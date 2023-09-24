@@ -25,6 +25,7 @@ public class ProxyController {
                                     Model model) {
         // Handle form submission here
         // Update Tor Proxy configuration with the provided data
+        
 
         // Redirect back to the configuration form with a success message
         model.addAttribute("successMessage", "Tor Proxy configured successfully!");
