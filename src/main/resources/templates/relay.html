@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tor Relay Configuration</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Include your CSS styles here -->
+</head>
+<body>
+<h1>Tor Relay Configuration</h1>
+
+<form action="/configure-relay" method="post">
+    <label for="relayNickname">Nickname:</label>
+    <input type="text" id="relayNickname" name="relayNickname" required><br><br>
+
+    <label for="relayBandwidth">Bandwidth (in KB/s):</label>
+    <input type="number" id="relayBandwidth" name="relayBandwidth" required><br><br>
+
+    <label for="relayPort">ORPort (e.g., 9001):</label>
+    <input type="text" id="relayPort" name="relayPort" required><br><br>
+
+    <label for="relayDirPort">DirPort (e.g., 9030):</label>
+    <input type="text" id="relayDirPort" name="relayDirPort" required><br><br>
+
+    <label for="relayContact">Contact Information:</label>
+    <input type="email" id="relayContact" name="relayContact" required><br><br>
+
+    <label for="relayExitPolicy">Exit Policy:</label>
+    <textarea id="relayExitPolicy" name="relayExitPolicy" rows="4" cols="50"></textarea><br><br>
+
+    <label for="relayConfig">Additional Configuration:</label>
+    <textarea id="relayConfig" name="relayConfig" rows="4" cols="50"></textarea><br><br>
+
+    <button type="submit">Configure Relay</button>
+</form>
+
+<br><br>
+<a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
+</body>
+</html>

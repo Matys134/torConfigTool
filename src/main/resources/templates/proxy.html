@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tor Proxy Configuration</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Include your CSS styles here -->
+</head>
+<body>
+<h1>Tor Proxy Configuration</h1>
+
+<form action="/configure-tor-proxy" method="post">
+    <label for="proxyPort">Proxy Port (e.g., 9050):</label>
+    <input type="text" id="proxyPort" name="proxyPort" required><br><br>
+
+    <label for="proxyBindAddress">Bind Address (e.g., 127.0.0.1):</label>
+    <input type="text" id="proxyBindAddress" name="proxyBindAddress" required><br><br>
+
+    <label for="proxyControlPort">Control Port (e.g., 9051):</label>
+    <input type="text" id="proxyControlPort" name="proxyControlPort" required><br><br>
+
+    <label for="proxyControlPassword">Control Password:</label>
+    <input type="password" id="proxyControlPassword" name="proxyControlPassword" required><br><br>
+
+    <label for="proxyConfig">Additional Configuration:</label>
+    <textarea id="proxyConfig" name="proxyConfig" rows="4" cols="50"></textarea><br><br>
+
+    <button type="submit">Configure Tor Proxy</button>
+</form>
+
+<br><br>
+<a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
+</body>
+</html>

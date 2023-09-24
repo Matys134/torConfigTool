@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tor Configuration Tool</title>
+    <!-- Include any necessary CSS stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Tor Configuration Tool</h1>
+
+<!-- Navigation menu -->
+<nav>
+    <ul>
+        <li><a th:href="@{/}" class="active">Home</a></li>
+        <li><a th:href="@{/relay}">Tor Relay</a></li>
+        <li><a th:href="@{/hidden-services}">Hidden Services</a></li>
+        <li><a th:href="@{/proxy}">Tor Proxy</a></li>
+    </ul>
+</nav>
+
+<!-- Home Page -->
+<div th:if="${currentPage == 'home'}">
+    <h2>Welcome to the Tor Configuration Tool</h2>
+    <p>Use this tool to configure and manage Tor services on your Raspberry Pi.</p>
+</div>
+
+<!-- Tor Relay Configuration -->
+<div th:if="${currentPage == 'relay'}">
+    <h2>Tor Relay Configuration</h2>
+    <!-- Add relay configuration form here -->
+</div>
+
+<!-- Hidden Services Configuration -->
+<div th:if="${currentPage == 'hidden-services'}">
+    <h2>Hidden Services Configuration</h2>
+    <!-- Add hidden services configuration form here -->
+</div>
+
+<!-- Tor Proxy Configuration -->
+<div th:if="${currentPage == 'proxy'}">
+    <h2>Tor Proxy Configuration</h2>
+    <!-- Add proxy configuration form here -->
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2023 Your Company</p>
+</footer>
+</body>
+</html>
