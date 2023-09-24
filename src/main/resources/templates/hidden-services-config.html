@@ -8,7 +8,12 @@
 <body>
 <h1>Hidden Services Configuration</h1>
 
-<form action="/configure-hidden-service" method="post">
+<!-- Display success message if provided -->
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<form action="/hidden-services/configure" method="post">
     <label for="serviceName">Service Name:</label>
     <input type="text" id="serviceName" name="serviceName" required><br><br>
 

@@ -8,7 +8,12 @@
 <body>
 <h1>Tor Proxy Configuration</h1>
 
-<form action="/configure-tor-proxy" method="post">
+<!-- Display success message if provided -->
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<form action="/proxy/configure" method="post">
     <label for="proxyPort">Proxy Port (e.g., 9050):</label>
     <input type="text" id="proxyPort" name="proxyPort" required><br><br>
 

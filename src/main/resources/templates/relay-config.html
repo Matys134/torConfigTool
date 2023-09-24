@@ -8,7 +8,12 @@
 <body>
 <h1>Tor Relay Configuration</h1>
 
-<form action="/configure-relay" method="post">
+<!-- Display success message if provided -->
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<form action="/relay/configure" method="post">
     <label for="relayNickname">Nickname:</label>
     <input type="text" id="relayNickname" name="relayNickname" required><br><br>
 
