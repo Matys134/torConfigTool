@@ -59,6 +59,33 @@ public class RelayController {
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
 
+    @PostMapping("/start")
+    public String startRelay(Model model) {
+        boolean startSuccess = startTorRelayService();
+
+        if (startSuccess) {
+            model.addAttribute("successMessage", "Tor Relay started successfully!");
+        } else {
+            model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
+        }
+
+        return "relay-config"; // Redirect to the configuration page
+    }
+
+    @PostMapping("/stop")
+    public String stopRelay(Model model) {
+        boolean stopSuccess = stopTorRelayService();
+
+        if (stopSuccess) {
+            model.addAttribute("successMessage", "Tor Relay stopped successfully!");
+        } else {
+            model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
+        }
+
+        return "relay-config"; // Redirect to the configuration page
+    }
+
+
     private boolean updateTorRelayConfiguration(
             String relayNickname,
             int relayBandwidth,
@@ -132,4 +159,40 @@ public class RelayController {
             return false;
         }
     }
+
+    private boolean startTorRelayService() {
+        try {
+            // Execute a command to start the Tor service
+            Process process = Runtime.getRuntime().exec("sudo systemctl start tor");
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            // Check the exit code to determine if the start was successful
+            return exitCode == 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log and handle any exceptions that occur during the start
+            return false;
+        }
+    }
+
+    private boolean stopTorRelayService() {
+        try {
+            // Execute a command to stop the Tor service
+            Process process = Runtime.getRuntime().exec("sudo systemctl stop tor");
+
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            // Check the exit code to determine if the stop was successful
+            return exitCode == 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log and handle any exceptions that occur during the stop
+            return false;
+        }
+    }
+
+
 }
