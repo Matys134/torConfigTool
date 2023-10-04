@@ -97,7 +97,7 @@ public class RelayController {
     ) {
         try {
             // Read the existing Tor Relay configuration file (torrc)
-            File torrcFile = new File("/etc/tor/torrc"); // Adjust the path to your torrc file
+            File torrcFile = new File("torrc/local-torrc"); // Adjust the path to your torrc file
             BufferedReader reader = new BufferedReader(new FileReader(torrcFile));
             String line;
             StringBuilder newTorrcContent = new StringBuilder();
