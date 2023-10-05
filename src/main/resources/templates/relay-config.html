@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <title>Tor Relay Configuration</title>
     <link rel="stylesheet" href="styles.css"> <!-- Include your CSS styles here -->
+    <style>
+        /* Style for the tabs */
+        .tab {
+            overflow: hidden;
+        }
+
+        .tab button {
+            background-color: #f2f2f2;
+            float: left;
+            border: 1px solid #ccc;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Style for the tab content */
+        .tabcontent {
+            display: none;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
 <h1>Tor Relay Configuration</h1>
@@ -13,39 +39,82 @@
     <p th:text="${successMessage}"></p>
 </div>
 
-<form action="/relay/configure" method="post">
-    <label for="relayNickname">Nickname:</label>
-    <input type="text" id="relayNickname" name="relayNickname" required><br><br>
+<!-- Create the tabs -->
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
+    <button class="tablinks" onclick="openTab(event, 'otherTab')">Bridge</button>
+    <button class="tablinks" onclick="openTab(event, 'otherTab')">Exit Relay</button>
+</div>
 
-    <label for="relayBandwidth">Bandwidth (in KB/s):</label>
-    <input type="number" id="relayBandwidth" name="relayBandwidth" required><br><br>
+<!-- Relay Tab Content -->
+<div id="relayTab" class="tabcontent">
+    <form action="/relay/configure" method="post">
+        <label for="relayNickname">Nickname:</label>
+        <input type="text" id="relayNickname" name="relayNickname" required><br><br>
 
-    <label for="relayPort">ORPort (e.g., 9001):</label>
-    <input type="text" id="relayPort" name="relayPort" required><br><br>
+        <label for="relayContact">Contact Information:</label>
+        <input type="email" id="relayContact" name="relayContact" required><br><br>
 
-    <label for="relayDirPort">DirPort (e.g., 9030):</label>
-    <input type="text" id="relayDirPort" name="relayDirPort" required><br><br>
+        <label for="relayPort">ORPort (e.g., 9001):</label>
+        <input type="text" id="relayPort" name="relayPort" required><br><br>
 
-    <label for="relayContact">Contact Information:</label>
-    <input type="email" id="relayContact" name="relayContact" required><br><br>
+        <label for="relayBandwidth">Bandwidth (in KB/s):</label>
+        <input type="number" id="relayBandwidth" name="relayBandwidth" required><br><br>
 
-    <label for="relayExitPolicy">Exit Policy:</label>
-    <textarea id="relayExitPolicy" name="relayExitPolicy" rows="4" cols="50"></textarea><br><br>
+        <!--
+        <label for="relayDirPort">DirPort (e.g., 9030):</label>
+        <input type="text" id="relayDirPort" name="relayDirPort" required><br><br>
+        -->
 
-    <label for="relayConfig">Additional Configuration:</label>
-    <textarea id="relayConfig" name="relayConfig" rows="4" cols="50"></textarea><br><br>
+        <!--
+        <label for="relayExitPolicy">Exit Policy:</label>
+        <textarea id="relayExitPolicy" name="relayExitPolicy" rows="4" cols="50"></textarea><br><br>
+        -->
 
-    <button type="submit">Configure Relay</button>
-</form>
+        <!--
+        <label for="relayConfig">Additional Configuration:</label>
+        <textarea id="relayConfig" name="relayConfig" rows="4" cols="50"></textarea><br><br>
+        -->
 
-<form action="/relay/start" method="post">
-    <button type="submit">Start Tor Relay</button>
-</form>
+        <button type="submit">Configure Relay</button>
+    </form>
 
-<form action="/relay/stop" method="post">
-    <button type="submit">Stop Tor Relay</button>
-</form>
+    <form action="/relay/start" method="post">
+        <button type="submit">Start Tor Relay</button>
+    </form>
 
+    <form action="/relay/stop" method="post">
+        <button type="submit">Stop Tor Relay</button>
+    </form>
+</div>
+
+<!-- Other Relay Type Tab Content -->
+<div id="otherTab" class="tabcontent">
+    <form action="/other-relay/configure" method="post">
+        <!-- Add input fields for the other relay type here -->
+        <!-- ... -->
+        <button type="submit">Configure Other Relay</button>
+    </form>
+
+    <!-- Add additional forms for starting and stopping the other relay type if needed -->
+</div>
+
+<script>
+    // JavaScript function to switch between tabs
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
 
 <br><br>
 <a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->

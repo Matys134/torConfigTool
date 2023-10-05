@@ -14,6 +14,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/relay")
@@ -28,20 +30,14 @@ public class RelayController {
     public String configureRelay(@RequestParam String relayNickname,
                                  @RequestParam int relayBandwidth,
                                  @RequestParam int relayPort,
-                                 @RequestParam int relayDirPort,
                                  @RequestParam String relayContact,
-                                 @RequestParam String relayExitPolicy,
-                                 @RequestParam String relayConfig,
                                  Model model) {
         // Implement logic to update the Tor Relay configuration and restart the service
         boolean configurationSuccess = updateTorRelayConfiguration(
                 relayNickname,
                 relayBandwidth,
                 relayPort,
-                relayDirPort,
-                relayContact,
-                relayExitPolicy,
-                relayConfig
+                relayContact
         );
 
         if (configurationSuccess) {
@@ -90,10 +86,7 @@ public class RelayController {
             String relayNickname,
             int relayBandwidth,
             int relayPort,
-            int relayDirPort,
-            String relayContact,
-            String relayExitPolicy,
-            String relayConfig
+            String relayContact
     ) {
         try {
             // Read the existing Tor Relay configuration file (torrc)
@@ -102,32 +95,46 @@ public class RelayController {
             String line;
             StringBuilder newTorrcContent = new StringBuilder();
 
+            // Flags to check if lines exist
+            boolean nicknameExists = false;
+            boolean bandwidthRateExists = false;
+            boolean orPortExists = false;
+            boolean contactInfoExists = false;
+
             while ((line = reader.readLine()) != null) {
                 // Modify the relevant configuration parameters based on user input
                 if (line.startsWith("Nickname ")) {
                     newTorrcContent.append("Nickname ").append(relayNickname).append("\n");
+                    nicknameExists = true;
                 } else if (line.startsWith("BandwidthRate ")) {
                     newTorrcContent.append("BandwidthRate ").append(relayBandwidth).append(" KBytes\n");
+                    bandwidthRateExists = true;
                 } else if (line.startsWith("ORPort ")) {
                     newTorrcContent.append("ORPort ").append(relayPort).append("\n");
-                } else if (line.startsWith("DirPort ")) {
-                    newTorrcContent.append("DirPort ").append(relayDirPort).append("\n");
+                    orPortExists = true;
                 } else if (line.startsWith("ContactInfo ")) {
                     newTorrcContent.append("ContactInfo ").append(relayContact).append("\n");
+                    contactInfoExists = true;
                 } else {
                     newTorrcContent.append(line).append("\n");
                 }
             }
 
-            // Add additional configuration (if provided)
-            if (!relayExitPolicy.isEmpty()) {
-                newTorrcContent.append(relayExitPolicy).append("\n");
-            }
-            if (!relayConfig.isEmpty()) {
-                newTorrcContent.append(relayConfig).append("\n");
-            }
-
             reader.close();
+
+            // If the lines don't exist, create and append them
+            if (!nicknameExists) {
+                newTorrcContent.append("Nickname ").append(relayNickname).append("\n");
+            }
+            if (!bandwidthRateExists) {
+                newTorrcContent.append("BandwidthRate ").append(relayBandwidth).append(" KBytes\n");
+            }
+            if (!orPortExists) {
+                newTorrcContent.append("ORPort ").append(relayPort).append("\n");
+            }
+            if (!contactInfoExists) {
+                newTorrcContent.append("ContactInfo ").append(relayContact).append("\n");
+            }
 
             // Write the updated configuration back to the torrc file
             BufferedWriter writer = new BufferedWriter(new FileWriter(torrcFile));
@@ -193,6 +200,8 @@ public class RelayController {
             return false;
         }
     }
+
+    // Request password from user for sudo commands
 
 
 }
