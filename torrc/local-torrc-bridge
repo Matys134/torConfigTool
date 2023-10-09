@@ -1,0 +1,7 @@
+BridgeRelay 1
+ORPort 2541
+ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy
+ServerTransportListenAddr obfs4 0.0.0.0:2541
+ExtORPort auto
+ContactInfo fweta@seztn.cz
+Nickname sfsvaa

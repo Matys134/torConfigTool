@@ -42,7 +42,7 @@
 <!-- Create the tabs -->
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
-    <button class="tablinks" onclick="openTab(event, 'otherTab')">Bridge</button>
+    <button class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
     <button class="tablinks" onclick="openTab(event, 'otherTab')">Exit Relay</button>
 </div>
 
@@ -89,14 +89,22 @@
 </div>
 
 <!-- Other Relay Type Tab Content -->
-<div id="otherTab" class="tabcontent">
-    <form action="/other-relay/configure" method="post">
-        <!-- Add input fields for the other relay type here -->
-        <!-- ... -->
-        <button type="submit">Configure Other Relay</button>
-    </form>
+<div id="bridgeTab" class="tabcontent">
+    <form action="/relay/configure-bridge" method="post">
+        <label for="bridgePort">Bridge Port (e.g., 9001):</label>
+        <input type="text" id="bridgePort" name="bridgePort" required><br><br>
 
-    <!-- Add additional forms for starting and stopping the other relay type if needed -->
+        <label for="serverTransportListenAddr">Server Transport Listen Address (e.g.,9001):</label>
+        <input type="text" id="serverTransportListenAddr" name="serverTransportListenAddr" required><br><br>
+
+        <label for="bridgeEmail">Contact Email:</label>
+        <input type="email" id="bridgeEmail" name="bridgeEmail" required><br><br>
+
+        <label for="bridgeNickname">Nickname:</label>
+        <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
+
+        <button type="submit">Configure Bridge Relay</button>
+    </form>
 </div>
 
 <script>
