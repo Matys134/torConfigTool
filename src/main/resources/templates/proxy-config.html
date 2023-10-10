@@ -8,28 +8,17 @@
 <body>
 <h1>Tor Proxy Configuration</h1>
 
-<!-- Display success message if provided -->
+<!-- Display success or error messages if needed -->
 <div th:if="${successMessage}" class="success-message">
     <p th:text="${successMessage}"></p>
 </div>
+<div th:if="${errorMessage}" class="error-message">
+    <p th:text="${errorMessage}"></p>
+</div>
 
-<form action="/proxy/configure" method="post">
-    <label for="proxyPort">Proxy Port (e.g., 9050):</label>
-    <input type="text" id="proxyPort" name="proxyPort" required><br><br>
-
-    <label for="proxyBindAddress">Bind Address (e.g., 127.0.0.1):</label>
-    <input type="text" id="proxyBindAddress" name="proxyBindAddress" required><br><br>
-
-    <label for="proxyControlPort">Control Port (e.g., 9051):</label>
-    <input type="text" id="proxyControlPort" name="proxyControlPort" required><br><br>
-
-    <label for="proxyControlPassword">Control Password:</label>
-    <input type="password" id="proxyControlPassword" name="proxyControlPassword" required><br><br>
-
-    <label for="proxyConfig">Additional Configuration:</label>
-    <textarea id="proxyConfig" name="proxyConfig" rows="4" cols="50"></textarea><br><br>
-
-    <button type="submit">Configure Tor Proxy</button>
+<!-- Button to turn on the Tor Proxy -->
+<form action="/proxy/start" method="post">
+    <button type="submit">Start Tor Proxy</button>
 </form>
 
 <br><br>
