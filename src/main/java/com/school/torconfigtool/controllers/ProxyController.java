@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controllers;
 
-import com.school.torconfigtool.TorProxyConfigurator;
+import com.school.torconfigtool.configurations.TorProxyConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

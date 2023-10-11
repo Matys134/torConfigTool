@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.configurations;
 
 import java.io.*;
 

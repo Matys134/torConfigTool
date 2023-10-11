@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hidden Services Configuration</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Include your CSS styles here -->
+</head>
+<body>
+<h1>Hidden Services Configuration</h1>
+
+<!-- Display success message if provided -->
+<div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" class="error-message">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<!-- Button to turn on hidden services -->
+<form action="/onion-service/start" method="post">
+    <input type="submit" value="Turn On Hidden Services">
+</form>
+
+<br><br>
+<a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
+</body>
+</html>
