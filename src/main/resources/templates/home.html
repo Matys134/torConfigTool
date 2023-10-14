@@ -14,6 +14,7 @@
     <ul>
         <li><a th:href="@{/}" class="active">Home</a></li>
         <li><a th:href="@{/relay}">Tor Relay</a></li>
+        <li><a th:href="@{/bridge}">Tor Bridge</a></li>
         <li><a th:href="@{/hidden-services}">Hidden Services</a></li>
         <li><a th:href="@{/proxy}">Tor Proxy</a></li>
     </ul>
@@ -29,6 +30,11 @@
 <div th:if="${currentPage == 'relay'}">
     <h2>Tor Relay Configuration</h2>
     <!-- Add relay configuration form here -->
+</div>
+
+<div th:if="${currentPage == 'bridge'}">
+    <h2>Tor Relay Status</h2>
+    <!-- Add relay status information here -->
 </div>
 
 <!-- Hidden Services Configuration -->
