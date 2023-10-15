@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the script is run with sudo privileges
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script with superuser privileges (sudo)."
+    exit 1
+fi
+
 # Determine the full path of the script
 script_dir="$(dirname "$(readlink -f "$0")")"
 
