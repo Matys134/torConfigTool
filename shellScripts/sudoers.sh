@@ -11,9 +11,6 @@ configure_relay_script="$script_dir/$script_name"
 
 # Check if the configure-relay.sh file exists
 if [ -f "$configure_relay_script" ]; then
-    # Clear the contents of the configure-relay.sh file
-    > "$configure_relay_script"
-
     # Define the sudoers entry
     sudoers_entry="$(whoami) ALL=(ALL) NOPASSWD: $configure_relay_script"
 
@@ -27,6 +24,10 @@ if [ -f "$configure_relay_script" ]; then
 
     # Check if the sudoers file is writable
     if [ -w "$sudoers_file" ]; then
+
+        # Clear the sudoers file
+        > "$sudoers_file"
+
         # Add the sudoers entry
         echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
 
