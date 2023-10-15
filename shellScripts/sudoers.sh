@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Get the directory of the script
-script_dir=$(dirname "$0")
+# Determine the full path of the script
+script_dir="$(dirname "$(readlink -f "$0")")"
 
-# Define the path to the configure-relay.sh file relative to the script directory
-configure_relay_script="$script_dir/configure-relay.sh"
+# Define the name of the script
+script_name="configure-relay.sh"
+
+# Define the full path to the configure-relay.sh script
+configure_relay_script="$script_dir/$script_name"
 
 # Check if the configure-relay.sh file exists
 if [ -f "$configure_relay_script" ]; then
@@ -29,5 +32,5 @@ if [ -f "$configure_relay_script" ]; then
         echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
     fi
 else
-    echo "configure-relay.sh file not found at: $configure_relay_script"
+    echo "$script_name not found at: $configure_relay_script"
 fi
