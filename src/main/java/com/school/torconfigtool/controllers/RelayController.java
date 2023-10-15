@@ -26,28 +26,31 @@ public class RelayController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  Model model) {
-        // Implement logic to update the Tor Relay configuration and restart the service
-        boolean configurationSuccess = updateTorRelayConfiguration(
-                relayNickname,
-                relayBandwidth,
-                relayPort,
-                relayContact
-        );
+        try {
+            // Define the path to the shell script
+            String scriptPath = "shellScripts/configure-relay.sh";  // Update this path
 
-        if (configurationSuccess) {
-            boolean restartSuccess = restartTorRelayService();
+            // Create a process builder for the script
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", scriptPath,
+                    relayNickname, String.valueOf(relayBandwidth), String.valueOf(relayPort), relayContact);
 
-            if (restartSuccess) {
+            // Start the process and wait for it to complete
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
                 model.addAttribute("successMessage", "Tor Relay configured and restarted successfully!");
             } else {
-                model.addAttribute("errorMessage", "Failed to restart Tor Relay service. Please restart it manually.");
+                model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
             }
-        } else {
-            model.addAttribute("errorMessage", "Failed to update Tor Relay configuration.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to run configuration script.");
         }
 
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
+
 
     @PostMapping("/start")
     public String startRelay(Model model) {

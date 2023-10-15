@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Get command-line arguments
+relayNickname="$1"
+relayBandwidth="$2"
+relayPort="$3"
+relayContact="$4"
+
 # Get the directory of the script
 script_dir=$(dirname "$0")
 
@@ -12,11 +18,10 @@ if [ -f "$torrc_file" ]; then
     > "$torrc_file"
 
     # Add the specified lines to the torrc file
-    echo 'Nickname    myNiceRelay  # Change "myNiceRelay" to something you like' >> "$torrc_file"
-    echo 'ContactInfo your@e-mail  # Write your e-mail and be aware it will be published' >> "$torrc_file"
-    echo 'ORPort      443          # You might use a different port, should you want to' >> "$torrc_file"
-    echo 'ExitRelay   0' >> "$torrc_file"
-    echo 'SocksPort   0' >> "$torrc_file"
+    echo "Nickname $relayNickname" >> "$torrc_file"
+    echo "BandwidthRate ${relayBandwidth} KBytes" >> "$torrc_file"
+    echo "ORPort $relayPort" >> "$torrc_file"
+    echo "ContactInfo $relayContact" >> "$torrc_file"
 
     echo "torrc file has been cleared and updated."
 else
