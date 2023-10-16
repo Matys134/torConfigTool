@@ -6,19 +6,19 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Determine the full path of the script
-script_dir="$(dirname "$(readlink -f "$0")")"
+# Determine the full path of the script folder
+script_dir="$(cd "$(dirname "$0")" && pwd)"
 
-# Define the name of the script folder
-script_folder="shellScripts"
+# Define the name of the script
+script_name="sudoers.sh"
 
-# Define the full path to the script folder
-script_folder_path="$script_dir/$script_folder"
+# Define the path to the script folder
+script_folder="$script_dir"
 
 # Check if the script folder exists
-if [ -d "$script_folder_path" ]; then
+if [ -d "$script_folder" ]; then
     # Define the sudoers entry for the user who ran this script with sudo
-    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $script_folder_path/*"
+    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $script_folder/*"
 
     # Define the path to the sudoers file
     sudoers_file="/etc/sudoers.d/torsudoers"
@@ -37,10 +37,10 @@ if [ -d "$script_folder_path" ]; then
         # Add the sudoers entry
         echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
 
-        echo "Sudoers entry added for $(logname) to run scripts in $script_folder_path"
+        echo "Sudoers entry added for $(logname) to run scripts in $script_folder"
     else
         echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
     fi
 else
-    echo "$script_folder not found at: $script_folder_path"
+    echo "Script folder not found at: $script_folder"
 fi
