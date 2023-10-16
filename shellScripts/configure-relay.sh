@@ -19,7 +19,11 @@ if [ -f "$torrc_file" ]; then
 
     # Add the specified lines to the torrc file
     echo "Nickname $relayNickname" >> "$torrc_file"
-    echo "BandwidthRate ${relayBandwidth} KBytes" >> "$torrc_file"
+
+    if [ -n "$relayBandwidth" ]; then
+        echo "BandwidthRate ${relayBandwidth} KBytes" >> "$torrc_file"
+    fi
+
     echo "ORPort $relayPort" >> "$torrc_file"
     echo "ContactInfo $relayContact" >> "$torrc_file"
 

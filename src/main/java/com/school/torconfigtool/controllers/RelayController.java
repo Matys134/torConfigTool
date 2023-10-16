@@ -22,7 +22,7 @@ public class RelayController {
 
     @PostMapping("/configure")
     public String configureRelay(@RequestParam String relayNickname,
-                                 @RequestParam int relayBandwidth,
+                                 @RequestParam(required = false) Integer relayBandwidth,
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  Model model) {
@@ -32,7 +32,7 @@ public class RelayController {
 
             // Create a process builder for the script
             ProcessBuilder processBuilder = new ProcessBuilder("bash", scriptPath,
-                    relayNickname, String.valueOf(relayBandwidth), String.valueOf(relayPort), relayContact);
+                    relayNickname, relayBandwidth != null ? String.valueOf(relayBandwidth) : "", String.valueOf(relayPort), relayContact);
 
             // Start the process and wait for it to complete
             Process process = processBuilder.start();
