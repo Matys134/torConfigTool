@@ -79,42 +79,6 @@ public class RelayController {
     }
 
 
-    private boolean updateTorRelayConfiguration(
-            String relayNickname,
-            int relayBandwidth,
-            int relayPort,
-            String relayContact
-    ) {
-        try {
-            // Create a temporary file to hold the updated configuration
-            File tempFile = new File("torrc/local-torrc.temp"); // Temporary file path
-            BufferedWriter tempWriter = new BufferedWriter(new FileWriter(tempFile));
-
-            // Write the updated configuration to the temporary file
-            tempWriter.write("Nickname " + relayNickname + "\n");
-            tempWriter.write("BandwidthRate " + relayBandwidth + " KBytes\n");
-            tempWriter.write("ORPort " + relayPort + "\n");
-            tempWriter.write("ContactInfo " + relayContact + "\n");
-
-            // Close the temporary file writer
-            tempWriter.close();
-
-            // Replace the existing configuration file with the temporary file
-            File torrcFile = new File("torrc/local-torrc"); // Adjust the path to your torrc file
-            if (torrcFile.exists()) {
-                torrcFile.delete();
-            }
-            tempFile.renameTo(torrcFile);
-
-            // Return true if configuration update is successful
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the update
-            return false;
-        }
-    }
-
     private boolean restartTorRelayService() {
         try {
             // Execute a command to restart the Tor service
@@ -165,8 +129,5 @@ public class RelayController {
             return false;
         }
     }
-
-    // Request password from user for sudo commands
-
 
 }
