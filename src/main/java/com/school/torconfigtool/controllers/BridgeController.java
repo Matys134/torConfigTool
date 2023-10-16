@@ -44,7 +44,7 @@ public class BridgeController {
             model.addAttribute("errorMessage", "Failed to run configuration script.");
         }
 
-        return "bridge-config"; // Thymeleaf template name (bridge-config.html)
+        return "relay-config"; // Thymeleaf template name (bridge-config.html)
     }
 
 
