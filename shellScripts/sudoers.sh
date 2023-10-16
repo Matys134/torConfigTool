@@ -16,9 +16,9 @@ script_name="configure-relay.sh"
 configure_relay_script="$script_dir/$script_name"
 
 # Check if the configure-relay.sh file exists
-if [ -f "$configure_relay_script" ]; then
+if [ -f "$script_dir" ]; then
     # Define the sudoers entry for the user who ran this script with sudo
-    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $configure_relay_script"
+    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $script_dir/*"
 
     # Define the path to the sudoers file
     sudoers_file="/etc/sudoers.d/torsudoers"
@@ -37,10 +37,10 @@ if [ -f "$configure_relay_script" ]; then
         # Add the sudoers entry
         echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
 
-        echo "Sudoers entry added for $(logname) to run $configure_relay_script"
+        echo "Sudoers entry added for $(logname) to run scripts in $script_dir"
     else
         echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
     fi
 else
-    echo "$script_name not found at: $configure_relay_script"
+    echo "Script folder not found at: $script_dir"
 fi
