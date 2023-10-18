@@ -10,7 +10,7 @@ relayContact="$4"
 script_dir=$(dirname "$0")
 
 # Define the path to the torrc file relative to the script directory
-torrc_file="$script_dir/../torrc/local-torrc-$relayNickname"
+torrc_file="$script_dir/../torrc/guard/local-torrc-$relayNickname"
 
 # Check if the torrc file exists or create it if it doesn't
 if [ -e "$torrc_file" ]; then

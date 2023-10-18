@@ -7,10 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-
 @Controller
 @RequestMapping("/relay")
 public class RelayController {
@@ -78,23 +74,6 @@ public class RelayController {
         return "relay-config"; // Redirect to the configuration page
     }
 
-
-    private boolean restartTorRelayService() {
-        try {
-            // Execute a command to restart the Tor service
-            Process process = Runtime.getRuntime().exec("sudo systemctl restart tor");
-
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-
-            // Check the exit code to determine if the restart was successful
-            return exitCode == 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the restart
-            return false;
-        }
-    }
 
     private boolean startTorRelayService() {
         try {
