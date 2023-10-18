@@ -6,19 +6,19 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Determine the full path of the script
-script_dir="$(dirname "$(readlink -f "$0")")"
+# Determine the full path of the script folder
+script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 # Define the name of the script
-script_name="configure-relay.sh"
+script_name="sudoers.sh"
 
-# Define the full path to the configure-relay.sh script
-configure_relay_script="$script_dir/$script_name"
+# Define the path to the script folder
+script_folder="$script_dir"
 
-# Check if the configure-relay.sh file exists
-if [ -f "$configure_relay_script" ]; then
+# Check if the script folder exists
+if [ -d "$script_folder" ]; then
     # Define the sudoers entry for the user who ran this script with sudo
-    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $configure_relay_script"
+    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $script_folder/*"
 
     # Define the path to the sudoers file
     sudoers_file="/etc/sudoers.d/torsudoers"
@@ -37,10 +37,10 @@ if [ -f "$configure_relay_script" ]; then
         # Add the sudoers entry
         echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
 
-        echo "Sudoers entry added for $(logname) to run $configure_relay_script"
+        echo "Sudoers entry added for $(logname) to run scripts in $script_folder"
     else
         echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
     fi
 else
-    echo "$script_name not found at: $configure_relay_script"
+    echo "Script folder not found at: $script_folder"
 fi

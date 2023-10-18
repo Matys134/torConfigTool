@@ -1,4 +1,5 @@
-Nickname Testík
-BandwidthRate 420 KBytes
-ORPort 6969
-ContactInfo test@porno.cz
+Nickname Matys
+ORPort 80 IPv4Only
+AddressDisableIPv6 1
+ContactInfo koubamates4@gmail.com
+Address 192.168.0.177

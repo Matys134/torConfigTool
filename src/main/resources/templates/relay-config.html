@@ -47,6 +47,7 @@
 </div>
 
 <!-- Relay Tab Content -->
+<!-- Relay Tab Content -->
 <div id="relayTab" class="tabcontent">
     <form action="/relay/configure" method="post">
         <label for="relayNickname">Nickname:</label>
@@ -58,8 +59,12 @@
         <label for="relayPort">ORPort (e.g., 9001):</label>
         <input type="text" id="relayPort" name="relayPort" required><br><br>
 
-        <label for="relayBandwidth">Bandwidth (in KB/s):</label>
-        <input type="number" id="relayBandwidth" name="relayBandwidth" required><br><br>
+        <input type="checkbox" id="includeBandwidth" name="includeBandwidth"> Include Bandwidth (KB/s):<br>
+
+        <div id="bandwidthField" style="display: none;">
+            <label for="relayBandwidth">Bandwidth (in KB/s):</label>
+            <input type="number" id="relayBandwidth" name="relayBandwidth"><br><br>
+        </div>
 
         <button type="submit">Configure Relay</button>
     </form>
@@ -72,6 +77,15 @@
         <button type="submit">Stop Tor Relay</button>
     </form>
 </div>
+
+<script>
+    // JavaScript function to show/hide bandwidth field based on checkbox
+    document.getElementById("includeBandwidth").addEventListener("change", function () {
+        var bandwidthField = document.getElementById("bandwidthField");
+        bandwidthField.style.display = this.checked ? "block" : "none";
+    });
+</script>
+
 
 <!-- Other Relay Type Tab Content -->
 <div id="bridgeTab" class="tabcontent">
