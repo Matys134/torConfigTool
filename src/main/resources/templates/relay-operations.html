@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Other head content... -->
+</head>
+<body>
+<h1>Tor Relay Operations</h1>
+
+<!-- Display guard configurations -->
+<h2>Guard Relay Configurations</h2>
+<ul>
+    <li th:each="config : ${guardConfigs}">
+        <p th:text="${'Nickname: ' + config.nickname}"></p>
+        <p th:text="${'ORPort: ' + config.orPort}"></p>
+        <p th:text="${'Contact: ' + config.contact}"></p>
+    </li>
+</ul>
+
+<!-- Display onion configurations -->
+<h2>Onion Service Configurations</h2>
+<ul>
+    <li th:each="config : ${onionConfigs}">
+        <p th:text="${'Hidden Service Dir: ' + config.hiddenServiceDir}"></p>
+        <p th:text="${'Hidden Service Port: ' + config.hiddenServicePort}"></p>
+    </li>
+</ul>
+
+<!-- Add navigation or links to other sections of your web application -->
+</body>
+</html>

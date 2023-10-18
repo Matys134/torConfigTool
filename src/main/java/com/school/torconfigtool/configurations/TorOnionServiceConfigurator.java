@@ -9,7 +9,7 @@ public class TorOnionServiceConfigurator {
     public static boolean configureTorOnionService() {
         try {
             // Check if the torrc file for the onion service exists, create it if not
-            File torrcFile = new File("torrc/local-torrc-onion-service");
+            File torrcFile = new File("torrc/local-torrc-onion-service.torrc");
             if (!torrcFile.exists()) {
                 torrcFile.createNewFile();
             }
