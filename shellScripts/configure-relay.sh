@@ -9,8 +9,8 @@ relayContact="$4"
 # Get the directory of the script
 script_dir=$(dirname "$0")
 
-# Define the path to the torrc file relative to the script directory
-torrc_file="$script_dir/../torrc/local-torrc"
+# Generate a unique torrc file for each relay
+torrc_file="$script_dir/../torrc/local-torrc-$relayNickname"
 
 # Check if the torrc file exists
 if [ -f "$torrc_file" ]; then

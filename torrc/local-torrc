@@ -1,5 +1,3 @@
 Nickname Matys
-ORPort 80 IPv4Only
-AddressDisableIPv6 1
+ORPort 80
 ContactInfo koubamates4@gmail.com
-Address 192.168.0.177
