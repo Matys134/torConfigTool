@@ -12,8 +12,8 @@ script_dir=$(dirname "$0")
 # Define the path to the torrc file relative to the script directory
 torrc_file="$script_dir/../torrc/local-torrc"
 
-# Check if the torrc file exists
-if [ -f "$torrc_file" ]; then
+# Check if the torrc file exists or create it if it doesn't
+if [ -e "$torrc_file" ]; then
     # Stop Tor
     systemctl stop tor  # Assuming you're using systemd; adjust for your system
 
@@ -48,5 +48,33 @@ if [ -f "$torrc_file" ]; then
         echo "Failed to start Tor. Make sure you have the necessary permissions."
     fi
 else
-    echo "torrc file not found at: $torrc_file"
+    # Create the torrc file
+    echo "Creating torrc file at: $torrc_file"
+
+    # Create the directory if it doesn't exist
+    mkdir -p "$script_dir/../torrc"
+
+    # Create the torrc file
+    touch "$torrc_file"
+
+    # Add the specified lines to the torrc file
+    echo "Nickname $relayNickname" >> "$torrc_file"
+
+    if [ -n "$relayBandwidth" ]; then
+        echo "BandwidthRate ${relayBandwidth} KBytes" >> "$torrc_file"
+    fi
+
+    echo "ORPort $relayPort" >> "$torrc_file"
+    echo "ContactInfo $relayContact" >> "$torrc_file"
+
+    echo "torrc file has been created and updated."
+
+    # Start Tor with the custom torrc file
+    tor -f "$torrc_file"
+
+    if [ $? -eq 0 ]; then
+        echo "Tor has been started with the custom torrc file."
+    else
+        echo "Failed to start Tor. Make sure you have the necessary permissions."
+    fi
 fi
