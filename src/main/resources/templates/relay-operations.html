@@ -9,22 +9,80 @@
 <!-- Display guard configurations -->
 <h2>Guard Relay Configurations</h2>
 <ul>
-    <li th:each="config : ${guardConfigs}">
+    <li th:each="config, configStatus : ${guardConfigs}">
         <p th:text="${'Nickname: ' + config.nickname}"></p>
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
+        <button class="edit-button" th:data-config-nickname="${config.nickname}" th:data-config-orport="${config.orPort}" th:data-config-contact="${config.contact}">Edit</button>
     </li>
 </ul>
 
 <!-- Display onion configurations -->
 <h2>Onion Service Configurations</h2>
 <ul>
-    <li th:each="config : ${onionConfigs}">
+    <li th:each="config, configStatus : ${onionConfigs}">
         <p th:text="${'Hidden Service Dir: ' + config.hiddenServiceDir}"></p>
         <p th:text="${'Hidden Service Port: ' + config.hiddenServicePort}"></p>
+        <button class="edit-button" th:data-config-hiddendir="${config.hiddenServiceDir}" th:data-config-hiddenport="${config.hiddenServicePort}">Edit</button>
     </li>
 </ul>
 
 <!-- Add navigation or links to other sections of your web application -->
+
+<!-- Add modal for editing configurations (hidden by default) -->
+<div id="edit-modal" class="modal">
+    <div class="modal-content">
+        <h2>Edit Configuration</h2>
+        <form id="edit-form">
+            <label for="edit-nickname">Nickname:</label>
+            <input type="text" id="edit-nickname" name="edit-nickname">
+            <br><br>
+            <label for="edit-orport">ORPort:</label>
+            <input type="text" id="edit-orport" name="edit-orport">
+            <br><br>
+            <label for="edit-contact">Contact:</label>
+            <input type="text" id="edit-contact" name="edit-contact">
+            <br><br>
+            <button type="button" id="save-button">Save</button>
+            <button type="button" id="cancel-button">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to show the edit modal
+    function showEditModal(nickname, orport, contact) {
+        $("#edit-nickname").val(nickname);
+        $("#edit-orport").val(orport);
+        $("#edit-contact").val(contact);
+        $("#edit-modal").show();
+    }
+
+    // Function to hide the edit modal
+    function hideEditModal() {
+        $("#edit-modal").hide();
+    }
+
+    // Handle the "Edit" button clicks
+    $(".edit-button").click(function() {
+        const nickname = $(this).data("config-nickname");
+        const orport = $(this).data("config-orport");
+        const contact = $(this).data("config-contact");
+
+        showEditModal(nickname, orport, contact);
+    });
+
+    // Handle the "Save" button click
+    $("#save-button").click(function() {
+        // Add code to save the edited configuration here
+        hideEditModal();
+    });
+
+    // Handle the "Cancel" button click
+    $("#cancel-button").click(function() {
+        hideEditModal();
+    });
+</script>
 </body>
 </html>
