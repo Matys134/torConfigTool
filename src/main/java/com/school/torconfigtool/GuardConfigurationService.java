@@ -6,18 +6,24 @@ import org.springframework.stereotype.Service;
 public class GuardConfigurationService {
     public boolean updateGuardConfiguration(String nickname, String orPort, String contact) {
         try {
-            // Execute your shell script with the provided parameters
-            String scriptCommand = "/path/to/your/script.sh " + nickname + " " + orPort + " " + contact;
-            Process process = Runtime.getRuntime().exec(scriptCommand);
+            String scriptPath = "shellScripts/configure-relay.sh";  // Update this path
 
-            // Wait for the process to complete
+            ProcessBuilder processBuilder = new ProcessBuilder("bash", scriptPath,
+                    nickname, "", orPort, contact);
+
+            Process process = processBuilder.start();
             int exitCode = process.waitFor();
 
-            // Check the exit code to determine if the update was successful
-            return exitCode == 0;
+            if (exitCode == 0) {
+                return true;
+            } else {
+                return false;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+
     }
 }
