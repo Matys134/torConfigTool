@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/update-relay-configuration")
@@ -15,32 +17,33 @@ public class UpdateRelayConfigurationController {
 
     @PostMapping
     public UpdateResponse updateRelayConfiguration(@RequestBody UpdateRequest request) {
-        // Build the shell command to execute the update script
-        String scriptPath = "shellScripts/configure-relay.sh"; // Adjust the path to your shell script
-        String command = scriptPath + " " + request.getNickname() + " " +
-                request.getBandwidth() + " " + request.getPort() + " " + request.getContact();
+        String scriptPath = "/path/to/your/update-relay-configuration.sh"; // Adjust the path to your shell script
 
         try {
-            // Execute the shell script
-            Process process = Runtime.getRuntime().exec(command);
+            ProcessBuilder processBuilder = new ProcessBuilder(scriptPath, request.getNickname(), request.getBandwidth(), request.getPort(), request.getContact());
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+            process.waitFor();
 
             // Capture the script's output
-            StringBuilder output = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
+            List<String> outputLines = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    outputLines.add(line);
+                }
             }
 
-            // Wait for the script to complete
-            int exitCode = process.waitFor();
+            int exitCode = process.exitValue();
 
             if (exitCode == 0) {
                 // Successful update
                 return new UpdateResponse(true, "Relay configuration updated successfully.");
             } else {
                 // Update failed
-                return new UpdateResponse(false, "Failed to update relay configuration. Script output: " + output.toString());
+                String outputMessage = String.join("\n", outputLines);
+                return new UpdateResponse(false, "Failed to update relay configuration. Script output: " + outputMessage);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
