@@ -18,7 +18,7 @@ def _handle_bandwidth_event(controller, event):
 
     # Send the data to your Java web application's API
     data = {'download': download, 'upload': upload}
-    api_url = 'http://your-java-app-hostname/api/relay-data'
+    api_url = 'http://192.168.2.117:8081/api/relay-data'
     response = requests.post(api_url, json=data)
 
     print(f"Downloaded: {event.read} bytes/s, Uploaded: {event.written} bytes/s")

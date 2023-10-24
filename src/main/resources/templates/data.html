@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Other head content... -->
+</head>
+<body>
+<h1>Tor Relay Data</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Download</th>
+        <th>Upload</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="data : ${relayDataList}">
+        <td th:text="${data.download}"></td>
+        <td th:text="${data.upload}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
