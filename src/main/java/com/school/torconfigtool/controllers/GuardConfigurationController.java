@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.service.GuardConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
