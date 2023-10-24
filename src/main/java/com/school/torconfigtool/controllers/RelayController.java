@@ -1,11 +1,13 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.models.RelayData;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 @RequestMapping("/relay")
@@ -107,6 +109,23 @@ public class RelayController {
             // Log and handle any exceptions that occur during the stop
             return false;
         }
+    }
+
+    @GetMapping("/relay-traffic")
+    public String showRelayTraffic(Model model) {
+        // Create a RestTemplate to make an HTTP GET request to your API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Replace with the actual URL of your relay data API
+        String relayDataUrl = "http://192.168.2.117:8081/api/relay-data";
+
+        // Send an HTTP GET request to fetch relay data
+        RelayData[] relayData = restTemplate.getForObject(relayDataUrl, RelayData[].class);
+
+        // Add relay data to the model for rendering in the Thymeleaf template
+        model.addAttribute("relayData", relayData);
+
+        return "data"; // Thymeleaf template name
     }
 
 }

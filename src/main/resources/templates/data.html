@@ -1,17 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <!-- Other head content... -->
+    <title>Tor Relay Traffic</title>
 </head>
 <body>
-<h1>Tor Relay Data</h1>
+<h1>Latest Traffic Data</h1>
+<p>Upload: <span id="uploadValue">Loading...</span> bytes</p>
+<p>Download: <span id="downloadValue">Loading...</span> bytes</p>
 
-<!-- Display the latest relay data -->
-<div>
-    <p th:text="${'Downloaded: ' + latestRelayData.read + ' bytes/s'}"></p>
-    <p th:text="${'Uploaded: ' + latestRelayData.written + ' bytes/s'}"></p>
-</div>
+<!-- Include jQuery for AJAX requests -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Add navigation or links to other sections of your web application -->
+<script>
+    $(document).ready(function() {
+        // Define the URL of your server-side endpoint
+        var apiUrl = '/api/relay-data'; // Change to your actual API endpoint
+
+        // Function to update the traffic data
+        function updateTrafficData() {
+            $.get(apiUrl, function(data) {
+                // Assuming the API returns an array of RelayData objects
+                if (data && data.length > 0) {
+                    var latestData = data[data.length - 1]; // Assuming the latest data is at the end of the array
+                    $('#uploadValue').text(latestData.upload);
+                    $('#downloadValue').text(latestData.download);
+                }
+            });
+        }
+
+        // Update the data initially
+        updateTrafficData();
+
+        // Set an interval to update the data periodically (e.g., every 10 seconds)
+        setInterval(updateTrafficData, 1000); // 10 seconds
+    });
+</script>
 </body>
 </html>

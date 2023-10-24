@@ -1,3 +1,4 @@
-Nickname hafo
-Contact hafo@gmail.com
-ORPort 69
+Nickname Test
+ORPort 20000
+ControlPort 9051
+CookieAuthentication 1
