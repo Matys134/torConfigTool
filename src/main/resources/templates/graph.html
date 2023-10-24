@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Other head content... -->
+</head>
+<body>
+<h1>Tor Relay Data</h1>
+
+<!-- Create a canvas element for the chart -->
+<canvas id="trafficChart" width="400" height="200"></canvas>
+
+<!-- Display the latest relay data -->
+<div>
+    <p th:text="${'Downloaded: ' + latestRelayData.read + ' bytes/s'}"></p>
+    <p th:text="${'Uploaded: ' + latestRelayData.written + ' bytes/s'}"></p>
+</div>
+
+<!-- Add navigation or links to other sections of your web application -->
+</body>
+</html>
+
