@@ -14,9 +14,9 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="data : ${relayDataList}">
-        <td th:text="${data.download}"></td>
-        <td th:text="${data.upload}"></td>
+    <tr>
+        <td th:text="${latestRelayData.download}"></td>
+        <td th:text="${latestRelayData.upload}"></td>
     </tr>
     </tbody>
 </table>
