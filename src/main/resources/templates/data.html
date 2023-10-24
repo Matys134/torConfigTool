@@ -6,20 +6,12 @@
 <body>
 <h1>Tor Relay Data</h1>
 
-<table>
-    <thead>
-    <tr>
-        <th>Download</th>
-        <th>Upload</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="data : ${relayDataList}">
-        <td th:text="${data.download}"></td>
-        <td th:text="${data.upload}"></td>
-    </tr>
-    </tbody>
-</table>
+<!-- Display the latest relay data -->
+<div>
+    <p th:text="${'Downloaded: ' + latestRelayData.read + ' bytes/s'}"></p>
+    <p th:text="${'Uploaded: ' + latestRelayData.written + ' bytes/s'}"></p>
+</div>
 
+<!-- Add navigation or links to other sections of your web application -->
 </body>
 </html>
