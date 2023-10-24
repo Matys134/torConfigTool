@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import org.springframework.stereotype.Service;
 
