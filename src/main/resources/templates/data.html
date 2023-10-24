@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Other head content... -->
 </head>
 <body>
 <h1>Tor Relay Data</h1>
+
+<!-- Create a canvas element for the chart -->
+<canvas id="trafficChart" width="400" height="200"></canvas>
 
 <!-- Display the latest relay data -->
 <div>
@@ -15,3 +20,50 @@
 <!-- Add navigation or links to other sections of your web application -->
 </body>
 </html>
+
+<script>
+    // Retrieve the canvas element and create a chart
+    var ctx = document.getElementById('trafficChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line', // Line chart type
+        data: {
+            labels: [], // Array to store time labels
+            datasets: [{
+                label: 'Download (bytes/s)',
+                data: [], // Array to store downloaded traffic values
+                borderColor: 'blue',
+                fill: false
+            }, {
+                label: 'Upload (bytes/s)',
+                data: [], // Array to store uploaded traffic values
+                borderColor: 'green',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    function updateChart(newData) {
+        // Add new data points to the chart
+        chart.data.labels.push(newData.time);
+        chart.data.datasets[0].data.push(newData.download);
+        chart.data.datasets[1].data.push(newData.upload);
+
+        // Limit the number of data points displayed (e.g., keep the last 20)
+        if (chart.data.labels.length > 20) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+            chart.data.datasets[1].data.shift();
+        }
+
+        // Update the chart
+        chart.update();
+    }
+</script>
