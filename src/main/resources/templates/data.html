@@ -20,14 +20,34 @@
         // Define the URL of your server-side endpoint
         var apiUrl = '/api/relay-data'; // Change to your actual API endpoint
 
+        // Get references to the chart canvas and its context
+        var ctx = document.getElementById('trafficChart').getContext('2d');
+
+        // Create an initial empty chart
+        var trafficChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Upload',
+                        borderColor: 'rgb(54, 162, 235)',
+                        data: [],
+                    },
+                    {
+                        label: 'Download',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: [],
+                    },
+                ],
+            },
+        });
+
         // Function to update the traffic data and chart
         function updateTrafficDataAndChart() {
             $.get(apiUrl, function(data) {
                 // Assuming the API returns an array of RelayData objects
                 if (data && data.length > 0) {
-                    // Get references to the chart canvas and its context
-                    var ctx = document.getElementById('trafficChart').getContext('2d');
-
                     // Extract upload and download data
                     var uploadData = data.map(function(relayData) {
                         return relayData.upload;
@@ -36,25 +56,10 @@
                         return relayData.download;
                     });
 
-                    // Create a chart using Chart.js
-                    var trafficChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: Array.from({ length: data.length }, (_, i) => i + 1),
-                            datasets: [
-                                {
-                                    label: 'Upload',
-                                    borderColor: 'rgb(54, 162, 235)',
-                                    data: uploadData,
-                                },
-                                {
-                                    label: 'Download',
-                                    borderColor: 'rgb(255, 99, 132)',
-                                    data: downloadData,
-                                },
-                            ],
-                        },
-                    });
+                    // Update the chart's data and labels
+                    trafficChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
+                    trafficChart.data.datasets[0].data = uploadData;
+                    trafficChart.data.datasets[1].data = downloadData;
 
                     // Update the chart
                     trafficChart.update();
@@ -68,6 +73,7 @@
         // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
         setInterval(updateTrafficDataAndChart, 1000); // 10 seconds
     });
+
 
 </script>
 
