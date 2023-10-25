@@ -15,7 +15,7 @@ public class OnionServiceController {
 
     @GetMapping
     public String onionServiceConfigurationForm() {
-        return "onion-service-config"; // Thymeleaf template name (onion-service-config.html)
+        return "relay-config"; // Thymeleaf template name (onion-service-config.html)
     }
 
     @PostMapping("/configure")
@@ -36,7 +36,7 @@ public class OnionServiceController {
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
         }
 
-        return "onion-service-config"; // Redirect to the configuration page
+        return "relay-config"; // Redirect to the configuration page
     }
 
     @PostMapping("/start")
@@ -54,7 +54,7 @@ public class OnionServiceController {
             model.addAttribute("errorMessage", "Failed to start Tor Onion Service.");
         }
 
-        return "onion-service-config"; // Redirect to the configuration page
+        return "relay-config"; // Redirect to the configuration page
     }
 
     private boolean startTorOnionService() {
@@ -78,7 +78,7 @@ public class OnionServiceController {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("HiddenServiceDir /var/lib/tor/my_website/");
             writer.newLine();
-            writer.write("HiddenServicePort " + onionServicePort + " 127.0.0.1:80");
+            writer.write("HiddenServicePort " + onionServicePort + " 127.0.0.1:" + onionServicePort);
         }
     }
 }
