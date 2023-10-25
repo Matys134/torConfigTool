@@ -43,7 +43,7 @@
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
     <button class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
-    <button class="tablinks" onclick="openTab(event, 'otherTab')">Exit Relay</button>
+    <button class="tablinks" onclick="openTab(event, 'onionTab')">Exit Relay</button>
 </div>
 
 <!-- Relay Tab Content -->
@@ -103,6 +103,20 @@
         <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
 
         <button type="submit">Configure Bridge</button>
+    </form>
+</div>
+
+<!-- Other Relay Type Tab Content -->
+<div id="onionTab" class="tabcontent">
+    <form action="/onion-service/configure" method="post">
+        <label for="onionServicePort">Onion Service Port (e.g., 80):</label>
+        <input type="text" id="onionServicePort" name="onionServicePort" required><br><br>
+
+        <button type="submit">Configure Onion Service</button>
+    </form>
+
+    <form action="/onion-service/start" method="post">
+        <button type="submit">Start Tor Onion Service</button>
     </form>
 </div>
 
