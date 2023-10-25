@@ -14,11 +14,7 @@ public class GuardConfigurationService {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
 
-            if (exitCode == 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return exitCode == 0;
 
         } catch (Exception e) {
             e.printStackTrace();
