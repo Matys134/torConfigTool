@@ -1,13 +1,13 @@
 package com.school.torconfigtool.controllers;
 
-import com.school.torconfigtool.models.RelayData;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/relay")
@@ -25,30 +25,26 @@ public class RelayController {
                                  @RequestParam String relayContact,
                                  Model model) {
         try {
-            // Define the path to the shell script
-            String scriptPath = "shellScripts/configure-relay.sh";  // Update this path
+            // Define the path to the torrc file based on the relay nickname
+            String torrcFileName = "local-torrc-" + relayNickname;
+            String torrcFilePath = "torrc/guard/" + torrcFileName;
 
-            // Create a process builder for the script
-            ProcessBuilder processBuilder = new ProcessBuilder("bash", scriptPath,
-                    relayNickname, relayBandwidth != null ? String.valueOf(relayBandwidth) : "", String.valueOf(relayPort), relayContact);
-
-            // Start the process and wait for it to complete
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode == 0) {
-                model.addAttribute("successMessage", "Tor Relay configured and restarted successfully!");
-            } else {
-                model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
+            // Check if the torrc file exists, create it if not
+            if (!new File(torrcFilePath).exists()) {
+                createTorrcFile(torrcFilePath, relayNickname, relayBandwidth, relayPort, relayContact);
             }
+
+            // Restart the Tor service with the new configuration if necessary
+
+            // Provide a success message
+            model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to run configuration script.");
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
 
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
-
 
     @PostMapping("/start")
     public String startRelay(Model model) {
@@ -75,7 +71,6 @@ public class RelayController {
 
         return "relay-config"; // Redirect to the configuration page
     }
-
 
     private boolean startTorRelayService() {
         try {
@@ -111,21 +106,17 @@ public class RelayController {
         }
     }
 
-    @GetMapping("/relay-traffic")
-    public String showRelayTraffic(Model model) {
-        // Create a RestTemplate to make an HTTP GET request to your API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Replace with the actual URL of your relay data API
-        String relayDataUrl = "http://192.168.2.117:8081/api/relay-data";
-
-        // Send an HTTP GET request to fetch relay data
-        RelayData[] relayData = restTemplate.getForObject(relayDataUrl, RelayData[].class);
-
-        // Add relay data to the model for rendering in the Thymeleaf template
-        model.addAttribute("relayData", relayData);
-
-        return "data"; // Thymeleaf template name
+    private void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("Nickname " + relayNickname);
+            writer.newLine();
+            if (relayBandwidth != null) {
+                writer.write("BandwidthRate " + relayBandwidth + " KBytes");
+                writer.newLine();
+            }
+            writer.write("ORPort " + relayPort);
+            writer.newLine();
+            writer.write("ContactInfo " + relayContact);
+        }
     }
-
 }
