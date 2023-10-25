@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 @Controller
 @RequestMapping("/bridge")
 public class BridgeController {
@@ -23,79 +28,42 @@ public class BridgeController {
                                   @RequestParam String bridgeNickname,
                                   Model model) {
         try {
-            // Define the path to the shell script
-            String scriptPath = "shellScripts/configure-bridge.sh";
+            // Define the path to the torrc file based on the bridge nickname
+            String torrcFileName = "local-torrc-bridge-" + bridgeNickname;
+            String torrcFilePath = "torrc/bridge/" + torrcFileName;
 
-            // Create a process builder for the script
-            ProcessBuilder processBuilder = new ProcessBuilder("bash", scriptPath,
-                    String.valueOf(bridgePort), String.valueOf(bridgeTransportListenAddr), bridgeContact, bridgeNickname);
-
-            // Start the process and wait for it to complete
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode == 0) {
-                model.addAttribute("successMessage", "Tor Bridge configured and restarted successfully!");
-            } else {
-                model.addAttribute("errorMessage", "Failed to configure Tor Bridge.");
+            // Check if the torrc file exists, create it if not
+            if (!new File(torrcFilePath).exists()) {
+                createTorrcFile(torrcFilePath, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname);
             }
+
+            // Restart the Tor service with the new configuration if necessary
+
+            // Provide a success message
+            model.addAttribute("successMessage", "Tor Bridge configured successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to run configuration script.");
+            model.addAttribute("errorMessage", "Failed to configure Tor Bridge.");
         }
 
         return "relay-config"; // Thymeleaf template name (bridge-config.html)
     }
 
-
-    private boolean restartTorRelayService() {
-        try {
-            // Execute a command to restart the Tor service
-            Process process = Runtime.getRuntime().exec("sudo systemctl restart tor");
-
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-
-            // Check the exit code to determine if the restart was successful
-            return exitCode == 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the restart
-            return false;
-        }
-    }
-
-    private boolean startTorRelayService() {
-        try {
-            // Execute a command to start the Tor service
-            Process process = Runtime.getRuntime().exec("sudo systemctl start tor");
-
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-
-            // Check the exit code to determine if the start was successful
-            return exitCode == 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the start
-            return false;
-        }
-    }
-
-    private boolean stopTorRelayService() {
-        try {
-            // Execute a command to stop the Tor service
-            Process process = Runtime.getRuntime().exec("sudo systemctl stop tor");
-
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-
-            // Check the exit code to determine if the stop was successful
-            return exitCode == 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the stop
-            return false;
+    private void createTorrcFile(String filePath, int bridgePort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("BridgeRelay 1");
+            writer.newLine();
+            writer.write("ORPort " + bridgePort);
+            writer.newLine();
+            writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
+            writer.newLine();
+            writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + bridgeTransportListenAddr);
+            writer.newLine();
+            writer.write("ExtORPort auto");
+            writer.newLine();
+            writer.write("ContactInfo " + bridgeContact);
+            writer.newLine();
+            writer.write("Nickname " + bridgeNickname);
         }
     }
 }
