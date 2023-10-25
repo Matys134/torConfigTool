@@ -10,11 +10,19 @@
 
 <!-- Include jQuery for AJAX requests -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<canvas id="trafficChart" width="400" height="200"></canvas>
+
+
 
 <script>
     $(document).ready(function() {
         // Define the URL of your server-side endpoint
         var apiUrl = '/api/relay-data'; // Change to your actual API endpoint
+
+        // Create the chart initially
+        var trafficChart = createChart();
 
         // Function to update the traffic data
         function updateTrafficData() {
@@ -24,6 +32,17 @@
                     var latestData = data[data.length - 1]; // Assuming the latest data is at the end of the array
                     $('#uploadValue').text(latestData.upload);
                     $('#downloadValue').text(latestData.download);
+
+                    // Add a timestamp to the labels array
+                    var timestamp = new Date().toLocaleTimeString();
+                    trafficChart.data.labels.push(timestamp);
+
+                    // Add the upload and download data to their respective datasets
+                    trafficChart.data.datasets[0].data.push(latestData.upload);
+                    trafficChart.data.datasets[1].data.push(latestData.download);
+
+                    // Update the chart
+                    trafficChart.update();
                 }
             });
         }
@@ -35,5 +54,45 @@
         setInterval(updateTrafficData, 1000); // 10 seconds
     });
 </script>
+
+<script>
+    function createChart() {
+        var ctx = document.getElementById('trafficChart').getContext('2d');
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Array to hold time labels (e.g., timestamps)
+                datasets: [
+                    {
+                        label: 'Upload',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false,
+                        data: [],
+                    },
+                    {
+                        label: 'Download',
+                        borderColor: 'rgba(192, 75, 192, 1)',
+                        fill: false,
+                        data: [],
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                    },
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+
+</script>
+
 </body>
 </html>
