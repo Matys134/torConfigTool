@@ -17,6 +17,8 @@
 
 <script>
     $(document).ready(function() {
+
+        Chart.defaults.animation = false;
         // Define the URL of your server-side endpoint
         var apiUrl = '/api/relay-data'; // Change to your actual API endpoint
 
@@ -56,6 +58,10 @@
                         return relayData.download;
                     });
 
+                    var latestData = data[data.length - 1]; // Assuming the latest data is at the end of the array
+                    $('#uploadValue').text(latestData.upload);
+                    $('#downloadValue').text(latestData.download);
+
                     // Update the chart's data and labels
                     trafficChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
                     trafficChart.data.datasets[0].data = uploadData;
@@ -75,44 +81,6 @@
     });
 
 
-</script>
-
-<script>
-    function createChart() {
-        var ctx = document.getElementById('trafficChart').getContext('2d');
-        return new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [], // Array to hold time labels (e.g., timestamps)
-                datasets: [
-                    {
-                        label: 'Upload',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        fill: false,
-                        data: [],
-                    },
-                    {
-                        label: 'Download',
-                        borderColor: 'rgba(192, 75, 192, 1)',
-                        fill: false,
-                        data: [],
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'linear',
-                    },
-                    y: {
-                        beginAtZero: true,
-                    },
-                },
-            },
-        });
-    }
 </script>
 </body>
 </html>
