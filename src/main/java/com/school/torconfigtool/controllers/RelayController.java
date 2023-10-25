@@ -27,7 +27,7 @@ public class RelayController {
         try {
             // Define the path to the torrc file based on the relay nickname
             String torrcFileName = "local-torrc-" + relayNickname;
-            String torrcFilePath = "path/to/torrc/directory/" + torrcFileName;
+            String torrcFilePath = "torrc/guard/" + torrcFileName;
 
             // Check if the torrc file exists, create it if not
             if (!new File(torrcFilePath).exists()) {
