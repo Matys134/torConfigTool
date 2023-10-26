@@ -1,0 +1,26 @@
+/* CSS styles for tabs */
+.tab {
+    overflow: hidden;
+}
+
+.tab button {
+    background-color: #f2f2f2;
+    float: left;
+    border: 1px solid #ccc;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* CSS styles for tab content */
+.tabcontent {
+    display: none;
+    padding: 20px;
+}
+
+/* Additional CSS styles can be added here */
