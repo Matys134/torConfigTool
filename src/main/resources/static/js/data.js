@@ -23,6 +23,9 @@ $(document).ready(function () {
                 },
             ],
         },
+        options: {
+            animation: false,
+        }
     });
 
     // Function to update the traffic data and chart
