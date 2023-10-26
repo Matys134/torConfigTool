@@ -103,7 +103,7 @@ public class RelayController {
         }
     }
 
-    private void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact) throws IOException {
+    public void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + relayNickname);
             writer.newLine();
