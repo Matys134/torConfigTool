@@ -4,10 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 @Controller
 @RequestMapping("/relay")
@@ -119,11 +116,50 @@ public class RelayController {
             writer.write("ContactInfo " + relayContact);
             writer.newLine();
 
+            // Get the program's current working directory
             String currentDirectory = System.getProperty("user.dir");
 
+            // Define the DataDirectory path based on the current working directory
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
 
+            // Write the DataDirectory configuration line
             writer.write("DataDirectory " + dataDirectoryPath);
+
+            // Get the list of files in the "torrc/guard" directory
+            File guardDirectory = new File(currentDirectory + File.separator + "torrc" + File.separator + "guard");
+            File[] guardFiles = guardDirectory.listFiles();
+
+            if (guardFiles != null && guardFiles.length > 1) {
+                // If there are more than one relay in the "torrc/guard" directory, add MyFamily line
+                writer.newLine();
+                writer.write("MyFamily ");
+
+                // Iterate through the "dataDirectory" folders
+                File dataDirectory = new File(dataDirectoryPath);
+                File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
+
+                if (dataDirectoryFiles != null) {
+                    for (File dataDir : dataDirectoryFiles) {
+                        String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
+                        String fingerprint = readFingerprint(fingerprintFilePath);
+                        if (fingerprint != null) {
+                            writer.write(fingerprint);
+                            writer.write(", ");
+                        }
+                    }
+                }
+            }
         }
     }
+
+    private String readFingerprint(String fingerprintFilePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fingerprintFilePath))) {
+            return reader.readLine().split(" ")[1].trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }
