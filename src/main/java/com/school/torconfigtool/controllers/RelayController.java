@@ -117,10 +117,11 @@ public class RelayController {
             writer.write("ORPort " + relayPort);
             writer.newLine();
             writer.write("ContactInfo " + relayContact);
+            writer.newLine();
 
             String currentDirectory = System.getProperty("user.dir");
 
-            String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory";
+            String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
 
             writer.write("DataDirectory " + dataDirectoryPath);
         }
