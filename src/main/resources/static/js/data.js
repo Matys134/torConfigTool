@@ -23,6 +23,9 @@ $(document).ready(function () {
                 },
             ],
         },
+        options: {
+            animation: false,
+        }
     });
 
     // Function to update the traffic data and chart
@@ -46,13 +49,6 @@ $(document).ready(function () {
                 trafficChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
                 trafficChart.data.datasets[0].data = uploadData;
                 trafficChart.data.datasets[1].data = downloadData;
-
-                // **Animate the chart on the x axis only**
-                trafficChart.options.animation = {
-                    duration: 1000,
-                    xAxis: true,
-                    yAxis: false,
-                };
 
                 // Update the chart
                 trafficChart.update();
