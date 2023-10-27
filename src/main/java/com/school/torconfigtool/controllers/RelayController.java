@@ -92,7 +92,7 @@ public class RelayController {
     }
 
     private int getTorRelayPID(String torrcFileName) throws IOException, InterruptedException {
-        String command = "ps aux | grep 'tor -f " + torrcFileName + "' | grep -v grep | awk '{print $2}'";
+        String command = "ps aux | grep " + torrcFileName + " | grep -v grep | awk '{print $2}'";
         Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
