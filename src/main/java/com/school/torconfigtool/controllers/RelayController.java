@@ -44,26 +44,45 @@ public class RelayController {
     }
 
     @PostMapping("/start")
-    public String startRelay(Model model) {
-        // Determine the program's current working directory
-        String currentDirectory = System.getProperty("user.dir");
+    public String startRelay(@RequestParam String relayNickname, Model model) {
+        try {
+            // Determine the program's current working directory
+            String currentDirectory = System.getProperty("user.dir");
 
-        // Define the path to the custom torrc file based on the current working directory and relay nickname
-        String torrcFileName = "local-torrc-test";
-        String torrcFilePath = currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
+            // Define the path to the torrc file based on the relay nickname
+            String torrcFileName = "local-torrc-" + relayNickname;
+            String torrcFilePath = currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
 
-        System.out.println(torrcFilePath);
 
-        boolean startSuccess = startTorRelayService(torrcFilePath);
+            // Check if the torrc file exists
+            File torrcFile = new File(torrcFilePath);
 
-        if (startSuccess) {
-            model.addAttribute("successMessage", "Tor Relay started successfully!");
-        } else {
-            model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
+            if (torrcFile.exists()) {
+                // Build the command to start the Tor service with the custom torrc file
+                String command = "tor -f " + torrcFile.getAbsolutePath();
+
+                // Execute the command
+                Process process = Runtime.getRuntime().exec(command);
+
+                // Wait for the process to complete
+                int exitCode = process.waitFor();
+
+                if (exitCode == 0) {
+                    model.addAttribute("successMessage", "Tor Relay started successfully!");
+                } else {
+                    model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
+                }
+            } else {
+                model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to start Tor Relay.");
         }
 
         return "relay-config"; // Redirect to the configuration page
     }
+
 
 
     @PostMapping("/stop")
