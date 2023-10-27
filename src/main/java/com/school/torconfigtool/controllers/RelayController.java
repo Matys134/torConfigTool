@@ -53,7 +53,6 @@ public class RelayController {
             String torrcFileName = "local-torrc-" + relayNickname;
             String torrcFilePath = currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
 
-            System.out.println("torrcFilePath: " + torrcFilePath);
 
             // Check if the torrc file exists
             File torrcFile = new File(torrcFilePath);
