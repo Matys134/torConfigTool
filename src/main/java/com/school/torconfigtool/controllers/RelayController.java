@@ -73,13 +73,13 @@ public class RelayController {
                 relayPids.put(relayNickname, pid);
 
                 // Wait for the process to complete
-                int exitCode = process.waitFor();
+                /*int exitCode = process.waitFor();
 
                 if (exitCode == 0) {
                     model.addAttribute("successMessage", "Tor Relay started successfully!");
                 } else {
                     model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
-                }
+                }*/
             } else {
                 model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
             }
