@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Define the username of the user who will have sudo permissions
-user_name="your_username" # Replace with the actual username
+user_name="$(logname)"
 
 # Define the sudoers entry for the specified user to control Tor without a password
 sudoers_entry="$user_name ALL=(ALL) NOPASSWD: /bin/systemctl start tor, /bin/systemctl stop tor, /bin/systemctl restart tor"
