@@ -6,41 +6,29 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Determine the full path of the script folder
-script_dir="$(cd "$(dirname "$0")" && pwd)"
+# Define the username of the user who will have sudo permissions
+user_name="$(logname)"
 
-# Define the name of the script
-script_name="sudoers.sh"
+# Define the sudoers entry for the specified user to control Tor without a password
+sudoers_entry="$user_name ALL=(ALL) NOPASSWD: /bin/systemctl start tor, /bin/systemctl stop tor, /bin/systemctl restart tor"
 
-# Define the path to the script folder
-script_folder="$script_dir"
+# Define the path to the sudoers file
+sudoers_file="/etc/sudoers.d/tor_sudoers"
 
-# Check if the script folder exists
-if [ -d "$script_folder" ]; then
-    # Define the sudoers entry for the user who ran this script with sudo
-    sudoers_entry="$(logname) ALL=(ALL) NOPASSWD: $script_folder/*"
+# Check if the sudoers file exists, and create it if it doesn't
+if [ ! -f "$sudoers_file" ]; then
+    touch "$sudoers_file"
+fi
 
-    # Define the path to the sudoers file
-    sudoers_file="/etc/sudoers.d/torsudoers"
+# Check if the sudoers file is writable
+if [ -w "$sudoers_file" ]; then
+    # Clear the sudoers file
+    > "$sudoers_file"
 
-    # Check if the sudoers file exists, and create it if it doesn't
-    if [ ! -f "$sudoers_file" ]; then
-        touch "$sudoers_file"
-    fi
+    # Add the sudoers entry
+    echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
 
-    # Check if the sudoers file is writable
-    if [ -w "$sudoers_file" ]; then
-
-        # Clear the sudoers file
-        > "$sudoers_file"
-
-        # Add the sudoers entry
-        echo "$sudoers_entry" | sudo tee -a "$sudoers_file" > /dev/null
-
-        echo "Sudoers entry added for $(logname) to run scripts in $script_folder"
-    else
-        echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
-    fi
+    echo "Sudoers entry added for $user_name to control Tor without a password."
 else
-    echo "Script folder not found at: $script_folder"
+    echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
 fi

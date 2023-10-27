@@ -45,7 +45,16 @@ public class RelayController {
 
     @PostMapping("/start")
     public String startRelay(Model model) {
-        boolean startSuccess = startTorRelayService();
+        // Determine the program's current working directory
+        String currentDirectory = System.getProperty("user.dir");
+
+        // Define the path to the custom torrc file based on the current working directory and relay nickname
+        String torrcFileName = "local-torrc-test";
+        String torrcFilePath = currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
+
+        System.out.println(torrcFilePath);
+
+        boolean startSuccess = startTorRelayService(torrcFilePath);
 
         if (startSuccess) {
             model.addAttribute("successMessage", "Tor Relay started successfully!");
@@ -55,6 +64,7 @@ public class RelayController {
 
         return "relay-config"; // Redirect to the configuration page
     }
+
 
     @PostMapping("/stop")
     public String stopRelay(Model model) {
@@ -69,10 +79,13 @@ public class RelayController {
         return "relay-config"; // Redirect to the configuration page
     }
 
-    private boolean startTorRelayService() {
+    private boolean startTorRelayService(String torrcFilePath) {
         try {
-            // Execute a command to start the Tor service
-            Process process = Runtime.getRuntime().exec("sudo systemctl start tor");
+            // Build the command to start the Tor service with the custom torrc file
+            String command = "tor -f " + torrcFilePath;
+
+            // Execute the command
+            Process process = Runtime.getRuntime().exec(command);
 
             // Wait for the process to complete
             int exitCode = process.waitFor();
@@ -85,6 +98,7 @@ public class RelayController {
             return false;
         }
     }
+
 
     private boolean stopTorRelayService() {
         try {
