@@ -101,6 +101,7 @@ public class RelayController {
         String pidString = reader.readLine();
         int pid = Integer.parseInt(pidString);
         process.waitFor();
+        System.out.println("PID: " + pid);
         return pid;
     }
 
