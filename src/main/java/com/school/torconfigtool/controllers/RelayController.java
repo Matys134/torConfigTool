@@ -106,10 +106,12 @@ public class RelayController {
     }
 
     @PostMapping("/stop")
-    public String stopRelay(@RequestParam String relayNickname, @RequestParam int pid, Model model) {
+    public String stopRelay(@RequestParam String relayNickname, Model model) {
         try {
+
+            int pid = getTorRelayPID("local-torrc-" + relayNickname);
             // Execute a command to stop the Tor service using the provided PID
-            String stopCommand = "sudo systemctl stop " + pid;
+            String stopCommand = "kill -SIGINT " + pid;
             Process stopProcess = Runtime.getRuntime().exec(stopCommand);
 
             System.out.println("Stop command: " + stopCommand);
