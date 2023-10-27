@@ -5,10 +5,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/relay")
 public class RelayController {
+
+    private Map<String, Integer> relayPids = new HashMap<>();
 
     @GetMapping
     public String relayConfigurationForm() {
@@ -64,6 +68,10 @@ public class RelayController {
                 // Execute the command
                 Process process = Runtime.getRuntime().exec(command);
 
+                // Store the process ID in the relayPids map
+                int pid = getTorRelayPID("local-torrc-" + relayNickname);
+                relayPids.put(relayNickname, pid);
+
                 // Wait for the process to complete
                 int exitCode = process.waitFor();
 
@@ -83,41 +91,45 @@ public class RelayController {
         return "relay-config"; // Redirect to the configuration page
     }
 
+    private int getTorRelayPID(String torrcFileName) throws IOException, InterruptedException {
+        String command = "ps aux | grep 'tor -f " + torrcFileName + "' | grep -v grep | awk '{print $2}'";
+        Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
+        System.out.println("PID command: " + command);
+
+        String pidString = reader.readLine();
+        int pid = Integer.parseInt(pidString);
+        process.waitFor();
+        return pid;
+    }
 
     @PostMapping("/stop")
-    public String stopRelay(Model model) {
-        boolean stopSuccess = stopTorRelayService();
+    public String stopRelay(@RequestParam String relayNickname, @RequestParam int pid, Model model) {
+        try {
+            // Execute a command to stop the Tor service using the provided PID
+            String stopCommand = "sudo systemctl stop " + pid;
+            Process stopProcess = Runtime.getRuntime().exec(stopCommand);
 
-        if (stopSuccess) {
-            model.addAttribute("successMessage", "Tor Relay stopped successfully!");
-        } else {
-            model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
+            System.out.println("Stop command: " + stopCommand);
+
+            int exitCode = stopProcess.waitFor();
+
+            if (exitCode == 0) {
+                // Relay stopped successfully
+                model.addAttribute("successMessage", "Tor Relay stopped successfully!");
+            } else {
+                model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
+            }
+        } catch (Exception e) {
+            // Error handling
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to stop Tor Relay.");
         }
 
+        // Return the template or a redirect as needed
         return "relay-config"; // Redirect to the configuration page
     }
-
-    private boolean startTorRelayService(String torrcFilePath) {
-        try {
-            // Build the command to start the Tor service with the custom torrc file
-            String command = "tor -f " + torrcFilePath;
-
-            // Execute the command
-            Process process = Runtime.getRuntime().exec(command);
-
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
-
-            // Check the exit code to determine if the start was successful
-            return exitCode == 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log and handle any exceptions that occur during the start
-            return false;
-        }
-    }
-
 
     private boolean stopTorRelayService() {
         try {
