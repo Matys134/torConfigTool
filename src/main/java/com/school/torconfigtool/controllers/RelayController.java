@@ -5,7 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -205,6 +207,52 @@ public class RelayController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @GetMapping("/check-running")
+    public String checkRunningRelays(Model model) {
+        try {
+            List<String> runningRelayNicknames = getRunningRelays();
+            model.addAttribute("runningRelays", runningRelayNicknames);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Failed to check running Tor Relays.");
+        }
+
+        return "relay-config";
+    }
+
+    private List<String> getRunningRelays() throws IOException, InterruptedException {
+        List<String> runningRelayNicknames = new ArrayList<>();
+        // Define the command to list Tor processes matching your relay configuration file patterns
+        String listCommand = "ps aux | grep 'local-torrc-' | grep -v grep | awk '{print $2,$11}'";
+        Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", listCommand});
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(" ", 2);
+            if (parts.length == 2) {
+                String pid = parts[0];
+                String processName = parts[1];
+                String relayNickname = extractRelayNickname(processName);
+                if (relayNickname != null) {
+                    runningRelayNicknames.add(relayNickname + " (PID: " + pid + ")");
+                }
+            }
+        }
+
+        process.waitFor();
+        return runningRelayNicknames;
+    }
+
+    private String extractRelayNickname(String processName) {
+        // Extract the relay nickname from the process name if it matches your naming pattern
+        String[] parts = processName.split("-");
+        if (parts.length == 3 && parts[0].equals("local") && parts[2].equals("torrc") && !parts[1].isEmpty()) {
+            return parts[1];
+        }
+        return null;
     }
 
 
