@@ -248,4 +248,17 @@ public class RelayController {
             e.printStackTrace();
         }
     }
+
+    @GetMapping("/status")
+    @ResponseBody
+    public String getRelayStatus(@RequestParam String relayNickname) throws IOException, InterruptedException {
+        // Check the status of the relay based on the PID
+        int pid = getTorRelayPID("local-torrc-" + relayNickname);
+        if (pid > 0) {
+            return "online";
+        } else {
+            return "offline";
+        }
+    }
+
 }
