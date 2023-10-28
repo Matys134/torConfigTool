@@ -5,7 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -16,6 +18,8 @@ public class RelayController {
 
     @GetMapping
     public String relayConfigurationForm() {
+        System.out.println("Relay configuration form requested");
+        checkRunningRelays();
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
 
@@ -209,5 +213,39 @@ public class RelayController {
         }
     }
 
+    public void checkRunningRelays() {
+        try {
+            // Execute the 'ps' command to list running processes
+            Process process = Runtime.getRuntime().exec("ps aux");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
+            String line;
+            List<String> runningRelayLines = new ArrayList<>();
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("tor -f local-torrc-")) {
+                    runningRelayLines.add(line);
+                }
+            }
+
+            // Parse the runningRelayLines to extract PIDs and other relevant information
+            List<Integer> runningRelayPIDs = new ArrayList<>();
+            for (String relayLine : runningRelayLines) {
+                // Extract PID and other information from the relayLine
+                String[] parts = relayLine.split("\\s+"); // Split by whitespace
+                if (parts.length >= 2) {
+                    int pid = Integer.parseInt(parts[1]);
+                    runningRelayPIDs.add(pid);
+                }
+                // Add more parsing logic if needed
+            }
+
+            // Store the PIDs or perform other actions as needed
+            for (Integer pid : runningRelayPIDs) {
+                System.out.println("PID: " + pid);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
