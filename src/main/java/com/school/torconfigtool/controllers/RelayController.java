@@ -18,6 +18,7 @@ public class RelayController {
 
     @GetMapping
     public String relayConfigurationForm() {
+        System.out.println("Relay configuration form requested");
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
 
@@ -209,52 +210,39 @@ public class RelayController {
         }
     }
 
-    @GetMapping("/check-running")
-    public String checkRunningRelays(Model model) {
+    public void checkRunningRelays() {
         try {
-            List<String> runningRelayNicknames = getRunningRelays();
-            model.addAttribute("runningRelays", runningRelayNicknames);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to check running Tor Relays.");
-        }
+            // Execute the 'ps' command to list running processes
+            Process process = Runtime.getRuntime().exec("ps aux");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-        return "relay-config";
-    }
+            String line;
+            List<String> runningRelayLines = new ArrayList<>();
 
-    private List<String> getRunningRelays() throws IOException, InterruptedException {
-        List<String> runningRelayNicknames = new ArrayList<>();
-        // Define the command to list Tor processes matching your relay configuration file patterns
-        String listCommand = "ps aux | grep 'local-torrc-' | grep -v grep | awk '{print $2,$11}'";
-        Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", listCommand});
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(" ", 2);
-            if (parts.length == 2) {
-                String pid = parts[0];
-                String processName = parts[1];
-                String relayNickname = extractRelayNickname(processName);
-                if (relayNickname != null) {
-                    runningRelayNicknames.add(relayNickname + " (PID: " + pid + ")");
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("tor")) {
+                    runningRelayLines.add(line);
                 }
             }
+
+            // Parse the runningRelayLines to extract PIDs and other relevant information
+            List<Integer> runningRelayPIDs = new ArrayList<>();
+            for (String relayLine : runningRelayLines) {
+                // Extract PID and other information from the relayLine
+                String[] parts = relayLine.split("\\s+"); // Split by whitespace
+                if (parts.length >= 2) {
+                    int pid = Integer.parseInt(parts[1]);
+                    runningRelayPIDs.add(pid);
+                }
+                // Add more parsing logic if needed
+            }
+
+            // Store the PIDs or perform other actions as needed
+            for (Integer pid : runningRelayPIDs) {
+                // Store or process the PID
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        process.waitFor();
-        System.out.println("Running relays: " + runningRelayNicknames);
-        return runningRelayNicknames;
     }
-
-    private String extractRelayNickname(String processName) {
-        // Extract the relay nickname from the process name if it matches your naming pattern
-        String[] parts = processName.split("-");
-        if (parts.length == 3 && parts[0].equals("local") && parts[2].equals("torrc") && !parts[1].isEmpty()) {
-            return parts[1];
-        }
-        return null;
-    }
-
-
 }
