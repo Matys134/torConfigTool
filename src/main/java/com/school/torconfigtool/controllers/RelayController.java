@@ -243,6 +243,7 @@ public class RelayController {
         }
 
         process.waitFor();
+        System.out.println("Running relays: " + runningRelayNicknames);
         return runningRelayNicknames;
     }
 
