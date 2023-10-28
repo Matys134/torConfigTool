@@ -221,7 +221,7 @@ public class RelayController {
             List<String> runningRelayLines = new ArrayList<>();
 
             while ((line = reader.readLine()) != null) {
-                if (line.contains("tor")) {
+                if (line.contains("tor -f local-torrc-")) {
                     runningRelayLines.add(line);
                 }
             }
