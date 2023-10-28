@@ -19,6 +19,7 @@ public class RelayController {
     @GetMapping
     public String relayConfigurationForm() {
         System.out.println("Relay configuration form requested");
+        checkRunningRelays();
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
 
@@ -239,7 +240,7 @@ public class RelayController {
 
             // Store the PIDs or perform other actions as needed
             for (Integer pid : runningRelayPIDs) {
-                // Store or process the PID
+                System.out.println("PID: " + pid);
             }
         } catch (IOException e) {
             e.printStackTrace();
