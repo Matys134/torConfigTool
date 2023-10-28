@@ -84,6 +84,15 @@
     </form>
 </div>
 
+<!-- Add this section to display running relays -->
+<h2>Running Relays</h2>
+<ul>
+    <li th:each="runningRelay : ${runningRelays}">
+        <p th:text="${runningRelay}"></p>
+    </li>
+</ul>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/tabs.js"></script> <!-- Include your JavaScript -->
 </body>
