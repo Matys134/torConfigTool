@@ -13,6 +13,7 @@
         <p th:text="${'Nickname: ' + config.nickname}"></p>
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
+        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
@@ -44,6 +45,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
+<script src="/js/status.js"></script>
 
 <!-- JavaScript to handle the "Stop" button click event -->
 <script>
