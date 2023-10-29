@@ -1,32 +1,49 @@
 import functools
-from stem.control import EventType, Controller
+from stem.control import Controller
 import requests
 
+# Function to create a new listener for a relay
+def create_relay_listener(port):
+    def relay_listener(controller, event):
+        download = event.read
+        upload = event.written
+
+        data = {'download': download, 'upload': upload}
+        api_url = f'http://localhost:{port}/api/relay-data'
+        response = requests.post(api_url, json=data)
+
+        print(f"Downloaded: {event.read} bytes/s, Uploaded: {event.written} bytes/s")
+
+        if response.status_code == 200:
+            print('Data sent successfully')
+        else:
+            print('Failed to send data')
+
+    return relay_listener
+
 def main():
-    with Controller.from_port(port=9051) as controller:
-        controller.authenticate()
-        try:
-            bw_event_handler = functools.partial(_handle_bandwidth_event, controller)
-            controller.add_event_listener(bw_event_handler, EventType.BW)
-            input("Press Enter to exit")
-        except KeyboardInterrupt:
-            pass  # the user hit ctrl+c
+    # Read control ports from torrc/guard files
+    control_ports = []
+    with open('torrc/guard', 'r') as file:
+        for line in file:
+            if line.startswith("ControlPort"):
+                parts = line.split()
+                if len(parts) == 2:
+                    control_ports.append(int(parts[1]))
 
-def _handle_bandwidth_event(controller, event):
-    download = event.read
-    upload = event.written
+    # Create listeners for each relay
+    listeners = []
+    for port in control_ports:
+        with Controller.from_port(port=port) as controller:
+            controller.authenticate()
+            relay_listener = create_relay_listener(port)
+            controller.add_event_listener(relay_listener, EventType.BW)
+            listeners.append(controller)
 
-    # Send the data to your Java web application's API
-    data = {'download': download, 'upload': upload}
-    api_url = 'http://192.168.2.117:8081/api/relay-data'
-    response = requests.post(api_url, json=data)
-
-    print(f"Downloaded: {event.read} bytes/s, Uploaded: {event.written} bytes/s")
-
-    if response.status_code == 200:
-        print('Data sent successfully')
-    else:
-        print('Failed to send data')
+    try:
+        input("Press Enter to exit")
+    except KeyboardInterrupt:
+        pass  # the user hit ctrl+c
 
 if __name__ == '__main__':
     main()
