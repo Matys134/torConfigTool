@@ -8,9 +8,12 @@ $(document).ready(function() {
             if (data === "online") {
                 statusElement.text("Online");
                 statusElement.css("color", "green");
-            } else {
+            } else if (data === "offline") {
                 statusElement.text("Offline");
                 statusElement.css("color", "red");
+            } else {
+                statusElement.text("Unknown"); // Handle any other status
+                statusElement.css("color", "blue"); // Adjust color as needed
             }
 
             // Check the status message and update accordingly
