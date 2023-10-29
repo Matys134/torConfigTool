@@ -149,21 +149,29 @@ public class RelayOperationsController {
         System.out.println("PID command: " + command);
 
         String pidString = reader.readLine();
-        int pid = Integer.parseInt(pidString);
-        process.waitFor();
-        System.out.println("PID: " + pid);
-        return pid;
+
+        if (pidString != null && !pidString.isEmpty()) {
+            int pid = Integer.parseInt(pidString);
+            process.waitFor();
+            System.out.println("PID: " + pid);
+            return pid;
+        } else {
+            System.out.println("No PID found for " + torrcFileName);
+            return -1; // Return -1 to indicate that no PID was found
+        }
     }
+
 
     @GetMapping("/status")
     @ResponseBody
     public String getRelayStatus(@RequestParam String relayNickname) throws IOException, InterruptedException {
-        // Check the status of the relay based on the PID
         int pid = getTorRelayPID("local-torrc-" + relayNickname);
         if (pid > 0) {
             return "online";
-        } else {
+        } else if (pid == -1) {
             return "offline";
+        } else {
+            return "error"; // Handle other cases as needed
         }
     }
 }
