@@ -14,6 +14,7 @@
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
         <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
+        <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
@@ -24,7 +25,7 @@
         </form>
         <form th:action="@{/relay/stop}" method="post">
             <input type="hidden" th:name="relayNickname" th:value="${config.nickname}">
-            <button type="submit">Stop</button>
+            <button type="submit" class="stop-button">Stop</button>
         </form>
     </li>
 </ul>
