@@ -55,7 +55,7 @@
             var nickname = $(this).data("config-nickname");
 
             // Send a POST request to stop the relay using the corresponding nickname
-            $.post("/relay/stop", { relayNickname: nickname }, function(data) {
+            $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
                 // Handle the response, e.g., show success or error messages
             });
         });

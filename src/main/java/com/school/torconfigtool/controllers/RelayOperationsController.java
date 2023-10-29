@@ -94,7 +94,7 @@ public class RelayOperationsController {
         }
 
         // Return the template or a redirect as needed
-        return "relay-config"; // Redirect to the configuration page
+        return "relay-operations"; // Redirect to the configuration page
     }
 
     @PostMapping("/start")
@@ -138,7 +138,7 @@ public class RelayOperationsController {
             model.addAttribute("errorMessage", "Failed to start Tor Relay.");
         }
 
-        return "relay-config"; // Redirect to the configuration page
+        return "relay-operations"; // Redirect to the configuration page
     }
 
     private int getTorRelayPID(String torrcFileName) throws IOException, InterruptedException {

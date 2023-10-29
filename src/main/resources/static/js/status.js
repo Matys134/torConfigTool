@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Function to check and update relay status
     function updateRelayStatus(nickname) {
-        $.get("/relay/status?relayNickname=" + nickname, function(data) {
+        $.get("/relay-operations/status?relayNickname=" + nickname, function(data) {
             var statusElement = $("#status-" + nickname);
             var statusMessageElement = $("#status-message-" + nickname);
 
@@ -40,7 +40,7 @@ $(document).ready(function() {
         statusMessageElement.text("Shutting down");
 
         // Send a POST request to stop the relay using the corresponding nickname
-        $.post("/relay/stop", { relayNickname: nickname }, function(data) {
+        $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
             // Handle the response, e.g., show success or error messages
         });
     });
