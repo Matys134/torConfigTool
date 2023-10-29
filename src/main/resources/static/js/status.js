@@ -14,7 +14,7 @@ $(document).ready(function() {
             }
 
             // Check the status message and update accordingly
-            if (statusMessageElement.text() === "Shutting down") {
+            if (statusMessageElement.text() === "Shutting down" && data !== "online") {
                 statusMessageElement.text("Idle");
             }
         });

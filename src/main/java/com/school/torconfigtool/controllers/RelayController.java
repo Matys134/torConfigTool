@@ -14,8 +14,6 @@ import java.util.Map;
 @RequestMapping("/relay")
 public class RelayController {
 
-    private Map<String, Integer> relayPids = new HashMap<>();
-
     @GetMapping
     public String relayConfigurationForm() {
         System.out.println("Relay configuration form requested");
@@ -53,92 +51,6 @@ public class RelayController {
         return "relay-config"; // Thymeleaf template name (relay-config.html)
     }
 
-    @PostMapping("/start")
-    public String startRelay(@RequestParam String relayNickname, Model model) {
-        try {
-            // Determine the program's current working directory
-            String currentDirectory = System.getProperty("user.dir");
-
-            // Define the path to the torrc file based on the relay nickname
-            String torrcFileName = "local-torrc-" + relayNickname;
-            String torrcFilePath = currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
-
-
-            // Check if the torrc file exists
-            File torrcFile = new File(torrcFilePath);
-
-            if (torrcFile.exists()) {
-                // Build the command to start the Tor service with the custom torrc file
-                String command = "tor -f " + torrcFile.getAbsolutePath();
-
-                // Execute the command
-                Process process = Runtime.getRuntime().exec(command);
-
-                // Store the process ID in the relayPids map
-                int pid = getTorRelayPID("local-torrc-" + relayNickname);
-                relayPids.put(relayNickname, pid);
-
-                // Wait for the process to complete
-                /*int exitCode = process.waitFor();
-
-                if (exitCode == 0) {
-                    model.addAttribute("successMessage", "Tor Relay started successfully!");
-                } else {
-                    model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
-                }*/
-            } else {
-                model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to start Tor Relay.");
-        }
-
-        return "relay-config"; // Redirect to the configuration page
-    }
-
-    private int getTorRelayPID(String torrcFileName) throws IOException, InterruptedException {
-        String command = "ps aux | grep " + torrcFileName + " | grep -v grep | awk '{print $2}'";
-        Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", command});
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-        System.out.println("PID command: " + command);
-
-        String pidString = reader.readLine();
-        int pid = Integer.parseInt(pidString);
-        process.waitFor();
-        System.out.println("PID: " + pid);
-        return pid;
-    }
-
-    @PostMapping("/stop")
-    public String stopRelay(@RequestParam String relayNickname, Model model) {
-        try {
-
-            int pid = getTorRelayPID("local-torrc-" + relayNickname);
-            // Execute a command to stop the Tor service using the provided PID
-            String stopCommand = "kill -SIGINT " + pid;
-            Process stopProcess = Runtime.getRuntime().exec(stopCommand);
-
-            System.out.println("Stop command: " + stopCommand);
-
-            int exitCode = stopProcess.waitFor();
-
-            if (exitCode == 0) {
-                // Relay stopped successfully
-                model.addAttribute("successMessage", "Tor Relay stopped successfully!");
-            } else {
-                model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
-            }
-        } catch (Exception e) {
-            // Error handling
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to stop Tor Relay.");
-        }
-
-        // Return the template or a redirect as needed
-        return "relay-config"; // Redirect to the configuration page
-    }
 
     private boolean stopTorRelayService() {
         try {
@@ -252,18 +164,6 @@ public class RelayController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @GetMapping("/status")
-    @ResponseBody
-    public String getRelayStatus(@RequestParam String relayNickname) throws IOException, InterruptedException {
-        // Check the status of the relay based on the PID
-        int pid = getTorRelayPID("local-torrc-" + relayNickname);
-        if (pid > 0) {
-            return "online";
-        } else {
-            return "offline";
         }
     }
 
