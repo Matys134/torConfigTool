@@ -14,17 +14,18 @@
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
         <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
+        <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
                 th:data-config-contact="${config.contact}">Edit</button>
-        <form th:action="@{/relay/start}" method="post">
+        <form th:action="@{/relay-operations/start}" method="post">
             <input type="hidden" th:name="relayNickname" th:value="${config.nickname}">
             <button type="submit">Start</button>
         </form>
-        <form th:action="@{/relay/stop}" method="post">
+        <form th:action="@{/relay-operations/stop}" method="post">
             <input type="hidden" th:name="relayNickname" th:value="${config.nickname}">
-            <button type="submit">Stop</button>
+            <button type="submit" class="stop-button">Stop</button>
         </form>
     </li>
 </ul>
@@ -54,7 +55,7 @@
             var nickname = $(this).data("config-nickname");
 
             // Send a POST request to stop the relay using the corresponding nickname
-            $.post("/relay/stop", { relayNickname: nickname }, function(data) {
+            $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
                 // Handle the response, e.g., show success or error messages
             });
         });
