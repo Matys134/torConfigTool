@@ -8,9 +8,12 @@ $(document).ready(function() {
             if (data === "online") {
                 statusElement.text("Online");
                 statusElement.css("color", "green");
-            } else {
+            } else if (data === "offline") {
                 statusElement.text("Offline");
                 statusElement.css("color", "red");
+            } else {
+                statusElement.text("Unknown"); // Handle any other status
+                statusElement.css("color", "blue"); // Adjust color as needed
             }
 
             // Check the status message and update accordingly
@@ -31,20 +34,6 @@ $(document).ready(function() {
     // Update relay status on page load
     updateAllRelayStatus();
 
-    // Function to handle the "Stop" button click event
-    $(".stop-button").click(function() {
-        var nickname = $(this).data("config-nickname");
-        var statusMessageElement = $("#status-message-" + nickname);
-
-        // Change the status message to "Shutting down"
-        statusMessageElement.text("Shutting down");
-
-        // Send a POST request to stop the relay using the corresponding nickname
-        $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
-            // Handle the response, e.g., show success or error messages
-        });
-    });
-
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
-    setInterval(updateAllRelayStatus, 10000);
+    setInterval(updateAllRelayStatus, 1000);
 });
