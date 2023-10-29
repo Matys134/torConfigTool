@@ -19,8 +19,8 @@
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
                 th:data-config-contact="${config.contact}">Edit</button>
-        <button class="start-button" data-config-nickname="${config.nickname}">Start</button>
-        <button class="stop-button" data-config-nickname="${config.nickname}">Stop</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}">Start</button>
+        <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
 </ul>
 
@@ -56,25 +56,21 @@
     });
 </script>
 <script>
-    $(document).ready(function() {
-        // Handle the "Start" button click
-        $(".start-button").click(function() {
-            var nickname = $(this).data("config-nickname");
-
-            // Send a POST request to start the relay using the corresponding nickname
-            $.post("/relay-operations/start", { relayNickname: nickname }, function(data) {
-                // Handle the response, e.g., show success or error messages
-            });
+    // JavaScript to handle the "Start" button click event
+    $(".start-button").click(function() {
+        var nickname = $(this).data("config-nickname");
+        // Send a POST request to start the relay using the corresponding nickname
+        $.post("/relay-operations/start", { relayNickname: nickname }, function(data) {
+            // Handle the response, e.g., show success or error messages
         });
+    });
 
-        // Handle the "Stop" button click
-        $(".stop-button").click(function() {
-            var nickname = $(this).data("config-nickname");
-
-            // Send a POST request to stop the relay using the corresponding nickname
-            $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
-                // Handle the response, e.g., show success or error messages
-            });
+    // JavaScript to handle the "Stop" button click event
+    $(".stop-button").click(function() {
+        var nickname = $(this).data("config-nickname");
+        // Send a POST request to stop the relay using the corresponding nickname
+        $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
+            // Handle the response, e.g., show success or error messages
         });
     });
 </script>
