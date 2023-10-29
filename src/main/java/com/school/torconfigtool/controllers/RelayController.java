@@ -28,6 +28,8 @@ public class RelayController {
                                  @RequestParam(required = false) Integer relayBandwidth,
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
+                                 @RequestParam int controlPort,
+                                 @RequestParam int socksPort,
                                  Model model) {
         try {
             // Define the path to the torrc file based on the relay nickname
@@ -36,7 +38,7 @@ public class RelayController {
 
             // Check if the torrc file exists, create it if not
             if (!new File(torrcFilePath).exists()) {
-                createTorrcFile(torrcFilePath, relayNickname, relayBandwidth, relayPort, relayContact);
+                createTorrcFile(torrcFilePath, relayNickname, relayBandwidth, relayPort, relayContact, controlPort, socksPort);
             }
 
             // Restart the Tor service with the new configuration if necessary
@@ -155,7 +157,7 @@ public class RelayController {
         }
     }
 
-    public void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact) throws IOException {
+    public void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact, int controlPort, int socksPort) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + relayNickname);
             writer.newLine();
@@ -166,6 +168,10 @@ public class RelayController {
             writer.write("ORPort " + relayPort);
             writer.newLine();
             writer.write("ContactInfo " + relayContact);
+            writer.newLine();
+            writer.write("ControlPort " + controlPort);
+            writer.newLine();
+            writer.write("SocksPort " + socksPort);
             writer.newLine();
 
             // Get the program's current working directory

@@ -25,10 +25,13 @@ public class GuardConfigurationController {
     public ResponseEntity<Map<String, String>> updateGuardConfiguration(
             @RequestParam String nickname,
             @RequestParam String orPort,
-            @RequestParam String contact) {
+            @RequestParam String contact,
+            @RequestParam String controlPort,
+            @RequestParam String socksPort
+    ) {
         Map<String, String> response = new HashMap<>();
 
-        boolean success = guardConfigurationService.updateGuardConfiguration(nickname, orPort, contact);
+        boolean success = guardConfigurationService.updateGuardConfiguration(nickname, orPort, contact, controlPort, socksPort);
 
         if (success) {
             response.put("success", "true");

@@ -13,10 +13,10 @@ public class GuardConfigurationService {
         this.relayController = relayController;
     }
 
-    public boolean updateGuardConfiguration(String nickname, String orPort, String contact) {
+    public boolean updateGuardConfiguration(String nickname, String orPort, String contact, String controlPort, String socksPort) {
         try {
             // Call the relevant method in RelayController
-            relayController.createTorrcFile("torrc/guard/local-torrc-" + nickname, nickname, null, Integer.parseInt(orPort), contact);
+            relayController.createTorrcFile("torrc/guard/local-torrc-" + nickname, nickname, null, Integer.parseInt(orPort), contact, Integer.parseInt(controlPort), Integer.parseInt(socksPort));
 
             return true;
         } catch (Exception e) {
