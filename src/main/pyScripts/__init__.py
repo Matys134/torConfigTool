@@ -5,6 +5,9 @@ from stem.control import EventType, Controller
 import requests
 import time
 
+# Define the base API endpoint
+BASE_API_ENDPOINT = "http://192.168.2.117:8081/api/relay-data"
+
 def main():
     # Define the directory containing Tor control files
     torrc_dir = "/home/matys/IdeaProjects/torConfigTool/torrc/guard"
@@ -45,20 +48,34 @@ def read_control_port(file_path):
 def monitor_traffic(control_port):
     with Controller.from_port(port=control_port) as controller:
         controller.authenticate()
-        bw_event_handler = functools.partial(_handle_bandwidth_event, controller)
+        bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
         controller.add_event_listener(bw_event_handler, EventType.BW)
 
         print(f"Monitoring relay on ControlPort {control_port}")
 
         while True:
             time.sleep(1)  # Wait for 1 second to collect data
-            # In this loop, the script continuously prints traffic per second
 
-def _handle_bandwidth_event(controller, event):
+def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
 
-    print(f"Downloaded: {event.read} bytes/s, Uploaded: {event.written} bytes/s")
+    # Create a dictionary with the bandwidth data and an identifier
+    data = {
+        "download": download,
+        "upload": upload,
+    }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
+    else:
+        print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 if __name__ == '__main__':
     main()
