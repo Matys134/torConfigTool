@@ -5,6 +5,7 @@ from stem.control import EventType, Controller
 import requests
 import time
 
+
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://192.168.2.117:8081/api/relay-data"
 
@@ -60,11 +61,13 @@ def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
 
+    
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
     }
+
 
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
