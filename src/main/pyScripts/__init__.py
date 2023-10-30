@@ -5,8 +5,9 @@ from stem.control import EventType, Controller
 import requests
 import time
 
-# Define the API endpoint
-API_ENDPOINT = "http://192.168.2.117:8081/api/relay-data"
+
+# Define the base API endpoint
+BASE_API_ENDPOINT = "http://192.168.2.117:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
@@ -60,14 +61,19 @@ def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
 
-    # Create a dictionary with the bandwidth data
+    
+    # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
     }
 
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(API_ENDPOINT, json=data, headers={'Control-Port': str(control_port)})
+    response = requests.post(api_endpoint, json=data)
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")

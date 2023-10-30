@@ -5,17 +5,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class RelayDataController {
 
     private static final int MAX_DATA_SIZE = 50;
-    private List<RelayData> relayDataList = new ArrayList<>();
+    private Map<Integer, List<RelayData>> relayDataMap = new HashMap<>();
 
-    @PostMapping("/relay-data")
-    public ResponseEntity<String> receiveRelayData(@RequestBody RelayData relayData) {
+    @PostMapping("/relay-data/{relayId}")
+    public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
+        // Get the relay data list for the given relayId
+        List<RelayData> relayDataList = relayDataMap.computeIfAbsent(relayId, k -> new ArrayList<>());
+
         // Add the relay data
         relayDataList.add(relayData);
 
@@ -25,11 +30,14 @@ public class RelayDataController {
             relayDataList.subList(0, relayDataList.size() - MAX_DATA_SIZE).clear();
         }
 
-        return ResponseEntity.ok("Data received successfully");
+        return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
-    @GetMapping("/relay-data")
-    public List<RelayData> getRelayData() {
+    @GetMapping("/relay-data/{relayId}")
+    public List<RelayData> getRelayData(@PathVariable int relayId) {
+        // Get the relay data list for the given relayId
+        List<RelayData> relayDataList = relayDataMap.getOrDefault(relayId, new ArrayList<>());
+
         // Return the list of stored relay data
         return relayDataList;
     }
