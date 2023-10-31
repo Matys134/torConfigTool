@@ -41,4 +41,9 @@ public class RelayDataController {
         // Return the list of stored relay data
         return relayDataList;
     }
+
+    @GetMapping("/control-ports")
+    public List<Integer> getControlPorts() {
+        return new ArrayList<>(relayDataMap.keySet());
+    }
 }

@@ -69,14 +69,14 @@ $(document).ready(function () {
         updateRelayTrafficDataAndChart();
 
         // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
-        setInterval(updateRelayTrafficDataAndChart, 10000); // 10 seconds
+        setInterval(updateRelayTrafficDataAndChart, 1000); // 10 seconds
     }
 
-    // Define an array of control ports (modify this as per your setup)
-    var controlPorts = [9051, 9052, 9053]; // Example control ports
-
-    // Create charts for each relay based on the control ports
-    controlPorts.forEach(function (port) {
-        createRelayChart(port);
+    // Fetch the list of control ports dynamically
+    $.get('http://192.168.2.117:8081/api/control-ports', function (controlPorts) {
+        // Create charts for each relay based on the retrieved control ports
+        controlPorts.forEach(function (port) {
+            createRelayChart(port);
+        });
     });
 });
