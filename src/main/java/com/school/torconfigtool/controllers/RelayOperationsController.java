@@ -73,6 +73,10 @@ public class RelayOperationsController {
         } else if (line.startsWith("HiddenServicePort")) {
             // Onion service specific
             config.setHiddenServicePort(line.split("HiddenServicePort")[1].trim());
+        } else if (line.startsWith("ControlPort")) {
+            config.setControlPort(line.split("ControlPort")[1].trim());
+        } else if (line.startsWith("SocksPort")) {
+            config.setSocksPort(line.split("SocksPort")[1].trim());
         }
     }
 

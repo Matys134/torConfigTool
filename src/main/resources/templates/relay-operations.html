@@ -13,12 +13,16 @@
         <p th:text="${'Nickname: ' + config.nickname}"></p>
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
+        <p th:text="${'Socks Port: ' + config.socksPort}"></p>
+        <p th:text="${'Control Port: ' + config.controlPort}"></p>
         <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
         <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
-                th:data-config-contact="${config.contact}">Edit</button>
+                th:data-config-contact="${config.contact}"
+                th:data-config-socksport="${config.socksPort}"
+                th:data-config-controlport="${config.controlPort}">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.nickname}">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
@@ -31,6 +35,8 @@
         <form id="edit-form">
             <input type="hidden" id="edit-nickname" name="edit-nickname">
             <input type="text" id="edit-orport" name="edit-orport">
+            <input type="text" id="edit-controlport" name="edit-controlport">
+            <input type="text" id="edit-socksport" name="edit-socksport">
             <input type="text" id="edit-contact" name="edit-contact">
             <button type="button" id="save-button">Save</button>
             <button type="button" id="cancel-button">Cancel</button>
