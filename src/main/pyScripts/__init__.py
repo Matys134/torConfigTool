@@ -3,6 +3,7 @@ import functools
 import threading
 
 import stem
+from requests import RequestException
 from stem.control import EventType, Controller
 import requests
 import time
@@ -58,20 +59,21 @@ def monitor_traffic(control_port):
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
-                while True:
+                while controller.is_alive():  # Check if the relay is still running
                     time.sleep(1)  # Wait for 1 second to collect data
+
+                print(f"Relay on ControlPort {control_port} has stopped.")
         except stem.SocketError as e:
             print(f"Error connecting to ControlPort {control_port}: {e}")
 
             # Sleep for a while before retrying
-            time.sleep(1)  # Sleep for 60 seconds before retrying
+            time.sleep(5)  # Sleep for 60 seconds before retrying
         except Exception as e:
             print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
 
             # Sleep for a while before retrying
-            time.sleep(1)  # Sleep for 60 seconds before retrying
+            time.sleep(5)  # Sleep for 60 seconds before retrying
 
-# Rest of your code remains unchanged
 
 
 def _handle_bandwidth_event(controller, control_port, event):
