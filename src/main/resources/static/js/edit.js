@@ -4,6 +4,8 @@ $(document).ready(function () {
         $("#edit-nickname").val(nickname);
         $("#edit-orport").val(orport);
         $("#edit-contact").val(contact);
+        $("#edit-controlport").val(controlport);
+        $("#edit-socksport").val(socksport);
         $("#edit-modal").show();
     }
 
@@ -17,6 +19,8 @@ $(document).ready(function () {
         const nickname = $(this).data("config-nickname");
         const orport = $(this).data("config-orport");
         const contact = $(this).data("config-contact");
+        const controlport = $(this).data("config-controlport");
+        const socksport = $(this).data("config-socksport");
 
         showEditModal(nickname, orport, contact);
     });
@@ -26,6 +30,8 @@ $(document).ready(function () {
         const editedNickname = $("#edit-nickname").val();
         const editedOrPort = $("#edit-orport").val();
         const editedContact = $("#edit-contact").val();
+        const editedControlPort = $("#edit-controlport").val();
+        const editedSocksPort = $("#edit-socksport").val();
 
         // Send an AJAX request to the server to update the configuration
         $.ajax({
@@ -34,7 +40,9 @@ $(document).ready(function () {
             data: {
                 nickname: editedNickname,
                 orPort: editedOrPort,
-                contact: editedContact
+                contact: editedContact,
+                controlPort: editedControlPort,
+                socksPort: editedSocksPort
             },
             success: function (data) {
                 // Check if the configuration was successfully updated

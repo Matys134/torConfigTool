@@ -48,7 +48,7 @@ public class RelayController {
         return "relay-config";
     }
 
-    private void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact, int controlPort, int socksPort) {
+    public void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact, int controlPort, int socksPort) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + relayNickname);
             writer.newLine();

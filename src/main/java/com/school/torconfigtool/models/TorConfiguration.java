@@ -6,6 +6,8 @@ public class TorConfiguration {
     private String contact;
     private String hiddenServiceDir;
     private String hiddenServicePort;
+    private String controlPort;
+    private String socksPort;
 
     public TorConfiguration() {
     }
@@ -16,6 +18,22 @@ public class TorConfiguration {
         this.contact = contact;
         this.hiddenServiceDir = hiddenServiceDir;
         this.hiddenServicePort = hiddenServicePort;
+    }
+
+    public String getControlPort() {
+        return controlPort;
+    }
+
+    public void setControlPort(String controlPort) {
+        this.controlPort = controlPort;
+    }
+
+    public String getSocksPort() {
+        return socksPort;
+    }
+
+    public void setSocksPort(String socksPort) {
+        this.socksPort = socksPort;
     }
 
     public String getNickname() {
