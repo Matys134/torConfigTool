@@ -5,82 +5,17 @@
 </head>
 <body>
 <h1>Latest Traffic Data</h1>
-<p>Upload: <span id="uploadValue">Loading...</span> bytes</p>
-<p>Download: <span id="downloadValue">Loading...</span> bytes</p>
 
 <!-- Include jQuery for AJAX requests -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Include Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Create a canvas for each relay -->
-<div class="relay-chart">
-    <canvas id="trafficChart" width="400" height="200"></canvas>
+<!-- Create a container for relay charts -->
+<div id="relayCharts">
+    <!-- Relay charts will be dynamically added here -->
 </div>
 
-<script>
-    // Define the base URL for the API
-    var baseUrl = '/api/relay-data';
-
-    // Function to update the traffic data and chart for a specific relay
-    function updateTrafficDataAndChart(relayPort) {
-        var apiUrl = baseUrl + '/' + relayPort;
-        $.get(apiUrl, function (data) {
-            if (data && data.length > 0) {
-                // Extract upload and download data
-                var uploadData = data.map(function (relayData) {
-                    return relayData.upload;
-                });
-                var downloadData = data.map(function (relayData) {
-                    return relayData.download;
-                });
-
-                var latestData = data[data.length - 1];
-                $('#uploadValue').text(latestData.upload);
-                $('#downloadValue').text(latestData.download);
-
-                // Get the chart canvas for the relay
-                var ctx = document.getElementById('trafficChart').getContext('2d');
-                var trafficChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: Array.from({ length: data.length }, (_, i) => i + 1),
-                        datasets: [
-                            {
-                                label: 'Upload',
-                                borderColor: 'rgb(54, 162, 235)',
-                                data: uploadData,
-                            },
-                            {
-                                label: 'Download',
-                                borderColor: 'rgb(255, 99, 132)',
-                                data: downloadData,
-                            },
-                        ],
-                    },
-                    options: {
-                        animation: false,
-                    }
-                });
-            }
-        });
-    }
-
-    // Update the data and chart for each relay
-    $.get('/api/relay-ports', function (ports) {
-        ports.forEach(function (port) {
-            updateTrafficDataAndChart(port);
-        });
-    });
-
-    // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
-    setInterval(function () {
-        $.get('/api/relay-ports', function (ports) {
-            ports.forEach(function (port) {
-                updateTrafficDataAndChart(port);
-            });
-        });
-    }, 1000); // 10 seconds
-</script>
+<script src="/js/data.js"></script>
 </body>
 </html>
