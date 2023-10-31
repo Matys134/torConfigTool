@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/relay")
@@ -19,7 +20,7 @@ public class RelayController {
     public String relayConfigurationForm() {
         System.out.println("Relay configuration form requested");
         checkRunningRelays();
-        return "relay-config"; // Thymeleaf template name (relay-config.html)
+        return "relay-config";
     }
 
     @PostMapping("/configure")
@@ -31,29 +32,23 @@ public class RelayController {
                                  @RequestParam int socksPort,
                                  Model model) {
         try {
-            // Define the path to the torrc file based on the relay nickname
             String torrcFileName = "local-torrc-" + relayNickname;
             String torrcFilePath = "torrc/guard/" + torrcFileName;
 
-            // Check if the torrc file exists, create it if not
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, relayNickname, relayBandwidth, relayPort, relayContact, controlPort, socksPort);
             }
 
-            // Restart the Tor service with the new configuration if necessary
-
-            // Provide a success message
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
 
-        return "relay-config"; // Thymeleaf template name (relay-config.html)
+        return "relay-config";
     }
 
-
-    public void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact, int controlPort, int socksPort) throws IOException {
+    private void createTorrcFile(String filePath, String relayNickname, Integer relayBandwidth, int relayPort, String relayContact, int controlPort, int socksPort) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + relayNickname);
             writer.newLine();
@@ -70,40 +65,35 @@ public class RelayController {
             writer.write("SocksPort " + socksPort);
             writer.newLine();
 
-            // Get the program's current working directory
             String currentDirectory = System.getProperty("user.dir");
-
-            // Define the DataDirectory path based on the current working directory
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
-
-            // Write the DataDirectory configuration line
             writer.write("DataDirectory " + dataDirectoryPath);
 
-            // Get the list of files in the "torrc/guard" directory
-            File guardDirectory = new File(currentDirectory + File.separator + "torrc" + File.separator + "guard");
-            File[] guardFiles = guardDirectory.listFiles();
-
-            if (guardFiles != null && guardFiles.length > 1) {
-                // If there are more than one relay in the "torrc/guard" directory, add MyFamily line
+            List<String> fingerprints = getFingerprints(dataDirectoryPath);
+            if (!fingerprints.isEmpty()) {
                 writer.newLine();
-                writer.write("MyFamily ");
+                writer.write("MyFamily " + String.join(", ", fingerprints));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                // Iterate through the "dataDirectory" folders
-                File dataDirectory = new File(dataDirectoryPath);
-                File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
+    private List<String> getFingerprints(String dataDirectoryPath) {
+        List<String> fingerprints = new ArrayList<>();
+        File dataDirectory = new File(dataDirectoryPath);
+        File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
 
-                if (dataDirectoryFiles != null) {
-                    for (File dataDir : dataDirectoryFiles) {
-                        String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
-                        String fingerprint = readFingerprint(fingerprintFilePath);
-                        if (fingerprint != null) {
-                            writer.write(fingerprint);
-                            writer.write(", ");
-                        }
-                    }
+        if (dataDirectoryFiles != null) {
+            for (File dataDir : dataDirectoryFiles) {
+                String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
+                String fingerprint = readFingerprint(fingerprintFilePath);
+                if (fingerprint != null) {
+                    fingerprints.add(fingerprint);
                 }
             }
         }
+        return fingerprints;
     }
 
     private String readFingerprint(String fingerprintFilePath) {
@@ -115,37 +105,20 @@ public class RelayController {
         }
     }
 
-    public void checkRunningRelays() {
+    private void checkRunningRelays() {
         try {
-            // Execute the 'ps' command to list running processes
             Process process = Runtime.getRuntime().exec("ps aux");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            InputStream inputStream = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            String line;
-            List<String> runningRelayLines = new ArrayList<>();
+            List<Integer> runningRelayPIDs = reader.lines()
+                    .filter(line -> line.contains("tor -f local-torrc-"))
+                    .map(line -> line.split("\\s+"))
+                    .filter(parts -> parts.length >= 2)
+                    .map(parts -> Integer.parseInt(parts[1]))
+                    .collect(Collectors.toList());
 
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("tor -f local-torrc-")) {
-                    runningRelayLines.add(line);
-                }
-            }
-
-            // Parse the runningRelayLines to extract PIDs and other relevant information
-            List<Integer> runningRelayPIDs = new ArrayList<>();
-            for (String relayLine : runningRelayLines) {
-                // Extract PID and other information from the relayLine
-                String[] parts = relayLine.split("\\s+"); // Split by whitespace
-                if (parts.length >= 2) {
-                    int pid = Integer.parseInt(parts[1]);
-                    runningRelayPIDs.add(pid);
-                }
-                // Add more parsing logic if needed
-            }
-
-            // Store the PIDs or perform other actions as needed
-            for (Integer pid : runningRelayPIDs) {
-                System.out.println("PID: " + pid);
-            }
+            runningRelayPIDs.forEach(pid -> System.out.println("PID: " + pid));
         } catch (IOException e) {
             e.printStackTrace();
         }
