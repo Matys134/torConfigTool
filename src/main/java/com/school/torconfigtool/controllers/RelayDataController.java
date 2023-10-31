@@ -36,10 +36,9 @@ public class RelayDataController {
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         // Get the relay data list for the given relayId
-        List<RelayData> relayDataList = relayDataMap.getOrDefault(relayId, new ArrayList<>());
 
         // Return the list of stored relay data
-        return relayDataList;
+        return relayDataMap.getOrDefault(relayId, new ArrayList<>());
     }
 
     @GetMapping("/control-ports")

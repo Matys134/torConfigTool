@@ -116,20 +116,13 @@ public class RelayOperationsController {
                 String command = "tor -f " + torrcFile.getAbsolutePath();
 
                 // Execute the command
-                Process process = Runtime.getRuntime().exec(command);
+                Runtime.getRuntime().exec(command);
 
                 // Store the process ID in the relayPids map
                 int pid = getTorRelayPID("local-torrc-" + relayNickname);
                 relayPids.put(relayNickname, pid);
 
                 // Wait for the process to complete
-                /*int exitCode = process.waitFor();
-
-                if (exitCode == 0) {
-                    model.addAttribute("successMessage", "Tor Relay started successfully!");
-                } else {
-                    model.addAttribute("errorMessage", "Failed to start Tor Relay service.");
-                }*/
             } else {
                 model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
             }
