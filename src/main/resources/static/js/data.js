@@ -1,64 +1,82 @@
 $(document).ready(function () {
-    // Define the URL of your server-side endpoint
-    var apiUrl = '/api/relay-data'; // Change to your actual API endpoint
+    // Define the base API endpoint
+    var baseApiUrl = 'http://192.168.2.117:8081/api/relay-data';
 
-    // Get references to the chart canvas and its context
-    var ctx = document.getElementById('trafficChart').getContext('2d');
+    // Function to create and update a chart for a given relay
+    function createRelayChart(port) {
+        // Create a container for the relay chart
+        var chartContainer = $('<div class="relay-chart"></div>');
+        var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
+        var relayName = 'Relay on Port ' + port;
 
-    // Create an initial empty chart
-    var trafficChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                {
-                    label: 'Upload',
-                    borderColor: 'rgb(54, 162, 235)',
-                    data: [],
+        // Append the chart container to the relayCharts div
+        chartContainer.appendTo($('#relayCharts'));
+
+        // Get references to the chart canvas and its context
+        var ctx = chartCanvas[0].getContext('2d');
+
+        // Create an initial empty chart
+        var relayChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Upload',
+                        borderColor: 'rgb(54, 162, 235)',
+                        data: [],
+                    },
+                    {
+                        label: 'Download',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: [],
+                    },
+                ],
+            },
+            options: {
+                animation: false,
+                title: {
+                    display: true,
+                    text: relayName,
                 },
-                {
-                    label: 'Download',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [],
-                },
-            ],
-        },
-        options: {
-            animation: false,
-        }
-    });
-
-    // Function to update the traffic data and chart
-    function updateTrafficDataAndChart() {
-        $.get(apiUrl, function (data) {
-            // Assuming the API returns an array of RelayData objects
-            if (data && data.length > 0) {
-                // Extract upload and download data
-                var uploadData = data.map(function (relayData) {
-                    return relayData.upload;
-                });
-                var downloadData = data.map(function (relayData) {
-                    return relayData.download;
-                });
-
-                var latestData = data[data.length - 1]; // Assuming the latest data is at the end of the array
-                $('#uploadValue').text(latestData.upload);
-                $('#downloadValue').text(latestData.download);
-
-                // Update the chart's data and labels
-                trafficChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
-                trafficChart.data.datasets[0].data = uploadData;
-                trafficChart.data.datasets[1].data = downloadData;
-
-                // Update the chart
-                trafficChart.update();
             }
         });
+
+        // Function to update the traffic data and chart for the relay
+        function updateRelayTrafficDataAndChart() {
+            var apiUrl = baseApiUrl + '/' + port;
+            $.get(apiUrl, function (data) {
+                if (data && data.length > 0) {
+                    var uploadData = data.map(function (relayData) {
+                        return relayData.upload;
+                    });
+                    var downloadData = data.map(function (relayData) {
+                        return relayData.download;
+                    });
+
+                    var latestData = data[data.length - 1];
+                    // Update the chart's data and labels
+                    relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
+                    relayChart.data.datasets[0].data = uploadData;
+                    relayChart.data.datasets[1].data = downloadData;
+                    // Update the chart
+                    relayChart.update();
+                }
+            });
+        }
+
+        // Update the data and chart for the relay initially
+        updateRelayTrafficDataAndChart();
+
+        // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
+        setInterval(updateRelayTrafficDataAndChart, 10000); // 10 seconds
     }
 
-    // Update the data and chart initially
-    updateTrafficDataAndChart();
+    // Define an array of control ports (modify this as per your setup)
+    var controlPorts = [9051, 9052, 9053]; // Example control ports
 
-    // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
-    setInterval(updateTrafficDataAndChart, 1000); // 10 seconds
+    // Create charts for each relay based on the control ports
+    controlPorts.forEach(function (port) {
+        createRelayChart(port);
+    });
 });
