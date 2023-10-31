@@ -1,6 +1,8 @@
 import os
 import functools
 import threading
+
+import stem
 from stem.control import EventType, Controller
 import requests
 import time
@@ -47,15 +49,30 @@ def read_control_port(file_path):
     return None
 
 def monitor_traffic(control_port):
-    with Controller.from_port(port=control_port) as controller:
-        controller.authenticate()
-        bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
-        controller.add_event_listener(bw_event_handler, EventType.BW)
+    while True:
+        try:
+            with Controller.from_port(port=control_port) as controller:
+                controller.authenticate()
+                bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
+                controller.add_event_listener(bw_event_handler, EventType.BW)
 
-        print(f"Monitoring relay on ControlPort {control_port}")
+                print(f"Monitoring relay on ControlPort {control_port}")
 
-        while True:
-            time.sleep(1)  # Wait for 1 second to collect data
+                while True:
+                    time.sleep(1)  # Wait for 1 second to collect data
+        except stem.SocketError as e:
+            print(f"Error connecting to ControlPort {control_port}: {e}")
+
+            # Sleep for a while before retrying
+            time.sleep(1)  # Sleep for 60 seconds before retrying
+        except Exception as e:
+            print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
+
+            # Sleep for a while before retrying
+            time.sleep(1)  # Sleep for 60 seconds before retrying
+
+# Rest of your code remains unchanged
+
 
 def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
