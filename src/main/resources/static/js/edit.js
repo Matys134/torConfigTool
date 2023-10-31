@@ -25,7 +25,7 @@ $(document).ready(function () {
         showEditModal(nickname, orport, contact);
     });
 
-    // Handle the "Save" button click
+// Handle the "Save" button click
     $("#save-button").click(function () {
         const editedNickname = $("#edit-nickname").val();
         const editedOrPort = $("#edit-orport").val();
@@ -33,17 +33,21 @@ $(document).ready(function () {
         const editedControlPort = $("#edit-controlport").val();
         const editedSocksPort = $("#edit-socksport").val();
 
+        // Create a JavaScript object with the data
+        const data = {
+            nickname: editedNickname,
+            orPort: editedOrPort,
+            contact: editedContact,
+            controlPort: editedControlPort,
+            socksPort: editedSocksPort
+        };
+
         // Send an AJAX request to the server to update the configuration
         $.ajax({
             type: "POST",
             url: "/update-guard-config",
-            data: {
-                nickname: editedNickname,
-                orPort: editedOrPort,
-                contact: editedContact,
-                controlPort: editedControlPort,
-                socksPort: editedSocksPort
-            },
+            contentType: "application/json", // Set the content type to JSON
+            data: JSON.stringify(data), // Convert the data to a JSON string
             success: function (data) {
                 // Check if the configuration was successfully updated
                 if (data.success) {
