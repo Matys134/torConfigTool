@@ -64,6 +64,28 @@ $(document).ready(function () {
             }
         });
 
+        $.ajax({
+            type: "POST",
+            url: "/update-bridge-config",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    // Update the view with the new configuration, if needed
+                    // For example, you can update the displayed values in the UI
+                    const nickname = data.nickname;
+                    const configElement = $(`[data-config-nickname="${nickname}"]`);
+                    configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
+                    configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+                    configElement.find(".config-contact").text(`Contact: ${data.contact}`);
+                    configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+                    configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
+                } else {
+                    alert("Failed to update configuration.");
+                }
+            }
+        })
+
         hideEditModal();
     });
 
