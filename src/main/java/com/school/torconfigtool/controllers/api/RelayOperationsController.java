@@ -1,9 +1,11 @@
-package com.school.torconfigtool.controllers;
+package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.models.TorConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,6 +16,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/relay-operations")
 public class RelayOperationsController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RelayOperationsController.class);
 
     private Map<String, Integer> relayPids = new HashMap<>();
 
@@ -35,11 +39,12 @@ public class RelayOperationsController {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-                    try {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         TorConfiguration config = parseTorConfiguration(file);
                         configs.add(config);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        // Handle or log the exception
+                        logger.error("Error reading Tor configuration file", e);
                     }
                 }
             }
@@ -85,20 +90,21 @@ public class RelayOperationsController {
         try {
             int pid = getTorRelayPID("local-torrc-" + relayNickname);
             String stopCommand = "kill -SIGINT " + pid;
-            Process stopProcess = Runtime.getRuntime().exec(stopCommand);
-
-            int exitCode = stopProcess.waitFor();
+            int exitCode = executeCommand(stopCommand);
 
             if (exitCode == 0) {
                 model.addAttribute("successMessage", "Tor Relay stopped successfully!");
             } else {
                 model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
+                logger.error("Failed to stop Tor Relay for relayNickname: {}", relayNickname);
             }
         } catch (Exception e) {
+            logger.error("Failed to stop Tor Relay for relayNickname: {}", relayNickname, e);
             handleException(model, "Failed to stop Tor Relay.", e);
         }
         return "relay-operations";
     }
+
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, Model model) {
@@ -108,13 +114,13 @@ public class RelayOperationsController {
 
             if (torrcFile.exists()) {
                 String command = "tor -f " + torrcFile.getAbsolutePath();
-                Process process = Runtime.getRuntime().exec(command);
-                int pid = getTorRelayPID("local-torrc-" + relayNickname);
+                int pid = executeCommand(command);
                 relayPids.put(relayNickname, pid);
             } else {
                 model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
             }
         } catch (Exception e) {
+            logger.error("Failed to start Tor Relay for relayNickname: {}", relayNickname, e);
             handleException(model, "Failed to start Tor Relay.", e);
         }
         return "relay-operations";
@@ -164,6 +170,24 @@ public class RelayOperationsController {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public class RelayOperationException extends RuntimeException {
+        public RelayOperationException(String message) {
+            super(message);
+        }
+    }
+
+    private int executeCommand(String command) throws IOException, InterruptedException {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(command);
+            return process.waitFor();
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
         }
     }
 }

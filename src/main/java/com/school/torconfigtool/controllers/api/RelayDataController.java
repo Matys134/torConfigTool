@@ -1,4 +1,4 @@
-package com.school.torconfigtool.controllers;
+package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.models.RelayData;
 import org.springframework.http.ResponseEntity;
