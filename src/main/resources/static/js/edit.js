@@ -1,58 +1,63 @@
 $(document).ready(function () {
-    // Function to show the edit modal
-    function showEditModal(nickname, orport, contact) {
-        $("#edit-nickname").val(nickname);
-        $("#edit-orport").val(orport);
-        $("#edit-contact").val(contact);
-        $("#edit-controlport").val(controlport);
-        $("#edit-socksport").val(socksport);
-        $("#edit-modal").show();
+    const editModal = $("#edit-modal");
+    const editNickname = $("#edit-nickname");
+    const editOrPort = $("#edit-orport");
+    const editServerTransport = $("#edit-server-transport");
+    const editContact = $("#edit-contact");
+    const editControlPort = $("#edit-controlport");
+    const editSocksPort = $("#edit-socksport");
+
+    const editButton = $(".edit-button, .edit-bridge-button"); // Combined edit buttons for guard and bridge
+    const saveButton = $("#save-button");
+    const cancelButton = $("#cancel-button");
+
+    function showEditModal(nickname, orport, serverTransport, contact, controlport, socksport) {
+        editNickname.val(nickname);
+        editOrPort.val(orport);
+        editServerTransport.val(serverTransport);
+        editContact.val(contact);
+        editControlPort.val(controlport);
+        editSocksPort.val(socksport);
+        editModal.show();
     }
 
-    // Function to hide the edit modal
     function hideEditModal() {
-        $("#edit-modal").hide();
+        editModal.hide();
     }
 
-    // Handle the "Edit" button clicks
-    $(".edit-button").click(function () {
-        const nickname = $(this).data("config-nickname");
-        const orport = $(this).data("config-orport");
-        const contact = $(this).data("config-contact");
-        const controlport = $(this).data("config-controlport");
-        const socksport = $(this).data("config-socksport");
+    editButton.click(function () {
+        const button = $(this);
+        const data = button.data();
 
-        showEditModal(nickname, orport, contact);
+        showEditModal(data.configNickname, data.configOrport, data.configServerTransport, data.configContact, data.configControlport, data.configSocksport);
     });
 
-// Handle the "Save" button click
-    $("#save-button").click(function () {
-        const editedNickname = $("#edit-nickname").val();
-        const editedOrPort = $("#edit-orport").val();
-        const editedContact = $("#edit-contact").val();
-        const editedControlPort = $("#edit-controlport").val();
-        const editedSocksPort = $("#edit-socksport").val();
-
-        // Create a JavaScript object with the data
+    saveButton.click(function () {
         const data = {
-            nickname: editedNickname,
-            orPort: editedOrPort,
-            contact: editedContact,
-            controlPort: editedControlPort,
-            socksPort: editedSocksPort
+            nickname: editNickname.val(),
+            orPort: editOrPort.val(),
+            serverTransport: editServerTransport.val(),
+            contact: editContact.val(),
+            controlPort: editControlPort.val(),
+            socksPort: editSocksPort.val(),
         };
 
-        // Send an AJAX request to the server to update the configuration
         $.ajax({
             type: "POST",
             url: "/update-guard-config",
-            contentType: "application/json", // Set the content type to JSON
-            data: JSON.stringify(data), // Convert the data to a JSON string
-            success: function (data) {
-                // Check if the configuration was successfully updated
-                if (data.success) {
-                    // Update the view with the new configuration
-                    // This is where you can update the view with the updated configuration
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    // Update the view with the new configuration, if needed
+                    // For example, you can update the displayed values in the UI
+                    const nickname = data.nickname;
+                    const configElement = $(`[data-config-nickname="${nickname}"]`);
+                    configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
+                    configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+                    configElement.find(".config-contact").text(`Contact: ${data.contact}`);
+                    configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+                    configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
                 } else {
                     alert("Failed to update configuration.");
                 }
@@ -62,8 +67,7 @@ $(document).ready(function () {
         hideEditModal();
     });
 
-    // Handle the "Cancel" button click
-    $("#cancel-button").click(function () {
+    cancelButton.click(function () {
         hideEditModal();
     });
 });

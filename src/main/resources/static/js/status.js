@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Function to check and update relay status
-    function updateRelayStatus(nickname) {
-        $.get("/relay-operations/status?relayNickname=" + nickname, function(data) {
+    function updateRelayStatus(nickname, relayType) {
+        $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function(data) {
             var statusElement = $("#status-" + nickname);
             var statusMessageElement = $("#status-message-" + nickname);
 
@@ -27,7 +27,8 @@ $(document).ready(function() {
     function updateAllRelayStatus() {
         $(".edit-button").each(function() {
             var nickname = $(this).data("config-nickname");
-            updateRelayStatus(nickname);
+            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            updateRelayStatus(nickname, relayType);
         });
     }
 
@@ -35,5 +36,5 @@ $(document).ready(function() {
     updateAllRelayStatus();
 
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
-    setInterval(updateAllRelayStatus, 1000);
+    setInterval(updateAllRelayStatus, 10000);
 });
