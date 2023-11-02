@@ -9,13 +9,14 @@
 <!-- Display guard configurations -->
 <h2>Guard Relay Configurations</h2>
 <ul>
-    <li th:each="config, configStatus : ${guardConfigs}">
+    <li th:each="config : ${guardConfigs}">
+        <!-- Display Guard relay configuration fields -->
         <p th:text="${'Nickname: ' + config.nickname}"></p>
         <p th:text="${'ORPort: ' + config.orPort}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
         <p th:text="${'Socks Port: ' + config.socksPort}"></p>
         <p th:text="${'Control Port: ' + config.controlPort}"></p>
-        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
+        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p>
         <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
@@ -23,7 +24,7 @@
                 th:data-config-contact="${config.contact}"
                 th:data-config-socksport="${config.socksPort}"
                 th:data-config-controlport="${config.controlPort}">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.nickname}">Start</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}" th:data-config-type="${config.relayType}">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
 </ul>
@@ -32,16 +33,19 @@
 <h2>Bridge Relay Configurations</h2>
 <ul>
     <li th:each="config : ${bridgeConfigs}">
+        <!-- Display Bridge relay configuration fields -->
         <p th:text="${'Nickname: ' + config.nickname}"></p>
         <p th:text="${'ORPort: ' + config.orPort}"></p>
+        <p th:text="${'ServerTransportListenAddr: ' + config.bridgeTransportListenAddr}"></p>
         <p th:text="${'Contact: ' + config.contact}"></p>
-        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
+        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p>
         <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
-        <button class="edit-button"
+        <button class="edit-bridge-button"
                 th:data-config-nickname="${config.nickname}"
                 th:data-config-orport="${config.orPort}"
+                th:data-config-server-transport="${config.bridgeTransportListenAddr}"
                 th:data-config-contact="${config.contact}">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.nickname}">Start</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}" th:data-config-type="${config.relayType}">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
 </ul>
@@ -51,11 +55,24 @@
     <div class="modal-content">
         <h2>Edit Configuration</h2>
         <form id="edit-form">
+            <label for="edit-nickname">Nickname:</label>
             <input type="hidden" id="edit-nickname" name="edit-nickname">
+
+            <label for="edit-orport">ORPort:</label>
             <input type="text" id="edit-orport" name="edit-orport">
-            <input type="text" id="edit-controlport" name="edit-controlport">
-            <input type="text" id="edit-socksport" name="edit-socksport">
+
+            <label for="edit-server-transport">ServerTransportListenAddr:</label>
+            <input type="text" id="edit-server-transport" name="edit-server-transport">
+
+            <label for="edit-contact">Contact:</label>
             <input type="text" id="edit-contact" name="edit-contact">
+
+            <label for="edit-controlport">Control Port:</label>
+            <input type="text" id="edit-controlport" name="edit-controlport">
+
+            <label for="edit-socksport">Socks Port:</label>
+            <input type="text" id="edit-socksport" name="edit-socksport">
+
             <button type="button" id="save-button">Save</button>
             <button type="button" id="cancel-button">Cancel</button>
         </form>
@@ -65,39 +82,5 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
 <script src="/js/status.js"></script>
-
-<!-- JavaScript to handle the "Stop" button click event -->
-<script>
-    $(document).ready(function() {
-        $(".stop-button").click(function() {
-            var nickname = $(this).data("config-nickname");
-
-            // Send a POST request to stop the relay using the corresponding nickname
-            $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
-                // Handle the response, e.g., show success or error messages
-            });
-        });
-    });
-</script>
-<script>
-    // JavaScript to handle the "Start" button click event
-    $(".start-button").click(function() {
-        var nickname = $(this).data("config-nickname");
-        // Send a POST request to start the relay using the corresponding nickname
-        $.post("/relay-operations/start", { relayNickname: nickname }, function(data) {
-            // Handle the response, e.g., show success or error messages
-        });
-    });
-
-    // JavaScript to handle the "Stop" button click event
-    $(".stop-button").click(function() {
-        var nickname = $(this).data("config-nickname");
-        // Send a POST request to stop the relay using the corresponding nickname
-        $.post("/relay-operations/stop", { relayNickname: nickname }, function(data) {
-            // Handle the response, e.g., show success or error messages
-        });
-    });
-</script>
-
 </body>
 </html>
