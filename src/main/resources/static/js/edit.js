@@ -1,58 +1,50 @@
 $(document).ready(function () {
-    // Function to show the edit modal
+    const editModal = $("#edit-modal");
+    const editNickname = $("#edit-nickname");
+    const editOrPort = $("#edit-orport");
+    const editContact = $("#edit-contact");
+    const editControlPort = $("#edit-controlport");
+    const editSocksPort = $("#edit-socksport");
+
+    const editButton = $(".edit-button");
+    const saveButton = $("#save-button");
+    const cancelButton = $("#cancel-button");
+
     function showEditModal(nickname, orport, contact) {
-        $("#edit-nickname").val(nickname);
-        $("#edit-orport").val(orport);
-        $("#edit-contact").val(contact);
-        $("#edit-controlport").val(controlport);
-        $("#edit-socksport").val(socksport);
-        $("#edit-modal").show();
+        editNickname.val(nickname);
+        editOrPort.val(orport);
+        editContact.val(contact);
+        editModal.show();
     }
 
-    // Function to hide the edit modal
     function hideEditModal() {
-        $("#edit-modal").hide();
+        editModal.hide();
     }
 
-    // Handle the "Edit" button clicks
-    $(".edit-button").click(function () {
-        const nickname = $(this).data("config-nickname");
-        const orport = $(this).data("config-orport");
-        const contact = $(this).data("config-contact");
-        const controlport = $(this).data("config-controlport");
-        const socksport = $(this).data("config-socksport");
+    editButton.click(function () {
+        const button = $(this);
+        const data = button.data();
 
-        showEditModal(nickname, orport, contact);
+        showEditModal(data.configNickname, data.configOrport, data.configContact);
     });
 
-// Handle the "Save" button click
-    $("#save-button").click(function () {
-        const editedNickname = $("#edit-nickname").val();
-        const editedOrPort = $("#edit-orport").val();
-        const editedContact = $("#edit-contact").val();
-        const editedControlPort = $("#edit-controlport").val();
-        const editedSocksPort = $("#edit-socksport").val();
-
-        // Create a JavaScript object with the data
+    saveButton.click(function () {
         const data = {
-            nickname: editedNickname,
-            orPort: editedOrPort,
-            contact: editedContact,
-            controlPort: editedControlPort,
-            socksPort: editedSocksPort
+            nickname: editNickname.val(),
+            orPort: editOrPort.val(),
+            contact: editContact.val(),
+            controlPort: editControlPort.val(),
+            socksPort: editSocksPort.val(),
         };
 
-        // Send an AJAX request to the server to update the configuration
         $.ajax({
             type: "POST",
             url: "/update-guard-config",
-            contentType: "application/json", // Set the content type to JSON
-            data: JSON.stringify(data), // Convert the data to a JSON string
+            contentType: "application/json",
+            data: JSON.stringify(data),
             success: function (data) {
-                // Check if the configuration was successfully updated
                 if (data.success) {
                     // Update the view with the new configuration
-                    // This is where you can update the view with the updated configuration
                 } else {
                     alert("Failed to update configuration.");
                 }
@@ -62,8 +54,7 @@ $(document).ready(function () {
         hideEditModal();
     });
 
-    // Handle the "Cancel" button click
-    $("#cancel-button").click(function () {
+    cancelButton.click(function () {
         hideEditModal();
     });
 });
