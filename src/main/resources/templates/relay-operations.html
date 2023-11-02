@@ -28,6 +28,24 @@
     </li>
 </ul>
 
+<!-- Display Bridge relay configurations -->
+<h2>Bridge Relay Configurations</h2>
+<ul>
+    <li th:each="config : ${bridgeConfigs}">
+        <p th:text="${'Nickname: ' + config.nickname}"></p>
+        <p th:text="${'ORPort: ' + config.orPort}"></p>
+        <p th:text="${'Contact: ' + config.contact}"></p>
+        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p> <!-- Add this line -->
+        <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
+        <button class="edit-button"
+                th:data-config-nickname="${config.nickname}"
+                th:data-config-orport="${config.orPort}"
+                th:data-config-contact="${config.contact}">Edit</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}">Start</button>
+        <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
+    </li>
+</ul>
+
 <!-- Add modal for editing configurations (hidden by default) -->
 <div id="edit-modal" class="modal">
     <div class="modal-content">

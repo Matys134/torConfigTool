@@ -1,35 +1,26 @@
 package com.school.torconfigtool.models;
 
+import lombok.Getter;
+
 public class TorConfiguration {
     private String nickname;
     private String orPort;
     private String contact;
     private String hiddenServiceDir;
     private String hiddenServicePort;
+    @Getter
     private String controlPort;
+    @Getter
     private String socksPort;
+    private String bandwidthRate;
+    private String bridgeTransportListenAddr;
+    private String relayType;
 
     public TorConfiguration() {
     }
 
-    public TorConfiguration(String nickname, String orPort, String contact, String hiddenServiceDir, String hiddenServicePort) {
-        this.nickname = nickname;
-        this.orPort = orPort;
-        this.contact = contact;
-        this.hiddenServiceDir = hiddenServiceDir;
-        this.hiddenServicePort = hiddenServicePort;
-    }
-
-    public String getControlPort() {
-        return controlPort;
-    }
-
     public void setControlPort(String controlPort) {
         this.controlPort = controlPort;
-    }
-
-    public String getSocksPort() {
-        return socksPort;
     }
 
     public void setSocksPort(String socksPort) {
@@ -74,5 +65,17 @@ public class TorConfiguration {
 
     public void setHiddenServicePort(String hiddenServicePort) {
         this.hiddenServicePort = hiddenServicePort;
+    }
+
+    public void setBandwidthRate(String bandwidthRate) {
+        this.bandwidthRate = bandwidthRate;
+    }
+
+    public void setBridgeTransportListenAddr(String serverTransportListenAddrObfs4) {
+        this.bridgeTransportListenAddr = serverTransportListenAddrObfs4;
+    }
+
+    public void setRelayType(String relayType) {
+        this.relayType = relayType;
     }
 }

@@ -21,18 +21,21 @@ public class RelayOperationsController {
 
     private Map<String, Integer> relayPids = new HashMap<>();
 
+    private List<TorConfiguration> guardConfigs = new ArrayList<>();
+    private List<TorConfiguration> bridgeConfigs = new ArrayList<>();
+
     @GetMapping
     public String relayOperations(Model model) {
-        List<TorConfiguration> guardConfigs = readTorConfigurations("torrc/guard");
-        List<TorConfiguration> onionConfigs = readTorConfigurations("torrc/onion");
+        guardConfigs = readTorConfigurations("torrc/guard", "guard");
+        bridgeConfigs = readTorConfigurations("torrc/bridge", "bridge");
 
         model.addAttribute("guardConfigs", guardConfigs);
-        model.addAttribute("onionConfigs", onionConfigs);
+        model.addAttribute("bridgeConfigs", bridgeConfigs);
 
         return "relay-operations"; // Thymeleaf template name
     }
 
-    private List<TorConfiguration> readTorConfigurations(String folder) {
+    private List<TorConfiguration> readTorConfigurations(String folder, String relayType) {
         List<TorConfiguration> configs = new ArrayList<>();
         File[] files = new File(folder).listFiles();
 
@@ -41,6 +44,7 @@ public class RelayOperationsController {
                 if (file.isFile()) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         TorConfiguration config = parseTorConfiguration(file);
+                        config.setRelayType(relayType); // Set the relay type
                         configs.add(config);
                     } catch (IOException e) {
                         // Handle or log the exception
@@ -82,21 +86,33 @@ public class RelayOperationsController {
             config.setControlPort(line.split("ControlPort")[1].trim());
         } else if (line.startsWith("SocksPort")) {
             config.setSocksPort(line.split("SocksPort")[1].trim());
+        } else if (line.startsWith("BandwidthRate")) {
+            config.setBandwidthRate(line.split("BandwidthRate")[1].trim());
+        } else if (line.startsWith("ServerTransportListenAddr obfs4 0.0.0.0:")) {
+            // Bridge specific
+            config.setBridgeTransportListenAddr(line.split("ServerTransportListenAddr obfs4")[1].trim());
         }
     }
 
     @PostMapping("/stop")
-    public String stopRelay(@RequestParam String relayNickname, Model model) {
+    public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         try {
-            int pid = getTorRelayPID("local-torrc-" + relayNickname);
-            String stopCommand = "kill -SIGINT " + pid;
-            int exitCode = executeCommand(stopCommand);
+            String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            File torrcFile = new File(torrcFilePath);
 
-            if (exitCode == 0) {
-                model.addAttribute("successMessage", "Tor Relay stopped successfully!");
+            if (torrcFile.exists()) {
+                int pid = getTorRelayPID(torrcFilePath);
+                String stopCommand = "kill -SIGINT " + pid;
+                int exitCode = executeCommand(stopCommand);
+
+                if (exitCode == 0) {
+                    model.addAttribute("successMessage", "Tor Relay stopped successfully!");
+                } else {
+                    model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
+                    logger.error("Failed to stop Tor Relay for relayNickname: {}", relayNickname);
+                }
             } else {
-                model.addAttribute("errorMessage", "Failed to stop Tor Relay service.");
-                logger.error("Failed to stop Tor Relay for relayNickname: {}", relayNickname);
+                model.addAttribute("errorMessage", "Torrc file does not exist for relay: " + relayNickname);
             }
         } catch (Exception e) {
             logger.error("Failed to stop Tor Relay for relayNickname: {}", relayNickname, e);
@@ -107,9 +123,9 @@ public class RelayOperationsController {
 
 
     @PostMapping("/start")
-    public String startRelay(@RequestParam String relayNickname, Model model) {
+    public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         try {
-            String torrcFilePath = buildTorrcFilePath(relayNickname);
+            String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
             File torrcFile = new File(torrcFilePath);
 
             if (torrcFile.exists()) {
@@ -126,10 +142,12 @@ public class RelayOperationsController {
         return "relay-operations";
     }
 
-    private String buildTorrcFilePath(String relayNickname) {
+    // Update the buildTorrcFilePath method to consider the relay type
+    private String buildTorrcFilePath(String relayNickname, String relayType) {
         String currentDirectory = System.getProperty("user.dir");
         String torrcFileName = "local-torrc-" + relayNickname;
-        return currentDirectory + File.separator + "torrc" + File.separator + "guard" + File.separator + torrcFileName;
+        String folder = relayType.equals("guard") ? "guard" : "bridge";
+        return currentDirectory + File.separator + "torrc" + File.separator + folder + File.separator + torrcFileName;
     }
 
     private void handleException(Model model, String errorMessage, Exception e) {
@@ -139,8 +157,9 @@ public class RelayOperationsController {
 
     @GetMapping("/status")
     @ResponseBody
-    public String getRelayStatus(@RequestParam String relayNickname) {
-        int pid = getTorRelayPID("local-torrc-" + relayNickname);
+    public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
+        String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        int pid = getTorRelayPID(torrcFilePath);
         if (pid > 0) {
             return "online";
         } else if (pid == -1) {
