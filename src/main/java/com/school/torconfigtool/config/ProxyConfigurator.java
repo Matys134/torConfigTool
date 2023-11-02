@@ -1,10 +1,10 @@
-package com.school.torconfigtool.configurations;
+package com.school.torconfigtool.config;
 
 import java.io.*;
 
-public class TorProxyConfigurator {
+public class ProxyConfigurator {
 
-    public static boolean configureTorProxy() {
+    public static boolean configureProxy() {
         try {
             // Check if the torrc file for the proxy exists, create it if not
             File torrcFile = new File("torrc/local-torrc-proxy");
@@ -33,7 +33,7 @@ public class TorProxyConfigurator {
         }
     }
 
-    public static boolean startTorProxy() {
+    public static boolean startProxy() {
         try {
             // Execute a command to start the Tor Proxy service
             Process process = Runtime.getRuntime().exec("sudo systemctl start tor@default");

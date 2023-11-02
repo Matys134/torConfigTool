@@ -1,4 +1,4 @@
-package com.school.torconfigtool.controllers;
+package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.models.TorConfiguration;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controllers;
 
-import com.school.torconfigtool.configurations.TorProxyConfigurator;
+import com.school.torconfigtool.config.ProxyConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +19,8 @@ public class ProxyController {
     @PostMapping("/start")
     public String startProxy(Model model) {
         // Configure and start the Tor Proxy
-        boolean configureSuccess = TorProxyConfigurator.configureTorProxy();
-        boolean startSuccess = TorProxyConfigurator.startTorProxy();
+        boolean configureSuccess = ProxyConfigurator.configureProxy();
+        boolean startSuccess = ProxyConfigurator.startProxy();
 
         if (configureSuccess && startSuccess) {
             model.addAttribute("successMessage", "Tor Proxy started successfully!");
@@ -30,6 +30,4 @@ public class ProxyController {
 
         return "proxy-config"; // Redirect to the configuration page
     }
-
-    // Add methods to stop and check the status of the Tor Proxy if needed
 }

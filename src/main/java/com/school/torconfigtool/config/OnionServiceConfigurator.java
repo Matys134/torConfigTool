@@ -1,12 +1,12 @@
-package com.school.torconfigtool.configurations;
+package com.school.torconfigtool.config;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class TorOnionServiceConfigurator {
-    public static boolean configureTorOnionService() {
+public class OnionServiceConfigurator {
+    public static boolean configureOnionService() {
         try {
             // Check if the torrc file for the onion service exists, create it if not
             File torrcFile = new File("torrc/local-torrc-onion-service.torrc");
@@ -32,7 +32,7 @@ public class TorOnionServiceConfigurator {
         }
     }
 
-    public static boolean startTorOnionService() {
+    public static boolean startOnionService() {
         try {
             // Execute a command to start the Tor Onion Service
             Process process = Runtime.getRuntime().exec("sudo systemctl start tor@onion-service");
