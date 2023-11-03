@@ -36,5 +36,5 @@ $(document).ready(function() {
     updateAllRelayStatus();
 
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
-    setInterval(updateAllRelayStatus, 1000);
+    setInterval(updateAllRelayStatus, 10000);
 });
