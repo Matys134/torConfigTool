@@ -22,4 +22,4 @@ $(document).ready(function () {
             }
         });
     });
-}
+});
