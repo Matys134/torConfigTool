@@ -35,6 +35,12 @@ public class RelayController {
             String torrcFileName = "local-torrc-" + relayNickname;
             String torrcFilePath = "torrc/guard/" + torrcFileName;
 
+            // Check if a relay with the same nickname already exists
+            if (relayExists(relayNickname)) {
+                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
+                return "relay-config";
+            }
+
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, relayNickname, relayBandwidth, relayPort, relayContact, controlPort, socksPort);
             }
@@ -122,6 +128,26 @@ public class RelayController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public boolean relayExists(String relayNickname) {
+        String currentDirectory = System.getProperty("user.dir");
+        String torrcDirectory = currentDirectory + File.separator + "torrc" + File.separator + "guard";
+
+        File[] torrcFiles = new File(torrcDirectory).listFiles();
+        if (torrcFiles != null) {
+            for (File file : torrcFiles) {
+                if (file.isFile() && file.getName().startsWith("local-torrc-")) {
+                    String existingNickname = file.getName().substring("local-torrc-".length());
+                    if (existingNickname.equals(relayNickname)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
 }

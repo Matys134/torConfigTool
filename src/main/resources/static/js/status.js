@@ -23,18 +23,35 @@ $(document).ready(function() {
         });
     }
 
-    // Function to update relay status for all relays
-    function updateAllRelayStatus() {
+    // Function to update relay status for guard relays
+    function updateGuardRelayStatus() {
         $(".edit-button").each(function() {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
-            updateRelayStatus(nickname, relayType);
+            if (relayType === "guard") {
+                updateRelayStatus(nickname, relayType);
+            }
         });
     }
 
-    // Update relay status on page load
-    updateAllRelayStatus();
+    // Function to update relay status for bridge relays
+    function updateBridgeRelayStatus() {
+        $(".edit-bridge-button").each(function() {
+            var nickname = $(this).data("config-nickname");
+            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            if (relayType === "bridge") {
+                updateRelayStatus(nickname, relayType);
+            }
+        });
+    }
+
+    // Update relay status on page load for both guard and bridge relays
+    updateGuardRelayStatus();
+    updateBridgeRelayStatus();
 
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
-    setInterval(updateAllRelayStatus, 1000);
+    setInterval(function() {
+        updateGuardRelayStatus();
+        updateBridgeRelayStatus();
+    }, 10000);
 });

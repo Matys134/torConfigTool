@@ -44,7 +44,7 @@ public class RelayOperationsController {
                 if (file.isFile()) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         TorConfiguration config = parseTorConfiguration(file);
-                        config.setRelayType(relayType); // Set the relay type
+                        config.setRelayType(relayType); // Set the relay type (either "guard" or "bridge")
                         configs.add(config);
                     } catch (IOException e) {
                         // Handle or log the exception
@@ -55,6 +55,7 @@ public class RelayOperationsController {
         }
         return configs;
     }
+
 
     private TorConfiguration parseTorConfiguration(File file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -161,6 +162,7 @@ public class RelayOperationsController {
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
         String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
         int pid = getTorRelayPID(torrcFilePath);
+
         if (pid > 0) {
             return "online";
         } else if (pid == -1) {

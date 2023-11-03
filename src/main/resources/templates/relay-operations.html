@@ -20,11 +20,8 @@
         <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-button"
                 th:data-config-nickname="${config.nickname}"
-                th:data-config-orport="${config.orPort}"
-                th:data-config-contact="${config.contact}"
-                th:data-config-socksport="${config.socksPort}"
-                th:data-config-controlport="${config.controlPort}">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.nickname}" th:data-config-type="${config.relayType}">Start</button>
+                th:attr="data-config-type=${config.relayType}">Edit</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}" th:attr="data-config-type=${config.relayType}">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
 </ul>
@@ -42,10 +39,8 @@
         <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
         <button class="edit-bridge-button"
                 th:data-config-nickname="${config.nickname}"
-                th:data-config-orport="${config.orPort}"
-                th:data-config-server-transport="${config.bridgeTransportListenAddr}"
-                th:data-config-contact="${config.contact}">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.nickname}" th:data-config-type="${config.relayType}">Start</button>
+                th:attr="data-config-type=${config.relayType}">Edit</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}" th:attr="data-config-type=${config.relayType}">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.nickname}">Stop</button>
     </li>
 </ul>
