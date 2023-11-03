@@ -127,6 +127,7 @@ public class RelayOperationsController {
         try {
             String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
             File torrcFile = new File(torrcFilePath);
+            System.out.println(torrcFilePath);
 
             if (torrcFile.exists()) {
                 String command = "tor -f " + torrcFile.getAbsolutePath();
@@ -170,8 +171,10 @@ public class RelayOperationsController {
     }
 
     private int getTorRelayPID(String torrcFileName) {
+        String relayNickname = new File(torrcFileName).getName(); // Extract the file name (relay nickname)
         try {
-            String command = "ps aux | grep " + torrcFileName + " | grep -v grep | awk '{print $2}'";
+            String command = "ps aux | grep " + relayNickname + " | grep -v grep | awk '{print $2}'";
+            System.out.println(command);
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
             Process process = processBuilder.start();
 
@@ -191,6 +194,7 @@ public class RelayOperationsController {
             return -1;
         }
     }
+
 
     public class RelayOperationException extends RuntimeException {
         public RelayOperationException(String message) {
