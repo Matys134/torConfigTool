@@ -127,6 +127,7 @@ public class RelayOperationsController {
         try {
             String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
             File torrcFile = new File(torrcFilePath);
+            System.out.println(torrcFilePath);
 
             if (torrcFile.exists()) {
                 String command = "tor -f " + torrcFile.getAbsolutePath();
