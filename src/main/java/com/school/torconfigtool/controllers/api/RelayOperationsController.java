@@ -102,7 +102,7 @@ public class RelayOperationsController {
             File torrcFile = new File(torrcFilePath);
 
             if (torrcFile.exists()) {
-                int pid = getTorRelayPID(torrcFilePath, relayType);
+                int pid = getTorRelayPID(torrcFilePath);
                 String stopCommand = "kill -SIGINT " + pid;
                 int exitCode = executeCommand(stopCommand);
 
@@ -161,7 +161,7 @@ public class RelayOperationsController {
     @ResponseBody
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
         String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
-        int pid = getTorRelayPID(torrcFilePath, relayType);
+        int pid = getTorRelayPID(torrcFilePath);
 
         if (pid > 0) {
             return "online";
@@ -172,18 +172,11 @@ public class RelayOperationsController {
         }
     }
 
-    private int getTorRelayPID(String torrcFileName, String relayType) {
+    private int getTorRelayPID(String torrcFileName) {
         String relayNickname = new File(torrcFileName).getName(); // Extract the file name (relay nickname)
         try {
-            String command;
-            if (relayType.equals("guard")) {
-                command = "ps aux | grep " + relayNickname + " | grep -v grep | awk '{print $2}'";
-            } else if (relayType.equals("bridge")) {
-                command = "ps aux | grep 'tor -f " + torrcFileName + "' | grep -v grep | awk '{print $2}'";
-            } else {
-                return -1; // Invalid relay type
-            }
-
+            String command = "ps aux | grep " + relayNickname + " | grep -v grep | awk '{print $2}'";
+            System.out.println(command);
             ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
             Process process = processBuilder.start();
 
@@ -203,7 +196,6 @@ public class RelayOperationsController {
             return -1;
         }
     }
-
 
 
     public class RelayOperationException extends RuntimeException {
