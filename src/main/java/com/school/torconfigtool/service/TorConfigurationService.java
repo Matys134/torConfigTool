@@ -27,7 +27,7 @@ public class TorConfigurationService {
     private List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String relayType) {
         List<TorConfiguration> configs = new ArrayList<>();
         File folder = new File(folderPath);
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".torrc"));
+        File[] files = folder.listFiles();
 
         if (files != null) {
             for (File file : files) {

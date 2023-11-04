@@ -91,6 +91,7 @@ public class RelayOperationsController {
     @ResponseBody
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
         String torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        System.out.println(torrcFilePath);
         int pid = processManagementService.getTorRelayPID(torrcFilePath);
         if (pid > 0) {
             return "online";
