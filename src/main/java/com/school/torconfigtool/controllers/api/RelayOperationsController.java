@@ -104,6 +104,7 @@ public class RelayOperationsController {
             if (torrcFile.exists()) {
                 int pid = getTorRelayPID(torrcFilePath);
                 String stopCommand = "kill -SIGINT " + pid;
+                System.out.println(stopCommand);
                 int exitCode = executeCommand(stopCommand);
 
                 if (exitCode == 0) {
