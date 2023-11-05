@@ -3,11 +3,12 @@ package com.school.torconfigtool.controllers;
 import com.school.torconfigtool.config.TorrcConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import java.io.File;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 @RequestMapping("/bridge")
@@ -15,7 +16,7 @@ public class BridgeController {
 
     @GetMapping
     public String bridgeConfigurationForm() {
-        return "relay-config"; // Thymeleaf template name (bridge-config.html)
+        return "relay-config";
     }
 
     @PostMapping("/configure")
@@ -24,44 +25,32 @@ public class BridgeController {
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
                                   Model model) {
+        String torrcFileName = "local-torrc-bridge-" + bridgeNickname;
+        String torrcDirectoryPath = "torrc/bridge/";
+        Path torrcFilePath = Paths.get(torrcDirectoryPath, torrcFileName);
+
         try {
-            // Define the path to the torrc file based on the bridge nickname
-            String torrcFileName = "local-torrc-bridge-" + bridgeNickname;
-            String torrcFilePath = "torrc/bridge/" + torrcFileName;
-
-            // Check if the torrc file exists, create it if not
-            if (!new File(torrcFilePath).exists()) {
-                // Define the Torrc configuration lines
-                String[] torrcLines = {
-                        "BridgeRelay 1",
-                        "ORPort " + bridgePort,
-                        "ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy",
-                        "ServerTransportListenAddr obfs4 0.0.0.0:" + bridgeTransportListenAddr,
-                        "ExtORPort auto",
-                        "ContactInfo " + bridgeContact,
-                        "Nickname " + bridgeNickname
-                };
-                boolean torrcCreated = TorrcConfigurator.createTorrcFile(torrcFilePath, torrcLines);
-                if (torrcCreated) {
-                    // Torrc file was successfully created
-                    // You can add further actions or messages for success here
-                    model.addAttribute("successMessage", "Tor Bridge configured successfully!");
-                } else {
-                    // Handle the error
-                    // You can add specific error messages or take appropriate actions
-                    model.addAttribute("errorMessage", "Failed to create Torrc file for the Bridge.");
-                }
+            if (!Files.exists(torrcFilePath)) {
+                String[] torrcLines = getTorrcConfigLines(bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname);
+                TorrcConfigurator.createTorrcFile(torrcFilePath.toString(), torrcLines);
             }
-
-            // Restart the Tor service with the new configuration if necessary
-
-            // Provide a success message
             model.addAttribute("successMessage", "Tor Bridge configured successfully!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "Failed to configure Tor Bridge.");
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Failed to create Torrc file for the Bridge: " + e.getMessage());
         }
 
-        return "relay-config"; // Thymeleaf template name (bridge-config.html)
+        return "relay-config";
+    }
+
+    private String[] getTorrcConfigLines(int bridgePort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname) {
+        return new String[]{
+                "BridgeRelay 1",
+                "ORPort " + bridgePort,
+                "ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy",
+                "ServerTransportListenAddr obfs4 0.0.0.0:" + bridgeTransportListenAddr,
+                "ExtORPort auto",
+                "ContactInfo " + bridgeContact,
+                "Nickname " + bridgeNickname
+        };
     }
 }

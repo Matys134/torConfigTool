@@ -1,22 +1,22 @@
 package com.school.torconfigtool.config;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TorrcConfigurator {
 
-    public static boolean createTorrcFile(String filePath, String[] torrcLines) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+    public static void createTorrcFile(String filePath, String[] torrcLines) throws IOException {
+        Path path = Paths.get(filePath);
+        Files.createDirectories(path.getParent());
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             for (String line : torrcLines) {
                 writer.write(line);
                 writer.newLine();
             }
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 }
