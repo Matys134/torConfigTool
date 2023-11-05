@@ -70,12 +70,28 @@ public class RelayOperationsController {
         if (!torrcFilePath.toFile().exists()) {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
         }
-        String command = (start ? "tor -f " : "kill -SIGINT ") + torrcFilePath.toAbsolutePath();
-        int exitCode = processManagementService.executeCommand(command);
-        if (exitCode != 0) {
-            throw new RelayOperationException("Failed to " + (start ? "start" : "stop") + " Tor Relay service.");
+        if (start) {
+            String command = "tor -f " + torrcFilePath.toAbsolutePath();
+            int exitCode = processManagementService.executeCommand(command);
+            if (exitCode != 0) {
+                throw new RelayOperationException("Failed to start Tor Relay service.");
+            }
+        } else {
+            int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
+            if (pid > 0) {
+                String command = "kill -SIGINT " + pid;
+                int exitCode = processManagementService.executeCommand(command);
+                if (exitCode != 0) {
+                    throw new RelayOperationException("Failed to stop Tor Relay service.");
+                }
+            } else if (pid == -1) {
+                throw new RelayOperationException("Tor Relay is not running.");
+            } else {
+                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
+            }
         }
     }
+
 
     private Path buildTorrcFilePath(String relayNickname, String relayType) {
         String folder = relayType.equals("guard") ? "guard" : "bridge";
