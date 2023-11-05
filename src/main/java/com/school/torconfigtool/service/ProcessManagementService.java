@@ -30,7 +30,9 @@ public class ProcessManagementService {
 
     public int getTorRelayPID(String torrcFilePath) {
         String relayNickname = new File(torrcFilePath).getName();
-        String command = String.format("ps aux | grep %s | grep -v grep | awk '{print $2}'", relayNickname);
+        String command = String.format("ps aux | grep -P '\\b%s\\b' | grep -v grep | awk '{print $2}'", relayNickname);
+
+        System.out.println(command);
         logger.debug("Command to execute: {}", command);
 
         try {
