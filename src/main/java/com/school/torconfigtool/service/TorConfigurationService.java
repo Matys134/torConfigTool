@@ -66,8 +66,9 @@ public class TorConfigurationService {
             // Onion service specific
             config.setHiddenServiceDir(line.split("HiddenServiceDir")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
-            // Onion service specific
-            config.setHiddenServicePort(line.split("HiddenServicePort")[1].trim());
+                // Onion service specific
+                String portPart = line.split(" ")[1];
+                config.setHiddenServicePort(portPart.trim());
         } else if (line.startsWith("ControlPort")) {
             config.setControlPort(line.split("ControlPort")[1].trim());
         } else if (line.startsWith("SocksPort")) {

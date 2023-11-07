@@ -45,6 +45,21 @@
     </li>
 </ul>
 
+<!-- Display Onion relay configurations -->
+<h2>Onion Relay Configurations</h2>
+<ul>
+    <li th:each="config : ${onionConfigs}">
+        <!-- Display Onion relay configuration fields -->
+        <p th:text="${'HiddenServicePort: ' + config.hiddenServicePort}"></p>
+        <p>Status: <span th:id="${'status-' + config.nickname}">Unknown</span></p>
+        <span th:id="${'status-message-' + config.nickname}" style="color: blue;">Idle</span>
+        <button class="edit-onion-button"
+                th:data-config-nickname="${config.nickname}"
+                th:attr="data-config-type=${config.relayType}">Edit</button>
+        <button class="start-button" th:data-config-nickname="${config.nickname}" th:attr="data-config-type=${config.relayType}">Start</button>
+        <button class="stop-button" th:data-config-nickname="${config.nickname}" th:attr="data-config-type=${config.relayType}">Stop</button>
+    </li>
+
 <!-- Add modal for editing configurations (hidden by default) -->
 <div id="edit-modal" class="modal">
     <div class="modal-content">

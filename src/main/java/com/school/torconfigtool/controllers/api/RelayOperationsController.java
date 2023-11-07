@@ -32,6 +32,7 @@ public class RelayOperationsController {
     public String relayOperations(Model model) {
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurations("guard"));
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurations("bridge"));
+        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurations("onion"));
         return "relay-operations";
     }
 

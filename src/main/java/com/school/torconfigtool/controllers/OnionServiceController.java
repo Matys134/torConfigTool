@@ -22,7 +22,7 @@ public class OnionServiceController {
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         try {
             // Define the path to the torrc file for the onion service
-            String torrcFileName = "local-torrc-onion-service";
+            String torrcFileName = "local-torrc-onion" + onionServicePort;
             String torrcFilePath = "torrc/onion/" + torrcFileName;
 
             // Check if the torrc file exists, create it if not
@@ -75,10 +75,26 @@ public class OnionServiceController {
     }
 
     private void createTorrcFile(String filePath, int onionServicePort) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("HiddenServiceDir /var/lib/tor/my_website/");
-            writer.newLine();
-            writer.write("HiddenServicePort " + onionServicePort + " 127.0.0.1:" + onionServicePort);
+        try (BufferedWriter torrcWritter = new BufferedWriter(new FileWriter(filePath))) {
+            String currentDirectory = System.getProperty("user.dir");
+            String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
+
+            File wwwDir = new File(currentDirectory + "/onion/www");
+            if (!wwwDir.exists()) {
+                wwwDir.mkdirs();
+            }
+
+            File serviceDir = new File(wwwDir, "service-" + onionServicePort);
+            serviceDir.mkdirs();
+
+            torrcWritter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
+            torrcWritter.newLine();
+            torrcWritter.write("HiddenServicePort " + onionServicePort + " 127.0.0.1:" + onionServicePort);
+
+            File indexHtml = new File(serviceDir, "index.html");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
+                writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
+            }
         }
     }
 }
