@@ -1,5 +1,8 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.models.TorConfiguration;
+import com.school.torconfigtool.service.TorConfigurationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,15 +11,47 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/onion-service")
 public class OnionServiceController {
 
-    @GetMapping
-    public String onionServiceConfigurationForm() {
-        return "relay-config"; // Thymeleaf template name (onion-service-config.html)
+    private final TorConfigurationService torConfigurationService;
+
+    @Autowired
+    public OnionServiceController(TorConfigurationService torConfigurationService) {
+        this.torConfigurationService = torConfigurationService;
     }
+
+    @GetMapping
+    public String onionServiceConfigurationForm(Model model) {
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations("onion");
+        Map<String, String> hostnames = new HashMap<>();
+
+        for (TorConfiguration config : onionConfigs) {
+            String hostname = readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
+            hostnames.put(config.getHiddenServicePort(), hostname);
+        }
+        String hostname = readHostnameFile(80); // Assuming port 80 for this example
+        model.addAttribute("hostname", hostname);
+
+        model.addAttribute("onionConfigs", onionConfigs);
+        model.addAttribute("hostnames", hostnames);
+        return "relay-config"; // The name of the Thymeleaf template to render
+    }
+
+    @GetMapping("/current-hostname")
+    @ResponseBody
+    public String getCurrentHostname() {
+        return readHostnameFile(80); // Or however you determine the correct port
+    }
+
 
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
@@ -95,6 +130,16 @@ public class OnionServiceController {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
+        }
+    }
+
+    private String readHostnameFile(int port) {
+        // Adjust the file path as needed
+        Path path = Paths.get("onion/hiddenServiceDirs/onion-service-" + port + "/hostname");
+        try {
+            return new String(Files.readAllBytes(path));
+        } catch (IOException e) {
+            return "Unable to read hostname file";
         }
     }
 }

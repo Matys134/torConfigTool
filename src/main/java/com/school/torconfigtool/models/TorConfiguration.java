@@ -14,6 +14,15 @@ public class TorConfiguration {
     private String bandwidthRate;
     private String bridgeTransportListenAddr;
     private String relayType;
+    private String hostname;
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
 
     public TorConfiguration() {
     }
