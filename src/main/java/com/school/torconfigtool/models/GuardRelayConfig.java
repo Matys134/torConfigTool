@@ -1,13 +1,10 @@
 package com.school.torconfigtool.models;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class GuardRelayConfig {
-    private String nickname;
-    private String orPort;
-    private String contact;
-    private String controlPort;
-    private String socksPort;
-    // Add other attributes here as needed
+@EqualsAndHashCode(callSuper = true)
+public class GuardRelayConfig extends BaseRelayConfig {
+    // Add guard-specific attributes and methods here...
 }
