@@ -36,17 +36,7 @@ public class ProcessManagementService {
         logger.debug("Command to execute: {}", command);
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-            Process process = processBuilder.start();
-
-            // Read the entire output to ensure we're not missing anything.
-            List<String> outputLines = new ArrayList<>();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    outputLines.add(line);
-                }
-            }
+            List<String> outputLines = getStrings(command);
 
             // Log the full output
             logger.debug("Command output: {}", outputLines);
@@ -66,19 +56,20 @@ public class ProcessManagementService {
         }
     }
 
+    private static List<String> getStrings(String command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+        Process process = processBuilder.start();
 
-    private int executeCommandAndGetPid(String command) throws IOException, InterruptedException {
-        Process process = null;
-        try {
-            process = Runtime.getRuntime().exec(command);
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String pidString = reader.readLine();
-                return pidString != null && !pidString.isEmpty() ? Integer.parseInt(pidString) : -1;
-            }
-        } finally {
-            if (process != null) {
-                process.destroy();
+        // Read the entire output to ensure we're not missing anything.
+        List<String> outputLines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outputLines.add(line);
             }
         }
+        return outputLines;
     }
+
+
 }

@@ -23,7 +23,7 @@ public class GuardConfigurationController {
     @PostMapping
     public ResponseEntity<?> updateGuardConfiguration(@RequestBody GuardRelayConfig config) {
         try {
-            boolean success = guardConfigurationService.updateGuardConfiguration(config);
+            boolean success = guardConfigurationService.updateConfiguration(config);
             if (success) {
                 logger.info("Guard configuration updated successfully for relay: {}", config.getNickname());
                 return ResponseEntity.ok(Map.of("success", "Guard configuration updated successfully"));

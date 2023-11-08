@@ -11,10 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -34,9 +37,38 @@ public class RelayOperationsController {
     public String relayOperations(Model model) {
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurations("guard"));
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurations("bridge"));
-        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurations("onion"));
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations("onion");
+        model.addAttribute("onionConfigs", onionConfigs);
+
+        // Create a map to store hostnames for onion services
+        Map<String, String> hostnames = new HashMap<>();
+        for (TorConfiguration config : onionConfigs) {
+            // Assuming you have a method to retrieve hostname by hiddenServicePort
+            String hostname = readHostnameFile(config.getHiddenServicePort());
+            hostnames.put(config.getHiddenServicePort(), hostname);
+        }
+        model.addAttribute("hostnames", hostnames);
+
         return "relay-operations";
     }
+
+    private String readHostnameFile(String hiddenServicePort) {
+        // The base directory where your hidden services directories are stored
+        String hiddenServiceBaseDir = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "hiddenServiceDirs";
+        // Construct the path to the hostname file for the hidden service port
+        Path hostnameFilePath = Paths.get(hiddenServiceBaseDir, "onion-service-" + hiddenServicePort, "hostname");
+
+        try {
+            // Read all the lines in the hostname file and return the first line which should be the hostname
+            List<String> lines = Files.readAllLines(hostnameFilePath);
+            return lines.isEmpty() ? "No hostname found" : lines.get(0);
+        } catch (IOException e) {
+            // Log the exception and return an indicative error message
+            logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
+            return "Unable to read hostname file";
+        }
+    }
+
 
     @PostMapping("/stop")
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
