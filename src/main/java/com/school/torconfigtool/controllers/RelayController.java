@@ -75,39 +75,8 @@ public class RelayController {
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
             writer.write("DataDirectory " + dataDirectoryPath);
 
-            List<String> fingerprints = getFingerprints(dataDirectoryPath);
-            if (!fingerprints.isEmpty()) {
-                writer.newLine();
-                writer.write("MyFamily " + String.join(", ", fingerprints));
-            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private List<String> getFingerprints(String dataDirectoryPath) {
-        List<String> fingerprints = new ArrayList<>();
-        File dataDirectory = new File(dataDirectoryPath);
-        File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
-
-        if (dataDirectoryFiles != null) {
-            for (File dataDir : dataDirectoryFiles) {
-                String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
-                String fingerprint = readFingerprint(fingerprintFilePath);
-                if (fingerprint != null) {
-                    fingerprints.add(fingerprint);
-                }
-            }
-        }
-        return fingerprints;
-    }
-
-    private String readFingerprint(String fingerprintFilePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fingerprintFilePath))) {
-            return reader.readLine().split(" ")[1].trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

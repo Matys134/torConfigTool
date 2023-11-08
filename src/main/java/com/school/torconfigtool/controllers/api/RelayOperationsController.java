@@ -10,9 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -72,6 +74,13 @@ public class RelayOperationsController {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
         }
         if (start) {
+            // Step 1: Retrieve Fingerprints
+            List<String> allFingerprints = getAllRelayFingerprints();
+
+            // Step 2: Update the torrc File with fingerprints
+            updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+
+            // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             int exitCode = processManagementService.executeCommand(command);
             if (exitCode != 0) {
@@ -98,4 +107,78 @@ public class RelayOperationsController {
         String folder = relayType.equals("guard") ? "guard" : "bridge";
         return Paths.get(System.getProperty("user.dir"), "torrc", folder, "local-torrc-" + relayNickname);
     }
+
+    // This method could be moved from RelayController to here
+    private List<String> getFingerprints(String dataDirectoryPath) {
+        // Assuming the dataDirectoryPath is something like "torrc/dataDirectory"
+        List<String> fingerprints = new ArrayList<>();
+        File dataDirectory = new File(dataDirectoryPath);
+        File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
+
+        if (dataDirectoryFiles != null) {
+            for (File dataDir : dataDirectoryFiles) {
+                String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
+                String fingerprint = readFingerprint(fingerprintFilePath);
+                if (fingerprint != null) {
+                    fingerprints.add(fingerprint);
+                }
+            }
+        }
+        return fingerprints;
+    }
+
+    private String readFingerprint(String fingerprintFilePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fingerprintFilePath))) {
+            return reader.readLine().split(" ")[1].trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // This new method would retrieve fingerprints from all existing relays
+    private List<String> getAllRelayFingerprints() {
+        // This path should lead to the base directory where all relay data directories are stored
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
+        return getFingerprints(dataDirectoryPath);
+    }
+
+    // This new method would update or append the fingerprints to the torrc configuration file
+    // This new method would update the MyFamily line with current fingerprints
+    private void updateTorrcWithFingerprints(Path torrcFilePath, List<String> currentFingerprints) throws IOException {
+        // Read the existing torrc file content
+        List<String> fileContent = new ArrayList<>();
+        boolean myFamilyUpdated = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // If the MyFamily line is encountered, update it with the current fingerprints
+                if (line.startsWith("MyFamily")) {
+                    if (!currentFingerprints.isEmpty()) {
+                        line = "MyFamily " + String.join(", ", currentFingerprints);
+                        myFamilyUpdated = true;
+                    } else {
+                        // If there are no current fingerprints, remove the MyFamily line
+                        continue;
+                    }
+                }
+                fileContent.add(line);
+            }
+        }
+
+        // If MyFamily line was not in the file and we have fingerprints, add it
+        if (!myFamilyUpdated && !currentFingerprints.isEmpty()) {
+            fileContent.add("MyFamily " + String.join(", ", currentFingerprints));
+        }
+
+        // Write the updated content back to the torrc file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(torrcFilePath.toFile()))) {
+            for (String line : fileContent) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
+
 }
