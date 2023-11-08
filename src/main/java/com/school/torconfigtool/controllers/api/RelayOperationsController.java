@@ -143,12 +143,42 @@ public class RelayOperationsController {
         return getFingerprints(dataDirectoryPath);
     }
 
+    // This new method would update or append the fingerprints to the torrc configuration file
     private void updateTorrcWithFingerprints(Path torrcFilePath, List<String> fingerprints) throws IOException {
-        // Only add fingerprints if there are any to add
-        if (!fingerprints.isEmpty()) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(torrcFilePath.toFile(), true))) { // true to append
+        // Read the existing torrc file content
+        List<String> fileContent = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))) {
+            String line;
+            boolean myFamilyExists = false;
+            while ((line = reader.readLine()) != null) {
+                // Check if MyFamily line exists
+                if (line.startsWith("MyFamily")) {
+                    myFamilyExists = true;
+                    // Update MyFamily line with new fingerprints, avoiding duplicates
+                    String existingFingerprints = line.substring("MyFamily".length()).trim();
+                    String[] parts = existingFingerprints.split(",");
+                    for (String part : parts) {
+                        String fingerprint = part.trim();
+                        if (!fingerprint.isEmpty() && !fingerprints.contains(fingerprint)) {
+                            fingerprints.add(fingerprint);
+                        }
+                    }
+                    line = "MyFamily " + String.join(", ", fingerprints);
+                }
+                fileContent.add(line);
+            }
+
+            // If MyFamily line does not exist, add it
+            if (!myFamilyExists && !fingerprints.isEmpty()) {
+                fileContent.add("MyFamily " + String.join(", ", fingerprints));
+            }
+        }
+
+        // Write the updated content back to the torrc file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(torrcFilePath.toFile()))) {
+            for (String line : fileContent) {
+                writer.write(line);
                 writer.newLine();
-                writer.write("MyFamily " + String.join(", ", fingerprints));
             }
         }
     }
