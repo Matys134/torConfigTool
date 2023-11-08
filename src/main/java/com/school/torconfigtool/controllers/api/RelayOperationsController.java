@@ -144,34 +144,32 @@ public class RelayOperationsController {
     }
 
     // This new method would update or append the fingerprints to the torrc configuration file
-    private void updateTorrcWithFingerprints(Path torrcFilePath, List<String> fingerprints) throws IOException {
+    // This new method would update the MyFamily line with current fingerprints
+    private void updateTorrcWithFingerprints(Path torrcFilePath, List<String> currentFingerprints) throws IOException {
         // Read the existing torrc file content
         List<String> fileContent = new ArrayList<>();
+        boolean myFamilyUpdated = false;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))) {
             String line;
-            boolean myFamilyExists = false;
             while ((line = reader.readLine()) != null) {
-                // Check if MyFamily line exists
+                // If the MyFamily line is encountered, update it with the current fingerprints
                 if (line.startsWith("MyFamily")) {
-                    myFamilyExists = true;
-                    // Update MyFamily line with new fingerprints, avoiding duplicates
-                    String existingFingerprints = line.substring("MyFamily".length()).trim();
-                    String[] parts = existingFingerprints.split(",");
-                    for (String part : parts) {
-                        String fingerprint = part.trim();
-                        if (!fingerprint.isEmpty() && !fingerprints.contains(fingerprint)) {
-                            fingerprints.add(fingerprint);
-                        }
+                    if (!currentFingerprints.isEmpty()) {
+                        line = "MyFamily " + String.join(", ", currentFingerprints);
+                        myFamilyUpdated = true;
+                    } else {
+                        // If there are no current fingerprints, remove the MyFamily line
+                        continue;
                     }
-                    line = "MyFamily " + String.join(", ", fingerprints);
                 }
                 fileContent.add(line);
             }
+        }
 
-            // If MyFamily line does not exist, add it
-            if (!myFamilyExists && !fingerprints.isEmpty()) {
-                fileContent.add("MyFamily " + String.join(", ", fingerprints));
-            }
+        // If MyFamily line was not in the file and we have fingerprints, add it
+        if (!myFamilyUpdated && !currentFingerprints.isEmpty()) {
+            fileContent.add("MyFamily " + String.join(", ", currentFingerprints));
         }
 
         // Write the updated content back to the torrc file
@@ -182,4 +180,5 @@ public class RelayOperationsController {
             }
         }
     }
+
 }
