@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +23,7 @@ public class RelayController {
     }
 
     @PostMapping("/configure")
-    public String configureRelay(@RequestParam String relayNickname,
-                                 @RequestParam(required = false) Integer relayBandwidth,
-                                 @RequestParam int relayPort,
-                                 @RequestParam String relayContact,
-                                 @RequestParam int controlPort,
-                                 @RequestParam int socksPort,
-                                 Model model) {
+    public String configureRelay(@RequestParam String relayNickname, @RequestParam(required = false) Integer relayBandwidth, @RequestParam int relayPort, @RequestParam String relayContact, @RequestParam int controlPort, @RequestParam int socksPort, Model model) {
         try {
             String torrcFileName = "local-torrc-" + relayNickname;
             String torrcFilePath = "torrc/guard/" + torrcFileName;
@@ -86,12 +79,7 @@ public class RelayController {
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            List<Integer> runningRelayPIDs = reader.lines()
-                    .filter(line -> line.contains("tor -f local-torrc-"))
-                    .map(line -> line.split("\\s+"))
-                    .filter(parts -> parts.length >= 2)
-                    .map(parts -> Integer.parseInt(parts[1]))
-                    .collect(Collectors.toList());
+            List<Integer> runningRelayPIDs = reader.lines().filter(line -> line.contains("tor -f local-torrc-")).map(line -> line.split("\\s+")).filter(parts -> parts.length >= 2).map(parts -> Integer.parseInt(parts[1])).collect(Collectors.toList());
 
             runningRelayPIDs.forEach(pid -> System.out.println("PID: " + pid));
         } catch (IOException e) {

@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.RelayOperationException;
-import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.ProcessManagementService;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
