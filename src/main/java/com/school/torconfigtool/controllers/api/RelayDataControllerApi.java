@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api")
-public class RelayDataController {
+public class RelayDataControllerApi {
 
     private static final int MAX_DATA_SIZE = 50;
     private Map<Integer, Deque<RelayData>> relayDataMap = new ConcurrentHashMap<>();

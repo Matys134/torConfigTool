@@ -1,4 +1,4 @@
-package com.school.torconfigtool.controllers.api;
+package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayOperationException;
 import com.school.torconfigtool.models.TorConfiguration;

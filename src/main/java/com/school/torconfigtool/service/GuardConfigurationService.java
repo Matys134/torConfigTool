@@ -5,10 +5,12 @@ import com.school.torconfigtool.models.GuardRelayConfig;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GuardConfigurationService extends BaseRelayConfigurationService<GuardRelayConfig> {
+public class GuardConfigurationService implements RelayConfigService<GuardRelayConfig> {
+
+    private final RelayController relayController;
 
     public GuardConfigurationService(RelayController relayController) {
-        super(relayController);
+        this.relayController = relayController;
     }
 
     @Override

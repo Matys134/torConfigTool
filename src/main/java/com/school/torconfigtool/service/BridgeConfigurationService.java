@@ -5,10 +5,12 @@ import com.school.torconfigtool.models.BridgeRelayConfig;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BridgeConfigurationService extends BaseRelayConfigurationService<BridgeRelayConfig> {
+public class BridgeConfigurationService implements RelayConfigService<BridgeRelayConfig> {
+
+    private final RelayController relayController;
 
     public BridgeConfigurationService(RelayController relayController) {
-        super(relayController);
+        this.relayController = relayController;
     }
 
     @Override
