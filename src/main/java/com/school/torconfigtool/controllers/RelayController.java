@@ -182,7 +182,7 @@ public class RelayController {
             throw new RuntimeException(e);
         }
 
-        return false;
+        return true;
     }
 }
 
