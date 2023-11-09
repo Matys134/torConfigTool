@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.models.BaseRelayConfig;
-import com.school.torconfigtool.models.BridgeRelayConfig;
 import com.school.torconfigtool.models.GuardRelayConfig;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,25 +82,14 @@ public class RelayController {
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
             writer.write("DataDirectory " + dataDirectoryPath);
 
-            // If the relay config has specific fields (like Guard or Bridge), handle them here
-            if (config instanceof GuardRelayConfig) {
-                // Handle Guard-specific config
-                GuardRelayConfig guardConfig = (GuardRelayConfig) config;
-                // Write guard-specific configurations to the file
-            } else if (config instanceof BridgeRelayConfig) {
-                // Handle Bridge-specific config
-                BridgeRelayConfig bridgeConfig = (BridgeRelayConfig) config;
-                // Write bridge-specific configurations to the file
-                writer.write("ServerTransportListenAddr obfs4 " + bridgeConfig.getBridgeTransportListenAddr());
-                writer.newLine();
-                // Include other bridge-specific settings
-            }
+            // Use the new method to write specific configurations
+            config.writeSpecificConfig(writer);
 
-            // Add any other specific configurations for different types of relays
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private void checkRunningRelays() {
         try {
@@ -109,7 +97,7 @@ public class RelayController {
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            List<Integer> runningRelayPIDs = reader.lines().filter(line -> line.contains("tor -f local-torrc-")).map(line -> line.split("\\s+")).filter(parts -> parts.length >= 2).map(parts -> Integer.parseInt(parts[1])).collect(Collectors.toList());
+            List<Integer> runningRelayPIDs = reader.lines().filter(line -> line.contains("tor -f local-torrc-")).map(line -> line.split("\\s+")).filter(parts -> parts.length >= 2).map(parts -> Integer.parseInt(parts[1])).toList();
 
             runningRelayPIDs.forEach(pid -> System.out.println("PID: " + pid));
         } catch (IOException e) {

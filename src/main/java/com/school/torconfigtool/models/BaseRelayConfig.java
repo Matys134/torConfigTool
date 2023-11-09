@@ -2,12 +2,17 @@ package com.school.torconfigtool.models;
 
 import lombok.Data;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 @Data
-public class BaseRelayConfig {
+public abstract class BaseRelayConfig {
     private String nickname;
     private String orPort;
     private String contact;
     private String controlPort;
     private String socksPort;
+
+    public abstract void writeSpecificConfig(BufferedWriter writer) throws IOException;
     // Add other common attributes and methods here...
 }
