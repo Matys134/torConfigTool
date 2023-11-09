@@ -42,6 +42,12 @@ public class RelayController {
                 return "relay-config";
             }
 
+            // Check if the ports are available
+            if (!portsAreAvailable(relayPort, controlPort, socksPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }
+
             GuardRelayConfig config = new GuardRelayConfig(); // Or BridgeRelayConfig depending on the context
             config.setNickname(relayNickname);
             config.setOrPort(String.valueOf(relayPort)); // Assuming the orPort is a String. Convert as necessary
@@ -125,4 +131,58 @@ public class RelayController {
         return false;
     }
 
+    // Check if the ports are available by checking torrc files and running processes
+    private boolean portsAreAvailable(int relayPort, int controlPort, int socksPort) {
+        String currentDirectory = System.getProperty("user.dir");
+        String torrcDirectory = currentDirectory + File.separator + "torrc" + File.separator + "guard";
+
+        File[] torrcFiles = new File(torrcDirectory).listFiles();
+        if (torrcFiles != null) {
+            for (File file : torrcFiles) {
+                if (file.isFile() && file.getName().startsWith("local-torrc-")) {
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            if (line.startsWith("ORPort") && line.contains(String.valueOf(relayPort))) {
+                                return false;
+                            } else if (line.startsWith("ControlPort") && line.contains(String.valueOf(controlPort))) {
+                                return false;
+                            } else if (line.startsWith("SocksPort") && line.contains(String.valueOf(socksPort))) {
+                                return false;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        try {
+            Process process = Runtime.getRuntime().exec("ps aux");
+            InputStream inputStream = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            List<Integer> runningRelayPIDs = reader.lines().filter(line -> line.contains("tor -f local-torrc-")).map(line -> line.split("\\s+")).filter(parts -> parts.length >= 2).map(parts -> Integer.parseInt(parts[1])).toList();
+
+            for (Integer pid : runningRelayPIDs) {
+                String command = String.format("netstat -tulpn | grep %d", pid);
+                Process netstatProcess = Runtime.getRuntime().exec(command);
+                InputStream netstatInputStream = netstatProcess.getInputStream();
+                BufferedReader netstatReader = new BufferedReader(new InputStreamReader(netstatInputStream));
+
+                List<String> netstatOutput = netstatReader.lines().toList();
+                for (String netstatLine : netstatOutput) {
+                    if (netstatLine.contains(String.valueOf(relayPort)) || netstatLine.contains(String.valueOf(controlPort)) || netstatLine.contains(String.valueOf(socksPort))) {
+                        return false;
+                    }
+                }
+            }
+    } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
 }
+
