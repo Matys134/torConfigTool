@@ -59,22 +59,52 @@
 
 <!-- Other Relay Type Tab Content -->
 <div id="bridgeTab" class="tabcontent">
-    <form action="/bridge/configure" method="post">
-        <label for="bridgePort">Bridge Port (e.g., 9001):</label>
-        <input type="text" id="bridgePort" name="bridgePort" required><br><br>
+    <form id="bridgeForm" action="/bridge/configure" method="post">
+        <label for="bridgeType">Bridge Type:</label>
+        <select id="bridgeType" name="bridgeType" onchange="toggleBridgeFields()">
+            <option value="bridge">Bridge</option>
+            <option value="webtunnel">WebTunnel Bridge</option>
+            <option value="snowflake">Snowflake</option>
+        </select><br><br>
 
-        <label for="bridgeTransportListenAddr">Server Transport Listen Address (e.g.,9001):</label>
-        <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required><br><br>
+        <!-- Common Fields -->
+        <div id="commonFields">
+            <label for="bridgeContact">Contact Email:</label>
+            <input type="email" id="bridgeContact" name="bridgeContact" required><br><br>
 
-        <label for="bridgeContact">Contact Email:</label>
-        <input type="email" id="bridgeContact" name="bridgeContact" required><br><br>
+            <label for="bridgeNickname">Nickname:</label>
+            <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
+        </div>
 
-        <label for="bridgeNickname">Nickname:</label>
-        <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
+        <!-- Specific Fields for Bridge -->
+        <div id="bridgeFields" class="bridge-specific">
+            <label for="bridgePort">ORPort (e.g., 9001):</label>
+            <input type="text" id="bridgePort" name="bridgePort" required><br><br>
+
+            <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
+            <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required><br><br>
+        </div>
+
+        <!-- Specific Fields for WebTunnel Bridge -->
+        <div id="webtunnelFields" class="bridge-specific" style="display: none;">
+            <label for="webtunnelDomain">Domain:</label>
+            <input type="text" id="webtunnelDomain" name="webtunnelDomain"><br><br>
+        </div>
+
+        <!-- Specific Fields for Snowflake -->
+        <div id="snowflakeFields" class="bridge-specific" style="display: none;">
+            <!-- Snowflake has no specific fields to enter -->
+        </div>
 
         <button type="submit">Configure Bridge</button>
     </form>
+
+    <!-- Configuration for Snowflake -->
+    <form id="snowflakeForm" action="/snowflake/configure" method="post" style="display: none;">
+        <button type="submit">Configure Snowflake</button>
+    </form>
 </div>
+
 
 <!-- Other Relay Type Tab Content -->
 <div id="onionTab" class="tabcontent">
@@ -101,5 +131,33 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/tabs.js"></script> <!-- Include your JavaScript -->
+<script>
+    function toggleBridgeFields() {
+        var bridgeType = document.getElementById("bridgeType").value;
+        var commonFields = document.getElementById("commonFields");
+        var bridgeFields = document.getElementById("bridgeFields");
+        var webtunnelFields = document.getElementById("webtunnelFields");
+        var snowflakeFields = document.getElementById("snowflakeFields");
+
+        // Hide all fields initially
+        commonFields.style.display = "none";
+        bridgeFields.style.display = "none";
+        webtunnelFields.style.display = "none";
+        snowflakeFields.style.display = "none";
+
+        // Show specific fields based on the selected bridge type
+        if (bridgeType === "bridge" || bridgeType === "webtunnel") {
+            commonFields.style.display = "block";
+        }
+
+        if (bridgeType === "bridge") {
+            bridgeFields.style.display = "block";
+        } else if (bridgeType === "webtunnel") {
+            webtunnelFields.style.display = "block";
+        } else if (bridgeType === "snowflake") {
+            snowflakeFields.style.display = "block";
+        }
+    }
+</script>
 </body>
 </html>

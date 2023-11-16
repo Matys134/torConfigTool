@@ -32,6 +32,37 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 apt update
 apt install -y tor deb.torproject.org-keyring
 apt install -y -t bullseye-backports obfs4proxy
-apt install -y apache2
+apt install -y nginx
+apt install -y golang
+apt install -y git
 
-echo "Installation completed successfully."
+echo "Tor installation completed successfully."
+
+# Install unattended-upgrades and apt-listchanges
+apt-get update
+apt-get install -y unattended-upgrades apt-listchanges
+
+# Configure 50unattended-upgrades
+cat > /etc/apt/apt.conf.d/50unattended-upgrades <<EOF
+Unattended-Upgrade::Origins-Pattern {
+    "origin=Debian,codename=${distro_codename},label=Debian-Security";
+    "origin=TorProject";
+};
+Unattended-Upgrade::Package-Blacklist {
+};
+EOF
+
+# Configure 20auto-upgrades
+cat > /etc/apt/apt.conf.d/20auto-upgrades <<EOF
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::AutocleanInterval "5";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Verbose "1";
+EOF
+
+echo "Automatic updates and unattended upgrades have been configured."
+
+# Trigger the initial unattended-upgrades run
+unattended-upgrade -d
+
+echo "Installation and configuration completed successfully."
