@@ -6,6 +6,26 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Display menu to the user
+echo "Choose the option you want to install"
+echo "1. Tor and obfs4proxy (Bridge)"
+echo "2. Tor and nginx (Onion)"
+read -p "Enter the number of your choice: " user_choice
+
+# Check the user's choice and install the appropriate components
+case $user_choice in
+    1)
+        components=("tor" "-t bullseye-backports obfs4proxy")
+        ;;
+    2)
+        components=("tor" "nginx")
+        ;;
+    *)
+        echo "Invalid choice. Exiting."
+        exit 1
+        ;;
+esac
+
 # Check the architecture
 architecture=$(dpkg --print-architecture)
 
@@ -30,11 +50,8 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 
 # Update the package list and install Tor and the Tor Project keyring
 apt update
-apt install -y tor deb.torproject.org-keyring
-apt install -y -t bullseye-backports obfs4proxy
-apt install -y nginx
-apt install -y golang
-apt install -y git
+apt install -y "${components[@]}"
+apt install -y deb.torproject.org-keyring
 
 echo "Tor installation completed successfully."
 
