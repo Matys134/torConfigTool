@@ -24,14 +24,12 @@ public class TorConfigToolApplication {
 				process.waitFor();
 				if (process.exitValue() != 0) {
 					System.out.println("Required program " + program + " not found. Exiting...");
-					System.exit(1);
 				}
 				else {
 					System.out.println("Required program " + program + " found.");
 				}
 			} catch (Exception e) {
 				System.out.println("Required program " + program + " not found. Exiting...");
-				System.exit(1);
 			}
 		}
 	}
