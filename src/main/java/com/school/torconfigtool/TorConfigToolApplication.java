@@ -28,7 +28,7 @@ public class TorConfigToolApplication {
 		}
 	}
 
-	private static boolean isProgramInstalled(String programName) {
+	public static boolean isProgramInstalled(String programName) {
 		try {
 			// Use the "which" command to check if the program is installed
 			Process process = new ProcessBuilder("which", programName).start();

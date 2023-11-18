@@ -107,7 +107,7 @@
 
 
 <!-- Other Relay Type Tab Content -->
-<div id="onionTab" class="tabcontent">
+<div th:if="${availableRelayTypes.contains('onion')}" id="onionTab" class="tabcontent">
     <form action="/onion-service/configure" method="post">
         <label for="onionServicePort">Onion Service Port (e.g., 80):</label>
         <input type="text" id="onionServicePort" name="onionServicePort" required><br><br>
