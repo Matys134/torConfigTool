@@ -29,10 +29,10 @@ public class GuardConfigurationController {
                 return ResponseEntity.ok(Map.of("success", "Guard configuration updated successfully"));
             } else {
                 logger.warn("Failed to update guard configuration for relay: {}", config.getNickname());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Failed to update guard configuration"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to update guard configuration"));
             }
         } catch (Exception e) {
-            logger.error("Exception occurred while updating guard configuration: {}", e.getMessage());
+            logger.error("Exception occurred while updating guard configuration", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An unexpected error occurred"));
         }
     }
