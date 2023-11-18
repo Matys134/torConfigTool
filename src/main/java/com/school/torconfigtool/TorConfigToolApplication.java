@@ -16,21 +16,29 @@ public class TorConfigToolApplication {
 	}
 
 	private static void checkRequiredPrograms() {
-		String[] requiredPrograms = {"nginx", "obfs4proxy", "tor"};
+		// Add the names of the programs you want to check for
+		String[] requiredPrograms = {"nginx", "obfs4proxy"};
 
+		// Iterate through the list of required programs and check their availability
 		for (String program : requiredPrograms) {
-			try {
-				Process process = Runtime.getRuntime().exec("which " + program);
-				process.waitFor();
-				if (process.exitValue() != 0) {
-					System.out.println("Required program " + program + " not found. Exiting...");
-				}
-				else {
-					System.out.println("Required program " + program + " found.");
-				}
-			} catch (Exception e) {
-				System.out.println("Required program " + program + " not found. Exiting...");
+			if (!isProgramInstalled(program)) {
+				System.err.println("Error: " + program + " is not installed. Please install it before running the application.");
+				System.exit(1); // Exit the application with an error code
 			}
+		}
+	}
+
+	private static boolean isProgramInstalled(String programName) {
+		try {
+			// Use the "which" command to check if the program is installed
+			Process process = new ProcessBuilder("which", programName).start();
+			int exitCode = process.waitFor();
+
+			// If the exit code is 0, the program is installed; otherwise, it's not installed
+			return exitCode == 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 }

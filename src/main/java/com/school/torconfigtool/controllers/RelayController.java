@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,9 +19,10 @@ import java.util.stream.Collectors;
 public class RelayController {
 
     @GetMapping
-    public String relayConfigurationForm() {
+    public String relayConfigurationForm(Model model) {
         System.out.println("Relay configuration form requested");
         checkRunningRelays();
+
         return "relay-config";
     }
 
