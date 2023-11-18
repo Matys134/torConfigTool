@@ -16,8 +16,8 @@
 <!-- Create the tabs -->
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
-    <button class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
-    <button class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
+    <button th:if="${availableRelayTypes.contains('bridge')}" class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
+    <button th:if="${availableRelayTypes.contains('onion')}" class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
 </div>
 
 <!-- Relay Tab Content -->
