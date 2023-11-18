@@ -109,12 +109,9 @@ public class RelayController {
             writer.newLine();
 
             // Add any other common configurations from BaseRelayConfig
-
-            if (!(config instanceof GuardRelayConfig)) {
                 String currentDirectory = System.getProperty("user.dir");
                 String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
                 writer.write("DataDirectory " + dataDirectoryPath);
-            }
 
             // Use the new method to write specific configurations
             config.writeSpecificConfig(writer);

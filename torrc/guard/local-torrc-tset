@@ -1,7 +1,0 @@
-Nickname tset
-ORPort 9003
-ContactInfo koubamates4@gmail.com
-SocksPort 9152
-ControlPort 9051
-DataDirectory /home/matys/IdeaProjects/torConfigTool/torrc/dataDirectory/tset
-MyFamily 

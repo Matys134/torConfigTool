@@ -1,7 +1,0 @@
-BridgeRelay 1
-ORPort 9001
-ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy
-ServerTransportListenAddr obfs4 0.0.0.0:9001
-ExtORPort auto
-ContactInfo gdfgdf@fsdf.fgsdf
-Nickname dfgdfg
