@@ -1,5 +1,6 @@
 package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.models.RelayConfig;
 import com.school.torconfigtool.models.BridgeRelayConfig;
 import com.school.torconfigtool.models.GuardRelayConfig;
 import com.school.torconfigtool.models.TorConfiguration;
@@ -22,7 +23,6 @@ public class TorConfigurationService {
     }
 
     private String buildFolderPath(String relayType) {
-        // Assumes the folder is either "guard" or "bridge", may need validation
         return "torrc" + File.separator + relayType;
     }
 
@@ -57,55 +57,44 @@ public class TorConfigurationService {
     }
 
     private void parseTorConfigLine(String line, TorConfiguration config, String relayType) {
-        // Check the relayType and instantiate the appropriate config if null
-        if ("guard".equals(relayType) && config.getGuardRelayConfig() == null) {
-            config.setGuardRelayConfig(new GuardRelayConfig());
-        } else if ("bridge".equals(relayType) && config.getBridgeRelayConfig() == null) {
-            config.setBridgeRelayConfig(new BridgeRelayConfig());
-        }
+        RelayConfig relayConfig = getRelayConfig(config, relayType);
 
         if (line.startsWith("Nickname")) {
-            if ("guard".equals(relayType)) {
-                config.getGuardRelayConfig().setNickname(line.split(" ")[1].trim());
-            } else if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setNickname(line.split(" ")[1].trim());
-            }
+            relayConfig.setNickname(line.split(" ")[1].trim());
         } else if (line.startsWith("ORPort")) {
-            if ("guard".equals(relayType)) {
-                config.getGuardRelayConfig().setOrPort(line.split(" ")[1].trim());
-            } else if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setOrPort(line.split(" ")[1].trim());
-            }
+            relayConfig.setOrPort(line.split(" ")[1].trim());
         } else if (line.startsWith("Contact")) {
-            if ("guard".equals(relayType)) {
-                config.getGuardRelayConfig().setContact(line.split(" ")[1].trim());
-            } else if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setContact(line.split(" ")[1].trim());
-            }
+            relayConfig.setContact(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServiceDir")) {
             config.setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
             config.setHiddenServicePort(line.split(" ")[1].trim());
         } else if (line.startsWith("ControlPort")) {
-            if ("guard".equals(relayType)) {
-                config.getGuardRelayConfig().setControlPort(line.split(" ")[1].trim());
-            } else if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setControlPort(line.split(" ")[1].trim());
-            }
+            relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("SocksPort")) {
-            if ("guard".equals(relayType)) {
-                config.getGuardRelayConfig().setSocksPort(line.split(" ")[1].trim());
-            } else if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setSocksPort(line.split(" ")[1].trim());
-            }
+            relayConfig.setSocksPort(line.split(" ")[1].trim());
         } else if (line.startsWith("BandwidthRate")) {
             config.setBandwidthRate(line.split(" ")[1].trim());
-        } else if (line.startsWith("ServerTransportListenAddr obfs4")) {
-            if ("bridge".equals(relayType)) {
-                config.getBridgeRelayConfig().setBridgeTransportListenAddr(line.substring(line.indexOf("obfs4")).trim());
-            }
+        } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
+            ((BridgeRelayConfig) relayConfig).setBridgeTransportListenAddr(line.substring(line.indexOf("obfs4")).trim());
         }
-        // Add other specific configurations as needed...
     }
 
+    private RelayConfig getRelayConfig(TorConfiguration config, String relayType) {
+        RelayConfig relayConfig = null;
+
+        if ("guard".equals(relayType)) {
+            if (config.getGuardRelayConfig() == null) {
+                config.setGuardRelayConfig(new GuardRelayConfig());
+            }
+            relayConfig = config.getGuardRelayConfig();
+        } else if ("bridge".equals(relayType)) {
+            if (config.getBridgeRelayConfig() == null) {
+                config.setBridgeRelayConfig(new BridgeRelayConfig());
+            }
+            relayConfig = config.getBridgeRelayConfig();
+        }
+
+        return relayConfig;
+    }
 }

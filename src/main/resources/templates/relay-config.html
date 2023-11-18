@@ -16,8 +16,8 @@
 <!-- Create the tabs -->
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
-    <button th:if="${availableRelayTypes.contains('bridge')}" class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
-    <button th:if="${availableRelayTypes.contains('onion')}" class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
+    <button class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
+    <button class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
 </div>
 
 <!-- Relay Tab Content -->
@@ -107,7 +107,7 @@
 
 
 <!-- Other Relay Type Tab Content -->
-<div th:if="${availableRelayTypes.contains('onion')}" id="onionTab" class="tabcontent">
+<div id="onionTab" class="tabcontent">
     <form action="/onion-service/configure" method="post">
         <label for="onionServicePort">Onion Service Port (e.g., 80):</label>
         <input type="text" id="onionServicePort" name="onionServicePort" required><br><br>

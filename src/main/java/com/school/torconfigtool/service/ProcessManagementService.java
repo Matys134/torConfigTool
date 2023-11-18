@@ -19,10 +19,17 @@ public class ProcessManagementService {
     public int executeCommand(String command) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
         Process process = processBuilder.start();
-        System.out.println(command);
+
+        // Log the command being executed
+        logger.info("Executing command: {}", command);
 
         try {
-            return process.waitFor();
+            int exitCode = process.waitFor();
+
+            // Log the exit code
+            logger.info("Command exit code: {}", exitCode);
+
+            return exitCode;
         } finally {
             process.destroy();
         }
@@ -32,11 +39,11 @@ public class ProcessManagementService {
         String relayNickname = new File(torrcFilePath).getName();
         String command = String.format("ps aux | grep -P '\\b%s\\b' | grep -v grep | awk '{print $2}'", relayNickname);
 
-        System.out.println(command);
+        // Log the command to be executed
         logger.debug("Command to execute: {}", command);
 
         try {
-            List<String> outputLines = getStrings(command);
+            List<String> outputLines = getCommandOutput(command);
 
             // Log the full output
             logger.debug("Command output: {}", outputLines);
@@ -56,7 +63,7 @@ public class ProcessManagementService {
         }
     }
 
-    private static List<String> getStrings(String command) throws IOException {
+    private static List<String> getCommandOutput(String command) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
         Process process = processBuilder.start();
 
@@ -70,6 +77,4 @@ public class ProcessManagementService {
         }
         return outputLines;
     }
-
-
 }

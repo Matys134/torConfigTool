@@ -54,8 +54,7 @@ public class RelayOperationsController {
 
     private String readHostnameFile(String hiddenServicePort) {
         // The base directory where your hidden services directories are stored
-        String hiddenServiceBaseDir = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "hiddenServiceDirs";
-        // Construct the path to the hostname file for the hidden service port
+        String hiddenServiceBaseDir = Paths.get(System.getProperty("user.dir"), "torrc", "hiddenServiceDirs").toString();
         Path hostnameFilePath = Paths.get(hiddenServiceBaseDir, "onion-service-" + hiddenServicePort, "hostname");
 
         try {
@@ -63,7 +62,6 @@ public class RelayOperationsController {
             List<String> lines = Files.readAllLines(hostnameFilePath);
             return lines.isEmpty() ? "No hostname found" : lines.get(0);
         } catch (IOException e) {
-            // Log the exception and return an indicative error message
             logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
             return "Unable to read hostname file";
         }
