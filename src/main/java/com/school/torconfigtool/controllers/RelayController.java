@@ -10,18 +10,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.school.torconfigtool.TorConfigToolApplication.isProgramInstalled;
 
 @Controller
 @RequestMapping("/relay")
 public class RelayController {
 
     @GetMapping
-    public String relayConfigurationForm() {
+    public String relayConfigurationForm(Model model) {
         System.out.println("Relay configuration form requested");
         checkRunningRelays();
+
+        List<String> availableRelayTypes = determineAvailableRelayTypes();
+        model.addAttribute("availableRelayTypes", availableRelayTypes);
+
         return "relay-config";
+    }
+
+    private List<String> determineAvailableRelayTypes() {
+        List<String> availableRelayTypes = new ArrayList<>();
+
+        if (isProgramInstalled("nginx")) {
+            availableRelayTypes.add("onion");
+        }
+        if (isProgramInstalled("obfs4proxy")) {
+            availableRelayTypes.add("bridge");
+        }
+        return availableRelayTypes;
     }
 
     @PostMapping("/configure")
