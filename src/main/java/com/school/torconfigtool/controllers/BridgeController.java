@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/bridge/";
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     @GetMapping
     public String bridgeConfigurationForm() {
@@ -34,7 +34,7 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelDomain,
                                   Model model) {
         try {
-            String torrcFileName = "local-torrc-bridge-" + (bridgeNickname != null ? bridgeNickname : "");
+            String torrcFileName = "torrc-" + (bridgeNickname != null ? bridgeNickname : "");
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (!Files.exists(torrcFilePath)) {

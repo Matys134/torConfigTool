@@ -22,7 +22,7 @@
 
 <!-- Relay Tab Content -->
 <div id="relayTab" class="tabcontent">
-    <form action="/relay/configure" method="post">
+    <form action="/guard/configure" method="post">
         <label for="relayNickname">Nickname:</label>
         <input type="text" id="relayNickname" name="relayNickname" required><br><br>
 
@@ -48,11 +48,11 @@
         <button type="submit">Configure Relay</button>
     </form>
 
-    <form action="/relay/start" method="post">
+    <form action="/guard/start" method="post">
         <button type="submit">Start Tor Relay</button>
     </form>
 
-    <form action="/relay/stop" method="post">
+    <form action="/guard/stop" method="post">
         <button type="submit">Stop Tor Relay</button>
     </form>
 </div>
