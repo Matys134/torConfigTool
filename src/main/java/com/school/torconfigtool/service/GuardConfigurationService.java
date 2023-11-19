@@ -1,6 +1,6 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.controllers.RelayController;
+import com.school.torconfigtool.controllers.GuardController;
 import com.school.torconfigtool.models.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +11,17 @@ public class GuardConfigurationService implements RelayConfigService<GuardRelayC
 
     private static final Logger logger = LoggerFactory.getLogger(GuardConfigurationService.class);
 
-    private final RelayController relayController;
+    private final GuardController guardController;
 
-    public GuardConfigurationService(RelayController relayController) {
-        this.relayController = relayController;
+    public GuardConfigurationService(GuardController guardController) {
+        this.guardController = guardController;
     }
 
     @Override
     public boolean updateConfiguration(GuardRelayConfig config) {
         try {
             String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            relayController.createTorrcFile(torrcFilePath, config);
+            TorrcFileCreator.createTorrcFile(torrcFilePath, config);
             return true;
         } catch (Exception e) {
             logger.error("Error updating guard relay configuration", e);

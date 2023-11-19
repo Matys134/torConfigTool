@@ -1,6 +1,6 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.controllers.RelayController;
+import com.school.torconfigtool.controllers.GuardController;
 import com.school.torconfigtool.models.BridgeRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,17 +11,17 @@ public class BridgeConfigurationService implements RelayConfigService<BridgeRela
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeConfigurationService.class);
 
-    private final RelayController relayController;
+    private final GuardController guardController;
 
-    public BridgeConfigurationService(RelayController relayController) {
-        this.relayController = relayController;
+    public BridgeConfigurationService(GuardController guardController) {
+        this.guardController = guardController;
     }
 
     @Override
     public boolean updateConfiguration(BridgeRelayConfig config) {
         try {
             String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            relayController.createTorrcFile(torrcFilePath, config);
+            TorrcFileCreator.createTorrcFile(torrcFilePath, config);
             return true;
         } catch (Exception e) {
             logger.error("Error updating bridge relay configuration", e);

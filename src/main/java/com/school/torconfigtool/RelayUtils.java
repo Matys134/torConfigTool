@@ -1,15 +1,7 @@
-package com.school.torconfigtool.controllers;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.models.BaseRelayConfig;
-import com.school.torconfigtool.models.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,26 +9,13 @@ import java.util.List;
 
 import static com.school.torconfigtool.TorConfigToolApplication.isProgramInstalled;
 
-@Controller
-@RequestMapping("/relay")
-public class RelayController {
+public class RelayUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(RelayController.class);
-    private static final String TORRC_DIRECTORY = "torrc" + File.separator + "guard";
-    private static final String TORRC_FILE_PREFIX = "local-torrc-";
+    private static final Logger logger = LoggerFactory.getLogger(RelayUtils.class);
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private static final String TORRC_FILE_PREFIX = "torrc-";
 
-    @GetMapping
-    public String relayConfigurationForm(Model model) {
-        logger.info("Relay configuration form requested");
-        checkRunningRelays();
-
-        List<String> availableRelayTypes = determineAvailableRelayTypes();
-        model.addAttribute("availableRelayTypes", availableRelayTypes);
-
-        return "relay-config";
-    }
-
-    private List<String> determineAvailableRelayTypes() {
+    public static List<String> determineAvailableRelayTypes() {
         List<String> availableRelayTypes = new ArrayList<>();
 
         if (isProgramInstalled("nginx")) {
@@ -48,81 +27,7 @@ public class RelayController {
         return availableRelayTypes;
     }
 
-    @PostMapping("/configure")
-    public String configureRelay(@RequestParam String relayNickname,
-                                 @RequestParam int relayPort,
-                                 @RequestParam String relayContact,
-                                 @RequestParam int controlPort,
-                                 @RequestParam int socksPort,
-                                 Model model) {
-        try {
-            String torrcFileName = TORRC_FILE_PREFIX + relayNickname;
-            String torrcFilePath = TORRC_DIRECTORY + File.separator + torrcFileName;
-
-            if (relayExists(relayNickname)) {
-                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "relay-config";
-            }
-
-            if (!portsAreAvailable(relayPort, controlPort, socksPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
-            }
-
-            GuardRelayConfig config = createRelayConfig(relayNickname, relayPort, relayContact, controlPort, socksPort);
-            if (!new File(torrcFilePath).exists()) {
-                createTorrcFile(torrcFilePath, config);
-            }
-
-            model.addAttribute("successMessage", "Tor Relay configured successfully!");
-        } catch (Exception e) {
-            logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
-        }
-
-        return "relay-config";
-    }
-
-    private GuardRelayConfig createRelayConfig(String relayNickname, int relayPort, String relayContact, int controlPort, int socksPort) {
-        GuardRelayConfig config = new GuardRelayConfig();
-        config.setNickname(relayNickname);
-        config.setOrPort(String.valueOf(relayPort));
-        config.setContact(relayContact);
-        config.setControlPort(String.valueOf(controlPort));
-        config.setSocksPort(String.valueOf(socksPort));
-        // Set other properties as necessary, for example, bandwidth rate
-
-        return config;
-    }
-
-    public void createTorrcFile(String filePath, BaseRelayConfig config) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("Nickname " + config.getNickname());
-            writer.newLine();
-            writer.write("ORPort " + config.getOrPort());
-            writer.newLine();
-            writer.write("ContactInfo " + config.getContact());
-            writer.newLine();
-            writer.write("ControlPort " + config.getControlPort());
-            writer.newLine();
-            writer.write("SocksPort " + config.getSocksPort());
-            writer.newLine();
-
-            // Add any other common configurations from BaseRelayConfig
-                String currentDirectory = System.getProperty("user.dir");
-                String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
-                writer.write("DataDirectory " + dataDirectoryPath);
-
-            // Use the new method to write specific configurations
-            config.writeSpecificConfig(writer);
-
-        } catch (IOException e) {
-            logger.error("Error creating Torrc file", e);
-        }
-    }
-
-
-    private void checkRunningRelays() {
+    public static void checkRunningRelays() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("ps", "aux");
             Process process = processBuilder.start();
@@ -130,7 +35,7 @@ public class RelayController {
             try (InputStreamReader reader = new InputStreamReader(process.getInputStream())) {
                 List<Integer> runningRelayPIDs = new BufferedReader(reader)
                         .lines()
-                        .filter(line -> line.contains("tor -f local-torrc-"))
+                        .filter(line -> line.contains("tor -f torrc-"))
                         .map(line -> line.split("\\s+"))
                         .filter(parts -> parts.length >= 2)
                         .map(parts -> Integer.parseInt(parts[1]))
@@ -150,9 +55,8 @@ public class RelayController {
         }
     }
 
-
-    private boolean relayExists(String relayNickname) {
-        String torrcDirectory = System.getProperty("user.dir") + File.separator + TORRC_DIRECTORY;
+    public static boolean relayExists(String relayNickname) {
+        String torrcDirectory = System.getProperty("user.dir") + File.separator + TORRC_DIRECTORY_PATH;
 
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
@@ -170,7 +74,7 @@ public class RelayController {
     }
 
     // Check if the ports are available by checking torrc files and running processes
-    private boolean portsAreAvailable(int relayPort, int controlPort, int socksPort) {
+    public static boolean portsAreAvailable(int relayPort, int controlPort, int socksPort) {
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc" + File.separator + "guard";
 
@@ -253,6 +157,4 @@ public class RelayController {
 
         return true;
     }
-
 }
-
