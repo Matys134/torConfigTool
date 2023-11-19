@@ -21,7 +21,7 @@ import java.util.List;
 public class GuardController {
 
     private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private static final String TORRC_DIRECTORY_PATH = "torrc/guard/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     @GetMapping

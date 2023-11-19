@@ -135,7 +135,7 @@ public class RelayOperationsController {
 
     private Path buildTorrcFilePath(String relayNickname, String relayType) {
         String folder = relayType.equals("guard") ? "guard" : "bridge";
-        return Paths.get(System.getProperty("user.dir"), "torrc", folder, "local-torrc-" + relayNickname);
+        return Paths.get(System.getProperty("user.dir"), "torrc", folder, "torrc-" + relayNickname);
     }
 
     // This method could be moved from RelayController to here

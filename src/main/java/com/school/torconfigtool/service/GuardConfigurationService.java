@@ -11,10 +11,7 @@ public class GuardConfigurationService implements RelayConfigService<GuardRelayC
 
     private static final Logger logger = LoggerFactory.getLogger(GuardConfigurationService.class);
 
-    private final GuardController guardController;
-
-    public GuardConfigurationService(GuardController guardController) {
-        this.guardController = guardController;
+    public GuardConfigurationService() {
     }
 
     @Override
@@ -31,6 +28,6 @@ public class GuardConfigurationService implements RelayConfigService<GuardRelayC
 
     private String buildTorrcFilePath(String nickname) {
         // Use Path for file manipulation
-        return String.format("torrc/guard/local-torrc-%s", nickname);
+        return String.format("torrc/guard/torrc-%s", nickname);
     }
 }

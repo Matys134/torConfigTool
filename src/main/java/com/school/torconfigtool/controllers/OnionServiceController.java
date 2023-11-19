@@ -62,7 +62,7 @@ public class OnionServiceController {
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         try {
-            String torrcFilePath = TORRC_DIRECTORY_PATH + "local-torrc-onion" + onionServicePort;
+            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-onion" + onionServicePort;
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, onionServicePort);
             }

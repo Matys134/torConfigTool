@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private static final String TORRC_DIRECTORY_PATH = "torrc/bridge/";
 
     @GetMapping
     public String bridgeConfigurationForm() {

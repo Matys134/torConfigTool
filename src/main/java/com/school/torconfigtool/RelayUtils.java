@@ -82,7 +82,7 @@ public class RelayUtils {
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
-                if (file.isFile() && file.getName().startsWith("local-torrc-")) {
+                if (file.isFile() && file.getName().startsWith("torrc-")) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {

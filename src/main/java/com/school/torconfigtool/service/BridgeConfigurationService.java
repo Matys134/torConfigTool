@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.controllers.GuardController;
 import com.school.torconfigtool.models.BridgeRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +10,7 @@ public class BridgeConfigurationService implements RelayConfigService<BridgeRela
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeConfigurationService.class);
 
-    private final GuardController guardController;
-
-    public BridgeConfigurationService(GuardController guardController) {
-        this.guardController = guardController;
+    public BridgeConfigurationService() {
     }
 
     @Override
@@ -31,6 +27,6 @@ public class BridgeConfigurationService implements RelayConfigService<BridgeRela
 
     private String buildTorrcFilePath(String nickname) {
         // Use Path for file manipulation
-        return String.format("torrc/bridge/local-torrc-%s", nickname);
+        return String.format("torrc/bridge/torrc-%s", nickname);
     }
 }
