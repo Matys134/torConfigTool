@@ -2,6 +2,7 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.models.BaseRelayConfig;
 import com.school.torconfigtool.models.GuardRelayConfig;
+import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,9 @@ import static com.school.torconfigtool.TorConfigToolApplication.isProgramInstall
 
 @Controller
 @RequestMapping("/relay")
-public class RelayController {
+public class GuardController {
 
-    private static final Logger logger = LoggerFactory.getLogger(RelayController.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
     private static final String TORRC_DIRECTORY = "torrc" + File.separator + "guard";
     private static final String TORRC_FILE_PREFIX = "local-torrc-";
 
@@ -71,7 +72,7 @@ public class RelayController {
 
             GuardRelayConfig config = createRelayConfig(relayNickname, relayPort, relayContact, controlPort, socksPort);
             if (!new File(torrcFilePath).exists()) {
-                createTorrcFile(torrcFilePath, config);
+                TorrcFileCreator.createTorrcFile(torrcFilePath, config);
             }
 
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
@@ -94,33 +95,6 @@ public class RelayController {
 
         return config;
     }
-
-    public void createTorrcFile(String filePath, BaseRelayConfig config) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("Nickname " + config.getNickname());
-            writer.newLine();
-            writer.write("ORPort " + config.getOrPort());
-            writer.newLine();
-            writer.write("ContactInfo " + config.getContact());
-            writer.newLine();
-            writer.write("ControlPort " + config.getControlPort());
-            writer.newLine();
-            writer.write("SocksPort " + config.getSocksPort());
-            writer.newLine();
-
-            // Add any other common configurations from BaseRelayConfig
-                String currentDirectory = System.getProperty("user.dir");
-                String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
-                writer.write("DataDirectory " + dataDirectoryPath);
-
-            // Use the new method to write specific configurations
-            config.writeSpecificConfig(writer);
-
-        } catch (IOException e) {
-            logger.error("Error creating Torrc file", e);
-        }
-    }
-
 
     private void checkRunningRelays() {
         try {
