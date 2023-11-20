@@ -122,7 +122,7 @@ public class RelayUtils {
             List<Integer> runningRelayPIDs;
             try (BufferedReader psReader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()))) {
                 runningRelayPIDs = psReader.lines()
-                        .filter(line -> line.contains("tor -f local-torrc-"))
+                        .filter(line -> line.contains("tor -f torrc-"))
                         .map(line -> line.split("\\s+"))
                         .filter(parts -> parts.length >= 2)
                         .map(parts -> Integer.parseInt(parts[1]))

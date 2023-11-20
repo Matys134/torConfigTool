@@ -7,7 +7,7 @@ public class ProxyConfigurator {
     public static boolean configureProxy() {
         try {
             // Check if the torrc file for the proxy exists, create it if not
-            File torrcFile = new File("torrc/torrc-proxy");
+            File torrcFile = new File("torrc/proxy");
             if (!torrcFile.exists()) {
                 torrcFile.createNewFile();
             }
