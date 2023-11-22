@@ -17,10 +17,10 @@ while true; do
 
     case $user_choice in
         1)
-            components=("tor" "-t bullseye-backports obfs4proxy")
+            components=("-t bullseye-backports obfs4proxy")
             ;;
         2)
-            components=("tor" "nginx")
+            components=("nginx")
             ;;
         3)
             echo "Exiting."
@@ -57,7 +57,7 @@ while true; do
     # Update the package list and install Tor and the Tor Project keyring
     apt update
     apt install -y "${components[@]}"
-    apt install -y deb.torproject.org-keyring
+    apt install -y tor deb.torproject.org-keyring
 
     echo "Tor installation completed successfully."
 
