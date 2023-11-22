@@ -8,7 +8,7 @@ $(document).ready(function () {
             relayType: button.attr('data-config-type')
         };
 
-        if (confirm("Are you sure you want to remove the Torrc file for this relay?")) {
+        if (confirm("Are you sure you want to remove the Torrc file and DataDirectory for this relay?")) {
             $.ajax({
                 type: "POST",
                 url: "/relay-operations/remove",
@@ -16,12 +16,13 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.success) {
                         // Optionally update the view or perform other actions on success
-                        alert("Torrc file removed successfully!");
+                        alert("Torrc file and DataDirectory removed successfully!");
                     } else {
-                        alert("Failed to remove Torrc file.");
+                        alert("Failed to remove Torrc file and DataDirectory.");
                     }
                 }
             });
         }
     });
+
 });

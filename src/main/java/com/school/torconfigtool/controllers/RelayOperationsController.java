@@ -4,6 +4,7 @@ import com.school.torconfigtool.RelayOperationException;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.ProcessManagementService;
 import com.school.torconfigtool.service.TorConfigurationService;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -212,19 +213,30 @@ public class RelayOperationsController {
     }
 
     @PostMapping("/remove")
-    public String removeRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
-
+    @ResponseBody
+    public Map<String, Object> removeRelay(@RequestParam String relayNickname, @RequestParam String relayType) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            // Delete the Torrc file
-            Files.deleteIfExists(torrcFilePath);
-            model.addAttribute("successMessage", "Torrc file removed successfully!");
-        } catch (IOException e) {
-            logger.error("Failed to remove Torrc file for relayNickname: {}", relayNickname, e);
-            model.addAttribute("errorMessage", "Failed to remove Torrc file.");
-        }
+            // Build paths for Torrc file and DataDirectory
+            Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
 
-        return relayOperations(model);
+            // Delete Torrc file
+            Files.deleteIfExists(torrcFilePath);
+
+            // Delete DataDirectory
+            FileUtils.deleteDirectory(new File(dataDirectoryPath));
+
+            response.put("success", true);
+        } catch (IOException e) {
+            logger.error("Failed to remove Torrc file and DataDirectory for relayNickname: {}", relayNickname, e);
+            response.put("success", false);
+        }
+        return response;
+    }
+
+    private String buildDataDirectoryPath(String relayNickname) {
+        return System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
     }
 
 
