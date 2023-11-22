@@ -4,6 +4,7 @@ import com.school.torconfigtool.RelayOperationException;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.ProcessManagementService;
 import com.school.torconfigtool.service.TorConfigurationService;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -210,5 +211,33 @@ public class RelayOperationsController {
             }
         }
     }
+
+    @PostMapping("/remove")
+    @ResponseBody
+    public Map<String, Object> removeRelay(@RequestParam String relayNickname, @RequestParam String relayType) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Build paths for Torrc file and DataDirectory
+            Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
+
+            // Delete Torrc file
+            Files.deleteIfExists(torrcFilePath);
+
+            // Delete DataDirectory
+            FileUtils.deleteDirectory(new File(dataDirectoryPath));
+
+            response.put("success", true);
+        } catch (IOException e) {
+            logger.error("Failed to remove Torrc file and DataDirectory for relayNickname: {}", relayNickname, e);
+            response.put("success", false);
+        }
+        return response;
+    }
+
+    private String buildDataDirectoryPath(String relayNickname) {
+        return System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
+    }
+
 
 }

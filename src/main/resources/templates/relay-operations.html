@@ -22,6 +22,9 @@
         <button class="edit-button"
                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
                 th:attr="data-config-type='guard'">Edit</button>
+        <button class="remove-button"
+                th:data-config-nickname="${config.guardRelayConfig.nickname}"
+                th:data-config-type="guard">Remove</button>
         <button class="start-button" th:data-config-nickname="${config.guardRelayConfig.nickname}" th:attr="data-config-type='guard'">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.guardRelayConfig.nickname}" th:attr="data-config-type='guard'">Stop</button>
     </li>
@@ -106,6 +109,7 @@
 <script src="/js/status.js"></script>
 <script src="/js/start.js"></script>
 <script src="/js/stop.js"></script>
+<script src="/js/remove.js"></script>
 <script>
     function updateHostname() {
         fetch('/onion-service/current-hostname')
