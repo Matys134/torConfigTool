@@ -11,7 +11,8 @@ while true; do
     echo "Choose the option you want to install:"
     echo "1. Tor and obfs4proxy (Bridge)"
     echo "2. Tor and nginx (Onion)"
-    echo "3. Exit"
+    echo "3. Only Tor"
+    echo "4. Exit"
 
     read -p "Enter the number of your choice: " user_choice
 
@@ -23,6 +24,9 @@ while true; do
             components=("nginx")
             ;;
         3)
+            components=()
+            ;;
+        4)
             echo "Exiting."
             exit 0
             ;;
