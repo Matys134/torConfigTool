@@ -211,4 +211,21 @@ public class RelayOperationsController {
         }
     }
 
+    @PostMapping("/remove")
+    public String removeRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
+        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+
+        try {
+            // Delete the Torrc file
+            Files.deleteIfExists(torrcFilePath);
+            model.addAttribute("successMessage", "Torrc file removed successfully!");
+        } catch (IOException e) {
+            logger.error("Failed to remove Torrc file for relayNickname: {}", relayNickname, e);
+            model.addAttribute("errorMessage", "Failed to remove Torrc file.");
+        }
+
+        return relayOperations(model);
+    }
+
+
 }
