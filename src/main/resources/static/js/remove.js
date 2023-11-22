@@ -3,7 +3,10 @@ $(document).ready(function () {
 
     removeButton.click(function () {
         const button = $(this);
-        const data = button.data();
+        const data = {
+            relayNickname: button.attr('data-config-nickname'),
+            relayType: button.attr('data-config-type')
+        };
 
         if (confirm("Are you sure you want to remove the Torrc file for this relay?")) {
             $.ajax({
