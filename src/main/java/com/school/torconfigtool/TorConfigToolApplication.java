@@ -23,7 +23,6 @@ public class TorConfigToolApplication {
 		for (String program : requiredPrograms) {
 			if (!isProgramInstalled(program)) {
 				System.err.println("Error: " + program + " is not installed. Please install it before running the application.");
-				System.exit(1); // Exit the application with an error code
 			}
 		}
 	}

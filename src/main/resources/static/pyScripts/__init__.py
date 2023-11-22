@@ -1,15 +1,16 @@
-import functools
 import os
+import functools
 import threading
+
+import stem
+from requests import RequestException
+from stem.control import EventType, Controller
+import requests
 import time
 
-import requests
-import stem
-from stem.control import EventType, Controller
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://192.168.2.110:8081/api/relay-data"
-
+BASE_API_ENDPOINT = "http://192.168.2.118:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
@@ -33,7 +34,6 @@ def main():
     # Wait for user input to stop monitoring
     input("Press Enter to stop monitoring")
 
-
 def read_control_port(file_path):
     # Read the control port from the Tor configuration file
     try:
@@ -48,7 +48,6 @@ def read_control_port(file_path):
     except Exception as e:
         print(f"Error reading control port from {file_path}: {str(e)}")
     return None
-
 
 def monitor_traffic(control_port):
     while True:
@@ -81,15 +80,19 @@ def monitor_traffic(control_port):
             time.sleep(5)  # Sleep for 5 seconds before retrying
 
 
-def _handle_bandwidth_event(control_port, event):
+
+
+def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
+
 
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
     }
+
 
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
@@ -101,7 +104,6 @@ def _handle_bandwidth_event(control_port, event):
         print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
-
 
 def get_relay_flags(control_port):
     try:
