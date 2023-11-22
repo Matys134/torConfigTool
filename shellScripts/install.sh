@@ -68,10 +68,10 @@ while true; do
     apt-get update
     apt-get install -y unattended-upgrades apt-listchanges
 
-    # Configure 50unattended-upgrades
-    cat > /etc/apt/apt.conf.d/50unattended-upgrades <<EOF
+# Configure 50unattended-upgrades
+cat > /etc/apt/apt.conf.d/50unattended-upgrades <<EOF
 Unattended-Upgrade::Origins-Pattern {
-    "origin=Debian,codename=${distro_codename},label=Debian-Security";
+    "origin=Debian,codename=\${distro_codename},label=Debian-Security";
     "origin=TorProject";
 };
 Unattended-Upgrade::Package-Blacklist {
