@@ -136,7 +136,18 @@ public class RelayOperationsController {
 
 
     private Path buildTorrcFilePath(String relayNickname, String relayType) {
-        String folder = relayType.equals("guard") ? "guard" : "bridge";
+        String folder;
+        if ("guard".equals(relayType)) {
+            folder = "guard";
+        } else if ("bridge".equals(relayType)) {
+            folder = "bridge";
+        } else if ("onion".equals(relayType)) {
+            folder = "onion";
+        } else {
+            throw new IllegalArgumentException("Invalid relay type: " + relayType);
+        }
+        System.out.println("Torrc file path: " + Paths.get(System.getProperty("user.dir"), "torrc", folder, "torrc-" + relayNickname));
+
         return Paths.get(System.getProperty("user.dir"), "torrc", folder, "torrc-" + relayNickname);
     }
 
