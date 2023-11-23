@@ -12,8 +12,8 @@ user_name="$(logname)"
 # Define the sudoers entry for the specified user to control Tor without a password
 sudoers_entry="$user_name ALL=(ALL) NOPASSWD: /bin/systemctl start tor, /bin/systemctl stop tor, /bin/systemctl restart tor"
 
-# Define the sudoers entry for the specified user to copy the apache2 config without a password
-sudoers_cp_entry="$user_name ALL=(ALL) NOPASSWD: /bin/cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/*.conf"
+# Define the sudoers entry for the specified user to copy the nginx config without a password
+sudoers_cp_entry="$user_name ALL=(ALL) NOPASSWD: /bin/cp /etc/nginx/sites-available/default /etc/nginx/sites-available/*.conf"
 
 # Define the path to the sudoers file
 sudoers_file="/etc/sudoers.d/tor_sudoers"
