@@ -27,7 +27,7 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
-    private static final String NGINX_VHOST_PATH = "/home/matys/IdeaProjects/torConfigTool/onion/config/nginx-custom.conf";
+    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
     private static final String NGINX_RESTART_COMMAND = "sudo systemctl restart nginx";
 
     @Autowired
@@ -85,9 +85,6 @@ public class OnionServiceController {
     }
 
     private String buildNginxConfig(int onionServicePort) {
-        String onionAddress = readHostnameFile(onionServicePort).trim();
-        String customConfigPath = "/home/matys/IdeaProjects/torConfigTool/onion/config/nginx-custom.conf";
-
         // Build the server block
         String nginxConfig = String.format("server {\n" +
                 "    listen unix:/var/run/tor-my-website.sock;\n" +
@@ -97,7 +94,7 @@ public class OnionServiceController {
                 "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
                 "}\n" +
                 // Include the custom configuration file
-                "include " + customConfigPath + ";");
+                "include " + NGINX_VHOST_PATH + ";");
         return nginxConfig;
     }
 
