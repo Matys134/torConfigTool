@@ -91,7 +91,7 @@ public class OnionServiceController {
         // Build the server block
         String nginxConfig = String.format("server {\n" +
                 "    listen unix:/var/run/tor-my-website.sock;\n" +
-                "    server_name %s.onion;\n" +
+                "    server_name test;\n" +
                 "    access_log /var/log/nginx/my-website.log;\n" +
                 "    index index.html;\n" +
                 "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
