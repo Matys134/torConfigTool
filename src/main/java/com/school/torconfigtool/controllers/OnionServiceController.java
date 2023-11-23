@@ -27,7 +27,7 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
-    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
+    private static final String NGINX_VHOST_PATH = "/home/matys/IdeaProjects/torConfigTool/onion/config/nginx-custom.conf";
     private static final String NGINX_RESTART_COMMAND = "sudo systemctl restart nginx";
 
     @Autowired
