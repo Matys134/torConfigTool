@@ -27,6 +27,9 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
+    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
+    private static final String NGINX_RESTART_COMMAND = "sudo systemctl restart nginx";
+
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
@@ -65,6 +68,8 @@ public class OnionServiceController {
             String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-onion" + onionServicePort;
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, onionServicePort);
+                generateNginxConfig(onionServicePort);
+                restartNginx();
             }
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
@@ -72,6 +77,39 @@ public class OnionServiceController {
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
         }
         return "relay-config";
+    }
+
+    private void generateNginxConfig(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxConfig(onionServicePort);
+        writeNginxConfig(nginxConfig);
+    }
+
+    private String buildNginxConfig(int onionServicePort) {
+        String onionAddress = readHostnameFile(onionServicePort).trim();
+        String nginxConfig = String.format("server {\n" +
+                "    listen unix:/var/run/tor-my-website.sock;\n" +
+                "    server_name %s.onion;\n" +
+                "    access_log /var/log/nginx/my-website.log;\n" +
+                "    index index.html;\n" +
+                "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
+                "}\n", onionAddress);
+        return nginxConfig;
+    }
+
+    private void writeNginxConfig(String nginxConfig) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(NGINX_VHOST_PATH))) {
+            writer.write(nginxConfig);
+        }
+    }
+
+    private void restartNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "restart", "nginx");
+            Process process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error restarting Nginx", e);
+        }
     }
 
     @PostMapping("/start")
