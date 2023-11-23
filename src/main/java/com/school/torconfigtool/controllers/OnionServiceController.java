@@ -27,6 +27,9 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
+    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
+    private static final String NGINX_RESTART_COMMAND = "sudo systemctl restart nginx";
+
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
@@ -65,6 +68,8 @@ public class OnionServiceController {
             String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-onion" + onionServicePort;
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, onionServicePort);
+                generateNginxConfig(onionServicePort);
+                restartNginx();
             }
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
@@ -72,6 +77,59 @@ public class OnionServiceController {
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
         }
         return "relay-config";
+    }
+
+    private void generateNginxConfig(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxConfig(onionServicePort);
+        editNginxConfig(nginxConfig);
+    }
+
+    private String buildNginxConfig(int onionServicePort) {
+        // Build the server block
+        String nginxConfig = String.format("server {\n" +
+                "    listen 80;\n" +
+                "    server_name test;\n" +
+                "    access_log /var/log/nginx/my-website.log;\n" +
+                "    index index.html;\n" +
+                "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
+                "}\n" +
+                // Include the custom configuration file
+                "include " + NGINX_VHOST_PATH + ";");
+        return nginxConfig;
+    }
+
+
+
+    private void editNginxConfig(String nginxConfig) throws IOException {
+        try {
+            // Write the nginxConfig to a temporary file
+            File tempFile = File.createTempFile("nginx_config", null);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+                writer.write(nginxConfig);
+            }
+
+            // Use sudo to copy the temporary file to the actual nginx configuration file
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), NGINX_VHOST_PATH);
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            // Clean up the temporary file
+            tempFile.delete();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error editing Nginx configuration", e);
+        }
+    }
+
+
+
+    private void restartNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "restart", "nginx");
+            Process process = processBuilder.start();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error restarting Nginx", e);
+        }
     }
 
     @PostMapping("/start")
@@ -143,5 +201,23 @@ public class OnionServiceController {
         } catch (IOException e) {
             return "Unable to read hostname file";
         }
+    }
+
+    private void writeNginxConfig(String nginxConfig, int onionServicePort) throws IOException {
+        String nginxConfigPath = String.format("/home/matys/IdeaProjects/torConfigTool/onion/config/onion-%d.conf", onionServicePort);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nginxConfigPath))) {
+            writer.write(nginxConfig);
+        }
+
+        // After writing the config, you can create a symbolic link or copy it to the Nginx directory.
+        createSymbolicLinkOrCopy(nginxConfigPath, onionServicePort);
+    }
+
+    private void createSymbolicLinkOrCopy(String nginxConfigPath, int onionServicePort) throws IOException {
+        // Code to create a symbolic link or copy the file to the Nginx directory
+        // For example, creating a symbolic link:
+        Path nginxLinkPath = Paths.get("/etc/nginx/sites-available/onion-" + onionServicePort + ".conf");
+        Files.createSymbolicLink(nginxLinkPath, Paths.get(nginxConfigPath));
     }
 }
