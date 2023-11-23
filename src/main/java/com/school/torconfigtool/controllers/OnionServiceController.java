@@ -86,15 +86,22 @@ public class OnionServiceController {
 
     private String buildNginxConfig(int onionServicePort) {
         String onionAddress = readHostnameFile(onionServicePort).trim();
+        String customConfigPath = "/home/matys/IdeaProjects/torConfigTool/onion/config/nginx-custom.conf";
+
+        // Build the server block
         String nginxConfig = String.format("server {\n" +
                 "    listen unix:/var/run/tor-my-website.sock;\n" +
                 "    server_name %s.onion;\n" +
                 "    access_log /var/log/nginx/my-website.log;\n" +
                 "    index index.html;\n" +
                 "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
-                "}\n", onionAddress);
+                "}\n" +
+                // Include the custom configuration file
+                "include " + customConfigPath + ";");
         return nginxConfig;
     }
+
+
 
     private void writeNginxConfig(String nginxConfig) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(NGINX_VHOST_PATH))) {
@@ -181,5 +188,23 @@ public class OnionServiceController {
         } catch (IOException e) {
             return "Unable to read hostname file";
         }
+    }
+
+    private void writeNginxConfig(String nginxConfig, int onionServicePort) throws IOException {
+        String nginxConfigPath = String.format("/home/matys/IdeaProjects/torConfigTool/onion/config/onion-%d.conf", onionServicePort);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nginxConfigPath))) {
+            writer.write(nginxConfig);
+        }
+
+        // After writing the config, you can create a symbolic link or copy it to the Nginx directory.
+        createSymbolicLinkOrCopy(nginxConfigPath, onionServicePort);
+    }
+
+    private void createSymbolicLinkOrCopy(String nginxConfigPath, int onionServicePort) throws IOException {
+        // Code to create a symbolic link or copy the file to the Nginx directory
+        // For example, creating a symbolic link:
+        Path nginxLinkPath = Paths.get("/etc/nginx/sites-available/onion-" + onionServicePort + ".conf");
+        Files.createSymbolicLink(nginxLinkPath, Paths.get(nginxConfigPath));
     }
 }
