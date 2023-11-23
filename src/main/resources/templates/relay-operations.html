@@ -66,9 +66,7 @@
         <button class="edit-onion-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
                 th:data-config-port="${config.hiddenServicePort}">Edit</button>
-        <button class="start-button"
-                th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Start</button>
+        <button class="start-button" th:data-config-nickname="${config.hiddenServicePort}" th:attr="data-config-type='onion'">Start</button>
         <button class="stop-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
                 th:data-config-port="${config.hiddenServicePort}">Stop</button>

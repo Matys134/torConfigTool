@@ -87,7 +87,7 @@ public class OnionServiceController {
     private String buildNginxConfig(int onionServicePort) {
         // Build the server block
         String nginxConfig = String.format("server {\n" +
-                "    listen unix:/var/run/tor-my-website.sock;\n" +
+                "    listen 80;\n" +
                 "    server_name test;\n" +
                 "    access_log /var/log/nginx/my-website.log;\n" +
                 "    index index.html;\n" +
