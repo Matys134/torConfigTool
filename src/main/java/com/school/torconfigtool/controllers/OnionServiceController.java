@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.models.RelayConfig;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
@@ -30,6 +31,8 @@ public class OnionServiceController {
     private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
     private static final String NGINX_RESTART_COMMAND = "sudo systemctl restart nginx";
 
+    TorConfiguration torConfiguration = new TorConfiguration();
+
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
@@ -46,7 +49,7 @@ public class OnionServiceController {
             String hostname = readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
-        String hostname = readHostnameFile(80); // Assuming port 80 for this example
+        String hostname = readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
         model.addAttribute("hostname", hostname);
 
         model.addAttribute("onionConfigs", onionConfigs);
@@ -58,14 +61,14 @@ public class OnionServiceController {
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
-        return readHostnameFile(80); // Or however you determine the correct port
+        return readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Or however you determine the correct port
     }
 
 
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         try {
-            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-onion" + onionServicePort;
+            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort;
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, onionServicePort);
                 generateNginxConfig(onionServicePort);
@@ -87,14 +90,12 @@ public class OnionServiceController {
     private String buildNginxConfig(int onionServicePort) {
         // Build the server block
         String nginxConfig = String.format("server {\n" +
-                "    listen 80;\n" +
+                "    listen "+ torConfiguration.getHiddenServicePort() + ";\n" +
                 "    server_name test;\n" +
                 "    access_log /var/log/nginx/my-website.log;\n" +
                 "    index index.html;\n" +
                 "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
-                "}\n" +
-                // Include the custom configuration file
-                "include " + NGINX_VHOST_PATH + ";");
+                "}\n");
         return nginxConfig;
     }
 
