@@ -90,12 +90,12 @@ public class OnionServiceController {
     private String buildNginxConfig(int onionServicePort) {
         // Build the server block
         String nginxConfig = String.format("server {\n" +
-                "    listen "+ torConfiguration.getHiddenServicePort() + ";\n" +
+                "    listen %d;\n" +
                 "    server_name test;\n" +
                 "    access_log /var/log/nginx/my-website.log;\n" +
                 "    index index.html;\n" +
                 "    root /home/matys/IdeaProjects/torConfigTool/onion/www;\n" +
-                "}\n");
+                "}\n", onionServicePort);
         return nginxConfig;
     }
 
