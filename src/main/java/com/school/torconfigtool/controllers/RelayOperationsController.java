@@ -113,6 +113,7 @@ public class RelayOperationsController {
 
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
+            System.out.println("Executing command: " + command);
             int exitCode = processManagementService.executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
