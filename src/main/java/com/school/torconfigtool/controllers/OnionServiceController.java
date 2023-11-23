@@ -81,7 +81,7 @@ public class OnionServiceController {
 
     private void generateNginxConfig(int onionServicePort) throws IOException {
         String nginxConfig = buildNginxConfig(onionServicePort);
-        writeNginxConfig(nginxConfig);
+        editNginxConfig(nginxConfig);
     }
 
     private String buildNginxConfig(int onionServicePort) {
@@ -100,11 +100,27 @@ public class OnionServiceController {
 
 
 
-    private void writeNginxConfig(String nginxConfig) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(NGINX_VHOST_PATH))) {
-            writer.write(nginxConfig);
+    private void editNginxConfig(String nginxConfig) throws IOException {
+        try {
+            // Write the nginxConfig to a temporary file
+            File tempFile = File.createTempFile("nginx_config", null);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+                writer.write(nginxConfig);
+            }
+
+            // Use sudo to copy the temporary file to the actual nginx configuration file
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), NGINX_VHOST_PATH);
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            // Clean up the temporary file
+            tempFile.delete();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error editing Nginx configuration", e);
         }
     }
+
+
 
     private void restartNginx() {
         try {
