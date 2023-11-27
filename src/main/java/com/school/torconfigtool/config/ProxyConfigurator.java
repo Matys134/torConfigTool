@@ -36,7 +36,7 @@ public class ProxyConfigurator {
     public static boolean startProxy() {
         try {
             // Start the Tor Proxy
-            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f IdeaProjects/torConfigTool/torrc/proxy/torrc-proxy");
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f /home/matys/IdeaProjects/torConfigTool/torrc/proxy/torrc-proxy");
             // print command for debugging
             System.out.println(processBuilder.command());
             Process process = processBuilder.start();
