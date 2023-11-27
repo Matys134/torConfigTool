@@ -35,15 +35,22 @@ public class ProxyConfigurator {
 
     public static boolean startProxy() {
         try {
-            // Execute a command to start the Tor Proxy service
-            Process process = Runtime.getRuntime().exec("sudo systemctl start tor@default");
+            // Start the Tor Proxy
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "tor -f home/matys/IdeaProjects/torConfigTool/torrc/proxy/torrc-proxy");
+            Process process = processBuilder.start();
 
-            // Wait for the process to complete
-            int exitCode = process.waitFor();
 
-            // Check the exit code to determine if the start was successful
-            return exitCode == 0;
-        } catch (Exception e) {
+            try {
+                int exitCode = process.waitFor();
+
+                // Log the exit code
+                System.out.println("Command exit code: " + exitCode);
+
+                return exitCode == 0;
+            } finally {
+                process.destroy();
+            }
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return false;
         }
