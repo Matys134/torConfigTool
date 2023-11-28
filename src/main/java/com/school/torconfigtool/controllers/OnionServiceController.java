@@ -211,7 +211,7 @@ public class OnionServiceController {
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
         try {
             Arrays.asList(files).stream().forEach(file -> {
-                String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80";
+                String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
                 try(FileOutputStream fos = new FileOutputStream(outputFile)){
