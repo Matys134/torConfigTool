@@ -17,28 +17,29 @@ public class ProxyController {
 
     @GetMapping
     public String proxyConfigurationForm() {
-        return "proxy-config"; // Thymeleaf template name (proxy-config.html)
+        return "proxy-config";
     }
 
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
-            boolean configureSuccess = ProxyConfigurator.configureProxy();
-            if (configureSuccess) {
-                boolean startSuccess = ProxyConfigurator.startProxy();
-                if (startSuccess) {
-                    model.addAttribute("successMessage", "Tor Proxy started successfully!");
-                } else {
-                    model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
-                }
-            } else {
+            if (!ProxyConfigurator.configureProxy()) {
                 model.addAttribute("errorMessage", "Failed to configure Tor Proxy.");
+                return "proxy-config";
             }
+
+            if (!ProxyConfigurator.startProxy()) {
+                model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
+                return "proxy-config";
+            }
+
+            model.addAttribute("successMessage", "Tor Proxy started successfully!");
+
         } catch (Exception e) {
             logger.error("Error during Tor Proxy configuration or start", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
         }
 
-        return "proxy-config"; // Redirect to the configuration page
+        return "proxy-config";
     }
 }
