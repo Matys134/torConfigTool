@@ -9,5 +9,16 @@
     <input type="file" name="files" multiple><br/><br/>
     <input type="submit" value="Submit">
 </form>
+<h2>Uploaded files:</h2>
+<ul>
+    <th:block th:each="file : ${uploadedFiles}">
+        <li>
+            <span th:text="${file}"></span>
+            <form th:action="@{/onion-service/remove-file/{fileName}(fileName=${file})}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    </th:block>
+</ul>
 </body>
 </html>

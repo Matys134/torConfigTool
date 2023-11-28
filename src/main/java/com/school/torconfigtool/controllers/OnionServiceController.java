@@ -203,7 +203,42 @@ public class OnionServiceController {
     }
 
     @GetMapping("/upload")
-    public String showUploadForm() {
+    public String showUploadForm(Model model) {
+        List<String> fileNames = getUploadedFiles();
+        model.addAttribute("uploadedFiles", fileNames);
+        return "file_upload_form";
+    }
+
+    @PostMapping("/remove-file/{fileName}")
+    public String removeFile(@PathVariable("fileName") String fileName, Model model) {
+        // Use try-catch block for exception handling
+        try {
+            //String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
+            String fileDir = "onion/www/service-80/";
+            File fileToRemove = new File(fileDir + fileName);
+
+            // Check if file exists and delete
+            if(fileToRemove.exists()) {
+                if (!fileToRemove.delete()) {
+                    model.addAttribute("message", "Error deleting the file.");
+                } else {
+                    model.addAttribute("message", "File deleted successfully.");
+                }
+            } else {
+                model.addAttribute("message", "File doesn't exist.");
+            }
+        } catch(Exception e) {
+            // Handle any error
+            model.addAttribute("message", "Error: " + e.getMessage());
+        }
+
+        // Get the updated list of files
+        List<String> fileNames = getUploadedFiles();
+
+        // Add list to model
+        model.addAttribute("uploadedFiles", fileNames);
+
+        // Redirect back to the upload page
         return "file_upload_form";
     }
 
@@ -211,7 +246,8 @@ public class OnionServiceController {
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
         try {
             Arrays.asList(files).stream().forEach(file -> {
-                String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
+                //String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
+                String fileDir = "onion/www/service-80/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
                 try(FileOutputStream fos = new FileOutputStream(outputFile)){
@@ -222,11 +258,23 @@ public class OnionServiceController {
                 }
             });
 
+            // Get the updated list of uploaded files
+            List<String> fileNames = getUploadedFiles();
+            model.addAttribute("uploadedFiles", fileNames);
+
             model.addAttribute("message", "Files uploaded successfully!");
             return "file_upload_form";
         } catch (Exception e) {
             model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
             return "file_upload_form";
         }
+    }
+
+    private List<String> getUploadedFiles() {
+        //String uploadDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
+        String uploadDir = "onion/www/service-80/";
+        File folder = new File(uploadDir);
+        List<String> fileNames = Arrays.asList(folder.list());
+        return fileNames;
     }
 }
