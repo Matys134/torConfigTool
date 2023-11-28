@@ -202,6 +202,11 @@ public class OnionServiceController {
         }
     }
 
+    @GetMapping("/upload")
+    public String showUploadForm() {
+        return "file_upload_form";
+    }
+
     @PostMapping("/upload")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
         try {
