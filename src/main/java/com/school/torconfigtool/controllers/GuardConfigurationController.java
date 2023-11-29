@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.GuardRelayConfig;
 import com.school.torconfigtool.service.GuardConfigurationService;
 import org.slf4j.Logger;
@@ -35,5 +36,12 @@ public class GuardConfigurationController {
             logger.error("Exception occurred while updating guard configuration", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An unexpected error occurred"));
         }
+    }
+
+    @GetMapping("/check-port-availability")
+    public ResponseEntity<?> checkPortAvailability(@RequestParam int orPort, @RequestParam int controlPort, @RequestParam int socksPort) {
+        boolean arePortsAvailable = RelayUtils.portsAreAvailable(orPort, controlPort, socksPort);
+
+        return ResponseEntity.ok(Map.of("available", arePortsAvailable));
     }
 }

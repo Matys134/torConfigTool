@@ -71,18 +71,38 @@ $(document).ready(function () {
     buttons.save.click(function () {
         const data = {
             nickname: configSelectors.nickname.val(),
-            orPort: configSelectors.orPort.val(),
+            orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
-            controlPort: configSelectors.controlPort.val(),
-            socksPort: configSelectors.socksPort.val(),
+            controlPort: parseInt(configSelectors.controlPort.val()),
+            socksPort: parseInt(configSelectors.socksPort.val()),
         };
 
-        sendUpdateRequest("/update-guard-config", data);
-        sendUpdateRequest("/update-bridge-config", data);
+        // Check for the uniqueness of ports
+        if (!arePortsUnique(data.orPort, data.controlPort, data.socksPort)) {
+            alert("The ports specified must be unique. Please check your entries.");
+            return;
+        }
 
-        hideModal();
+        // Now send a GET request to your new API for checking the port availability
+        $.get("/update-guard-config/check-port-availability",
+            { orPort: data.orPort, controlPort: data.controlPort, socksPort: data.socksPort },
+            function(response) {
+                console.log(response);  // log the response here
+                if (response['available']) {
+                    sendUpdateRequest("/update-guard-config", data);
+                    sendUpdateRequest("/update-bridge-config", data);
+                    hideModal();
+                } else {
+                    alert("One or more ports are already in use. Please choose different ports.");
+                }
+            });
     });
+
+    // Method to check uniqueness of ports
+    function arePortsUnique(relayPort, controlPort, socksPort){
+        return !(relayPort === controlPort || relayPort === socksPort || controlPort === socksPort);
+    }
 
     buttons.cancel.click(hideModal);
 });
