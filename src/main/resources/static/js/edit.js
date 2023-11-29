@@ -88,6 +88,7 @@ $(document).ready(function () {
         $.get("/update-guard-config/check-port-availability",
             { orPort: data.orPort, controlPort: data.controlPort, socksPort: data.socksPort },
             function(response) {
+                console.log(response);  // log the response here
                 if (response['available']) {
                     sendUpdateRequest("/update-guard-config", data);
                     sendUpdateRequest("/update-bridge-config", data);
