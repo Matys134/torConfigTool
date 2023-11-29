@@ -75,6 +75,11 @@ public class RelayUtils {
 
     // Check if the ports are available by checking torrc files and running processes
     public static boolean portsAreAvailable(int relayPort, int controlPort, int socksPort) {
+
+        if(!arePortsUnique(relayPort, controlPort, socksPort)){
+            return false;
+        }
+
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc" + File.separator + "guard";
 
@@ -154,6 +159,13 @@ public class RelayUtils {
             return false;
         }
 
+        return true;
+    }
+
+    public static boolean arePortsUnique(int relayPort, int controlPort, int socksPort){
+        if(relayPort == controlPort || relayPort == socksPort || controlPort == socksPort){
+            return false;
+        }
         return true;
     }
 }
