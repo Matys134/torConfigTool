@@ -1,95 +1,88 @@
 $(document).ready(function () {
-    const editModal = $("#edit-modal");
-    const editNickname = $("#edit-nickname");
-    const editOrPort = $("#edit-orport");
-    const editServerTransport = $("#edit-server-transport");
-    const editContact = $("#edit-contact");
-    const editControlPort = $("#edit-controlport");
-    const editSocksPort = $("#edit-socksport");
+    const configSelectors = {
+        modal: $("#edit-modal"),
+        nickname: $("#edit-nickname"),
+        orPort: $("#edit-orport"),
+        serverTransport: $("#edit-server-transport"),
+        contact: $("#edit-contact"),
+        controlPort: $("#edit-controlport"),
+        socksPort: $("#edit-socksport"),
+    };
 
-    const editButton = $(".edit-button, .edit-bridge-button"); // Combined edit buttons for guard and bridge
-    const saveButton = $("#save-button");
-    const cancelButton = $("#cancel-button");
+    const buttons = {
+        edit: $(".edit-button, .edit-bridge-button"), // Combined edit buttons for guard and bridge
+        save: $("#save-button"),
+        cancel: $("#cancel-button"),
+    };
 
-    function showEditModal(nickname, orport, serverTransport, contact, controlport, socksport) {
-        editNickname.val(nickname);
-        editOrPort.val(orport);
-        editServerTransport.val(serverTransport);
-        editContact.val(contact);
-        editControlPort.val(controlport);
-        editSocksPort.val(socksport);
-        editModal.show();
+    function showModalWith(values) {
+        for (let key in values) {
+            configSelectors[key].val(values[key]);
+        }
+
+        configSelectors.modal.show();
     }
 
-    function hideEditModal() {
-        editModal.hide();
+    function hideModal() {
+        configSelectors.modal.hide();
     }
 
-    editButton.click(function () {
-        const button = $(this);
-        const data = button.data();
+    function updateView(data) {
+        const configElement = $(`[data-config-nickname="${data.nickname}"]`);
 
-        showEditModal(data.configNickname, data.configOrport, data.configServerTransport, data.configContact, data.configControlport, data.configSocksport);
-    });
+        configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
+        configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+        configElement.find(".config-contact").text(`Contact: ${data.contact}`);
+        configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+        configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
+    }
 
-    saveButton.click(function () {
-        const data = {
-            nickname: editNickname.val(),
-            orPort: editOrPort.val(),
-            serverTransport: editServerTransport.val(),
-            contact: editContact.val(),
-            controlPort: editControlPort.val(),
-            socksPort: editSocksPort.val(),
-        };
-
+    function sendUpdateRequest(url, data) {
         $.ajax({
             type: "POST",
-            url: "/update-guard-config",
+            url: url,
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (response) {
                 if (response.success) {
                     // Update the view with the new configuration, if needed
-                    // For example, you can update the displayed values in the UI
-                    const nickname = data.nickname;
-                    const configElement = $(`[data-config-nickname="${nickname}"]`);
-                    configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
-                    configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
-                    configElement.find(".config-contact").text(`Contact: ${data.contact}`);
-                    configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-                    configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
+                    updateView(data);
                 } else {
                     alert("Failed to update configuration.");
                 }
             }
         });
+    }
 
-        $.ajax({
-            type: "POST",
-            url: "/update-bridge-config",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function (response) {
-                if (response.success) {
-                    // Update the view with the new configuration, if needed
-                    // For example, you can update the displayed values in the UI
-                    const nickname = data.nickname;
-                    const configElement = $(`[data-config-nickname="${nickname}"]`);
-                    configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
-                    configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
-                    configElement.find(".config-contact").text(`Contact: ${data.contact}`);
-                    configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-                    configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
-                } else {
-                    alert("Failed to update configuration.");
-                }
-            }
-        })
+    buttons.edit.click(function () {
+        const button = $(this);
+        const data = {
+            nickname: button.attr('data-config-nickname'),
+            orPort: button.attr('data-config-orport'),
+            contact: button.attr('data-config-contact'),
+            socksPort: button.attr('data-config-socksport'),
+            controlPort: button.attr('data-config-controlport'),
+            serverTransport: button.hasClass('edit-bridge-button') ? button.attr('data-config-servertransport') : ""
+        };
 
-        hideEditModal();
+        showModalWith(data);
     });
 
-    cancelButton.click(function () {
-        hideEditModal();
+    buttons.save.click(function () {
+        const data = {
+            nickname: configSelectors.nickname.val(),
+            orPort: configSelectors.orPort.val(),
+            serverTransport: configSelectors.serverTransport.val(),
+            contact: configSelectors.contact.val(),
+            controlPort: configSelectors.controlPort.val(),
+            socksPort: configSelectors.socksPort.val(),
+        };
+
+        sendUpdateRequest("/update-guard-config", data);
+        sendUpdateRequest("/update-bridge-config", data);
+
+        hideModal();
     });
+
+    buttons.cancel.click(hideModal);
 });
