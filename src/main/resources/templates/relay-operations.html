@@ -19,9 +19,16 @@
         <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
         <span th:id="${'status-message-' + config.guardRelayConfig.nickname}" style="color: blue;">Idle</span>
         <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
-        <button class="edit-button"
+        <button
+                class="edit-button"
                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
-                th:attr="data-config-type='guard'">Edit</button>
+                th:data-config-orport="${config.guardRelayConfig.orPort}"
+                th:data-config-contact="${config.guardRelayConfig.contact}"
+                th:data-config-socksport="${config.guardRelayConfig.socksPort}"
+                th:data-config-controlport="${config.guardRelayConfig.controlPort}"
+        >
+        Edit
+        </button>
         <button class="remove-button"
                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
                 th:data-config-type="guard">Remove</button>
