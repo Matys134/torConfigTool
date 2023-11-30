@@ -51,7 +51,7 @@ public class GuardController {
                 return "relay-config";
             }
 
-            if (!RelayUtils.portsAreAvailable(relayPort, controlPort, socksPort)) {
+            if (!RelayUtils.portsAreAvailable(relayNickname ,relayPort, controlPort, socksPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }

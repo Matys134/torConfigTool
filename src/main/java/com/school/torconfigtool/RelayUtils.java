@@ -74,8 +74,7 @@ public class RelayUtils {
     }
 
     // Check if the ports are available by checking torrc files and running processes
-    public static boolean portsAreAvailable(int relayPort, int controlPort, int socksPort) {
-
+    public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort, int socksPort) {
         if(!arePortsUnique(relayPort, controlPort, socksPort)){
             return false;
         }
@@ -88,6 +87,11 @@ public class RelayUtils {
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
                 if (file.isFile() && file.getName().startsWith("torrc-")) {
+                    String currentFileRelayNickname = file.getName().substring("torrc-".length());
+
+                    if (currentFileRelayNickname.equals(relayNickname)) {
+                        continue;
+                    }
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
@@ -163,9 +167,6 @@ public class RelayUtils {
     }
 
     public static boolean arePortsUnique(int relayPort, int controlPort, int socksPort){
-        if(relayPort == controlPort || relayPort == socksPort || controlPort == socksPort){
-            return false;
-        }
-        return true;
+        return relayPort != controlPort && relayPort != socksPort && controlPort != socksPort;
     }
 }

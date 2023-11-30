@@ -39,8 +39,8 @@ public class GuardConfigurationController {
     }
 
     @GetMapping("/check-port-availability")
-    public ResponseEntity<?> checkPortAvailability(@RequestParam int orPort, @RequestParam int controlPort, @RequestParam int socksPort) {
-        boolean arePortsAvailable = RelayUtils.portsAreAvailable(orPort, controlPort, socksPort);
+    public ResponseEntity<?> checkPortAvailability(@RequestParam String nickname, @RequestParam int orPort, @RequestParam int controlPort, @RequestParam int socksPort) {
+        boolean arePortsAvailable = RelayUtils.portsAreAvailable(nickname ,orPort, controlPort, socksPort);
 
         return ResponseEntity.ok(Map.of("available", arePortsAvailable));
     }
