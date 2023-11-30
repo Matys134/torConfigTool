@@ -87,7 +87,7 @@ $(document).ready(function () {
         // Now send a GET request to your new API for checking the port availability
         $.get("/update-guard-config/check-port-availability",
             {
-                nickname:  data.nickname,
+                nickName:  data.nickName,
                 orPort: data.orPort,
                 controlPort: data.controlPort,
                 socksPort: data.socksPort
