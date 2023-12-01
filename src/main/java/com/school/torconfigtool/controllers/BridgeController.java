@@ -33,14 +33,16 @@ public class BridgeController {
     }
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
-                                  @RequestParam(required = false) Integer bridgePort,
-                                  @RequestParam(required = false) Integer bridgeTransportListenAddr,
-                                  @RequestParam(required = false) String bridgeContact,
-                                  @RequestParam(required = false) String bridgeNickname,
-                                  @RequestParam(required = false) String webtunnelDomain,
+                                  @RequestParam int bridgePort,
+                                  @RequestParam int bridgeTransportListenAddr,
+                                  @RequestParam String bridgeContact,
+                                  @RequestParam String bridgeNickname,
+                                  @RequestParam String webtunnelDomain,
+                                  @RequestParam int socksPort,
+                                  @RequestParam int controlPort,
                                   Model model) {
         try {
-            if (!relayService.isPortAvailable(bridgeType, bridgePort)) {
+            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort, socksPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }

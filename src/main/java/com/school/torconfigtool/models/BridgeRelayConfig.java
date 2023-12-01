@@ -11,6 +11,8 @@ import java.io.IOException;
 public class BridgeRelayConfig extends BaseRelayConfig {
     private String bridgeTransportListenAddr;
     private String relayType;
+    private String webtunnelDomain;
+    private String bridgeType;
 
 
     @Override

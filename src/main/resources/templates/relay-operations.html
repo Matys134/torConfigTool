@@ -57,6 +57,8 @@
                 th:data-config-orport="${config.bridgeRelayConfig.orPort}"
                 th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}"
                 th:data-config-contact="${config.bridgeRelayConfig.contact}"
+                th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
+                th:data-config-socksport="${config.bridgeRelayConfig.socksPort}"
                 th:attr="data-config-type='bridge'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>
