@@ -1,6 +1,7 @@
 package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.config.TorrcConfigurator;
+import com.school.torconfigtool.service.RelayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,11 @@ public class BridgeController {
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/bridge/";
 
+    private final RelayService relayService;
+    public BridgeController(RelayService relayService) {
+        this.relayService = relayService;
+    }
+
     @GetMapping
     public String bridgeConfigurationForm() {
         return "relay-config";
@@ -34,6 +40,11 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelDomain,
                                   Model model) {
         try {
+            if (!relayService.isPortAvailable(bridgeType, bridgePort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }
+
             String torrcFileName = "torrc-" + (bridgeNickname != null ? bridgeNickname : "");
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 

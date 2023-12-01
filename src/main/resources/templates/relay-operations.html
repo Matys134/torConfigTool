@@ -26,6 +26,7 @@
                 th:data-config-contact="${config.guardRelayConfig.contact}"
                 th:data-config-socksport="${config.guardRelayConfig.socksPort}"
                 th:data-config-controlport="${config.guardRelayConfig.controlPort}"
+                th:attr="data-config-type='guard'"
         >
         Edit
         </button>
@@ -53,6 +54,9 @@
         <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
         <button class="edit-bridge-button"
                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
+                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
+                th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}"
+                th:data-config-contact="${config.bridgeRelayConfig.contact}"
                 th:attr="data-config-type='bridge'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>

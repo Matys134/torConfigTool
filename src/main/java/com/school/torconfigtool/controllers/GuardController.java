@@ -2,6 +2,7 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.GuardRelayConfig;
+import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,12 @@ public class GuardController {
     private static final String TORRC_DIRECTORY_PATH = "torrc/guard/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
+    private final RelayService relayService;
+
+    public GuardController(RelayService relayService) {
+        this.relayService = relayService;
+    }
+
     @GetMapping
     public String guardConfigurationForm(Model model) {
         logger.info("Relay configuration form requested");
@@ -43,6 +50,11 @@ public class GuardController {
                                  @RequestParam int socksPort,
                                  Model model) {
         try {
+            if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort, socksPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }
+
             String torrcFileName = TORRC_FILE_PREFIX + relayNickname;
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
