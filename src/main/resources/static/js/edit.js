@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    var isBridge = false; // Add this variable to track which config is being edited
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
@@ -54,12 +55,13 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const button = $(this);
+        isBridge = button.hasClass('edit-bridge-button'); // Set this flag when the edit button is clicked
         const data = {
             nickname: button.attr('data-config-nickname'),
             orPort: button.attr('data-config-orport'),
             contact: button.attr('data-config-contact'),
             controlPort: button.attr('data-config-controlport'),
-            serverTransport: button.hasClass('edit-bridge-button') ? button.attr('data-config-servertransport') : ""
+            serverTransport: isBridge ? button.attr('data-config-servertransport') : ""
         };
 
         showModalWith(data);
@@ -88,10 +90,11 @@ $(document).ready(function () {
                 controlPort: data.controlPort,
             },
             function(response) {
-                console.log(response);  // log the response here
                 if (response['available']) {
-                    sendUpdateRequest("/update-guard-config", data);
-                    sendUpdateRequest("/update-bridge-config", data);
+                    sendUpdateRequest("/update-guard-config", data); // Always update the guard config
+                    if (isBridge) { // Only update the bridge config if the edit was for a bridge
+                        sendUpdateRequest("/update-bridge-config", data);
+                    }
                     hideModal();
                 } else {
                     alert("One or more ports are already in use. Please choose different ports.");

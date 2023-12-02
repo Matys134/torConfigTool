@@ -18,9 +18,7 @@ public class GuardConfigurationService implements RelayConfigService<GuardRelayC
     public boolean updateConfiguration(GuardRelayConfig config) {
         try {
             String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            System.out.println("torrcFilePath: " + torrcFilePath);
             TorrcFileCreator.createTorrcFile(torrcFilePath, config);
-            System.out.println("torrcFilePath: " + torrcFilePath);
             return true;
         } catch (Exception e) {
             logger.error("Error updating guard relay configuration", e);
