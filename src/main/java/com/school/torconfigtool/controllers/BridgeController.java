@@ -38,11 +38,10 @@ public class BridgeController {
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
                                   @RequestParam String webtunnelDomain,
-                                  @RequestParam int socksPort,
                                   @RequestParam int controlPort,
                                   Model model) {
         try {
-            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort, socksPort)) {
+            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }
@@ -71,6 +70,7 @@ public class BridgeController {
         String extORPortOption = "ExtORPort auto";
         String contactInfoOption = "ContactInfo " + bridgeContact;
         String nicknameOption = "Nickname " + bridgeNickname;
+        String socksPortOption = "SocksPort 0";
 
         if ("bridge".equals(bridgeType)) {
             return new String[]{
@@ -80,7 +80,8 @@ public class BridgeController {
                     "ServerTransportListenAddr obfs4 0.0.0.0:" + bridgeTransportListenAddr,
                     extORPortOption,
                     contactInfoOption,
-                    nicknameOption
+                    nicknameOption,
+                    "SocksPort 0"
             };
         } else if ("webtunnel".equals(bridgeType)) {
             return new String[]{

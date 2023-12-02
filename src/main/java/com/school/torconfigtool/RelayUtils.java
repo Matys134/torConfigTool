@@ -74,8 +74,8 @@ public class RelayUtils {
     }
 
     // Check if the ports are available by checking torrc files and running processes
-    public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort, int socksPort) {
-        if(!arePortsUnique(relayPort, controlPort, socksPort)){
+    public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort) {
+        if(!arePortsUnique(relayPort, controlPort)){
             return false;
         }
 
@@ -97,8 +97,8 @@ public class RelayUtils {
                         while ((line = reader.readLine()) != null) {
                             if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("SocksPort")) &&
                                     (line.contains(String.valueOf(relayPort)) ||
-                                            line.contains(String.valueOf(controlPort)) ||
-                                            line.contains(String.valueOf(socksPort)))) {
+                                            line.contains(String.valueOf(controlPort))
+                                            )) {
                                 return false;
                             }
                         }
@@ -145,7 +145,7 @@ public class RelayUtils {
                 try (BufferedReader netstatReader = new BufferedReader(new InputStreamReader(netstatForPidProcess.getInputStream()))) {
                     List<String> netstatOutput = netstatReader.lines().toList();
                     for (String netstatLine : netstatOutput) {
-                        if (netstatLine.contains(String.valueOf(relayPort)) || netstatLine.contains(String.valueOf(controlPort)) || netstatLine.contains(String.valueOf(socksPort))) {
+                        if (netstatLine.contains(String.valueOf(relayPort)) || netstatLine.contains(String.valueOf(controlPort))) {
                             return false;
                         }
                     }
@@ -166,7 +166,7 @@ public class RelayUtils {
         return true;
     }
 
-    public static boolean arePortsUnique(int relayPort, int controlPort, int socksPort){
-        return relayPort != controlPort && relayPort != socksPort && controlPort != socksPort;
+    public static boolean arePortsUnique(int relayPort, int controlPort){
+        return relayPort != controlPort;
     }
 }

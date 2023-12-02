@@ -23,7 +23,7 @@ public class TorrcFileCreator {
             writer.newLine();
             writer.write("ControlPort " + config.getControlPort());
             writer.newLine();
-            writer.write("SocksPort " + config.getSocksPort());
+            writer.write("SocksPort 0");
             writer.newLine();
 
             // Add any other common configurations from BaseRelayConfig
