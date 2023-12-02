@@ -30,7 +30,7 @@ $(document).ready(function () {
         const configElement = $(`[data-config-nickname="${data.nickname}"]`);
 
         configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
-        configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+        //configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
     }
@@ -59,7 +59,7 @@ $(document).ready(function () {
             orPort: button.attr('data-config-orport'),
             contact: button.attr('data-config-contact'),
             controlPort: button.attr('data-config-controlport'),
-            serverTransport: button.hasClass('edit-bridge-button') ? button.attr('data-config-servertransport') : ""
+            //serverTransport: button.hasClass('edit-bridge-button') ? button.attr('data-config-servertransport') : ""
         };
 
         showModalWith(data);
@@ -69,7 +69,7 @@ $(document).ready(function () {
         const data = {
             nickname: configSelectors.nickname.val(),
             orPort: parseInt(configSelectors.orPort.val()),
-            serverTransport: configSelectors.serverTransport.val(),
+            //serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
