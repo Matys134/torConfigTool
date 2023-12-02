@@ -14,7 +14,6 @@
         <p th:text="'Nickname: ' + ${config.guardRelayConfig.nickname}"></p>
         <p th:text="'ORPort: ' + ${config.guardRelayConfig.orPort}"></p>
         <p th:text="'Contact: ' + ${config.guardRelayConfig.contact}"></p>
-        <p th:text="'Socks Port: ' + ${config.guardRelayConfig.socksPort}"></p>
         <p th:text="'Control Port: ' + ${config.guardRelayConfig.controlPort}"></p>
         <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
         <span th:id="${'status-message-' + config.guardRelayConfig.nickname}" style="color: blue;">Idle</span>
@@ -24,7 +23,6 @@
                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
                 th:data-config-orport="${config.guardRelayConfig.orPort}"
                 th:data-config-contact="${config.guardRelayConfig.contact}"
-                th:data-config-socksport="${config.guardRelayConfig.socksPort}"
                 th:data-config-controlport="${config.guardRelayConfig.controlPort}"
                 th:attr="data-config-type='guard'"
         >
@@ -58,7 +56,6 @@
                 th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}"
                 th:data-config-contact="${config.bridgeRelayConfig.contact}"
                 th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
-                th:data-config-socksport="${config.bridgeRelayConfig.socksPort}"
                 th:attr="data-config-type='bridge'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>
@@ -105,9 +102,6 @@
 
             <label for="edit-controlport">Control Port:</label>
             <input type="text" id="edit-controlport" name="edit-controlport">
-
-            <label for="edit-socksport">Socks Port:</label>
-            <input type="text" id="edit-socksport" name="edit-socksport">
 
             <button type="button" id="save-button">Save</button>
             <button type="button" id="cancel-button">Cancel</button>

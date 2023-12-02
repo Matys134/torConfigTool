@@ -6,7 +6,6 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
-        socksPort: $("#edit-socksport"),
     };
 
     const buttons = {
@@ -34,7 +33,6 @@ $(document).ready(function () {
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-        configElement.find(".config-socksport").text(`Socks Port: ${data.socksPort}`);
     }
 
     function sendUpdateRequest(url, data) {
@@ -60,7 +58,6 @@ $(document).ready(function () {
             nickname: button.attr('data-config-nickname'),
             orPort: button.attr('data-config-orport'),
             contact: button.attr('data-config-contact'),
-            socksPort: button.attr('data-config-socksport'),
             controlPort: button.attr('data-config-controlport'),
             serverTransport: button.hasClass('edit-bridge-button') ? button.attr('data-config-servertransport') : ""
         };
@@ -75,11 +72,10 @@ $(document).ready(function () {
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
-            socksPort: parseInt(configSelectors.socksPort.val()),
         };
 
         // Check for the uniqueness of ports
-        if (!arePortsUnique(data.orPort, data.controlPort, data.socksPort)) {
+        if (!arePortsUnique(data.orPort, data.controlPort)) {
             alert("The ports specified must be unique. Please check your entries.");
             return;
         }
@@ -90,7 +86,6 @@ $(document).ready(function () {
                 nickname:  data.nickname,
                 orPort: data.orPort,
                 controlPort: data.controlPort,
-                socksPort: data.socksPort
             },
             function(response) {
                 console.log(response);  // log the response here
@@ -105,8 +100,8 @@ $(document).ready(function () {
     });
 
     // Method to check uniqueness of ports
-    function arePortsUnique(relayPort, controlPort, socksPort){
-        return !(relayPort === controlPort || relayPort === socksPort || controlPort === socksPort);
+    function arePortsUnique(relayPort, controlPort){
+        return !(relayPort === controlPort);
     }
 
     buttons.cancel.click(hideModal);

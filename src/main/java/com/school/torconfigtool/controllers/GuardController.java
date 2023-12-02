@@ -47,10 +47,9 @@ public class GuardController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
-                                 @RequestParam int socksPort,
                                  Model model) {
         try {
-            if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort, socksPort)) {
+            if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }
@@ -63,12 +62,12 @@ public class GuardController {
                 return "relay-config";
             }
 
-            if (!RelayUtils.portsAreAvailable(relayNickname ,relayPort, controlPort, socksPort)) {
+            if (!RelayUtils.portsAreAvailable(relayNickname ,relayPort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }
 
-            GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, socksPort);
+            GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -82,13 +81,12 @@ public class GuardController {
         return "relay-config";
     }
 
-    private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, int socksPort) {
+    private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort) {
         GuardRelayConfig config = new GuardRelayConfig();
         config.setNickname(relayNickname);
         config.setOrPort(String.valueOf(relayPort));
         config.setContact(relayContact);
         config.setControlPort(String.valueOf(controlPort));
-        config.setSocksPort(String.valueOf(socksPort));
         // Set other properties as necessary, for example, bandwidth rate
 
         return config;
