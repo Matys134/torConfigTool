@@ -20,7 +20,5 @@ public interface RelayConfig {
     String getControlPort();
     void setControlPort(String controlPort);
 
-    String getSocksPort();
-    void setSocksPort(String socksPort);
     void writeSpecificConfig(BufferedWriter writer) throws IOException;
 }

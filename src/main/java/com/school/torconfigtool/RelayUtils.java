@@ -95,7 +95,7 @@ public class RelayUtils {
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("SocksPort")) &&
+                            if ((line.contains("ORPort") || line.contains("ControlPort")) &&
                                     (line.contains(String.valueOf(relayPort)) ||
                                             line.contains(String.valueOf(controlPort))
                                             )) {
