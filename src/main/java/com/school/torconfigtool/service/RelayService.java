@@ -11,13 +11,9 @@ public class RelayService {
 
     public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
         try {
-            if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
-                return false;
-            }
+            return RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort);
 
             // Other necessary code here...
-
-            return true;
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             return false;
