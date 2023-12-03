@@ -1,0 +1,6 @@
+Nickname TestNode
+ORPort 5000
+ContactInfo test@example.com
+ControlPort 7000
+SocksPort 0
+DataDirectory C:\Users\kouba\IdeaProjects\torConfigTool\torrc\dataDirectory\TestNode
