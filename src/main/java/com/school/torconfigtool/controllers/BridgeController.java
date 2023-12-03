@@ -70,7 +70,6 @@ public class BridgeController {
         String extORPortOption = "ExtORPort auto";
         String contactInfoOption = "ContactInfo " + bridgeContact;
         String nicknameOption = "Nickname " + bridgeNickname;
-        String socksPortOption = "SocksPort 0";
 
         if ("bridge".equals(bridgeType)) {
             return new String[]{
