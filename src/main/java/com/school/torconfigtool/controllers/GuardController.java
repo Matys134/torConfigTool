@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
-@RequestMapping("/relay")
+@RequestMapping("/guard")
 public class GuardController {
 
     private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
