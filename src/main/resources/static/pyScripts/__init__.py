@@ -3,7 +3,6 @@ import functools
 import threading
 
 import stem
-from requests import RequestException
 from stem.control import EventType, Controller
 import requests
 import time
@@ -57,11 +56,6 @@ def monitor_traffic(control_port):
                 bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
                 controller.add_event_listener(bw_event_handler, EventType.BW)
 
-                # Get the relay's flags
-                relay_flags = get_relay_flags(control_port)
-                if relay_flags:
-                    print(f"Flags for ControlPort {control_port}: {relay_flags}")
-
                 print(f"Monitoring relay on ControlPort {control_port}")
 
                 while controller.is_alive():  # Check if the relay is still running
@@ -104,20 +98,6 @@ def _handle_bandwidth_event(controller, control_port, event):
         print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
-
-def get_relay_flags(control_port):
-    try:
-        with Controller.from_port(port=control_port) as controller:
-            controller.authenticate()
-            relay_flags = controller.get_info("ns/id/{}".format(controller.get_info("fingerprint")))
-            return relay_flags
-    except stem.SocketError as e:
-        print(f"Error connecting to ControlPort {control_port}: {e}")
-    except stem.ProtocolError as e:
-        print(f"Error in the Tor Control Protocol for ControlPort {control_port}: {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
-    return None
 
 
 if __name__ == '__main__':
