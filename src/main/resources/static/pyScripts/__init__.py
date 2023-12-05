@@ -9,7 +9,7 @@ import time
 
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://192.168.2.118:8081/api/relay-data"
+BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
