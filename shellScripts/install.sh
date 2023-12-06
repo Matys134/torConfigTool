@@ -69,10 +69,8 @@ while true; do
 
       # If the component is nginx, modify the nginx.conf file
       if [[ "$component" == "nginx" ]]; then
-        # Print a message to the user command line
-        echo "Modifying nginx.conf file..."
-        # Get the current username
-        current_user=$(whoami)
+        # Get the user who launched the script
+        current_user=$(logname)
 
         # Replace 'user www-data;' with "user $current_user;" in nginx.conf
         sed -i "s/user www-data;/user $current_user;/" /etc/nginx/nginx.conf
