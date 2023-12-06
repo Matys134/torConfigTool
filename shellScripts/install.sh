@@ -63,7 +63,19 @@ while true; do
 
     # Update the package list and install Tor and the Tor Project keyring
     apt update
-    apt install -y "${components[@]}"
+    # Install the components
+    for component in "${components[@]}"; do
+      apt install -y "$component"
+
+      # If the component is nginx, modify the nginx.conf file
+      if [[ "$component" == "nginx" ]]; then
+        # Get the current username
+        current_user=$(whoami)
+
+        # Replace 'user www-data;' with "user $current_user;" in nginx.conf
+        sed -i "s/user www-data;/user $current_user;/" /etc/nginx/nginx.conf
+      fi
+    done
     apt install -y tor deb.torproject.org-keyring
 
     echo "Tor installation completed successfully."
