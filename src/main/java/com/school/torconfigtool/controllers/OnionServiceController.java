@@ -248,7 +248,6 @@ public class OnionServiceController {
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
         try {
             Arrays.asList(files).stream().forEach(file -> {
-                //String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
                 String fileDir = "onion/www/service-80/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
@@ -273,7 +272,6 @@ public class OnionServiceController {
     }
 
     private List<String> getUploadedFiles() {
-        //String uploadDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
         String uploadDir = "onion/www/service-80/";
         File folder = new File(uploadDir);
         List<String> fileNames = Arrays.asList(folder.list());
