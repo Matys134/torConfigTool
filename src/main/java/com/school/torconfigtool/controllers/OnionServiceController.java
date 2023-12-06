@@ -85,6 +85,8 @@ public class OnionServiceController {
     }
 
     private String buildNginxConfig(int onionServicePort) {
+
+        String currentDirectory = System.getProperty("user.dir");
         // Build the server block
         return String.format("""
                 server {
@@ -92,9 +94,9 @@ public class OnionServiceController {
                     server_name test;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
-                    root /home/matys/IdeaProjects/torConfigTool/onion/www;
+                    root %s/onion/www/service-%d;
                 }
-                """, onionServicePort);
+                """, onionServicePort, currentDirectory);
     }
 
 
