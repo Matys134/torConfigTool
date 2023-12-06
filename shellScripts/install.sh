@@ -69,6 +69,8 @@ while true; do
 
       # If the component is nginx, modify the nginx.conf file
       if [[ "$component" == "nginx" ]]; then
+        # Print a message to the user command line
+        echo "Modifying nginx.conf file..."
         # Get the current username
         current_user=$(whoami)
 
