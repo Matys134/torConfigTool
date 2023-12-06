@@ -30,6 +30,7 @@ public class TorrcFileCreator {
             writer.newLine();
             writer.write("SocksPort 0");
             writer.newLine();
+            writer.write("RunAsDaemon 1");
 
             if (InetAddress.getByName("::0").isReachable(2000)) {
                 writer.write("ORPort " + getSystemIpv6() + ":" + config.getOrPort());
