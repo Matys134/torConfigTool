@@ -70,7 +70,7 @@ while true; do
       # If the component is nginx, modify the nginx.conf file
       if [[ "$component" == "nginx" ]]; then
         # Get the user who launched the script
-        current_user=$(logname)
+        current_user=$SUDO_USER
 
         # Replace 'user www-data;' with "user $current_user;" in nginx.conf
         sed -i "s/user www-data;/user $current_user;/" /etc/nginx/nginx.conf
