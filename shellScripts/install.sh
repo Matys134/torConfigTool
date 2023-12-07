@@ -108,4 +108,9 @@ EOF
     unattended-upgrade -d
 
     echo "Installation and configuration completed successfully."
+
+    # Disable tor and nginx services from starting at boot
+    sudo systemctl disable tor.service
+    sudo systemctl disable nginx.service
+
 done
