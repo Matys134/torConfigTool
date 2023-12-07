@@ -33,9 +33,11 @@ public class TorrcFileCreator {
             writer.write("RunAsDaemon 1");
             writer.newLine();
 
-            if (InetAddress.getByName("::0").isReachable(2000)) {
+            String systemIpv6 = getSystemIpv6();
+
+            if (systemIpv6 != null && InetAddress.getByName("::0").isReachable(2000)) {
                 writer.newLine();
-                writer.write("ORPort " + getSystemIpv6() + ":" + config.getOrPort());
+                writer.write("ORPort " + systemIpv6 + ":" + config.getOrPort());
                 writer.newLine();
             }
 
