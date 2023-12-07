@@ -14,10 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/onion-service")
@@ -96,7 +93,7 @@ public class OnionServiceController {
                     index index.html;
                     root %s/onion/www/service-%d;
                 }
-                """, onionServicePort, currentDirectory);
+                """, onionServicePort, currentDirectory, onionServicePort);
     }
 
 
@@ -115,7 +112,11 @@ public class OnionServiceController {
             process.waitFor();
 
             // Clean up the temporary file
-            tempFile.delete();
+            boolean isDeleted = tempFile.delete();
+
+            if (!isDeleted) {
+                logger.error("Failed to delete temporary file: " + tempFile);
+            }
         } catch (IOException | InterruptedException e) {
             logger.error("Error editing Nginx configuration", e);
         }
@@ -247,7 +248,7 @@ public class OnionServiceController {
     @PostMapping("/upload")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
         try {
-            Arrays.asList(files).stream().forEach(file -> {
+            Arrays.stream(files).forEach(file -> {
                 String fileDir = "onion/www/service-80/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
@@ -274,7 +275,6 @@ public class OnionServiceController {
     private List<String> getUploadedFiles() {
         String uploadDir = "onion/www/service-80/";
         File folder = new File(uploadDir);
-        List<String> fileNames = Arrays.asList(folder.list());
-        return fileNames;
+        return Arrays.asList(Objects.requireNonNull(folder.list()));
     }
 }
