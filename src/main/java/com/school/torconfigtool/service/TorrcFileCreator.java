@@ -64,9 +64,11 @@ public class TorrcFileCreator {
                 while(addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
                     if (addr instanceof Inet6Address) {
-                        String hostAddress = addr.getHostAddress();
-                        int idx = hostAddress.indexOf('%');
-                        return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
+                        if(!addr.isLinkLocalAddress()){
+                            String hostAddress = addr.getHostAddress();
+                            int idx = hostAddress.indexOf('%');
+                            return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
+                        }
                     }
                 }
             }
