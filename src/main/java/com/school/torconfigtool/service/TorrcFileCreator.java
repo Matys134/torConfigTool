@@ -31,11 +31,13 @@ public class TorrcFileCreator {
             writer.write("SocksPort 0");
             writer.newLine();
             writer.write("RunAsDaemon 1");
+            writer.newLine();
 
-            if (InetAddress.getByName("::0").isReachable(2000)) {
+            /*if (InetAddress.getByName("::0").isReachable(2000)) {
+                writer.newLine();
                 writer.write("ORPort " + getSystemIpv6() + ":" + config.getOrPort());
                 writer.newLine();
-            }
+            }*/
 
             // Add any other common configurations from BaseRelayConfig
             String currentDirectory = System.getProperty("user.dir");
