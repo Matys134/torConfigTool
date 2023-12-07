@@ -33,11 +33,13 @@ public class TorrcFileCreator {
             writer.write("RunAsDaemon 1");
             writer.newLine();
 
-            /*if (InetAddress.getByName("::0").isReachable(2000)) {
+            String systemIpv6 = getSystemIpv6();
+
+            if (systemIpv6 != null && InetAddress.getByName("::0").isReachable(2000)) {
                 writer.newLine();
-                writer.write("ORPort " + getSystemIpv6() + ":" + config.getOrPort());
+                writer.write("ORPort " + systemIpv6 + ":" + config.getOrPort());
                 writer.newLine();
-            }*/
+            }
 
             // Add any other common configurations from BaseRelayConfig
             String currentDirectory = System.getProperty("user.dir");
@@ -64,9 +66,11 @@ public class TorrcFileCreator {
                 while(addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
                     if (addr instanceof Inet6Address) {
-                        String hostAddress = addr.getHostAddress();
-                        int idx = hostAddress.indexOf('%');
-                        return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
+                        if(!addr.isLinkLocalAddress()){
+                            String hostAddress = addr.getHostAddress();
+                            int idx = hostAddress.indexOf('%');
+                            return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
+                        }
                     }
                 }
             }
