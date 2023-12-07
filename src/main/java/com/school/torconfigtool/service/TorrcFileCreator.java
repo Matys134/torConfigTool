@@ -31,6 +31,7 @@ public class TorrcFileCreator {
             writer.write("SocksPort 0");
             writer.newLine();
             writer.write("RunAsDaemon 1");
+            writer.newLine();
 
             /*if (InetAddress.getByName("::0").isReachable(2000)) {
                 writer.newLine();
