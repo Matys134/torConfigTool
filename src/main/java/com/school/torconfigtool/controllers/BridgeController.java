@@ -40,11 +40,11 @@ public class BridgeController {
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
                                   @RequestParam String webtunnelDomain,
-                                  @RequestParam int controlPort,
+                                  @RequestParam int bridgeControlPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
-            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort)) {
+            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }
@@ -78,7 +78,7 @@ public class BridgeController {
     }
 
 
-    private String[] getTorrcConfigLines(String bridgeType, int bridgePort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain) {
+    private String[] getTorrcConfigLines(String bridgeType, int bridgePort, int bridgeControlPort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain) {
         // Use constants or enums instead of hard-coded strings
         String bridgeRelayOption = "BridgeRelay 1";
         String extORPortOption = "ExtORPort auto";
@@ -94,7 +94,8 @@ public class BridgeController {
                     extORPortOption,
                     contactInfoOption,
                     nicknameOption,
-                    "SocksPort 0"
+                    "SocksPort 0",
+                    "ControlPort " + bridgeControlPort,
             };
         } else if ("webtunnel".equals(bridgeType)) {
             return new String[]{
