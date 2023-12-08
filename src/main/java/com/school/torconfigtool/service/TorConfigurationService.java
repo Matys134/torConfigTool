@@ -17,22 +17,23 @@ public class TorConfigurationService {
 
     private static final Logger logger = LoggerFactory.getLogger(TorConfigurationService.class);
 
-    public List<TorConfiguration> readTorConfigurations(String relayType) {
-        String folderPath = buildFolderPath(relayType);
-        return readTorConfigurationsFromFolder(folderPath, relayType);
+    public List<TorConfiguration> readTorConfigurations() {
+        String folderPath = buildFolderPath();
+        return readTorConfigurationsFromFolder(folderPath);
     }
 
-    private String buildFolderPath(String relayType) {
-        return "torrc" + File.separator + relayType;
+    private String buildFolderPath() {
+        return "torrc";
     }
 
-    private List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String relayType) {
+    private List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath) {
         List<TorConfiguration> configs = new ArrayList<>();
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
 
         if (files != null) {
             for (File file : files) {
+                String relayType = parseRelayTypeFromFile(file);
                 try {
                     TorConfiguration config = parseTorConfiguration(file, relayType);
                     configs.add(config);
@@ -43,6 +44,12 @@ public class TorConfigurationService {
         }
 
         return configs;
+    }
+
+    private String parseRelayTypeFromFile(File file) {
+        String fileName = file.getName();
+        // e.g. assuming file name is "torrc-relayNickname_relayType"
+        return fileName.substring(fileName.indexOf("_") + 1);
     }
 
     private TorConfiguration parseTorConfiguration(File file, String relayType) throws IOException {

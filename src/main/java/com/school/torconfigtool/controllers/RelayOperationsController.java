@@ -36,9 +36,9 @@ public class RelayOperationsController {
 
     @GetMapping
     public String relayOperations(Model model) {
-        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurations("guard"));
-        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurations("bridge"));
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations("onion");
+        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurations());
+        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurations());
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         model.addAttribute("onionConfigs", onionConfigs);
 
         // Create a map to store hostnames for onion services
