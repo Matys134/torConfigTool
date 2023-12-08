@@ -80,7 +80,7 @@ public class RelayUtils {
         }
 
         String currentDirectory = System.getProperty("user.dir");
-        String torrcDirectory = currentDirectory + File.separator + "torrc" + File.separator + "guard";
+        String torrcDirectory = currentDirectory + File.separator + "torrc";
 
         // Check torrc files
         File[] torrcFiles = new File(torrcDirectory).listFiles();
