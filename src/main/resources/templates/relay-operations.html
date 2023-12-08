@@ -36,6 +36,29 @@
     </li>
 </ul>
 
+<!-- Display Bridge relay configurations -->
+ <h2>Bridge Relay Configurations</h2>
+<ul>
+    <li th:each="config : ${bridgeConfigs}">
+        <!-- Display Bridge relay configuration fields -->
+        <p th:if="${config.bridgeRelayConfig != null}" th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></p>
+        <p th:if="${config.bridgeRelayConfig != null}" th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
+        <p th:if="${config.bridgeRelayConfig != null}" th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
+        <p th:if="${config.bridgeRelayConfig != null}" th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
+        <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+        <span th:id="${'status-message-' + config.bridgeRelayConfig.nickname}" style="color: blue;">Idle</span>
+        <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
+        <button class="edit-bridge-button"
+                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
+                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
+                th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}"
+                th:data-config-contact="${config.bridgeRelayConfig.contact}"
+                th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
+                th:attr="data-config-type='bridge'">Edit</button>
+        <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
+        <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>
+    </li>
+</ul>
 
 <!-- Add modal for editing configurations (hidden by default) -->
 <div id="edit-modal" class="modal">
