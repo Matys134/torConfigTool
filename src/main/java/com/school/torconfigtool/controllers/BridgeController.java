@@ -96,6 +96,7 @@ public class BridgeController {
                     nicknameOption,
                     "SocksPort 0",
                     "ControlPort " + bridgeControlPort,
+                    "RunAsDaemon 1"
             };
         } else if ("webtunnel".equals(bridgeType)) {
             return new String[]{
