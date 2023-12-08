@@ -28,6 +28,6 @@ public class GuardConfigurationService implements RelayConfigService<GuardRelayC
 
     private String buildTorrcFilePath(String nickname) {
         // Use Path for file manipulation
-        return String.format("torrc/torrc-%s", nickname);
+        return String.format("torrc/torrc-%s_guard", nickname);
     }
 }
