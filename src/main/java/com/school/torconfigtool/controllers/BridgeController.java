@@ -21,10 +21,12 @@ public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/bridge/";
+    private final RelayOperationsController relayOperationController;
 
     private final RelayService relayService;
-    public BridgeController(RelayService relayService) {
+    public BridgeController(RelayService relayService, RelayOperationsController relayOperationController) {
         this.relayService = relayService;
+        this.relayOperationController = relayOperationController;
     }
 
     @GetMapping
@@ -39,6 +41,7 @@ public class BridgeController {
                                   @RequestParam String bridgeNickname,
                                   @RequestParam String webtunnelDomain,
                                   @RequestParam int controlPort,
+                                  @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
             if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort)) {
@@ -58,6 +61,17 @@ public class BridgeController {
             // Add appropriate exception handling (e.g., logging, displaying an error message)
             logger.error("Error configuring Tor Bridge", e);
             model.addAttribute("errorMessage", "Error configuring Tor Bridge. Please check the logs for details.");
+        }
+
+        if (startBridgeAfterConfig) {
+            try {
+                relayOperationController.startRelay(bridgeNickname, "bridge", model);
+                model.addAttribute("successMessage", "Tor Bridge configured and started successfully!");
+            } catch (Exception e) {
+                // Add appropriate exception handling (e.g., logging, displaying an error message)
+                logger.error("Error starting Tor Bridge", e);
+                model.addAttribute("errorMessage", "Error starting Tor Bridge. Please check the logs for details.");
+            }
         }
 
         return "relay-config";
