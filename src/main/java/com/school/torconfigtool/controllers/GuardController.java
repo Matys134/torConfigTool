@@ -59,7 +59,7 @@ public class GuardController {
                 return "relay-config";
             }
 
-            String torrcFileName = TORRC_FILE_PREFIX + relayNickname;
+            String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (RelayUtils.relayExists(relayNickname)) {
