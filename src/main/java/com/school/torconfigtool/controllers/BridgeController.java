@@ -53,7 +53,7 @@ public class BridgeController {
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (!Files.exists(torrcFilePath)) {
-                String[] torrcLines = getTorrcConfigLines(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain);
+                String[] torrcLines = getTorrcConfigLines(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeControlPort, bridgeContact, bridgeNickname, webtunnelDomain);
                 TorrcConfigurator.createTorrcFile(torrcFilePath.toString(), torrcLines);
             }
             model.addAttribute("successMessage", "Tor Bridge configured successfully!");
