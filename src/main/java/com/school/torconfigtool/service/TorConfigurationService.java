@@ -18,15 +18,20 @@ public class TorConfigurationService {
     private static final Logger logger = LoggerFactory.getLogger(TorConfigurationService.class);
 
     public List<TorConfiguration> readTorConfigurations() {
+        List<TorConfiguration> configs = new ArrayList<>();
         String folderPath = buildFolderPath();
-        return readTorConfigurationsFromFolder(folderPath);
+
+        configs.addAll(readTorConfigurationsFromFolder(folderPath, "guard"));
+        configs.addAll(readTorConfigurationsFromFolder(folderPath, "bridge"));
+
+        return configs;
     }
 
-    private String buildFolderPath() {
+    public String buildFolderPath() {
         return "torrc";
     }
 
-    private List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath) {
+    public List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
         List<TorConfiguration> configs = new ArrayList<>();
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
@@ -34,11 +39,13 @@ public class TorConfigurationService {
         if (files != null) {
             for (File file : files) {
                 String relayType = parseRelayTypeFromFile(file);
-                try {
-                    TorConfiguration config = parseTorConfiguration(file, relayType);
-                    configs.add(config);
-                } catch (IOException e) {
-                    logger.error("Error reading Tor configuration file: {}", file.getName(), e);
+                if(relayType.equals(expectedRelayType)) {
+                    try {
+                        TorConfiguration config = parseTorConfiguration(file, relayType);
+                        configs.add(config);
+                    } catch (IOException e) {
+                        logger.error("Error reading Tor configuration file: {}", file.getName(), e);
+                    }
                 }
             }
         }
