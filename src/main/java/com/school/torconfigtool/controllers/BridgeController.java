@@ -21,10 +21,12 @@ public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/bridge/";
+    private final RelayOperationsController relayOperationController;
 
     private final RelayService relayService;
-    public BridgeController(RelayService relayService) {
+    public BridgeController(RelayService relayService, RelayOperationsController relayOperationController) {
         this.relayService = relayService;
+        this.relayOperationController = relayOperationController;
     }
 
     @GetMapping
@@ -38,10 +40,11 @@ public class BridgeController {
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
                                   @RequestParam String webtunnelDomain,
-                                  @RequestParam int controlPort,
+                                  @RequestParam int bridgeControlPort,
+                                  @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
-            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, controlPort)) {
+            if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }
@@ -50,7 +53,7 @@ public class BridgeController {
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (!Files.exists(torrcFilePath)) {
-                String[] torrcLines = getTorrcConfigLines(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain);
+                String[] torrcLines = getTorrcConfigLines(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeControlPort, bridgeContact, bridgeNickname, webtunnelDomain);
                 TorrcConfigurator.createTorrcFile(torrcFilePath.toString(), torrcLines);
             }
             model.addAttribute("successMessage", "Tor Bridge configured successfully!");
@@ -60,11 +63,22 @@ public class BridgeController {
             model.addAttribute("errorMessage", "Error configuring Tor Bridge. Please check the logs for details.");
         }
 
+        if (startBridgeAfterConfig) {
+            try {
+                relayOperationController.startRelay(bridgeNickname, "bridge", model);
+                model.addAttribute("successMessage", "Tor Bridge configured and started successfully!");
+            } catch (Exception e) {
+                // Add appropriate exception handling (e.g., logging, displaying an error message)
+                logger.error("Error starting Tor Bridge", e);
+                model.addAttribute("errorMessage", "Error starting Tor Bridge. Please check the logs for details.");
+            }
+        }
+
         return "relay-config";
     }
 
 
-    private String[] getTorrcConfigLines(String bridgeType, int bridgePort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain) {
+    private String[] getTorrcConfigLines(String bridgeType, int bridgePort, int bridgeControlPort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain) {
         // Use constants or enums instead of hard-coded strings
         String bridgeRelayOption = "BridgeRelay 1";
         String extORPortOption = "ExtORPort auto";
@@ -80,7 +94,9 @@ public class BridgeController {
                     extORPortOption,
                     contactInfoOption,
                     nicknameOption,
-                    "SocksPort 0"
+                    "SocksPort 0",
+                    "ControlPort " + bridgeControlPort,
+                    "RunAsDaemon 1"
             };
         } else if ("webtunnel".equals(bridgeType)) {
             return new String[]{

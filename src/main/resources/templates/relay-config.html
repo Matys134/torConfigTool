@@ -66,6 +66,9 @@
 
             <label for="bridgeNickname">Nickname:</label>
             <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
+
+            <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
+            <input type="text" id="bridgeControlPort" name="bridgeControlPort" required><br><br>
         </div>
 
         <!-- Specific Fields for Bridge -->
@@ -76,6 +79,9 @@
             <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
             <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required><br><br>
         </div>
+
+        <input type="checkbox" id="startBridgeAfterConfig" name="startBridgeAfterConfig">
+        <label for="startBridgeAfterConfig">Start Relay after configuration</label><br>
 
         <!-- Specific Fields for WebTunnel Bridge -->
         <div id="webtunnelFields" class="bridge-specific" style="display: none;">
