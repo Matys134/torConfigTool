@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 public class ProxyConfigurator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyConfigurator.class);
-    private static final String TORRC_PROXY_FILE = "torrc/proxy/torrc-proxy";
+    private static final String TORRC_PROXY_FILE = "torrc/torrc-proxy";
 
     public static boolean configureProxy() {
         try {

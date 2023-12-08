@@ -22,7 +22,7 @@ import java.util.List;
 public class GuardController {
 
     private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/guard/";
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final RelayService relayService;
@@ -59,7 +59,7 @@ public class GuardController {
                 return "relay-config";
             }
 
-            String torrcFileName = TORRC_FILE_PREFIX + relayNickname;
+            String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (RelayUtils.relayExists(relayNickname)) {

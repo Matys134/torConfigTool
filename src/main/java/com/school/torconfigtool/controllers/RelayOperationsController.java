@@ -36,9 +36,10 @@ public class RelayOperationsController {
 
     @GetMapping
     public String relayOperations(Model model) {
-        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurations("guard"));
-        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurations("bridge"));
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations("onion");
+        String folderPath = torConfigurationService.buildFolderPath();
+        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
+        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         model.addAttribute("onionConfigs", onionConfigs);
 
         // Create a map to store hostnames for onion services
@@ -136,19 +137,7 @@ public class RelayOperationsController {
 
 
     private Path buildTorrcFilePath(String relayNickname, String relayType) {
-        String folder;
-        if ("guard".equals(relayType)) {
-            folder = "guard";
-        } else if ("bridge".equals(relayType)) {
-            folder = "bridge";
-        } else if ("onion".equals(relayType)) {
-            folder = "onion";
-        } else {
-            throw new IllegalArgumentException("Invalid relay type: " + relayType);
-        }
-        System.out.println("Torrc file path: " + Paths.get(System.getProperty("user.dir"), "torrc", folder, "torrc-" + relayNickname));
-
-        return Paths.get(System.getProperty("user.dir"), "torrc", folder, "torrc-" + relayNickname);
+        return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
     }
 
     // This method could be moved from RelayController to here

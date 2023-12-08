@@ -37,7 +37,7 @@
 </ul>
 
 <!-- Display Bridge relay configurations -->
-<h2>Bridge Relay Configurations</h2>
+ <h2>Bridge Relay Configurations</h2>
 <ul>
     <li th:each="config : ${bridgeConfigs}">
         <!-- Display Bridge relay configuration fields -->
@@ -57,27 +57,6 @@
                 th:attr="data-config-type='bridge'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
         <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>
-    </li>
-</ul>
-
-<!-- Display Onion relay configurations -->
-<h2>Onion Relay Configurations</h2>
-<ul>
-    <li th:each="config : ${onionConfigs}">
-        <!-- Display Onion relay configuration fields -->
-        <p th:text="'HiddenServiceDir: ' + ${config.hiddenServiceDir}"></p>
-        <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-        <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
-        <p>Hostname: <span th:text="${hostnames[config.hiddenServicePort]}">Default Hostname</span></p>
-
-        <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
-        <button class="edit-onion-button"
-                th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.hiddenServicePort}" th:attr="data-config-type='onion'">Start</button>
-        <button class="stop-button"
-                th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Stop</button>
     </li>
 </ul>
 

@@ -17,32 +17,46 @@ public class TorConfigurationService {
 
     private static final Logger logger = LoggerFactory.getLogger(TorConfigurationService.class);
 
-    public List<TorConfiguration> readTorConfigurations(String relayType) {
-        String folderPath = buildFolderPath(relayType);
-        return readTorConfigurationsFromFolder(folderPath, relayType);
+    public List<TorConfiguration> readTorConfigurations() {
+        List<TorConfiguration> configs = new ArrayList<>();
+        String folderPath = buildFolderPath();
+
+        configs.addAll(readTorConfigurationsFromFolder(folderPath, "guard"));
+        configs.addAll(readTorConfigurationsFromFolder(folderPath, "bridge"));
+
+        return configs;
     }
 
-    private String buildFolderPath(String relayType) {
-        return "torrc" + File.separator + relayType;
+    public String buildFolderPath() {
+        return "torrc";
     }
 
-    private List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String relayType) {
+    public List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
         List<TorConfiguration> configs = new ArrayList<>();
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
 
         if (files != null) {
             for (File file : files) {
-                try {
-                    TorConfiguration config = parseTorConfiguration(file, relayType);
-                    configs.add(config);
-                } catch (IOException e) {
-                    logger.error("Error reading Tor configuration file: {}", file.getName(), e);
+                String relayType = parseRelayTypeFromFile(file);
+                if(relayType.equals(expectedRelayType)) {
+                    try {
+                        TorConfiguration config = parseTorConfiguration(file, relayType);
+                        configs.add(config);
+                    } catch (IOException e) {
+                        logger.error("Error reading Tor configuration file: {}", file.getName(), e);
+                    }
                 }
             }
         }
 
         return configs;
+    }
+
+    private String parseRelayTypeFromFile(File file) {
+        String fileName = file.getName();
+        // e.g. assuming file name is "torrc-relayNickname_relayType"
+        return fileName.substring(fileName.indexOf("_") + 1);
     }
 
     private TorConfiguration parseTorConfiguration(File file, String relayType) throws IOException {
