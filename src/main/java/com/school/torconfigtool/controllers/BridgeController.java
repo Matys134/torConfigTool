@@ -1,7 +1,11 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.config.TorrcConfigurator;
+import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.models.GuardRelayConfig;
 import com.school.torconfigtool.service.RelayService;
+import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -53,67 +57,47 @@ public class BridgeController {
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-            if (!Files.exists(torrcFilePath)) {
-                String[] torrcLines = getTorrcConfigLines(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeControlPort, bridgeContact, bridgeNickname, webtunnelDomain);
-                TorrcConfigurator.createTorrcFile(torrcFilePath.toString(), torrcLines);
+            if (RelayUtils.relayExists(bridgeNickname)) {
+                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
+                return "relay-config";
             }
-            model.addAttribute("successMessage", "Tor Bridge configured successfully!");
+
+            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }
+
+            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
+            if (!torrcFilePath.toFile().exists()) {
+                TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
+            }
+
+            model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
-            // Add appropriate exception handling (e.g., logging, displaying an error message)
-            logger.error("Error configuring Tor Bridge", e);
-            model.addAttribute("errorMessage", "Error configuring Tor Bridge. Please check the logs for details.");
+            logger.error("Error during Tor Relay configuration", e);
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
 
         if (startBridgeAfterConfig) {
             try {
-                relayOperationController.startRelay(bridgeNickname, "bridge", model);
-                model.addAttribute("successMessage", "Tor Bridge configured and started successfully!");
+                relayOperationController.startRelay(bridgeNickname, "guard", model);
+                model.addAttribute("successMessage", "Tor Relay configured and started successfully!");
             } catch (Exception e) {
-                // Add appropriate exception handling (e.g., logging, displaying an error message)
-                logger.error("Error starting Tor Bridge", e);
-                model.addAttribute("errorMessage", "Error starting Tor Bridge. Please check the logs for details.");
+                logger.error("Error starting Tor Relay", e);
+                model.addAttribute("errorMessage", "Failed to start Tor Relay.");
             }
         }
 
         return "relay-config";
     }
 
+    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, int bridgePort, String bridgeContact, int bridgeControlPort) {
+        BridgeRelayConfig config = new BridgeRelayConfig();
+        config.setNickname(bridgeNickname);
+        config.setOrPort(String.valueOf(bridgePort));
+        config.setContact(bridgeContact);
+        config.setControlPort(String.valueOf(bridgeControlPort));
 
-    private String[] getTorrcConfigLines(String bridgeType, int bridgePort, int bridgeControlPort, int bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain) {
-        // Use constants or enums instead of hard-coded strings
-        String bridgeRelayOption = "BridgeRelay 1";
-        String extORPortOption = "ExtORPort auto";
-        String contactInfoOption = "ContactInfo " + bridgeContact;
-        String nicknameOption = "Nickname " + bridgeNickname;
-
-        if ("bridge".equals(bridgeType)) {
-            return new String[]{
-                    bridgeRelayOption,
-                    "ORPort " + bridgePort,
-                    "ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy",
-                    "ServerTransportListenAddr obfs4 0.0.0.0:" + bridgeTransportListenAddr,
-                    extORPortOption,
-                    contactInfoOption,
-                    nicknameOption,
-                    "SocksPort 0",
-                    "ControlPort " + bridgeControlPort,
-                    "RunAsDaemon 1"
-            };
-        } else if ("webtunnel".equals(bridgeType)) {
-            return new String[]{
-                    bridgeRelayOption,
-                    "ORPort 127.0.0.1:auto",
-                    "AssumeReachable 1",
-                    "ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel",
-                    "ServerTransportListenAddr webtunnel 127.0.0.1:15000",
-                    "ServerTransportOptions webtunnel url=" + webtunnelDomain,
-                    extORPortOption,
-                    contactInfoOption,
-                    nicknameOption,
-                    "SocksPort 0"
-            };
-        } else {
-            return new String[0];
-        }
+        return config;
     }
 }
