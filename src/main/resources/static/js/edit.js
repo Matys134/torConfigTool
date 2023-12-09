@@ -76,6 +76,13 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
+        if (isBridge) { // Only update the bridge config if the edit was for a bridge
+            sendUpdateRequest("/update-bridge-config", data);
+        } else {
+            // ONLY update the guard config IF the edit was NOT for a bridge.
+            sendUpdateRequest("/update-guard-config", data);
+        }
+
         // Check for the uniqueness of ports
         if (!arePortsUnique(data.orPort, data.controlPort)) {
             alert("The ports specified must be unique. Please check your entries.");
