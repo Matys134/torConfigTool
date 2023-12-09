@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    var isBridge = true; // Add this variable to track which config is being edited
+
+    var isBridgeEdit = false; // Add this variable to track which config is being edited
+
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
@@ -54,14 +56,14 @@ $(document).ready(function () {
     }
 
     buttons.edit.click(function () {
-        const button = $(this);
-        isBridge = button.hasClass('edit-bridge-button'); // Set this flag when the edit button is clicked
+        isBridgeEdit = $(this).hasClass('edit-bridge-button'); // Set this flag when the edit button is clicked
+
         const data = {
-            nickname: button.attr('data-config-nickname'),
-            orPort: button.attr('data-config-orport'),
-            contact: button.attr('data-config-contact'),
-            controlPort: button.attr('data-config-controlport'),
-            serverTransport: isBridge ? button.attr('data-config-servertransport') : ""
+            nickname: $(this).data('config-nickname'),
+            orPort: $(this).data('config-orport'),
+            contact: $(this).data('config-contact'),
+            controlPort: $(this).data('config-controlport'),
+            serverTransport: isBridgeEdit ? $(this).data('config-servertransport') : ""
         };
 
         showModalWith(data);
@@ -82,11 +84,6 @@ $(document).ready(function () {
             return;
         }
 
-        if (isBridge) {
-            sendUpdateRequest("/update-bridge-config", data);
-        } else {
-            sendUpdateRequest("/update-guard-config", data);
-        }
         hideModal();
 
         // Now send a GET request to your new API for checking the port availability
@@ -98,10 +95,8 @@ $(document).ready(function () {
             },
             function(response) {
                 if (response['available']) {
-                    sendUpdateRequest("/update-guard-config", data); // Always update the guard config
-                    if (isBridge) { // Only update the bridge config if the edit was for a bridge
-                        sendUpdateRequest("/update-bridge-config", data);
-                    }
+                    let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
+                    sendUpdateRequest(url, data);
                     hideModal();
                 } else {
                     alert("One or more ports are already in use. Please choose different ports.");
