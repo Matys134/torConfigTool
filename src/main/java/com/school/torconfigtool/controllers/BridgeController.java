@@ -43,10 +43,10 @@ public class BridgeController {
                                   @RequestParam int bridgeTransportListenAddr,
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
-                                  @RequestParam String webtunnelDomain,
-                                    @RequestParam int bridgeControlPort,
-                                  @RequestParam String webtunnelUrl,
-                                  @RequestParam int webtunnelPort,
+                                  @RequestParam(required = false) String webtunnelDomain,
+                                  @RequestParam int bridgeControlPort,
+                                  @RequestParam(required = false) String webtunnelUrl,
+                                  @RequestParam(required = false) int webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
