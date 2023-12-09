@@ -27,6 +27,6 @@ public class BridgeConfigurationService implements RelayConfigService<BridgeRela
 
     private String buildTorrcFilePath(String nickname) {
         // Use Path for file manipulation
-        return String.format("torrc/torrc-%s", nickname);
+        return String.format("torrc/torrc-%s_bridge", nickname);
     }
 }
