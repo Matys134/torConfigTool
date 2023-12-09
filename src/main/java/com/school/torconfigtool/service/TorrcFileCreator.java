@@ -1,6 +1,8 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.models.BaseRelayConfig;
+import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.models.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,14 @@ public class TorrcFileCreator {
             writer.newLine();
             writer.write("RunAsDaemon 1");
             writer.newLine();
+
+            if (config instanceof BridgeRelayConfig) {
+                config.writeSpecificConfig(writer);
+            } else if (config instanceof GuardRelayConfig) {
+                config.writeSpecificConfig(writer);
+            } else {
+                logger.error("Unknown relay type");
+            }
 
             String systemIpv6 = getSystemIpv6();
 
