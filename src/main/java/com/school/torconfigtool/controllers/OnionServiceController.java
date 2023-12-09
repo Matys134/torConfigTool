@@ -1,6 +1,5 @@
 package com.school.torconfigtool.controllers;
 
-import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorConfigurationService;
@@ -63,16 +62,13 @@ public class OnionServiceController {
 
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
-        // Check port availability before configuring the onion service
-        if (!RelayUtils.portsAreAvailable("torrc-" + onionServicePort + "_onion", onionServicePort, onionServicePort)) { // You may need to replace "onion" with actual relay name
-            model.addAttribute("errorMessage", "Port is not available.");
-            return "relay-config"; // The name of the Thymeleaf template to render when the configuration fails
-        }
+        // Check port availability before configuring the onion service to avoid conflicts with other services running on the same port
+
 
         try {
-            String pathToFile = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
-            if (!new File(pathToFile).exists()) {
-                createTorrcFile(pathToFile, onionServicePort);
+            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
+            if (!new File(torrcFilePath).exists()) {
+                createTorrcFile(torrcFilePath, onionServicePort);
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
