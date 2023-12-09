@@ -46,7 +46,7 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelDomain,
                                   @RequestParam int bridgeControlPort,
                                   @RequestParam(required = false) String webtunnelUrl,
-                                  @RequestParam(required = false) int webtunnelPort,
+                                  @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
