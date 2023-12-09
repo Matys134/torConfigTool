@@ -56,9 +56,6 @@ public class TorrcFileCreator {
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
             writer.write("DataDirectory " + dataDirectoryPath);
 
-            // Use the new method to write specific configurations
-            config.writeSpecificConfig(writer);
-
         } catch (IOException e) {
             logger.error("Error creating Torrc file", e);
         }
