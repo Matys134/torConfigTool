@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var isBridge = false; // Add this variable to track which config is being edited
+    var isBridge = true; // Add this variable to track which config is being edited
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
