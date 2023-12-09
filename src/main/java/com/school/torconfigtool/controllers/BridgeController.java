@@ -21,6 +21,7 @@ public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private static final String TORRC_FILE_PREFIX = "torrc-";
     private final RelayOperationsController relayOperationController;
 
     private final RelayService relayService;
@@ -49,7 +50,7 @@ public class BridgeController {
                 return "relay-config";
             }
 
-            String torrcFileName = "torrc-" + (bridgeNickname != null ? bridgeNickname : "");
+            String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
             if (!Files.exists(torrcFilePath)) {
