@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     var isBridgeEdit = false; // Add this variable to track which config is being edited
 
     const configSelectors = {
