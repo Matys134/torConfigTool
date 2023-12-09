@@ -3,7 +3,6 @@ package com.school.torconfigtool.controllers;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.config.TorrcConfigurator;
 import com.school.torconfigtool.models.BridgeRelayConfig;
-import com.school.torconfigtool.models.GuardRelayConfig;
 import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -27,8 +25,8 @@ public class BridgeController {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
     private final RelayOperationsController relayOperationController;
-
     private final RelayService relayService;
+
     public BridgeController(RelayService relayService, RelayOperationsController relayOperationController) {
         this.relayService = relayService;
         this.relayOperationController = relayOperationController;
@@ -38,14 +36,17 @@ public class BridgeController {
     public String bridgeConfigurationForm() {
         return "relay-config";
     }
+
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
                                   @RequestParam int bridgePort,
                                   @RequestParam int bridgeTransportListenAddr,
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
-                                  @RequestParam String webtunnelDomain,
+                                  @RequestParam(required = false) String webtunnelDomain,
                                   @RequestParam int bridgeControlPort,
+                                  @RequestParam(required = false) String webtunnelUrl,
+                                  @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
@@ -68,6 +69,11 @@ public class BridgeController {
             }
 
             BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
+            config.setBridgeType(bridgeType);
+            config.setWebtunnelDomain(webtunnelDomain);
+            config.setWebtunnelUrl(webtunnelUrl);
+            config.setWebtunnelPort(webtunnelPort == null ? 0 : webtunnelPort.intValue());
+            config.setEmail(bridgeContact); // Assume bridgeContact is email here
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
