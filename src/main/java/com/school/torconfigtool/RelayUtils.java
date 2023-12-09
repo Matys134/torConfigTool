@@ -86,8 +86,9 @@ public class RelayUtils {
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
-                if (file.isFile() && file.getName().startsWith("torrc-")) {
-                    String currentFileRelayNickname = file.getName().substring("torrc-".length());
+                if (file.isFile() && (file.getName().startsWith("torrc-") && file.getName().contains("_"))) {
+                    String[] fileParts = file.getName().substring("torrc-".length()).split("_");
+                    String currentFileRelayNickname = fileParts[0];
 
                     if (currentFileRelayNickname.equals(relayNickname)) {
                         continue;
