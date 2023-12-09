@@ -11,7 +11,7 @@ import java.io.IOException;
 public class GuardRelayConfig extends BaseRelayConfig {
 
     @Override
-    public void writeSpecificConfig(BufferedWriter writer) throws IOException {
+    public void writeSpecificConfig(BufferedWriter writer) {
         // Write guard-specific configurations to the file
     }
 }

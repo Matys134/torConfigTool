@@ -1,6 +1,7 @@
 package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.models.TorConfiguration;
+import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class OnionServiceController {
         this.torConfigurationService = torConfigurationService;
     }
 
-    private static final String TORRC_DIRECTORY_PATH = "torrc/onion/";
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
@@ -61,8 +62,15 @@ public class OnionServiceController {
 
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
+        // Check port availability using the RelayService
+        RelayService relayService = new RelayService();
+        if (!relayService.arePortsAvailable("onion-service", onionServicePort, onionServicePort)) {
+            model.addAttribute("errorMessage", "One or more ports are already in use.");
+            return "relay-config";
+        }
+
         try {
-            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort;
+            String torrcFilePath = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
             if (!new File(torrcFilePath).exists()) {
                 createTorrcFile(torrcFilePath, onionServicePort);
                 generateNginxConfig(onionServicePort);
