@@ -164,7 +164,7 @@ public class BridgeController {
 
     private void modifyNginxConfig() {
         String programLocation = System.getProperty("user.dir");
-        String nginxConfigPath = "/etc/nginx/sites-available/default";
+        String nginxConfigPath = "/etc/nginx/sites-available/webtunnel";
 
         // Generate random string
         String command = "echo $(cat /dev/urandom | tr -cd \"qwertyuiopasdfghjklzxcvbnmMNBVCXZLKJHGFDSAQWERTUIOP0987654321\"|head -c 24)";
