@@ -50,7 +50,6 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
-            bridgePort = 0;
             /*//if bridgeport is null, check only if controlport is available and vice versa
             if (bridgePort == null && !relayService.isPortAvailable(bridgeNickname, bridgeControlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
