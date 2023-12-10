@@ -25,6 +25,7 @@ public class BridgeController {
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
+    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
     private final RelayOperationsController relayOperationController;
     private final RelayService relayService;
 
@@ -49,7 +50,7 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelUrl,
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
-                                  Model model) {
+                                  Model model) throws IOException {
         try {
             /*//if bridgeport is null, check only if controlport is available and vice versa
             if (bridgePort == null && !relayService.isPortAvailable(bridgeNickname, bridgeControlPort)) {
@@ -97,6 +98,7 @@ public class BridgeController {
             setupWebtunnel(webtunnelUrl);
             installCert(webtunnelUrl);
             modifyNginxConfig();
+            generateNginxConfig(80);
         }
 
         if (startBridgeAfterConfig) {
@@ -209,5 +211,73 @@ public class BridgeController {
         } catch (IOException e) {
             logger.error("Error during nginx configuration modification", e);
         }
+    }
+
+    private void editNginxConfig(String nginxConfig) {
+        try {
+            // Write the nginxConfig to a temporary file
+            File tempFile = File.createTempFile("nginx_config", null);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+                writer.write(nginxConfig);
+            }
+
+            // Use sudo to copy the temporary file to the actual nginx configuration file
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), NGINX_VHOST_PATH);
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            // Clean up the temporary file
+            boolean isDeleted = tempFile.delete();
+
+            if (!isDeleted) {
+                logger.error("Failed to delete temporary file: " + tempFile);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error editing Nginx configuration", e);
+        }
+    }
+
+    private void generateNginxConfig(int onionServicePort) throws IOException {
+        try {
+
+            String currentDirectory = System.getProperty("user.dir");
+
+            File wwwDir = new File(currentDirectory + "/onion/www");
+            if (!wwwDir.exists() && !wwwDir.mkdirs()) {
+                throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
+            }
+
+            File serviceDir = new File(wwwDir, "service-" + onionServicePort);
+            if (!serviceDir.exists() && !serviceDir.mkdirs()) {
+                throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
+            }
+
+
+            File indexHtml = new File(serviceDir, "index.html");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
+                writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
+            }
+        }
+        catch (IOException e) {
+            logger.error("Error generating Nginx configuration", e);
+        }
+
+        String nginxConfig = buildNginxConfig(onionServicePort);
+        editNginxConfig(nginxConfig);
+    }
+
+    private String buildNginxConfig(int onionServicePort) {
+
+        String currentDirectory = System.getProperty("user.dir");
+        // Build the server block
+        return String.format("""
+                server {
+                    listen 80;
+                    server_name test;
+                    access_log /var/log/nginx/my-website.log;
+                    index index.html;
+                    root %s/onion/www/service-80;
+                }
+                """, currentDirectory);
     }
 }
