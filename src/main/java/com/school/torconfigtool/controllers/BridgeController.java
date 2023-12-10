@@ -70,10 +70,10 @@ public class BridgeController {
                 return "relay-config";
             }
 
-            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
+            /*if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
-            }
+            }*/
 
             BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
             config.setBridgeType(bridgeType);
