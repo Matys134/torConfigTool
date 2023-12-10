@@ -49,7 +49,7 @@
     </form>
 </div>
 
-<!-- Other Relay Type Tab Content -->
+<!-- Bridge Tab Content -->
 <div id="bridgeTab" class="tabcontent">
     <form id="bridgeForm" action="/bridge/configure" method="post">
         <label for="bridgeType">Bridge Type:</label>
@@ -74,10 +74,10 @@
         <!-- Specific Fields for Bridge -->
         <div id="bridgeFields" class="bridge-specific">
             <label for="bridgePort">ORPort (e.g., 9001):</label>
-            <input type="text" id="bridgePort" name="bridgePort" required><br><br>
+            <input type="text" id="bridgePort" name="bridgePort"><br><br>
 
             <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
-            <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required><br><br>
+            <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr"><br><br>
         </div>
 
         <input type="checkbox" id="startBridgeAfterConfig" name="startBridgeAfterConfig">
@@ -85,8 +85,8 @@
 
         <!-- Specific Fields for WebTunnel Bridge -->
         <div id="webtunnelFields" class="bridge-specific" style="display: none;">
-            <label for="webtunnelDomain">Domain:</label>
-            <input type="text" id="webtunnelDomain" name="webtunnelDomain"><br><br>
+            <label for="webtunnelUrl">Domain:</label>
+            <input type="text" id="webtunnelUrl" name="webtunnelUrl"><br><br>
         </div>
 
         <!-- Specific Fields for Snowflake -->
@@ -95,11 +95,6 @@
         </div>
 
         <button type="submit">Configure Bridge</button>
-    </form>
-
-    <!-- Configuration for Snowflake -->
-    <form id="snowflakeForm" action="/snowflake/configure" method="post" style="display: none;">
-        <button type="submit">Configure Snowflake</button>
     </form>
 </div>
 
@@ -133,25 +128,38 @@
         var webtunnelFields = document.getElementById("webtunnelFields");
         var snowflakeFields = document.getElementById("snowflakeFields");
 
+        // Retrieve the form elements
+        var bridgePort = document.getElementById("bridgePort");
+        var bridgeTransportListenAddr = document.getElementById("bridgeTransportListenAddr");
+
         // Hide all fields initially
         commonFields.style.display = "none";
         bridgeFields.style.display = "none";
         webtunnelFields.style.display = "none";
         snowflakeFields.style.display = "none";
 
-        // Show specific fields based on the selected bridge type
+        // Remove 'required' attributes initially
+        bridgePort.removeAttribute("required");
+        bridgeTransportListenAddr.removeAttribute("required");
+
+        // Show specific fields and add 'required' attributes based on the selected bridge type
         if (bridgeType === "bridge" || bridgeType === "webtunnel") {
             commonFields.style.display = "block";
         }
 
         if (bridgeType === "bridge") {
             bridgeFields.style.display = "block";
+            bridgePort.setAttribute("required", "");
+            bridgeTransportListenAddr.setAttribute("required", "");
         } else if (bridgeType === "webtunnel") {
             webtunnelFields.style.display = "block";
         } else if (bridgeType === "snowflake") {
             snowflakeFields.style.display = "block";
         }
     }
+
+    // Call the function to initialize fields when the page loads
+    window.onload = toggleBridgeFields;
 </script>
 </body>
 </html>

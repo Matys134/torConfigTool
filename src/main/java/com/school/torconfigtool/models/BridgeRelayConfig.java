@@ -36,7 +36,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             case "webtunnel":
                 writer.write("ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel");
                 writer.newLine();
-                writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:" + getWebtunnelPort());
+                writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:15000");
                 writer.newLine();
                 writer.write("ServerTransportOptions webtunnel url=" + getWebtunnelUrl());
                 writer.newLine();
