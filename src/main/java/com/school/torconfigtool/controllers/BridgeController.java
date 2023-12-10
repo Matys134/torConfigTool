@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -92,6 +93,12 @@ public class BridgeController {
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
 
+        if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
+            setupWebtunnel(webtunnelUrl);
+            installCert(webtunnelUrl);
+            modifyNginxConfig();
+        }
+
         if (startBridgeAfterConfig) {
             try {
                 relayOperationController.startRelay(bridgeNickname, "guard", model);
@@ -114,5 +121,93 @@ public class BridgeController {
         config.setControlPort(String.valueOf(bridgeControlPort));
 
         return config;
+    }
+
+    private void setupWebtunnel(String webTunnelUrl) {
+        String programLocation = System.getProperty("user.dir");
+        String command = "acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/";
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", command);
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error during webtunnel setup. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error during webtunnel setup", e);
+        }
+    }
+
+    private void installCert(String webTunnelUrl) {
+        String programLocation = System.getProperty("user.dir");
+        String command = "acme.sh --install-cert -d " + webTunnelUrl +
+                " --key-file " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem" +
+                " --fullchain-file " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem" +
+                " --reloadcmd \"sudo systemctl restart nginx.service\"";
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", command);
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error during certificate installation. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error during certificate installation", e);
+        }
+    }
+
+    private void modifyNginxConfig() {
+        String programLocation = System.getProperty("user.dir");
+        String nginxConfigPath = "/etc/nginx/sites-available/default";
+
+        // Generate random string
+        String command = "echo $(cat /dev/urandom | tr -cd \"qwertyuiopasdfghjklzxcvbnmMNBVCXZLKJHGFDSAQWERTUIOP0987654321\"|head -c 24)";
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", command);
+        String randomString = "";
+        try {
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            randomString = reader.readLine();
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error during random string generation", e);
+        }
+
+        // Modify nginx configuration
+        String configContent = "server {\n" +
+                "    listen 443 ssl;\n" +
+                "    listen [::]:443 ssl;\n\n" +
+                "    ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;\n" +
+                "    ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;\n\n" +
+                "    location /" + randomString + " {\n" +
+                "        proxy_pass http://127.0.0.1:15000;\n" +
+                "        proxy_http_version 1.1;\n" +
+                "        proxy_set_header Upgrade $http_upgrade;\n" +
+                "        proxy_set_header Connection \"upgrade\";\n" +
+                "        proxy_set_header Accept-Encoding \"\";\n" +
+                "        proxy_set_header Host $host;\n" +
+                "        proxy_set_header X-Real-IP $remote_addr;\n" +
+                "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n" +
+                "        proxy_set_header X-Forwarded-Proto $scheme;\n" +
+                "        add_header Front-End-Https on;\n" +
+                "        proxy_redirect off;\n" +
+                "        access_log off;\n" +
+                "        error_log off;\n" +
+                "    }\n" +
+                "}";
+
+        try (FileWriter fileWriter = new FileWriter(nginxConfigPath, false);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(configContent);
+        } catch (IOException e) {
+            logger.error("Error during nginx configuration modification", e);
+        }
     }
 }
