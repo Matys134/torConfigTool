@@ -39,8 +39,8 @@ public class BridgeController {
 
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
-                                  @RequestParam(required = false) int bridgePort,
-                                  @RequestParam(required = false) int bridgeTransportListenAddr,
+                                  @RequestParam(required = false, defaultValue = "0") int bridgePort,
+                                  @RequestParam(required = false, defaultValue = "0") int bridgeTransportListenAddr,
                                   @RequestParam String bridgeContact,
                                   @RequestParam String bridgeNickname,
                                   @RequestParam(required = false) String webtunnelDomain,
