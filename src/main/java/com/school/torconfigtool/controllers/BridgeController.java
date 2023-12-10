@@ -150,6 +150,8 @@ public class BridgeController {
                 " --fullchain-file " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
 
+        System.out.println(command);
+
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", command);
 
