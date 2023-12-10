@@ -95,10 +95,10 @@ public class BridgeController {
         }
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
+            generateNginxConfig(80);
             setupWebtunnel(webtunnelUrl);
             installCert(webtunnelUrl);
             modifyNginxConfig();
-            generateNginxConfig(80);
         }
 
         if (startBridgeAfterConfig) {
