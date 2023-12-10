@@ -79,7 +79,7 @@ public class BridgeController {
             config.setBridgeType(bridgeType);
             config.setWebtunnelDomain(webtunnelDomain);
             config.setWebtunnelUrl(webtunnelUrl);
-            config.setWebtunnelPort(webtunnelPort == null ? 0 : bridgePort.intValue());
+            config.setWebtunnelPort(webtunnelPort == null ? (bridgePort == null ? 0 : bridgePort.intValue()) : webtunnelPort);
             config.setEmail(bridgeContact); // Assume bridgeContact is email here
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
