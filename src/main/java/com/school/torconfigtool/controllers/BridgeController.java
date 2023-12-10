@@ -79,7 +79,7 @@ public class BridgeController {
             config.setBridgeType(bridgeType);
             config.setWebtunnelDomain(webtunnelDomain);
             config.setWebtunnelUrl(webtunnelUrl);
-            config.setWebtunnelPort(webtunnelPort != null ? webtunnelPort : (bridgePort != null ? bridgePort : Integer.valueOf(0)));
+            config.setWebtunnelPort(webtunnelPort);
             config.setEmail(bridgeContact); // Assume bridgeContact is email here
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
@@ -104,10 +104,11 @@ public class BridgeController {
         return "relay-config";
     }
 
-    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, int bridgePort, String bridgeContact, int bridgeControlPort) {
+    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
         config.setNickname(bridgeNickname);
-        config.setOrPort(String.valueOf(bridgePort));
+        if (bridgePort != null)
+            config.setOrPort(String.valueOf(bridgePort));
         config.setContact(bridgeContact);
         config.setControlPort(String.valueOf(bridgeControlPort));
 
