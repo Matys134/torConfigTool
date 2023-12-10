@@ -51,6 +51,19 @@ public class BridgeController {
                                   Model model) {
         try {
 
+
+            /*//if bridgeport is null, check only if controlport is available and vice versa
+            if (bridgePort == null && !relayService.isPortAvailable(bridgeNickname, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            } else if (bridgeControlPort == 0 && !relayService.isPortAvailable(bridgeNickname, bridgePort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            } else if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }*/
+
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
@@ -64,7 +77,7 @@ public class BridgeController {
                 return "relay-config";
             }
 
-            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
+            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort != null ? bridgePort : 0, bridgeContact, bridgeControlPort);
             config.setBridgeType(bridgeType);
             config.setWebtunnelDomain(webtunnelDomain);
             config.setWebtunnelUrl(webtunnelUrl);
