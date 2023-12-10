@@ -127,7 +127,7 @@ public class BridgeController {
 
     private void setupWebtunnel(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/ --force";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/";
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", command);
@@ -146,8 +146,8 @@ public class BridgeController {
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
         String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl +
-                " --key-file " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem" +
-                " --fullchain-file " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem" +
+                " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
+                " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
 
         System.out.println(command);
