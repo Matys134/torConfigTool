@@ -50,6 +50,19 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   Model model) {
         try {
+            bridgePort = 0;
+            /*//if bridgeport is null, check only if controlport is available and vice versa
+            if (bridgePort == null && !relayService.isPortAvailable(bridgeNickname, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            } else if (bridgeControlPort == 0 && !relayService.isPortAvailable(bridgeNickname, bridgePort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            } else if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
+                return "relay-config";
+            }*/
+
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
@@ -63,15 +76,11 @@ public class BridgeController {
                 return "relay-config";
             }
 
-            BridgeRelayConfig config = createBridgeConfig(
-                    bridgeNickname,
-                    String.valueOf(bridgePort != null ? bridgePort : 0), // here's the change
-                    bridgeContact,
-                    bridgeControlPort);
+            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
             config.setBridgeType(bridgeType);
             config.setWebtunnelDomain(webtunnelDomain);
             config.setWebtunnelUrl(webtunnelUrl);
-            config.setWebtunnelPort(webtunnelPort != null ? webtunnelPort : 0);
+            config.setWebtunnelPort(webtunnelPort == null ? 0 : webtunnelPort.intValue());
             config.setEmail(bridgeContact); // Assume bridgeContact is email here
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
@@ -96,10 +105,10 @@ public class BridgeController {
         return "relay-config";
     }
 
-    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, String bridgePort, String bridgeContact, int bridgeControlPort) {
+    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, int bridgePort, String bridgeContact, int bridgeControlPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
         config.setNickname(bridgeNickname);
-        config.setOrPort(bridgePort);
+        config.setOrPort(String.valueOf(bridgePort));
         config.setContact(bridgeContact);
         config.setControlPort(String.valueOf(bridgeControlPort));
 
