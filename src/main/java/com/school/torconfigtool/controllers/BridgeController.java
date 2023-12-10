@@ -186,6 +186,9 @@ public class BridgeController {
         String configContent = "server {\n" +
                 "    listen 443 ssl;\n" +
                 "    listen [::]:443 ssl;\n\n" +
+                "    server_name webtunnel;\n\n" +
+                "    index index.html" +
+                "    root " + programLocation + "/torConfigTool/onion/www/service-80;\n\n" +
                 "    ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;\n" +
                 "    ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;\n\n" +
                 "    location /" + randomString + " {\n" +
@@ -213,30 +216,6 @@ public class BridgeController {
         }
     }
 
-    private void editNginxConfig(String nginxConfig) {
-        try {
-            // Write the nginxConfig to a temporary file
-            File tempFile = File.createTempFile("nginx_config", null);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
-                writer.write(nginxConfig);
-            }
-
-            // Use sudo to copy the temporary file to the actual nginx configuration file
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), NGINX_VHOST_PATH);
-            Process process = processBuilder.start();
-            process.waitFor();
-
-            // Clean up the temporary file
-            boolean isDeleted = tempFile.delete();
-
-            if (!isDeleted) {
-                logger.error("Failed to delete temporary file: " + tempFile);
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error editing Nginx configuration", e);
-        }
-    }
-
     private void generateNginxConfig(int onionServicePort) throws IOException {
         try {
 
@@ -261,23 +240,5 @@ public class BridgeController {
         catch (IOException e) {
             logger.error("Error generating Nginx configuration", e);
         }
-
-        String nginxConfig = buildNginxConfig(onionServicePort);
-        editNginxConfig(nginxConfig);
-    }
-
-    private String buildNginxConfig(int onionServicePort) {
-
-        String currentDirectory = System.getProperty("user.dir");
-        // Build the server block
-        return String.format("""
-                server {
-                    listen 80;
-                    server_name test;
-                    access_log /var/log/nginx/my-website.log;
-                    index index.html;
-                    root %s/onion/www/service-80;
-                }
-                """, currentDirectory);
     }
 }
