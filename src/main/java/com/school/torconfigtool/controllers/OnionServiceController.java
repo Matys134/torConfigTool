@@ -2,7 +2,6 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.TorConfiguration;
-import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +85,7 @@ public class OnionServiceController {
 
     private void generateNginxConfig(int onionServicePort) throws IOException {
         String nginxConfig = buildNginxConfig(onionServicePort);
-        editNginxConfig(nginxConfig);
+        editNginxConfig(nginxConfig, onionServicePort);
     }
 
     private String buildNginxConfig(int onionServicePort) {
@@ -106,7 +105,7 @@ public class OnionServiceController {
 
 
 
-    private void editNginxConfig(String nginxConfig) {
+    private void editNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
             File tempFile = File.createTempFile("nginx_config", null);
@@ -114,9 +113,17 @@ public class OnionServiceController {
                 writer.write(nginxConfig);
             }
 
+            String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
+
             // Use sudo to copy the temporary file to the actual nginx configuration file
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), NGINX_VHOST_PATH);
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath);
             Process process = processBuilder.start();
+            process.waitFor();
+
+            // Create a symbolic link to the nginx configuration file
+            String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServicePort;
+            processBuilder = new ProcessBuilder("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath);
+            process = processBuilder.start();
             process.waitFor();
 
             // Clean up the temporary file
