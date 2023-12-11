@@ -120,6 +120,12 @@ public class OnionServiceController {
             Process process = processBuilder.start();
             process.waitFor();
 
+            // Create a symbolic link to the nginx configuration file
+            String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServicePort;
+            processBuilder = new ProcessBuilder("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath);
+            process = processBuilder.start();
+            process.waitFor();
+
             // Clean up the temporary file
             boolean isDeleted = tempFile.delete();
 
