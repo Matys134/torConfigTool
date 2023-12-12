@@ -220,9 +220,9 @@ public class OnionServiceController {
         }
     }
 
-    @GetMapping("/upload")
-    public String showUploadForm(Model model) {
-        List<String> fileNames = getUploadedFiles(Integer.parseInt(torConfiguration.getHiddenServicePort()));
+    @GetMapping("/upload/{port}")
+    public String showUploadForm(@PathVariable("port") int port, Model model) {
+        List<String> fileNames = getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }
