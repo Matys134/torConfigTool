@@ -222,20 +222,17 @@ public class OnionServiceController {
 
     @GetMapping("/upload")
     public String showUploadForm(Model model) {
-        List<String> fileNames = getUploadedFiles();
+        List<String> fileNames = getUploadedFiles(Integer.parseInt(torConfiguration.getHiddenServicePort()));
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }
 
-    @PostMapping("/remove-file/{fileName}")
-    public String removeFile(@PathVariable("fileName") String fileName, Model model) {
-        // Use try-catch block for exception handling
+    @PostMapping("/remove-file/{fileName}/{port}")
+    public String removeFile(@PathVariable("fileName") String fileName, @PathVariable("port") int port, Model model) {
         try {
-            //String fileDir = "/home/matys/IdeaProjects/torConfigTool/onion/www/service-80/";
-            String fileDir = "onion/www/service-80/";
+            String fileDir = "onion/www/service-" + port + "/";
             File fileToRemove = new File(fileDir + fileName);
 
-            // Check if file exists and delete
             if(fileToRemove.exists()) {
                 if (!fileToRemove.delete()) {
                     model.addAttribute("message", "Error deleting the file.");
@@ -246,25 +243,20 @@ public class OnionServiceController {
                 model.addAttribute("message", "File doesn't exist.");
             }
         } catch(Exception e) {
-            // Handle any error
             model.addAttribute("message", "Error: " + e.getMessage());
         }
 
-        // Get the updated list of files
-        List<String> fileNames = getUploadedFiles();
-
-        // Add list to model
+        List<String> fileNames = getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
 
-        // Redirect back to the upload page
         return "file_upload_form";
     }
 
-    @PostMapping("/upload")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, Model model) {
+    @PostMapping("/upload/{port}")
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
         try {
             Arrays.stream(files).forEach(file -> {
-                String fileDir = "onion/www/service-80/";
+                String fileDir = "onion/www/service-" + port + "/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
                 try(FileOutputStream fos = new FileOutputStream(outputFile)){
@@ -275,8 +267,7 @@ public class OnionServiceController {
                 }
             });
 
-            // Get the updated list of uploaded files
-            List<String> fileNames = getUploadedFiles();
+            List<String> fileNames = getUploadedFiles(port);
             model.addAttribute("uploadedFiles", fileNames);
 
             model.addAttribute("message", "Files uploaded successfully!");
@@ -287,8 +278,8 @@ public class OnionServiceController {
         }
     }
 
-    private List<String> getUploadedFiles() {
-        String uploadDir = "onion/www/service-80/";
+    private List<String> getUploadedFiles(int port) {
+        String uploadDir = "onion/www/service-" + port + "/";
         File folder = new File(uploadDir);
         return Arrays.asList(Objects.requireNonNull(folder.list()));
     }
