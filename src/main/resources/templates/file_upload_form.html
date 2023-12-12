@@ -14,7 +14,7 @@
     <th:block th:each="file : ${uploadedFiles}">
         <li>
             <span th:text="${file}"></span>
-            <form th:action="@{/onion-service/remove-file/{fileName}(fileName=${file})}" method="post">
+            <form action="#" th:action="@{/onion-service/upload/{port}(port=${port})}" method="post" enctype="multipart/form-data">
                 <button type="submit">Delete</button>
             </form>
         </li>
