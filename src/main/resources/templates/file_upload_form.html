@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>File Upload</h1>
-<form method="POST" action="/onion-service/upload" enctype="multipart/form-data">
+<form method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" enctype="multipart/form-data">
     <input type="file" name="files" multiple><br/><br/>
     <input type="submit" value="Submit">
 </form>
@@ -14,7 +14,7 @@
     <th:block th:each="file : ${uploadedFiles}">
         <li>
             <span th:text="${file}"></span>
-            <form action="#" th:action="@{/onion-service/upload/{port}(port=${port})}" method="post" enctype="multipart/form-data">
+            <form method="POST" th:action="@{/onion-service/remove-file/{fileName}/{port}(fileName=${file}, port=${port})}">
                 <button type="submit">Delete</button>
             </form>
         </li>
