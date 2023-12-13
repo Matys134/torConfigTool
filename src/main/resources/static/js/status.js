@@ -47,10 +47,10 @@ $(document).ready(function() {
 
     function updateOnionRelayStatus() {
         $(".edit-onion-button").each(function() {
-            var nickname = $(this).data("config-nickname");
+            var port = $(this).data("config-port");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "onion") {
-                updateRelayStatus(nickname, relayType);
+                updateRelayStatus(port, relayType);
             }
         });
     }
