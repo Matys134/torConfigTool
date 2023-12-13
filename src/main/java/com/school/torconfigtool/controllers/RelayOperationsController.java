@@ -40,14 +40,16 @@ public class RelayOperationsController {
         String folderPath = torConfigurationService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
-        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
+
+        logger.info("OnionConfigs: {}", onionConfigs);
 
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfiguration config : onionConfigs) {
             String hostname = readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
+            logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
         logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
