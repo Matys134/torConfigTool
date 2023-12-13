@@ -51,7 +51,7 @@ public class OnionServiceController {
         model.addAttribute("hostname", hostname);
 
         model.addAttribute("onionConfigs", onionConfigs);
-        model.addAttribute("hostnames", hostnames);
+        model.addAttribute("hostname", hostname);
 
         return "relay-config"; // The name of the Thymeleaf template to render
     }
