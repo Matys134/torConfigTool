@@ -67,6 +67,7 @@
         <!-- Display Onion relay configuration fields -->
         <p th:text="'HiddenServiceDir: ' + ${config.hiddenServiceDir}"></p>
         <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
+        <p>Hostname: <span id="hostname-display">Default Hostname</span></p>
         <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
         <p>Hostname: <span th:text="${hostnames[config.hiddenServicePort]}">Default Hostname</span></p>
 
@@ -116,7 +117,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         function updateHostname() {
-            fetch('/relay-operations/onion-service/current-hostname')
+            fetch('/onion-service/current-hostname')
                 .then(response => response.text())
                 .then(hostname => {
                     document.getElementById('hostname-display').textContent = hostname;
