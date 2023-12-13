@@ -45,6 +45,16 @@ $(document).ready(function() {
         });
     }
 
+    function updateOnionServiceStatus() {
+        $(".edit-onion-button").each(function() {
+            var nickname = $(this).data("config-nickname");
+            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            if (relayType === "onion") {
+                updateRelayStatus(nickname, relayType);
+            }
+        });
+    }
+
     // Update relay status on page load for both guard and bridge relays
     updateGuardRelayStatus();
     updateBridgeRelayStatus();
