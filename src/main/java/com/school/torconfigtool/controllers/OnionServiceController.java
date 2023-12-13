@@ -35,6 +35,7 @@ public class OnionServiceController {
 
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
+
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
@@ -56,7 +57,12 @@ public class OnionServiceController {
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
-        return readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Or however you determine the correct port
+        String hiddenServicePortString = torConfiguration.getHiddenServicePort();
+        if (hiddenServicePortString != null) {
+            return readHostnameFile(Integer.parseInt(hiddenServicePortString));
+        } else {
+            return "Hidden service port is null";
+        }
     }
 
 
