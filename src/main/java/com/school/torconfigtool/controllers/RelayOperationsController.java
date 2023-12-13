@@ -46,10 +46,10 @@ public class RelayOperationsController {
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfiguration config : onionConfigs) {
-            // Assuming you have a method to retrieve hostname by hiddenServicePort
             String hostname = readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
+        logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
 
         return "relay-operations";
