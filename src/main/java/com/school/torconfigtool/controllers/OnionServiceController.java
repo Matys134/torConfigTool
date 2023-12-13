@@ -31,8 +31,7 @@ public class OnionServiceController {
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
-        TorConfiguration torConfig = new TorConfiguration();
-        torConfig.setHiddenServicePort("5555");
+        this.torConfiguration.setHiddenServicePort("5555");
     }
 
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
