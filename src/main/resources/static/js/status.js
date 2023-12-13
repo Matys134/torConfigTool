@@ -2,6 +2,8 @@ $(document).ready(function() {
     // Function to check and update relay status
     function updateRelayStatus(nickname, relayType) {
         $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function(data) {
+            console.log(data); // Log the server response
+
             var statusElement = $("#status-" + nickname);
             var statusMessageElement = $("#status-message-" + nickname);
 
@@ -45,13 +47,27 @@ $(document).ready(function() {
         });
     }
 
+    // Function to update relay status for Onion relays
+    function updateOnionRelayStatus() {
+        $(".edit-onion-button").each(function() {
+            var port = $(this).data("config-port");
+            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            if (relayType === "onion") {
+                updateRelayStatus(port, relayType);
+            }
+        });
+    }
+
+
     // Update relay status on page load for both guard and bridge relays
     updateGuardRelayStatus();
     updateBridgeRelayStatus();
+    updateOnionRelayStatus();
 
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
     setInterval(function() {
         updateGuardRelayStatus();
         updateBridgeRelayStatus();
+        updateOnionRelayStatus();
     }, 10000);
 });

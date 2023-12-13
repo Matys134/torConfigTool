@@ -67,17 +67,19 @@
         <!-- Display Onion relay configuration fields -->
         <p th:text="'HiddenServiceDir: ' + ${config.hiddenServiceDir}"></p>
         <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-        <p>Hostname: <span th:text="${hostnames[config.hiddenServicePort]}">Default Hostname</span></p>
+        <p>Hostname: <span id="hostname-display"></span></p>
         <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
 
         <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
         <button class="edit-onion-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Edit</button>
+                th:data-config-port="${config.hiddenServicePort}"
+                th:attr="data-config-type='onion'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.hiddenServicePort}" th:attr="data-config-type='onion'">Start</button>
         <button class="stop-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Stop</button>
+                th:data-config-port="${config.hiddenServicePort}"
+                th:attr="data-config-type='onion'">Stop</button>
     </li>
 </ul>
 
