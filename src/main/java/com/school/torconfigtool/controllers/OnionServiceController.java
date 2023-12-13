@@ -31,6 +31,7 @@ public class OnionServiceController {
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
+        this.torConfiguration.setHiddenServicePort("5555");
     }
 
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
@@ -38,6 +39,7 @@ public class OnionServiceController {
 
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
+        System.out.println("OnionServiceConfigurationForm called");
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         Map<String, String> hostnames = new HashMap<>();
 
@@ -54,16 +56,24 @@ public class OnionServiceController {
         return "relay-config"; // The name of the Thymeleaf template to render
     }
 
+
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
+        logger.info("Inside getCurrentHostname method");
         String hiddenServicePortString = torConfiguration.getHiddenServicePort();
+        logger.info("Hidden Service Port: {}", hiddenServicePortString);
+
         if (hiddenServicePortString != null) {
-            return readHostnameFile(Integer.parseInt(hiddenServicePortString));
+            String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
+            logger.info("Fetched Hostname: {}", hostname);
+            return hostname;
         } else {
+            logger.warn("Hidden service port is null");
             return "Hidden service port is null";
         }
     }
+
 
 
     @PostMapping("/configure")
@@ -220,6 +230,7 @@ public class OnionServiceController {
     private String readHostnameFile(int port) {
         // Adjust the file path as needed
         Path path = Paths.get("onion/hiddenServiceDirs/onion-service-" + port + "/hostname");
+        System.out.println(path);
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
