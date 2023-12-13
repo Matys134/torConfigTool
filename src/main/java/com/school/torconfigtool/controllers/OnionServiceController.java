@@ -58,13 +58,20 @@ public class OnionServiceController {
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
+        logger.info("Inside getCurrentHostname method");
         String hiddenServicePortString = torConfiguration.getHiddenServicePort();
+        logger.info("Hidden Service Port: {}", hiddenServicePortString);
+
         if (hiddenServicePortString != null) {
-            return readHostnameFile(Integer.parseInt(hiddenServicePortString));
+            String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
+            logger.info("Fetched Hostname: {}", hostname);
+            return hostname;
         } else {
+            logger.warn("Hidden service port is null");
             return "Hidden service port is null";
         }
     }
+
 
 
     @PostMapping("/configure")
