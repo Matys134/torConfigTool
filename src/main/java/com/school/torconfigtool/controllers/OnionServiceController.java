@@ -55,9 +55,13 @@ public class OnionServiceController {
         return "relay-config"; // The name of the Thymeleaf template to render
     }
 
+
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
+        TorConfiguration torConfig = new TorConfiguration();
+        torConfig.setHiddenServicePort("5555");
+
         logger.info("Inside getCurrentHostname method");
         String hiddenServicePortString = torConfiguration.getHiddenServicePort();
         logger.info("Hidden Service Port: {}", hiddenServicePortString);
