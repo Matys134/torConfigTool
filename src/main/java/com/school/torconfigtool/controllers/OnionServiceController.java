@@ -220,6 +220,7 @@ public class OnionServiceController {
     private String readHostnameFile(int port) {
         // Adjust the file path as needed
         Path path = Paths.get("onion/hiddenServiceDirs/onion-service-" + port + "/hostname");
+        System.out.println(path);
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
