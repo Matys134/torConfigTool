@@ -47,6 +47,7 @@ $(document).ready(function() {
         });
     }
 
+    // Function to update relay status for Onion relays
     function updateOnionRelayStatus() {
         $(".edit-onion-button").each(function() {
             var port = $(this).data("config-port");
@@ -56,6 +57,7 @@ $(document).ready(function() {
             }
         });
     }
+
 
     // Update relay status on page load for both guard and bridge relays
     updateGuardRelayStatus();
