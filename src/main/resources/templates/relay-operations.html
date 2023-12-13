@@ -73,11 +73,13 @@
         <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
         <button class="edit-onion-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Edit</button>
+                th:data-config-port="${config.hiddenServicePort}">Edit
+                th:attr="data-config-type='onion'">Edit</button>
         <button class="start-button" th:data-config-nickname="${config.hiddenServicePort}" th:attr="data-config-type='onion'">Start</button>
         <button class="stop-button"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}">Stop</button>
+                th:data-config-port="${config.hiddenServicePort}"
+                th:attr="data-config-type='onion'">Stop</button>
     </li>
 </ul>
 
