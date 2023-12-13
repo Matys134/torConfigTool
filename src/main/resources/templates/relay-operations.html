@@ -67,9 +67,7 @@
         <!-- Display Onion relay configuration fields -->
         <p th:text="'HiddenServiceDir: ' + ${config.hiddenServiceDir}"></p>
         <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-        <ul th:each="entry : ${hostnames}">
-            <li>Port: <span th:text="${entry.key}"></span>, Hostname: <span th:text="${entry.value}"></span></li>
-        </ul>
+        <p>Hostname: <span th:text="${hostnames[config.hiddenServicePort]}"></span></p>
         <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
 
         <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
