@@ -36,6 +36,7 @@ public class RelayOperationsController {
 
     @GetMapping
     public String relayOperations(Model model) {
+        System.out.println("Inside relayOperations method");
         String folderPath = torConfigurationService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));

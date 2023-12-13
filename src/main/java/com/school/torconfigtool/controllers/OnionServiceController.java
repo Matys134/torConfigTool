@@ -38,6 +38,7 @@ public class OnionServiceController {
 
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
+        System.out.println("OnionServiceConfigurationForm called");
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         Map<String, String> hostnames = new HashMap<>();
 
