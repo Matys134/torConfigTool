@@ -40,6 +40,7 @@ public class RelayOperationsController {
         String folderPath = torConfigurationService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
+        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
 
         logger.info("OnionConfigs: {}", onionConfigs);
