@@ -103,7 +103,7 @@ public class BridgeController {
 
         if (startBridgeAfterConfig) {
             try {
-                relayOperationController.startRelay(bridgeNickname, "guard", model);
+                relayOperationController.startRelay(bridgeNickname, "bridge", model);
                 model.addAttribute("successMessage", "Tor Relay configured and started successfully!");
             } catch (Exception e) {
                 logger.error("Error starting Tor Relay", e);
