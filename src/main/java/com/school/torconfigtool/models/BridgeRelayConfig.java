@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 
 @Data
@@ -49,8 +50,35 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 // ... Add relevant configuration lines
                 break;
             case "snowflake":
-                // No configuration needed
+                runSnowflakeProxy();
                 return;
+        }
+    }
+
+    public void runSnowflakeProxy() {
+        try {
+            // Command to clone the snowflake repository
+            ProcessBuilder gitCloneProcessBuilder = new ProcessBuilder("git", "clone", "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake.git");
+            gitCloneProcessBuilder.redirectErrorStream(true);
+            Process gitCloneProcess = gitCloneProcessBuilder.start();
+            gitCloneProcess.waitFor();
+
+            // Command to build the snowflake proxy
+            ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
+            goBuildProcessBuilder.directory(new File("snowflake/proxy"));
+            goBuildProcessBuilder.redirectErrorStream(true);
+            Process goBuildProcess = goBuildProcessBuilder.start();
+            goBuildProcess.waitFor();
+
+            // Command to run the snowflake proxy
+            ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
+            runProxyProcessBuilder.directory(new File("snowflake/proxy"));
+            runProxyProcessBuilder.redirectErrorStream(true);
+            Process runProxyProcess = runProxyProcessBuilder.start();
+            runProxyProcess.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
