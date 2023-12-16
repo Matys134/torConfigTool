@@ -32,6 +32,15 @@ public class RelayOperationsController {
                                      ProcessManagementService processManagementService) {
         this.torConfigurationService = torConfigurationService;
         this.processManagementService = processManagementService;
+
+        try {
+            Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
+            if (!dataDirectoryPath.toFile().exists()) {
+                Files.createDirectory(dataDirectoryPath);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to create dataDirectory folder", e);
+        }
     }
 
     @GetMapping
@@ -243,6 +252,4 @@ public class RelayOperationsController {
     private String buildDataDirectoryPath(String relayNickname) {
         return System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
     }
-
-
 }
