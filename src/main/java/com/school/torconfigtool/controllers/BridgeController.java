@@ -7,6 +7,8 @@ import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -248,6 +250,17 @@ public class BridgeController {
         }
         catch (IOException e) {
             logger.error("Error generating Nginx configuration", e);
+        }
+    }
+
+    @PostMapping("/run-snowflake-proxy")
+    public ResponseEntity<String> runSnowflakeProxy() {
+        try {
+            BridgeRelayConfig bridgeRelayConfig = new BridgeRelayConfig();
+            bridgeRelayConfig.runSnowflakeProxy();
+            return new ResponseEntity<>("Snowflake proxy started successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
