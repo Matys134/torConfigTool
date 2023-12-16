@@ -29,7 +29,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();
-                writer.write("ContactInfo " + getEmail());
+                writer.write("ContactInfo " + getContact());
                 writer.newLine();
                 // ... Add relevant configuration lines
                 break;
