@@ -35,6 +35,11 @@ public class TorrcFileCreator {
             writer.write("RunAsDaemon 1");
             writer.newLine();
 
+            if (config.getBandwidthRate() != null) {
+                writer.write("BandwidthRate " + config.getBandwidthRate());
+                writer.newLine();
+            }
+
             if (config instanceof BridgeRelayConfig) {
                 config.writeSpecificConfig(writer);
             } else if (config instanceof GuardRelayConfig) {

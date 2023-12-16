@@ -51,6 +51,7 @@ public class GuardController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
+                                 @RequestParam(required = false) Integer relayBandwidth,
                                  @RequestParam(defaultValue = "false") boolean startRelayAfterConfig,
                                  Model model) {
         try {
@@ -72,7 +73,7 @@ public class GuardController {
                 return "relay-config";
             }
 
-            GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort);
+            GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -96,13 +97,15 @@ public class GuardController {
         return "relay-config";
     }
 
-    private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort) {
+    private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
         GuardRelayConfig config = new GuardRelayConfig();
         config.setNickname(relayNickname);
         config.setOrPort(String.valueOf(relayPort));
         config.setContact(relayContact);
         config.setControlPort(String.valueOf(controlPort));
-        // Set other properties as necessary, for example, bandwidth rate
+        if (relayBandwidth != null) {
+            config.setBandwidthRate(String.valueOf(relayBandwidth));
+        }
 
         return config;
     }

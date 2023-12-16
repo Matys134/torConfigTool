@@ -11,6 +11,7 @@ public abstract class BaseRelayConfig implements RelayConfig {
     private String orPort;
     private String contact;
     private String controlPort;
+    private String bandwidthRate;
 
     @Override
     public abstract void writeSpecificConfig(BufferedWriter writer) throws IOException;
