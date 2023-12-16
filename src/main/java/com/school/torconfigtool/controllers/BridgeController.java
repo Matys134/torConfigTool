@@ -78,7 +78,7 @@ public class BridgeController {
                 return "relay-config";
             }*/
 
-            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth);
+            BridgeRelayConfig config = createBridgeConfig(bridgeType ,bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -109,8 +109,9 @@ public class BridgeController {
         return "relay-config";
     }
 
-    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth) {
+    private BridgeRelayConfig createBridgeConfig(String bridgeType,String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
+        config.setBridgeType(bridgeType);
         config.setNickname(bridgeNickname);
         if (bridgePort != null)
             config.setOrPort(String.valueOf(bridgePort));
@@ -118,6 +119,12 @@ public class BridgeController {
         config.setControlPort(String.valueOf(bridgeControlPort));
         if (bridgeBandwidth != null)
             config.setBandwidthRate(String.valueOf(bridgeBandwidth));
+        if (webtunnelDomain != null)
+            config.setWebtunnelDomain(webtunnelDomain);
+        if (webtunnelUrl != null)
+            config.setWebtunnelUrl(webtunnelUrl);
+        if (webtunnelPort != null)
+            config.setWebtunnelPort(webtunnelPort);
 
 
         return config;
