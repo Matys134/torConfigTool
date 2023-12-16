@@ -69,6 +69,13 @@
 
             <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
             <input type="text" id="bridgeControlPort" name="bridgeControlPort" required><br><br>
+
+            <input type="checkbox" id="includeBridgeBandwidth" name="includeBridgeBandwidth"> Include Bandwidth (KB/s):<br>
+
+            <div id="bridgeBandwidthField" style="display: none;">
+                <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
+                <input type="number" id="bridgeBandwidth" name="bridgeBandwidth" min="0">
+            </div>
         </div>
 
         <!-- Specific Fields for Bridge -->

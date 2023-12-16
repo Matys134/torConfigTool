@@ -36,7 +36,7 @@ public class TorrcFileCreator {
             writer.newLine();
 
             if (config.getBandwidthRate() != null) {
-                writer.write("BandwidthRate " + config.getBandwidthRate());
+                writer.write("BandwidthRate " + config.getBandwidthRate() + " KBytes");
                 writer.newLine();
             }
 
