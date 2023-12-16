@@ -41,8 +41,8 @@
         <label for="startRelayAfterConfig">Start Relay after configuration</label><br>
 
         <div id="bandwidthField" style="display: none;">
-            <label for="relayBandwidth">Bandwidth (in KB/s):</label>
-            <input type="number" id="relayBandwidth" name="relayBandwidth"><br><br>
+            <label for="relayBandwidth">Bandwidth Limit (KB/s):</label>
+            <input type="number" id="relayBandwidth" name="relayBandwidth" min="0">
         </div>
 
         <button type="submit">Configure Relay</button>
@@ -54,7 +54,7 @@
     <form id="bridgeForm" action="/bridge/configure" method="post">
         <label for="bridgeType">Bridge Type:</label>
         <select id="bridgeType" name="bridgeType" onchange="toggleBridgeFields()">
-            <option value="obfs4">Bridge</option>
+            <option value="bridge">Bridge</option>
             <option value="webtunnel">WebTunnel Bridge</option>
             <option value="snowflake">Snowflake</option>
         </select><br><br>
@@ -69,6 +69,13 @@
 
             <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
             <input type="text" id="bridgeControlPort" name="bridgeControlPort" required><br><br>
+
+            <input type="checkbox" id="includeBridgeBandwidth" name="includeBridgeBandwidth"> Include Bandwidth (KB/s):<br>
+
+            <div id="bridgeBandwidthField" style="display: none;">
+                <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
+                <input type="number" id="bridgeBandwidth" name="bridgeBandwidth" min="0">
+            </div>
         </div>
 
         <!-- Specific Fields for Bridge -->

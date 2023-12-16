@@ -4,6 +4,12 @@ document.getElementById("includeBandwidth").addEventListener("change", function 
     bandwidthField.style.display = this.checked ? "block" : "none";
 });
 
+// JavaScript function to show/hide bridge bandwidth field based on checkbox
+document.getElementById("includeBridgeBandwidth").addEventListener("change", function () {
+    var bridgeBandwidthField = document.getElementById("bridgeBandwidthField");
+    bridgeBandwidthField.style.display = this.checked ? "block" : "none";
+});
+
 // JavaScript function to switch between tabs
 function openTab(evt, tabName) {
     var i, tabcontent, tablinks;

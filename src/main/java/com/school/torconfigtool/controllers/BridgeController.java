@@ -50,6 +50,7 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelUrl,
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
+                                  @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) throws IOException {
         try {
             /*//if bridgeport is null, check only if controlport is available and vice versa
@@ -77,13 +78,7 @@ public class BridgeController {
                 return "relay-config";
             }*/
 
-            BridgeRelayConfig config = createBridgeConfig(bridgeNickname, bridgePort, bridgeContact, bridgeControlPort);
-            config.setBridgeType(bridgeType);
-            config.setWebtunnelDomain(webtunnelDomain);
-            config.setWebtunnelUrl(webtunnelUrl);
-            if (webtunnelPort != null)
-                config.setWebtunnelPort(webtunnelPort);
-            config.setEmail(bridgeContact); // Assume bridgeContact is email here
+            BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr,bridgeType ,bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -114,13 +109,25 @@ public class BridgeController {
         return "relay-config";
     }
 
-    private BridgeRelayConfig createBridgeConfig(String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort) {
+    private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr,String bridgeType,String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
+        config.setBridgeType(bridgeType);
         config.setNickname(bridgeNickname);
         if (bridgePort != null)
             config.setOrPort(String.valueOf(bridgePort));
         config.setContact(bridgeContact);
         config.setControlPort(String.valueOf(bridgeControlPort));
+        if (bridgeBandwidth != null)
+            config.setBandwidthRate(String.valueOf(bridgeBandwidth));
+        if (webtunnelDomain != null)
+            config.setWebtunnelDomain(webtunnelDomain);
+        if (webtunnelUrl != null)
+            config.setWebtunnelUrl(webtunnelUrl);
+        if (webtunnelPort != null)
+            config.setWebtunnelPort(webtunnelPort);
+        if (bridgeTransportListenAddr != null)
+            config.setBridgeTransportListenAddr(String.valueOf(bridgeTransportListenAddr));
+
 
         return config;
     }
