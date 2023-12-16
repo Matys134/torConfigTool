@@ -78,6 +78,9 @@ public class RelayUtils {
         if(!arePortsUnique(relayPort, controlPort)){
             return false;
         }
+        if(arePortsPrivileged(relayPort, controlPort)){
+            return false;
+        }
 
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
@@ -259,5 +262,9 @@ public class RelayUtils {
 
     public static boolean arePortsUnique(int relayPort, int controlPort){
         return relayPort != controlPort;
+    }
+
+    public static boolean arePortsPrivileged(int relayPort, int controlPort){
+        return relayPort < 1024 || controlPort < 1024;
     }
 }
