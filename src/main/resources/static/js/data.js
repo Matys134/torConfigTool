@@ -56,9 +56,13 @@ $(document).ready(function () {
                     var flagsData = data.map(function (relayData) {
                         return relayData.flags;
                     });
+                    console.log(flagsData);
 
                     // Handle the case where flagsData is 'No flags'
                     var flagsDisplayText = Array.isArray(flagsData) ? flagsData.join(', ') : flagsData;
+
+                    // Update the flagsData div with the flags data
+                    document.getElementById('flagsData').innerText = 'Flags: ' + flagsDisplayText;
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
