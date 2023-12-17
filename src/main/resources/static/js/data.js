@@ -57,11 +57,14 @@ $(document).ready(function () {
                         return relayData.flags;
                     });
 
+                    // Handle the case where flagsData is 'No flags'
+                    var flagsDisplayText = Array.isArray(flagsData) ? flagsData.join(', ') : flagsData;
+
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
-                    relayChart.options.title.text = relayName + ' Flags: ' + flagsData.join(', ');
+                    relayChart.options.title.text = relayName + ' Flags: ' + flagsDisplayText;
 
                     // Update the chart
                     relayChart.update();
