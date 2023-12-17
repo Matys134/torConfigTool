@@ -53,18 +53,12 @@ $(document).ready(function () {
                     var downloadData = data.map(function (relayData) {
                         return relayData.download;
                     });
-                    var flagsData = data.map(function (relayData) {
-                        return relayData.flags;
-                    });
-                    console.log(flagsData);
+
+                    // Get the flags from the most recent data
+                    var flagsData = data[data.length - 1].flags;
 
                     // Handle the case where flagsData is 'No flags'
-                    var flagsDisplayText;
-                    if (Array.isArray(flagsData)) {
-                        flagsDisplayText = flagsData.join(', ');
-                    } else {
-                        flagsDisplayText = flagsData;
-                    }
+                    var flagsDisplayText = Array.isArray(flagsData) ? flagsData.join(', ') : flagsData;
 
                     // Update the flagsData div with the flags data
                     document.getElementById('flagsData').innerText = 'Flags: ' + flagsDisplayText;
