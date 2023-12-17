@@ -57,8 +57,8 @@ $(document).ready(function () {
                     // Get the flags from the most recent data
                     var flagsData = data[data.length - 1].flags;
 
-                    // Handle the case where flagsData is 'No flags'
-                    var flagsDisplayText = Array.isArray(flagsData) ? flagsData.join(', ') : flagsData;
+                    // Directly assign the flagsData to flagsDisplayText
+                    var flagsDisplayText = flagsData;
 
                     // Update the flagsData div with the flags data
                     document.getElementById('flagsData').innerText = 'Flags: ' + flagsDisplayText;
