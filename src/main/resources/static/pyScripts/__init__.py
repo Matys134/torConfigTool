@@ -13,7 +13,7 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
-    torrc_dir = "/home/matys/IdeaProjects/torConfigTool/torrc"
+    torrc_dir = "/home/matys/git/torConfigTool/torrc"
     control_ports = []
 
     # Iterate through the files in the directory and collect control ports
