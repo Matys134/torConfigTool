@@ -1,3 +1,4 @@
+import json
 import os
 import functools
 import threading
@@ -92,7 +93,7 @@ def _handle_bandwidth_event(controller, control_port, event):
     data = {
         "download": download,
         "upload": upload,
-        "flags": flags,
+        "flags": json.dumps(flags),  # Convert the list to a JSON array
     }
 
 
