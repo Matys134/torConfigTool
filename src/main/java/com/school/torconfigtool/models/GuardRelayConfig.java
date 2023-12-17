@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

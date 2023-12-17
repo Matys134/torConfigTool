@@ -1,9 +1,7 @@
 package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
-import com.school.torconfigtool.config.TorrcConfigurator;
 import com.school.torconfigtool.models.BridgeRelayConfig;
-import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +25,9 @@ public class BridgeController {
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
-    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
     private final RelayOperationsController relayOperationController;
-    private final RelayService relayService;
 
-    public BridgeController(RelayService relayService, RelayOperationsController relayOperationController) {
-        this.relayService = relayService;
+    public BridgeController(RelayOperationsController relayOperationController) {
         this.relayOperationController = relayOperationController;
     }
 
@@ -53,19 +48,8 @@ public class BridgeController {
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
-                                  Model model) throws IOException {
+                                  Model model) {
         try {
-            /*//if bridgeport is null, check only if controlport is available and vice versa
-            if (bridgePort == null && !relayService.isPortAvailable(bridgeNickname, bridgeControlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
-            } else if (bridgeControlPort == 0 && !relayService.isPortAvailable(bridgeNickname, bridgePort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
-            } else if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
-            }*/
 
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
@@ -74,11 +58,6 @@ public class BridgeController {
                 model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
                 return "relay-config";
             }
-
-            /*if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
-            }*/
 
             BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr,bridgeType ,bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
             if (!torrcFilePath.toFile().exists()) {
@@ -92,7 +71,7 @@ public class BridgeController {
         }
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
-            generateNginxConfig(80);
+            generateNginxConfig();
             setupWebtunnel(webtunnelUrl);
             installCert(webtunnelUrl);
             modifyNginxConfig();
@@ -227,23 +206,12 @@ public class BridgeController {
         }
     }
 
-    private void generateNginxConfig(int onionServicePort) throws IOException {
+    private void generateNginxConfig() {
         try {
 
             String currentDirectory = System.getProperty("user.dir");
 
-            File wwwDir = new File(currentDirectory + "/onion/www");
-            if (!wwwDir.exists() && !wwwDir.mkdirs()) {
-                throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
-            }
-
-            File serviceDir = new File(wwwDir, "service-" + onionServicePort);
-            if (!serviceDir.exists() && !serviceDir.mkdirs()) {
-                throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
-            }
-
-
-            File indexHtml = new File(serviceDir, "index.html");
+            File indexHtml = getFile(currentDirectory);
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
@@ -251,6 +219,21 @@ public class BridgeController {
         catch (IOException e) {
             logger.error("Error generating Nginx configuration", e);
         }
+    }
+
+    private File getFile(String currentDirectory) throws IOException {
+        File wwwDir = new File(currentDirectory + "/onion/www");
+        if (!wwwDir.exists() && !wwwDir.mkdirs()) {
+            throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
+        }
+
+        File serviceDir = new File(wwwDir, "service-" + 80);
+        if (!serviceDir.exists() && !serviceDir.mkdirs()) {
+            throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
+        }
+
+
+        return new File(serviceDir, "index.html");
     }
 
     @PostMapping("/run-snowflake-proxy")

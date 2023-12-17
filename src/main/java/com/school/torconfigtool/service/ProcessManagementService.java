@@ -50,7 +50,7 @@ public class ProcessManagementService {
 
             // Assuming the PID is on the first line, if not you need to check the outputLines list.
             if (!outputLines.isEmpty()) {
-                String pidString = outputLines.get(0);
+                String pidString = outputLines.getFirst();
                 logger.debug("PID string: {}", pidString);
                 return Integer.parseInt(pidString);
             } else {

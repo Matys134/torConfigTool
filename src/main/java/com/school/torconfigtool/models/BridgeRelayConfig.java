@@ -51,7 +51,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 break;
             case "snowflake":
                 runSnowflakeProxy();
-                return;
         }
     }
 
@@ -64,21 +63,25 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             gitCloneProcess.waitFor();
 
             // Command to build the snowflake proxy
-            ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
-            goBuildProcessBuilder.directory(new File("snowflake/proxy"));
-            goBuildProcessBuilder.redirectErrorStream(true);
-            Process goBuildProcess = goBuildProcessBuilder.start();
-            goBuildProcess.waitFor();
-
-            // Command to run the snowflake proxy
-            ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
-            runProxyProcessBuilder.directory(new File("snowflake/proxy"));
-            runProxyProcessBuilder.redirectErrorStream(true);
-            Process runProxyProcess = runProxyProcessBuilder.start();
+            Process runProxyProcess = getProcess();
             runProxyProcess.waitFor();
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private Process getProcess() throws IOException, InterruptedException {
+        ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
+        goBuildProcessBuilder.directory(new File("snowflake/proxy"));
+        goBuildProcessBuilder.redirectErrorStream(true);
+        Process goBuildProcess = goBuildProcessBuilder.start();
+        goBuildProcess.waitFor();
+
+        // Command to run the snowflake proxy
+        ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
+        runProxyProcessBuilder.directory(new File("snowflake/proxy"));
+        runProxyProcessBuilder.redirectErrorStream(true);
+        return runProxyProcessBuilder.start();
     }
 }
