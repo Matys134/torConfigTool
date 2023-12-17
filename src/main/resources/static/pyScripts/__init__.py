@@ -1,3 +1,4 @@
+import json
 import os
 import functools
 import threading
@@ -13,7 +14,7 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
-    torrc_dir = "/home/matys/IdeaProjects/torConfigTool/torrc/guard"
+    torrc_dir = "/home/matys/git/torConfigTool/torrc"
     control_ports = []
 
     # Iterate through the files in the directory and collect control ports
@@ -79,18 +80,20 @@ def monitor_traffic_and_flags(control_port):
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
     status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
-    return status.flags  # Access the flags
+    return getattr(status, 'flags', 'No flags')  # Access the flags, return 'No flags' if not present
 
 
 def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
+    flags = relay_flags(controller)
 
 
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
+        "flags": flags,  # Convert the list to a JSON array
     }
 
 
@@ -101,7 +104,7 @@ def _handle_bandwidth_event(controller, control_port, event):
     response = requests.post(api_endpoint, json=data)
 
     if response.status_code == 200:
-        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
