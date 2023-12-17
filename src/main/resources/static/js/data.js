@@ -53,10 +53,16 @@ $(document).ready(function () {
                     var downloadData = data.map(function (relayData) {
                         return relayData.download;
                     });
-// Update the chart's data and labels
+                    var flagsData = data.map(function (relayData) {
+                        return relayData.flags;
+                    });
+
+                    // Update the chart's data and labels
                     relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
+                    relayChart.options.title.text = relayName + ' Flags: ' + flagsData.join(', ');
+
                     // Update the chart
                     relayChart.update();
                 }

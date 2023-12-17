@@ -13,7 +13,7 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
-    torrc_dir = "/home/matys/IdeaProjects/torConfigTool/torrc/guard"
+    torrc_dir = "/home/matys/IdeaProjects/torConfigTool/torrc"
     control_ports = []
 
     # Iterate through the files in the directory and collect control ports
@@ -85,12 +85,14 @@ def relay_flags(controller):
 def _handle_bandwidth_event(controller, control_port, event):
     download = event.read
     upload = event.written
+    flags = relay_flags(controller)
 
 
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
+        "flags": flags,
     }
 
 
@@ -101,7 +103,7 @@ def _handle_bandwidth_event(controller, control_port, event):
     response = requests.post(api_endpoint, json=data)
 
     if response.status_code == 200:
-        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
