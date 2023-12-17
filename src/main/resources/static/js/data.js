@@ -57,6 +57,11 @@ $(document).ready(function () {
                     // Get the flags from the most recent data
                     var flagsData = data[data.length - 1].flags;
 
+                    // Check if flagsData is undefined and if so, set it to "no flags"
+                    if (typeof flagsData === 'undefined') {
+                        flagsData = 'no flags';
+                    }
+
                     // Directly assign the flagsData to flagsDisplayText
                     var flagsDisplayText = flagsData;
 
