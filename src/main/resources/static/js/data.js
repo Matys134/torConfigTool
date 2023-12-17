@@ -58,7 +58,7 @@ $(document).ready(function () {
                     var flagsData = data[data.length - 1].flags;
 
                     // Check if flagsData is undefined and if so, set it to "no flags"
-                    if (typeof flagsData === 'undefined') {
+                    if (typeof flagsData === 'undefined' || flagsData.length === 0) {
                         flagsData = 'no flags';
                     }
 
