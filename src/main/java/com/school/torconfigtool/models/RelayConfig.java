@@ -1,9 +1,6 @@
 // RelayConfig.java
 package com.school.torconfigtool.models;
 
-import com.school.torconfigtool.models.BaseRelayConfig;
-import lombok.Data;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 

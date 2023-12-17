@@ -115,30 +115,9 @@ public class RelayUtils {
 
         // Check running processes
         try {
-            ProcessBuilder psProcessBuilder = new ProcessBuilder("ps", "aux");
-            Process psProcess = psProcessBuilder.start();
-
-            ProcessBuilder netstatProcessBuilder = new ProcessBuilder("netstat", "-tulpn");
-            Process netstatProcess = netstatProcessBuilder.start();
-
-            // Wait for the processes to complete
-            int psExitCode = psProcess.waitFor();
-            int netstatExitCode = netstatProcess.waitFor();
-
-            if (psExitCode != 0 || netstatExitCode != 0) {
-                logger.error("ps or netstat command exited with non-zero status: ps={}, netstat={}", psExitCode, netstatExitCode);
-                return false; // Consider the ports unavailable in case of a command failure
-            }
-
-            // Read the output of ps command
-            List<Integer> runningRelayPIDs;
-            try (BufferedReader psReader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()))) {
-                runningRelayPIDs = psReader.lines()
-                        .filter(line -> line.contains("tor -f torrc-"))
-                        .map(line -> line.split("\\s+"))
-                        .filter(parts -> parts.length >= 2)
-                        .map(parts -> Integer.parseInt(parts[1]))
-                        .toList();
+            List<Integer> runningRelayPIDs = getRunningRelayPIDs();
+            if (runningRelayPIDs == null) {
+                return false;
             }
 
             // Check ports using netstat for each running process
@@ -203,30 +182,9 @@ public class RelayUtils {
 
         // Check running processes
         try {
-            ProcessBuilder psProcessBuilder = new ProcessBuilder("ps", "aux");
-            Process psProcess = psProcessBuilder.start();
-
-            ProcessBuilder netstatProcessBuilder = new ProcessBuilder("netstat", "-tulpn");
-            Process netstatProcess = netstatProcessBuilder.start();
-
-            // Wait for the processes to complete
-            int psExitCode = psProcess.waitFor();
-            int netstatExitCode = netstatProcess.waitFor();
-
-            if (psExitCode != 0 || netstatExitCode != 0) {
-                logger.error("ps or netstat command exited with non-zero status: ps={}, netstat={}", psExitCode, netstatExitCode);
-                return false; // Consider the ports unavailable in case of a command failure
-            }
-
-            // Read the output of ps command
-            List<Integer> runningRelayPIDs;
-            try (BufferedReader psReader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()))) {
-                runningRelayPIDs = psReader.lines()
-                        .filter(line -> line.contains("tor -f torrc-"))
-                        .map(line -> line.split("\\s+"))
-                        .filter(parts -> parts.length >= 2)
-                        .map(parts -> Integer.parseInt(parts[1]))
-                        .toList();
+            List<Integer> runningRelayPIDs = getRunningRelayPIDs();
+            if (runningRelayPIDs == null) {
+                return false;
             }
 
             // Check ports using netstat for each running process
@@ -266,5 +224,35 @@ public class RelayUtils {
 
     public static boolean arePortsPrivileged(int relayPort, int controlPort){
         return relayPort < 1024 || controlPort < 1024;
+    }
+
+    public static List<Integer> getRunningRelayPIDs() throws IOException, InterruptedException {
+        ProcessBuilder psProcessBuilder = new ProcessBuilder("ps", "aux");
+        Process psProcess = psProcessBuilder.start();
+
+        ProcessBuilder netstatProcessBuilder = new ProcessBuilder("netstat", "-tulpn");
+        Process netstatProcess = netstatProcessBuilder.start();
+
+        // Wait for the processes to complete
+        int psExitCode = psProcess.waitFor();
+        int netstatExitCode = netstatProcess.waitFor();
+
+        if (psExitCode != 0 || netstatExitCode != 0) {
+            logger.error("ps or netstat command exited with non-zero status: ps={}, netstat={}", psExitCode, netstatExitCode);
+            return null; // Consider the ports unavailable in case of a command failure
+        }
+
+        // Read the output of ps command
+        List<Integer> runningRelayPIDs;
+        try (BufferedReader psReader = new BufferedReader(new InputStreamReader(psProcess.getInputStream()))) {
+            runningRelayPIDs = psReader.lines()
+                    .filter(line -> line.contains("tor -f torrc-"))
+                    .map(line -> line.split("\\s+"))
+                    .filter(parts -> parts.length >= 2)
+                    .map(parts -> Integer.parseInt(parts[1]))
+                    .toList();
+        }
+
+        return runningRelayPIDs;
     }
 }

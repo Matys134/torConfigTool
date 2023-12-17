@@ -99,6 +99,7 @@
         <!-- Specific Fields for Snowflake -->
         <div id="snowflakeFields" class="bridge-specific" style="display: none;">
             <!-- Snowflake has no specific fields to enter -->
+            <button id="runSnowflakeProxyButton" type="button">Run Snowflake Proxy</button>
         </div>
 
         <button type="submit">Configure Bridge</button>
@@ -167,6 +168,20 @@
 
     // Call the function to initialize fields when the page loads
     window.onload = toggleBridgeFields;
+</script>
+<script>
+    document.getElementById("runSnowflakeProxyButton").addEventListener("click", function() {
+        $.ajax({
+            url: '/bridge/run-snowflake-proxy',
+            type: 'POST',
+            success: function(response) {
+                alert("Snowflake proxy started successfully");
+            },
+            error: function(error) {
+                alert("Error starting snowflake proxy: " + error.responseText);
+            }
+        });
+    });
 </script>
 </body>
 </html>

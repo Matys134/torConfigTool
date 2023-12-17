@@ -24,8 +24,6 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
-    private static final String NGINX_VHOST_PATH = "/etc/nginx/sites-available/default";
-
     TorConfiguration torConfiguration = new TorConfiguration();
 
     @Autowired
