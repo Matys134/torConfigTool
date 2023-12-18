@@ -24,11 +24,13 @@ $(document).ready(function () {
                     {
                         label: 'Upload',
                         borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Add background color
                         data: [],
                     },
                     {
                         label: 'Download',
                         borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Add background color
                         data: [],
                     },
                 ],
@@ -38,6 +40,20 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     text: relayName,
+                },
+                tooltips: { // Add tooltips
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: { // Change hover mode
+                    mode: 'nearest',
+                    intersect: true
+                },
+                legend: { // Add legend
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(255, 99, 132)'
+                    }
                 },
             }
         });
