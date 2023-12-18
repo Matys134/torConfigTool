@@ -15,6 +15,16 @@ $(document).ready(function () {
         // Get references to the chart canvas and its context
         var ctx = chartCanvas[0].getContext('2d');
 
+        // Create a gradient for the upload line
+        var uploadGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        uploadGradient.addColorStop(0, 'rgba(54, 162, 235, 0.5)');
+        uploadGradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
+
+        // Create a gradient for the download line
+        var downloadGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        downloadGradient.addColorStop(0, 'rgba(255, 99, 132, 0.5)');
+        downloadGradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
+
         // Create an initial empty chart
         var relayChart = new Chart(ctx, {
             type: 'line',
@@ -24,36 +34,39 @@ $(document).ready(function () {
                     {
                         label: 'Upload',
                         borderColor: 'rgb(54, 162, 235)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)', // Add background color
+                        backgroundColor: uploadGradient,
                         data: [],
+                        fill: 'start',
                     },
                     {
                         label: 'Download',
                         borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Add background color
+                        backgroundColor: downloadGradient,
                         data: [],
+                        fill: 'start',
                     },
                 ],
             },
             options: {
+                responsive: true,
                 animation: false,
                 title: {
                     display: true,
                     text: relayName,
                 },
-                tooltips: { // Add tooltips
+                tooltips: {
                     mode: 'index',
                     intersect: false,
                 },
-                hover: { // Change hover mode
+                hover: {
                     mode: 'nearest',
-                    intersect: true
+                    intersect: true,
                 },
-                legend: { // Add legend
+                legend: {
                     display: true,
                     labels: {
-                        fontColor: 'rgb(255, 99, 132)'
-                    }
+                        fontColor: 'rgb(255, 99, 132)',
+                    },
                 },
             }
         });
