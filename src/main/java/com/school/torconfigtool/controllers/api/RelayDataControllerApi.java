@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 public class RelayDataControllerApi {
 
     private static final int MAX_DATA_SIZE = 50;
+    private static final int MAX_EVENT_SIZE = 10;
     private final Map<Integer, Deque<RelayData>> relayDataMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Deque<String>> relayEventMap = new ConcurrentHashMap<>();
 
     @PostMapping("/relay-data/{relayId}")
     public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
@@ -36,19 +38,16 @@ public class RelayDataControllerApi {
             addRelayData(relayDataQueue, relayData);
         }
 
+        // Add the event to the relay events
+        Deque<String> relayEventQueue = relayEventMap.computeIfAbsent(relayId, k -> new LinkedList<>());
+        addRelayEvent(relayEventQueue, event);
+
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 
     @GetMapping("/relay-data/{relayId}/events")
     public List<String> getRelayEvents(@PathVariable int relayId) {
-        Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
-        if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
-            return relayDataQueue.stream()
-                    .map(RelayData::getEvent)
-                    .limit(10)
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
+        return new ArrayList<>(relayEventMap.getOrDefault(relayId, new LinkedList<>()));
     }
 
     @GetMapping("/relay-data/{relayId}")
@@ -66,5 +65,12 @@ public class RelayDataControllerApi {
             relayDataQueue.poll(); // Remove the oldest data entry
         }
         relayDataQueue.offer(relayData); // Add the new data entry
+    }
+
+    private void addRelayEvent(Deque<String> relayEventQueue, String event) {
+        if (relayEventQueue.size() >= MAX_EVENT_SIZE) {
+            relayEventQueue.poll(); // Remove the oldest event
+        }
+        relayEventQueue.offer(event); // Add the new event
     }
 }
