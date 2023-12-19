@@ -30,9 +30,10 @@ public class RelayDataControllerApi {
 
         // Add the event to the relay data
         Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
-        if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
-            RelayData lastRelayData = relayDataQueue.getLast();
-            lastRelayData.setEvent(event);
+        if (relayDataQueue != null) {
+            RelayData relayData = new RelayData();
+            relayData.setEvent(event);
+            addRelayData(relayDataQueue, relayData);
         }
 
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
