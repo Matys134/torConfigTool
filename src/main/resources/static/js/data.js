@@ -62,17 +62,14 @@ $(document).ready(function () {
                         flagsData = 'no flags';
                     }
 
-                    // Directly assign the flagsData to flagsDisplayText
-                    var flagsDisplayText = flagsData;
-
                     // Update the flagsData div with the flags data
-                    document.getElementById('flagsData').innerText = 'Flags: ' + flagsDisplayText;
+                    document.getElementById('flagsData').innerText = 'Flags: ' + flagsData;
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
-                    relayChart.options.title.text = relayName + ' Flags: ' + flagsDisplayText;
+                    relayChart.options.title.text = relayName + ' Flags: ' + flagsData;
 
                     // Update the chart
                     relayChart.update();
