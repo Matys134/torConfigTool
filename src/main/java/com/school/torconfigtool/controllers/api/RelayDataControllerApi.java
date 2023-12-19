@@ -21,7 +21,7 @@ public class RelayDataControllerApi {
         addRelayData(relayDataQueue, relayData);
         relayDataQueue.offer(relayData);
 
-        return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId + ". Logs: " + relayData.getLogs());
+        return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
     @GetMapping("/relay-data/{relayId}")
