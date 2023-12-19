@@ -78,6 +78,15 @@ $(document).ready(function () {
                     relayChart.update();
                 }
             });
+
+            // Fetch the event data
+            var eventApiUrl = baseApiUrl + '/' + port + '/event';
+            $.get(eventApiUrl, function (eventData) {
+                if (eventData && eventData.event) {
+                    // Update the eventData div with the event data
+                    document.getElementById('eventData').innerText = 'Event: ' + eventData.event;
+                }
+            });
         }
 
         // Update the data and chart for the relay initially

@@ -8,7 +8,6 @@ from stem.control import EventType, Controller
 import requests
 import time
 
-
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
@@ -54,15 +53,24 @@ def monitor_traffic_and_flags(control_port):
         try:
             with Controller.from_port(port=control_port) as controller:
                 controller.authenticate()
-                bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
-                controller.add_event_listener(bw_event_handler, EventType.BW)
+
+                # Enable all events
+                controller.set_conf('__LeaveStreamsUnattached', '1')  # Avoid attaching streams to circuits ourselves
+                controller.set_conf('ControlPort', str(control_port))
+                controller.set_conf('HashedControlPassword', '')
+                controller.set_conf('CookieAuthentication', '1')
+
+                # Enable log messages
+                controller.set_conf('Log', ['NOTICE stdout'])
+
+                # Add event listener for INFO events
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.NOTICE)
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
                 while controller.is_alive():  # Check if the relay is still running
-                    # Get the relay's status entry
-                    flags = relay_flags(controller)
-                    print(f"Relay flags: {flags}")
+                    # Send the bandwidth data every second
+                    _send_bandwidth_data(controller, control_port)
                     time.sleep(1)  # Wait for 1 second to collect data
 
                 print(f"Relay on ControlPort {control_port} has stopped.")
@@ -80,7 +88,29 @@ def monitor_traffic_and_flags(control_port):
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
     status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
-    return getattr(status, 'flags', 'No flags')  # Access the flags, return 'No flags' if not present
+    flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
+    return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
+
+def _send_bandwidth_data(controller, control_port):
+    download = controller.get_info("traffic/read")
+    upload = controller.get_info("traffic/written")
+
+    # Create a dictionary with the bandwidth data and an identifier
+    data = {
+        "download": download,
+        "upload": upload,
+    }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s")
+    else:
+        print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 
 def _handle_bandwidth_event(controller, control_port, event):
@@ -88,13 +118,40 @@ def _handle_bandwidth_event(controller, control_port, event):
     upload = event.written
     flags = relay_flags(controller)
 
-
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
         "flags": flags,  # Convert the list to a JSON array
     }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
+    else:
+        print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
+
+def _handle_event(controller, control_port, event):
+    # Create a dictionary with the event data and an identifier
+    data = {
+        "event": str(event),
+    }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}/event"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Event sent for ControlPort {control_port}: {event}")
+    else:
+        print(f"Failed to send event for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 
     # Construct the complete API endpoint URL with the relayId
@@ -107,6 +164,25 @@ def _handle_bandwidth_event(controller, control_port, event):
         print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
+
+def _handle_newconsensus_event(controller, control_port, event):
+    flags = relay_flags(controller)
+
+    # Create a dictionary with the flags data and an identifier
+    data = {
+        "flags": flags,  # Convert the list to a JSON array
+    }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Flags sent for ControlPort {control_port}: Flags: {flags}")
+    else:
+        print(f"Failed to send flags for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 
 if __name__ == '__main__':
