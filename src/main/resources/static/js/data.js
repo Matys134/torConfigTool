@@ -2,6 +2,23 @@ $(document).ready(function () {
     // Define the base API endpoint
     var baseApiUrl = 'http://' + location.hostname + ':8081/api/relay-data';
 
+    function updateRelayEventData(port) {
+        var apiUrl = baseApiUrl + '/' + port + '/events';
+        $.get(apiUrl, function (data) {
+            // Update the eventData div with the event data
+            var eventDataDiv = document.getElementById('eventData');
+            eventDataDiv.innerHTML = '';
+            data.forEach(function(event, index) {
+                if (event !== null) { // Check if the event is not null
+                    var eventElement = document.createElement('p');
+                    eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                    eventDataDiv.appendChild(eventElement);
+                }
+            });
+        });
+    }
+
+
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart
@@ -75,22 +92,15 @@ $(document).ready(function () {
                     relayChart.update();
                 }
             });
-
-            // Fetch the event data
-            var eventApiUrl = baseApiUrl + '/' + port + '/event';
-            $.get(eventApiUrl, function (eventData) {
-                if (eventData && eventData.event) {
-                    // Update the eventData div with the event data
-                    document.getElementById('eventData').innerText = 'Event: ' + eventData.event;
-                }
-            });
         }
 
         // Update the data and chart for the relay initially
         updateRelayTrafficDataAndChart();
+        updateRelayEventData(port);
 
-        // Set an interval to update the data and chart periodically (e.g., every 10 seconds)
-        setInterval(updateRelayTrafficDataAndChart, 1000); // 10 seconds
+        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
+        setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
+        setInterval(updateRelayEventData, 1000, port); // 1 seconds
     }
 
     // Fetch the list of control ports dynamically

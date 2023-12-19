@@ -2,6 +2,14 @@
 <html>
 <head>
     <title>Tor Relay Traffic</title>
+    <style>
+        .container {
+            display: flex;
+        }
+        .relay-chart, #eventData {
+            width: 50%;
+        }
+    </style>
 </head>
 <body>
 <h1>Latest Traffic Data</h1>
@@ -12,12 +20,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div id="flagsData"></div>
-<!-- Create a container for relay charts -->
-<div id="relayCharts">
-    <!-- Relay charts will be dynamically added here -->
-</div>
+<!-- Create a container for relay charts and events -->
+<div class="container">
+    <!-- Create a container for relay charts -->
+    <div id="relayCharts" class="relay-chart">
+        <!-- Relay charts will be dynamically added here -->
+    </div>
 
-<div id="eventData"></div>
+    <!-- Create a container for events -->
+    <div id="eventData">
+        <!-- Events will be dynamically added here -->
+    </div>
+</div>
 
 <script src="/js/data.js"></script>
 </body>
