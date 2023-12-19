@@ -56,7 +56,7 @@ def monitor_traffic_and_flags(control_port):
                 bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
                 controller.add_event_listener(bw_event_handler, EventType.BW)
 
-                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType)
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event))
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
