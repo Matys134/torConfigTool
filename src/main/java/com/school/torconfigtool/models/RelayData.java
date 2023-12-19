@@ -11,4 +11,5 @@ public class RelayData {
     private double bandwidth;
     private double uptime;
     private List<String> flags;
+    private List<String> logs;
 }

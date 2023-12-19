@@ -2,12 +2,16 @@ import json
 import os
 import functools
 import threading
+import logging
 
 import stem
 from stem.control import EventType, Controller
 import requests
 import time
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
@@ -88,12 +92,16 @@ def _handle_bandwidth_event(controller, control_port, event):
     upload = event.written
     flags = relay_flags(controller)
 
+    logs = []
+    for handler in logger.handlers:
+        logs.extend(handler.buffer)
 
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download,
         "upload": upload,
         "flags": flags,  # Convert the list to a JSON array
+        "logs": [record.getMessage() for record in logs],
     }
 
 
