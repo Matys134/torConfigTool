@@ -97,6 +97,17 @@ def _handle_bandwidth_event(controller, control_port, event):
         "flags": flags,  # Convert the list to a JSON array
     }
 
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
+    else:
+        print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
+
 def _handle_event(controller, control_port, event):
     # Create a dictionary with the event data and an identifier
     data = {
