@@ -9,9 +9,11 @@ $(document).ready(function () {
             var eventDataDiv = document.getElementById('eventData');
             eventDataDiv.innerHTML = '';
             data.forEach(function(event, index) {
-                var eventElement = document.createElement('p');
-                eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
-                eventDataDiv.appendChild(eventElement);
+                if (event !== null) { // Check if the event is not null
+                    var eventElement = document.createElement('p');
+                    eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                    eventDataDiv.appendChild(eventElement);
+                }
             });
         });
     }
