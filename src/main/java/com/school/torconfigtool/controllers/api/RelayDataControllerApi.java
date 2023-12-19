@@ -38,6 +38,16 @@ public class RelayDataControllerApi {
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 
+    @GetMapping("/relay-data/{relayId}/event")
+    public ResponseEntity<String> getRelayEvent(@PathVariable int relayId) {
+        Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
+        if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
+            RelayData lastRelayData = relayDataQueue.getLast();
+            return ResponseEntity.ok(lastRelayData.getEvent());
+        }
+        return ResponseEntity.ok("No event data for Relay ID: " + relayId);
+    }
+
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
