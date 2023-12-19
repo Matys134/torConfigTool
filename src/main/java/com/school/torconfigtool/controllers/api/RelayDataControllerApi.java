@@ -19,7 +19,6 @@ public class RelayDataControllerApi {
 
         Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
         addRelayData(relayDataQueue, relayData);
-        relayDataQueue.offer(relayData);
 
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
