@@ -84,7 +84,8 @@ def monitor_traffic_and_flags(control_port):
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
     status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
-    return getattr(status, 'flags', 'No flags')  # Access the flags, return 'No flags' if not present
+    flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
+    return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
 
 
 def _handle_bandwidth_event(controller, control_port, event):
