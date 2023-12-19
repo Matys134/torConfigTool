@@ -24,7 +24,7 @@ public class RelayDataControllerApi {
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
-    @PostMapping("/relay-data/{relayId}/event")
+    @GetMapping("/relay-data/{relayId}/event")
     public ResponseEntity<String> receiveRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
         String event = eventData.get("event");
 
