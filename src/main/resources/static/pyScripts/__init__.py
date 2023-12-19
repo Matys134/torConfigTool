@@ -60,8 +60,11 @@ def monitor_traffic_and_flags(control_port):
                 controller.set_conf('HashedControlPassword', '')
                 controller.set_conf('CookieAuthentication', '1')
 
-                # Add event listener for STATUS_SERVER events
-                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.STATUS_SERVER)
+                # Enable log messages
+                controller.set_conf('Log', ['NOTICE stdout'])
+
+                # Add event listener for INFO events
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.INFO)
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
