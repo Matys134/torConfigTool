@@ -60,11 +60,8 @@ def monitor_traffic_and_flags(control_port):
                 controller.set_conf('HashedControlPassword', '')
                 controller.set_conf('CookieAuthentication', '1')
 
-                bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
-                controller.add_event_listener(bw_event_handler, EventType.BW)
-
-                # Add event listener for NEWCONSENSUS events
-                controller.add_event_listener(lambda event: _handle_newconsensus_event(controller, control_port, event), EventType.NEWCONSENSUS)
+                # Add event listener for BW events
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.BW)
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
