@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -37,14 +38,16 @@ public class RelayDataControllerApi {
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 
-    @GetMapping("/relay-data/{relayId}/event")
-    public ResponseEntity<String> getRelayEvent(@PathVariable int relayId) {
+    @GetMapping("/relay-data/{relayId}/events")
+    public List<String> getRelayEvents(@PathVariable int relayId) {
         Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
         if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
-            RelayData lastRelayData = relayDataQueue.getLast();
-            return ResponseEntity.ok(lastRelayData.getEvent());
+            return relayDataQueue.stream()
+                    .map(RelayData::getEvent)
+                    .limit(10)
+                    .collect(Collectors.toList());
         }
-        return ResponseEntity.ok("No event data for Relay ID: " + relayId);
+        return Collections.emptyList();
     }
 
     @GetMapping("/relay-data/{relayId}")

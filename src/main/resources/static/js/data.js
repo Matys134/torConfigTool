@@ -3,10 +3,16 @@ $(document).ready(function () {
     var baseApiUrl = 'http://' + location.hostname + ':8081/api/relay-data';
 
     function updateRelayEventData(port) {
-        var apiUrl = baseApiUrl + '/' + port + '/event';
+        var apiUrl = baseApiUrl + '/' + port + '/events';
         $.get(apiUrl, function (data) {
             // Update the eventData div with the event data
-            document.getElementById('eventData').innerText = 'Latest Event: ' + data;
+            var eventDataDiv = document.getElementById('eventData');
+            eventDataDiv.innerHTML = '';
+            data.forEach(function(event, index) {
+                var eventElement = document.createElement('p');
+                eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                eventDataDiv.appendChild(eventElement);
+            });
         });
     }
 
