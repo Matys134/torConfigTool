@@ -56,6 +56,8 @@ def monitor_traffic_and_flags(control_port):
                 bw_event_handler = functools.partial(_handle_bandwidth_event, controller, control_port)
                 controller.add_event_listener(bw_event_handler, EventType.BW)
 
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event))
+
                 print(f"Monitoring relay on ControlPort {control_port}")
 
                 while controller.is_alive():  # Check if the relay is still running
@@ -94,6 +96,23 @@ def _handle_bandwidth_event(controller, control_port, event):
         "upload": upload,
         "flags": flags,  # Convert the list to a JSON array
     }
+
+def _handle_event(controller, control_port, event):
+    # Create a dictionary with the event data and an identifier
+    data = {
+        "event": str(event),
+    }
+
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}/event"
+
+    # Send data to the API endpoint for the corresponding relay
+    response = requests.post(api_endpoint, json=data)
+
+    if response.status_code == 200:
+        print(f"Event sent for ControlPort {control_port}: {event}")
+    else:
+        print(f"Failed to send event for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 
     # Construct the complete API endpoint URL with the relayId

@@ -24,6 +24,20 @@ public class RelayDataControllerApi {
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
+    @PostMapping("/relay-data/{relayId}/event")
+    public ResponseEntity<String> receiveRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
+        String event = eventData.get("event");
+
+        // Add the event to the relay data
+        Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
+        if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
+            RelayData lastRelayData = relayDataQueue.getLast();
+            lastRelayData.setEvent(event);
+        }
+
+        return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
+    }
+
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
