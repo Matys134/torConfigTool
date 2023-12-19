@@ -64,7 +64,7 @@ def monitor_traffic_and_flags(control_port):
                 controller.set_conf('Log', ['NOTICE stdout'])
 
                 # Add event listener for INFO events
-                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.INFO)
+                controller.add_event_listener(lambda event: _handle_event(controller, control_port, event), EventType.NOTICE)
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
