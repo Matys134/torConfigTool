@@ -30,6 +30,16 @@ public class OnionServiceController {
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
         this.torConfiguration.setHiddenServicePort("5555");
+
+        // Check if hiddenServiceDirs directory exists, if not, create it
+        String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
+        File hiddenServiceDirs = new File(hiddenServiceDirsPath);
+        if (!hiddenServiceDirs.exists()) {
+            boolean dirCreated = hiddenServiceDirs.mkdirs();
+            if (!dirCreated) {
+                logger.error("Failed to create directory: " + hiddenServiceDirsPath);
+            }
+        }
     }
 
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
