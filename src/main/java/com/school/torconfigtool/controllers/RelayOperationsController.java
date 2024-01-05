@@ -241,6 +241,14 @@ public class RelayOperationsController {
             // Delete DataDirectory
             FileUtils.deleteDirectory(new File(dataDirectoryPath));
 
+            // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
+            Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "onion-service-" + relayNickname);
+            Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_onion");
+
+            // Delete Onion files in /onion folder and its corresponding file in torrc directory
+            FileUtils.deleteDirectory(new File(onionFilePath.toString()));
+            Files.deleteIfExists(torrcOnionFilePath);
+
             // Call the shell script to delete Nginx configuration file and symbolic link
             ProcessBuilder processBuilder = new ProcessBuilder("shellScripts/remove_onion_files.sh", relayNickname);
             Process process = processBuilder.start();
@@ -251,7 +259,7 @@ public class RelayOperationsController {
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to remove Torrc file, DataDirectory, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
+            logger.error("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
             response.put("success", false);
         }
         return response;
