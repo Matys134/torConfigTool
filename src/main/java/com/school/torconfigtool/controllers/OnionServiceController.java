@@ -118,7 +118,7 @@ public class OnionServiceController {
         // Build the server block
         return String.format("""
                 server {
-                    listen %d;
+                    listen 127.0.0.1:%d;
                     server_name test;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
@@ -225,7 +225,7 @@ public class OnionServiceController {
 
             torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
             torrcWriter.newLine();
-            torrcWriter.write("HiddenServicePort " + onionServicePort + " 127.0.0.1:" + onionServicePort);
+            torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
 
             File indexHtml = new File(serviceDir, "index.html");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {

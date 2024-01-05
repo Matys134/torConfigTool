@@ -82,7 +82,10 @@ public class TorConfigurationService {
         } else if (line.startsWith("HiddenServiceDir")) {
             config.setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
-            config.setHiddenServicePort(line.split(" ")[1].trim());
+            String[] parts = line.split(" ");
+            String addressAndPort = parts[parts.length - 1]; // Get the last element "127.0.0.1:9005"
+            String port = addressAndPort.split(":")[1]; // Split by ":" and get the second element "9005"
+            config.setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("BandwidthRate")) {
