@@ -241,9 +241,17 @@ public class RelayOperationsController {
             // Delete DataDirectory
             FileUtils.deleteDirectory(new File(dataDirectoryPath));
 
+            // Build paths for Nginx configuration file and symbolic link
+            Path nginxConfigFilePath = Paths.get("/etc/nginx/sites-available/onion-service-" + relayNickname);
+            Path nginxSymbolicLinkPath = Paths.get("/etc/nginx/sites-enabled/onion-service-" + relayNickname);
+
+            // Delete Nginx configuration file and symbolic link
+            Files.deleteIfExists(nginxConfigFilePath);
+            Files.deleteIfExists(nginxSymbolicLinkPath);
+
             response.put("success", true);
         } catch (IOException e) {
-            logger.error("Failed to remove Torrc file and DataDirectory for relayNickname: {}", relayNickname, e);
+            logger.error("Failed to remove Torrc file, DataDirectory, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
             response.put("success", false);
         }
         return response;
