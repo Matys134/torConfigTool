@@ -82,7 +82,7 @@ public class TorConfigurationService {
         } else if (line.startsWith("HiddenServiceDir")) {
             config.setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
-            config.setHiddenServicePort(line.split(" ")[14].trim());
+            config.setHiddenServicePort(line.split(" ")[3].trim());
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("BandwidthRate")) {
