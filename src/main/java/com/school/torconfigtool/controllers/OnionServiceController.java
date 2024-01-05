@@ -93,11 +93,9 @@ public class OnionServiceController {
         }
 
         try {
-            if (!new File(TORRC_DIRECTORY_PATH + "torrc_onion").exists()) {
-                createTorrcFile(onionServicePort);
-                generateNginxConfig(onionServicePort);
-                restartNginx();
-            }
+            createTorrcFile(onionServicePort);
+            generateNginxConfig(onionServicePort);
+            restartNginx();
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
