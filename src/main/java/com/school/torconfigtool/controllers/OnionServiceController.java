@@ -93,9 +93,12 @@ public class OnionServiceController {
         }
 
         try {
-            createTorrcFile(onionServicePort);
-            generateNginxConfig(onionServicePort);
-            restartNginx();
+            String pathToFile = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
+            if (!new File(pathToFile).exists()) {
+                createTorrcFile(pathToFile, onionServicePort);
+                generateNginxConfig(onionServicePort);
+                restartNginx();
+            }
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
@@ -198,8 +201,7 @@ public class OnionServiceController {
         }
     }
 
-    private void createTorrcFile(int onionServicePort) throws IOException {
-        String filePath = TORRC_DIRECTORY_PATH + "torrc_onion";
+    private void createTorrcFile(String filePath, int onionServicePort) throws IOException {
         File torrcFile = new File(filePath);
 
         // Check if the parent directories exist; if not, attempt to create them
@@ -207,7 +209,7 @@ public class OnionServiceController {
             throw new IOException("Failed to create parent directories for: " + filePath);
         }
 
-        try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile, true))) { // true for append mode
+        try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
             String currentDirectory = System.getProperty("user.dir");
             String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
 
@@ -221,7 +223,6 @@ public class OnionServiceController {
                 throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
             }
 
-            torrcWriter.newLine(); // add a new line before appending new configuration
             torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
             torrcWriter.newLine();
             torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
