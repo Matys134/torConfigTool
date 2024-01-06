@@ -99,6 +99,9 @@
                 th:data-config-nickname="${config.hiddenServicePort}"
                 th:data-config-port="${config.hiddenServicePort}">Stop
         </button>
+        <button class="edit-files-button">
+            <a th:href="@{/onion-service/upload/{port}(port=${config.hiddenServicePort})}">Edit Files</a>
+        </button>
     </li>
 </ul>
 
@@ -127,8 +130,6 @@
         </form>
     </div>
 </div>
-
-<a href="/onion-service/edit">Edit Onion Services</a>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
