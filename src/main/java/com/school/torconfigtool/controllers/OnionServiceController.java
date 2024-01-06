@@ -29,7 +29,7 @@ public class OnionServiceController {
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
-        this.torConfiguration.setHiddenServicePort("5555");
+        //this.torConfiguration.setHiddenServicePort("5555");
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
