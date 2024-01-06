@@ -87,21 +87,24 @@ public class OnionServiceController {
     }
 
 
-    @GetMapping("/current-hostname")
+    @GetMapping("/current-hostnames")
     @ResponseBody
-    public String getCurrentHostname() {
-        logger.info("Inside getCurrentHostname method");
-        String hiddenServicePortString = torConfiguration.getHiddenServicePort();
-        logger.info("Hidden Service Port: {}", hiddenServicePortString);
+    public Map<String, String> getCurrentHostnames() {
+        logger.info("Inside getCurrentHostnames method");
+        Map<String, String> hostnames = new HashMap<>();
+        for (String hiddenServicePortString : onionServicePorts) {
+            logger.info("Hidden Service Port: {}", hiddenServicePortString);
 
-        if (hiddenServicePortString != null) {
-            String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
-            logger.info("Fetched Hostname: {}", hostname);
-            return hostname;
-        } else {
-            logger.warn("Hidden service port is null");
-            return "Hidden service port is null";
+            if (hiddenServicePortString != null) {
+                String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
+                logger.info("Fetched Hostname: {}", hostname);
+                hostnames.put(hiddenServicePortString, hostname);
+            } else {
+                logger.warn("Hidden service port is null");
+                hostnames.put(hiddenServicePortString, "Hidden service port is null");
+            }
         }
+        return hostnames;
     }
 
 

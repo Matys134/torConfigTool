@@ -67,7 +67,7 @@
         <!-- Display Onion relay configuration fields -->
         <p th:text="'HiddenServiceDir: ' + ${config.hiddenServiceDir}"></p>
         <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-        <p>Hostname: <span id="hostname-display"></span></p>
+        <p>Hostname: <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
         <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
 
         <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
@@ -122,10 +122,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         function updateHostname() {
-            fetch('/onion-service/current-hostname')
-                .then(response => response.text())
-                .then(hostname => {
-                    document.getElementById('hostname-display').textContent = hostname;
+            fetch('/onion-service/current-hostnames')
+                .then(response => response.json())
+                .then(hostnames => {
+                    // Iterate over each hostname
+                    for (const [port, hostname] of Object.entries(hostnames)) {
+                        // Find the corresponding HTML element and update its text content
+                        const element = document.getElementById('hostname-display-' + port);
+                        if (element) {
+                            element.textContent = hostname;
+                        }
+                    }
                 })
                 .catch(error => console.error('Error fetching hostname:', error));
         }
