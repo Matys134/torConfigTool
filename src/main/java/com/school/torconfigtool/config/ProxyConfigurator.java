@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class ProxyConfigurator {
 
@@ -22,8 +25,7 @@ public class ProxyConfigurator {
             }
 
             // Get local IP address
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            String localIpAddress = inetAddress.getHostAddress();
+            String localIpAddress = getLocalIpAddress();
 
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(torrcFile))) {
                 bw.write("SocksPort " + localIpAddress + ":9050");
@@ -60,5 +62,24 @@ public class ProxyConfigurator {
             LOGGER.error("Failed to start proxy", e);
             return false;
         }
+    }
+
+    private static String getLocalIpAddress() {
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            LOGGER.error("Failed to get local IP address", e);
+        }
+        return "127.0.0.1";  // fallback to loopback address
     }
 }
