@@ -73,16 +73,17 @@
                                 th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}">
                             Edit
                         </button>
-                        <button class="btn btn-secondary"
+                        <button class="btn btn-secondary remove-button"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
                                 th:data-config-type="bridge">
                             Remove
                         </button>
-                        <button class="btn btn-secondary" th:attr="data-config-type='bridge'"
+                        <button type="button" class="btn btn-secondary start-button" th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Start
                         </button>
-                        <button class="btn btn-secondary" th:attr="data-config-type='bridge'"
+                        <button class="btn btn-secondary stop-button"
+                                th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Stop
                         </button>
