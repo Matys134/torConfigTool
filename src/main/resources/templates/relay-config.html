@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Tor Relay Configuration</title>
-    <link rel="stylesheet" href="/css/tabs.css"> <!-- Include your CSS styles here -->
+    <link href="/css/tabs.css" rel="stylesheet"> <!-- Include your CSS styles here -->
 </head>
 <body>
 <h1>Tor Relay Configuration</h1>
 
 <!-- Display success message if provided -->
-<div th:if="${successMessage}" class="success-message">
+<div class="success-message" th:if="${successMessage}">
     <p th:text="${successMessage}"></p>
 </div>
 
@@ -21,28 +21,28 @@
 </div>
 
 <!-- Relay Tab Content -->
-<div id="relayTab" class="tabcontent">
+<div class="tabcontent" id="relayTab">
     <form action="/guard/configure" method="post">
         <label for="relayNickname">Nickname:</label>
-        <input type="text" id="relayNickname" name="relayNickname" required><br><br>
+        <input id="relayNickname" name="relayNickname" required type="text"><br><br>
 
         <label for="relayContact">Contact Information:</label>
-        <input type="email" id="relayContact" name="relayContact" required><br><br>
+        <input id="relayContact" name="relayContact" required type="email"><br><br>
 
         <label for="relayPort">ORPort (e.g., 9001):</label>
-        <input type="text" id="relayPort" name="relayPort" required><br><br>
+        <input id="relayPort" name="relayPort" required type="text"><br><br>
 
         <label for="controlPort">ControlPort (e.g., 9051):</label>
-        <input type="text" id="controlPort" name="controlPort" required><br><br>
+        <input id="controlPort" name="controlPort" required type="text"><br><br>
 
-        <input type="checkbox" id="includeBandwidth" name="includeBandwidth"> Include Bandwidth (KB/s):<br>
+        <input id="includeBandwidth" name="includeBandwidth" type="checkbox"> Include Bandwidth (KB/s):<br>
 
-        <input type="checkbox" id="startRelayAfterConfig" name="startRelayAfterConfig">
+        <input id="startRelayAfterConfig" name="startRelayAfterConfig" type="checkbox">
         <label for="startRelayAfterConfig">Start Relay after configuration</label><br>
 
         <div id="bandwidthField" style="display: none;">
             <label for="relayBandwidth">Bandwidth Limit (KB/s):</label>
-            <input type="number" id="relayBandwidth" name="relayBandwidth" min="0">
+            <input id="relayBandwidth" min="0" name="relayBandwidth" type="number">
         </div>
 
         <button type="submit">Configure Relay</button>
@@ -50,8 +50,8 @@
 </div>
 
 <!-- Bridge Tab Content -->
-<div id="bridgeTab" class="tabcontent">
-    <form id="bridgeForm" action="/bridge/configure" method="post">
+<div class="tabcontent" id="bridgeTab">
+    <form action="/bridge/configure" id="bridgeForm" method="post">
         <label for="bridgeType">Bridge Type:</label>
         <select id="bridgeType" name="bridgeType" onchange="toggleBridgeFields()">
             <option value="bridge">Bridge</option>
@@ -62,42 +62,43 @@
         <!-- Common Fields -->
         <div id="commonFields">
             <label for="bridgeContact">Contact Email:</label>
-            <input type="email" id="bridgeContact" name="bridgeContact" required><br><br>
+            <input id="bridgeContact" name="bridgeContact" required type="email"><br><br>
 
             <label for="bridgeNickname">Nickname:</label>
-            <input type="text" id="bridgeNickname" name="bridgeNickname" required><br><br>
+            <input id="bridgeNickname" name="bridgeNickname" required type="text"><br><br>
 
             <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
-            <input type="text" id="bridgeControlPort" name="bridgeControlPort" required><br><br>
+            <input id="bridgeControlPort" name="bridgeControlPort" required type="text"><br><br>
 
-            <input type="checkbox" id="includeBridgeBandwidth" name="includeBridgeBandwidth"> Include Bandwidth (KB/s):<br>
+            <input id="includeBridgeBandwidth" name="includeBridgeBandwidth" type="checkbox"> Include Bandwidth
+            (KB/s):<br>
 
             <div id="bridgeBandwidthField" style="display: none;">
                 <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
-                <input type="number" id="bridgeBandwidth" name="bridgeBandwidth" min="0">
+                <input id="bridgeBandwidth" min="0" name="bridgeBandwidth" type="number">
             </div>
         </div>
 
         <!-- Specific Fields for Bridge -->
-        <div id="bridgeFields" class="bridge-specific">
+        <div class="bridge-specific" id="bridgeFields">
             <label for="bridgePort">ORPort (e.g., 9001):</label>
-            <input type="text" id="bridgePort" name="bridgePort"><br><br>
+            <input id="bridgePort" name="bridgePort" type="text"><br><br>
 
             <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
-            <input type="text" id="bridgeTransportListenAddr" name="bridgeTransportListenAddr"><br><br>
+            <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" type="text"><br><br>
         </div>
 
-        <input type="checkbox" id="startBridgeAfterConfig" name="startBridgeAfterConfig">
+        <input id="startBridgeAfterConfig" name="startBridgeAfterConfig" type="checkbox">
         <label for="startBridgeAfterConfig">Start Relay after configuration</label><br>
 
         <!-- Specific Fields for WebTunnel Bridge -->
-        <div id="webtunnelFields" class="bridge-specific" style="display: none;">
+        <div class="bridge-specific" id="webtunnelFields" style="display: none;">
             <label for="webtunnelUrl">Domain:</label>
-            <input type="text" id="webtunnelUrl" name="webtunnelUrl"><br><br>
+            <input id="webtunnelUrl" name="webtunnelUrl" type="text"><br><br>
         </div>
 
         <!-- Specific Fields for Snowflake -->
-        <div id="snowflakeFields" class="bridge-specific" style="display: none;">
+        <div class="bridge-specific" id="snowflakeFields" style="display: none;">
             <!-- Snowflake has no specific fields to enter -->
             <button id="runSnowflakeProxyButton" type="button">Run Snowflake Proxy</button>
         </div>
@@ -108,10 +109,10 @@
 
 
 <!-- Other Relay Type Tab Content -->
-<div id="onionTab" class="tabcontent">
+<div class="tabcontent" id="onionTab">
     <form action="/onion-service/configure" method="post">
         <label for="onionServicePort">Onion Service Port (e.g., 80):</label>
-        <input type="text" id="onionServicePort" name="onionServicePort" required><br><br>
+        <input id="onionServicePort" name="onionServicePort" required type="text"><br><br>
 
         <button type="submit">Configure Onion Service</button>
     </form>
@@ -170,14 +171,14 @@
     window.onload = toggleBridgeFields;
 </script>
 <script>
-    document.getElementById("runSnowflakeProxyButton").addEventListener("click", function() {
+    document.getElementById("runSnowflakeProxyButton").addEventListener("click", function () {
         $.ajax({
             url: '/bridge/run-snowflake-proxy',
             type: 'POST',
-            success: function(response) {
+            success: function (response) {
                 alert("Snowflake proxy started successfully");
             },
-            error: function(error) {
+            error: function (error) {
                 alert("Error starting snowflake proxy: " + error.responseText);
             }
         });

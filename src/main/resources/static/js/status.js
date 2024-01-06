@@ -1,7 +1,7 @@
-$(document).ready(function() {
+$(document).ready(function () {
     // Function to check and update relay status
     function updateRelayStatus(nickname, relayType) {
-        $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function(data) {
+        $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
             console.log(data); // Log the server response
 
             var statusElement = $("#status-" + nickname);
@@ -27,7 +27,7 @@ $(document).ready(function() {
 
     // Function to update relay status for guard relays
     function updateGuardRelayStatus() {
-        $(".edit-button").each(function() {
+        $(".edit-button").each(function () {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "guard") {
@@ -38,7 +38,7 @@ $(document).ready(function() {
 
     // Function to update relay status for bridge relays
     function updateBridgeRelayStatus() {
-        $(".edit-bridge-button").each(function() {
+        $(".edit-bridge-button").each(function () {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "bridge") {
@@ -49,7 +49,7 @@ $(document).ready(function() {
 
     // Function to update relay status for Onion relays
     function updateOnionRelayStatus() {
-        $(".edit-onion-button").each(function() {
+        $(".edit-onion-button").each(function () {
             var port = $(this).data("config-port");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "onion") {
@@ -65,7 +65,7 @@ $(document).ready(function() {
     updateOnionRelayStatus();
 
     // Periodically update relay status every 10 seconds (adjust the interval as needed)
-    setInterval(function() {
+    setInterval(function () {
         updateGuardRelayStatus();
         updateBridgeRelayStatus();
         updateOnionRelayStatus();

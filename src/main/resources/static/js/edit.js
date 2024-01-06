@@ -89,11 +89,11 @@ $(document).ready(function () {
         // Now send a GET request to your new API for checking the port availability
         $.get("/update-guard-config/check-port-availability",
             {
-                nickname:  data.nickname,
+                nickname: data.nickname,
                 orPort: data.orPort,
                 controlPort: data.controlPort,
             },
-            function(response) {
+            function (response) {
                 if (response['available']) {
                     let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
                     sendUpdateRequest(url, data);
@@ -105,7 +105,7 @@ $(document).ready(function () {
     });
 
     // Method to check uniqueness of ports
-    function arePortsUnique(relayPort, controlPort){
+    function arePortsUnique(relayPort, controlPort) {
         return !(relayPort === controlPort);
     }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Tor Configuration Tool</title>
     <!-- Include any necessary CSS stylesheets -->
-    <link rel="stylesheet" href="styles.css">
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body>
 <h1>Tor Configuration Tool</h1>
@@ -12,7 +12,7 @@
 <!-- Navigation menu -->
 <nav>
     <ul>
-        <li><a th:href="@{/}" class="active">Home</a></li>
+        <li><a class="active" th:href="@{/}">Home</a></li>
         <li><a th:href="@{/relay}">Tor Relay</a></li>
         <li><a th:href="@{/hidden-services}">Hidden Services</a></li>
         <li><a th:href="@{/proxy}">Tor Proxy</a></li>

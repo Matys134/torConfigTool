@@ -7,7 +7,7 @@ $(document).ready(function () {
         $.get(apiUrl, function (data) {
             // Update the eventData div with the event data
             eventContainer.html('');
-            data.forEach(function(event, index) {
+            data.forEach(function (event, index) {
                 if (event !== null) { // Check if the event is not null
                     var eventElement = document.createElement('p');
                     eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
@@ -85,7 +85,7 @@ $(document).ready(function () {
                     document.getElementById('flagsData').innerText = 'Flags: ' + flagsData;
 
                     // Update the chart's data and labels
-                    relayChart.data.labels = Array.from({ length: data.length }, (_, i) => i + 1);
+                    relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
                     relayChart.options.title.text = relayName + ' Flags: ' + flagsData;
@@ -102,7 +102,9 @@ $(document).ready(function () {
 
         // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
-        setInterval(function() { updateRelayEventData(port, eventContainer); }, 1000); // 1 seconds
+        setInterval(function () {
+            updateRelayEventData(port, eventContainer);
+        }, 1000); // 1 seconds
     }
 
     // Fetch the list of control ports dynamically
