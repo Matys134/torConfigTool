@@ -31,6 +31,7 @@ public class OnionServiceController {
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
         this.onionServicePorts = getAllOnionServicePorts();
+        this.torConfiguration = new TorConfiguration();
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
@@ -116,6 +117,7 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
+            torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort)); // Set the hiddenServicePort here
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
