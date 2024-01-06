@@ -253,17 +253,14 @@ public class OnionServiceController {
 
 
     private String readHostnameFile(int port) {
-        // Get the current working directory
-        String currentDirectory = System.getProperty("user.dir");
-        System.out.println("JSI TADY KRETÉNE: " + currentDirectory);
-
-        // Build the relative path to the hostname file
-        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
-        System.out.println(path);
+String hiddenServiceDir = System.getProperty("user.dir") + "/onion/hiddenServiceDirs/onion-service-" + port;
+        String hostnameFilePath = hiddenServiceDir + "/hostname";
+        Path path = Paths.get(hostnameFilePath);
         try {
-            return new String(Files.readAllBytes(path));
+            return Files.readString(path);
         } catch (IOException e) {
-            return "Unable to read hostname file";
+            logger.error("Error reading hostname file: {}", hostnameFilePath, e);
+            return "Error reading hostname file: " + hostnameFilePath;
         }
     }
 
