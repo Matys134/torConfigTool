@@ -29,7 +29,6 @@ public class GuardController {
     private final RelayOperationsController relayOperationController;
 
 
-
     public GuardController(RelayService relayService, RelayOperationsController relayOperationController) {
         this.relayService = relayService;
         this.relayOperationController = relayOperationController;
@@ -68,7 +67,7 @@ public class GuardController {
                 return "relay-config";
             }
 
-            if (!RelayUtils.portsAreAvailable(relayNickname ,relayPort, controlPort)) {
+            if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return "relay-config";
             }

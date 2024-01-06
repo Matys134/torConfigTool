@@ -75,10 +75,10 @@ public class RelayUtils {
 
     // Check if the ports are available by checking torrc files and running processes
     public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort) {
-        if(!arePortsUnique(relayPort, controlPort)){
+        if (!arePortsUnique(relayPort, controlPort)) {
             return false;
         }
-        if(arePortsPrivileged(relayPort, controlPort)){
+        if (arePortsPrivileged(relayPort, controlPort)) {
             return false;
         }
 
@@ -102,7 +102,7 @@ public class RelayUtils {
                             if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
                                     (line.contains(String.valueOf(relayPort)) ||
                                             line.contains(String.valueOf(controlPort))
-                                            )) {
+                                    )) {
                                 return false;
                             }
                         }
@@ -217,12 +217,11 @@ public class RelayUtils {
     }
 
 
-
-    public static boolean arePortsUnique(int relayPort, int controlPort){
+    public static boolean arePortsUnique(int relayPort, int controlPort) {
         return relayPort != controlPort;
     }
 
-    public static boolean arePortsPrivileged(int relayPort, int controlPort){
+    public static boolean arePortsPrivileged(int relayPort, int controlPort) {
         return relayPort < 1024 || controlPort < 1024;
     }
 

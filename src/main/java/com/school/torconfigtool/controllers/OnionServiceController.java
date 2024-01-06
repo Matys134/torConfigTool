@@ -21,9 +21,9 @@ import java.util.*;
 @RequestMapping("/onion-service")
 public class OnionServiceController {
 
-    private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
-
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
 
@@ -64,9 +64,6 @@ public class OnionServiceController {
         return ports;
     }
 
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
-
-
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         System.out.println("OnionServiceConfigurationForm called");
@@ -106,7 +103,6 @@ public class OnionServiceController {
         }
         return hostnames;
     }
-
 
 
     @PostMapping("/configure")
@@ -155,7 +151,6 @@ public class OnionServiceController {
     }
 
 
-
     private void editNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
@@ -187,7 +182,6 @@ public class OnionServiceController {
             logger.error("Error editing Nginx configuration", e);
         }
     }
-
 
 
     private void restartNginx() {
@@ -289,7 +283,7 @@ public class OnionServiceController {
             String fileDir = "onion/www/service-" + port + "/";
             File fileToRemove = new File(fileDir + fileName);
 
-            if(fileToRemove.exists()) {
+            if (fileToRemove.exists()) {
                 if (!fileToRemove.delete()) {
                     model.addAttribute("message", "Error deleting the file.");
                 } else {
@@ -298,7 +292,7 @@ public class OnionServiceController {
             } else {
                 model.addAttribute("message", "File doesn't exist.");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             model.addAttribute("message", "Error: " + e.getMessage());
         }
 
@@ -315,11 +309,11 @@ public class OnionServiceController {
                 String fileDir = "onion/www/service-" + port + "/";
                 File outputFile = new File(fileDir + file.getOriginalFilename());
 
-                try(FileOutputStream fos = new FileOutputStream(outputFile)){
+                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                     fos.write(file.getBytes());
                 } catch (IOException e) {
                     logger.error("Error during file saving", e);
-                    throw new RuntimeException("Error during file saving: "+e.getMessage());
+                    throw new RuntimeException("Error during file saving: " + e.getMessage());
                 }
             });
 

@@ -1,14 +1,17 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.models.RelayConfig;
 import com.school.torconfigtool.models.BridgeRelayConfig;
 import com.school.torconfigtool.models.GuardRelayConfig;
+import com.school.torconfigtool.models.RelayConfig;
 import com.school.torconfigtool.models.TorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +42,7 @@ public class TorConfigurationService {
         if (files != null) {
             for (File file : files) {
                 String relayType = parseRelayTypeFromFile(file);
-                if(relayType.equals(expectedRelayType)) {
+                if (relayType.equals(expectedRelayType)) {
                     try {
                         TorConfiguration config = parseTorConfiguration(file, relayType);
                         configs.add(config);

@@ -59,7 +59,7 @@ public class BridgeController {
                 return "relay-config";
             }
 
-            BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr,bridgeType ,bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+            BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -90,7 +90,7 @@ public class BridgeController {
         return "relay-config";
     }
 
-    private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr,String bridgeType,String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
+    private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
         config.setBridgeType(bridgeType);
         config.setNickname(bridgeNickname);
@@ -215,8 +215,7 @@ public class BridgeController {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error("Error generating Nginx configuration", e);
         }
     }
