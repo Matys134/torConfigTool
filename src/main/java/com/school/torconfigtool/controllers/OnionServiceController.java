@@ -117,7 +117,6 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
-            torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort)); // Set the hiddenServicePort here
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
