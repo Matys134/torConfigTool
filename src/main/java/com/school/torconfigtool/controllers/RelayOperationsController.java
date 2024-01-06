@@ -69,7 +69,7 @@ public class RelayOperationsController {
 
     private String readHostnameFile(String hiddenServicePort) {
         // The base directory where your hidden services directories are stored
-        String hiddenServiceBaseDir = Paths.get(System.getProperty("user.dir"), "torrc", "hiddenServiceDirs").toString();
+        String hiddenServiceBaseDir = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs").toString();
         Path hostnameFilePath = Paths.get(hiddenServiceBaseDir, "onion-service-" + hiddenServicePort, "hostname");
 
         try {

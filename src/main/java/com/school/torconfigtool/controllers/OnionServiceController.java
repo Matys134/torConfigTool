@@ -24,12 +24,18 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
+    private final List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
 
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
-        this.torConfiguration.setHiddenServicePort("5555");
+        this.onionServicePorts = getAllOnionServicePorts();
+
+        // Set the hiddenServicePort here if it's not being set elsewhere
+        if (!onionServicePorts.isEmpty()) {
+            torConfiguration.setHiddenServicePort(onionServicePorts.get(0));
+        }
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
@@ -42,6 +48,22 @@ public class OnionServiceController {
         }
     }
 
+    private List<String> getAllOnionServicePorts() {
+        List<String> ports = new ArrayList<>();
+        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
+        File[] torrcFiles = torrcDirectory.listFiles((dir, name) -> name.endsWith("_onion"));
+
+        if (torrcFiles != null) {
+            for (File file : torrcFiles) {
+                String fileName = file.getName();
+                String port = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('_'));
+                ports.add(port);
+            }
+        }
+
+        return ports;
+    }
+
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
 
@@ -51,9 +73,9 @@ public class OnionServiceController {
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         Map<String, String> hostnames = new HashMap<>();
 
-        for (TorConfiguration config : onionConfigs) {
-            String hostname = readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
-            hostnames.put(config.getHiddenServicePort(), hostname);
+        for (String port : onionServicePorts) {
+            String hostname = readHostnameFile(Integer.parseInt(port));
+            hostnames.put(port, hostname);
         }
         String hostname = readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
         model.addAttribute("hostname", hostname);
@@ -87,9 +109,9 @@ public class OnionServiceController {
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         // Check port availability before configuring the onion service
-        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) { // You may need to replace "onion" with actual relay name
+        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
             model.addAttribute("errorMessage", "Port is not available.");
-            return "relay-config"; // The name of the Thymeleaf template to render when the configuration fails
+            return "relay-config";
         }
 
         try {
@@ -99,6 +121,8 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
+            torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
+            logger.info("Hidden Service Port set to: {}", onionServicePort);
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
@@ -236,8 +260,11 @@ public class OnionServiceController {
 
 
     private String readHostnameFile(int port) {
-        // Adjust the file path as needed
-        Path path = Paths.get("onion/hiddenServiceDirs/onion-service-" + port + "/hostname");
+        // Get the current working directory
+        String currentDirectory = System.getProperty("user.dir");
+
+        // Build the correct path to the hostname file
+        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
         System.out.println(path);
         try {
             return new String(Files.readAllBytes(path));
