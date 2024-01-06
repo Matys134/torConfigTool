@@ -255,6 +255,7 @@ public class OnionServiceController {
     private String readHostnameFile(int port) {
         // Get the current working directory
         String currentDirectory = System.getProperty("user.dir");
+        System.out.println(currentDirectory);
 
         // Build the relative path to the hostname file
         Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
