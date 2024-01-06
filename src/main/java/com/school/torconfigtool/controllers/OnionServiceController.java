@@ -24,12 +24,13 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
+    private List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
 
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
-        //this.torConfiguration.setHiddenServicePort("5555");
+        this.onionServicePorts = getAllOnionServicePorts();
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
@@ -42,6 +43,22 @@ public class OnionServiceController {
         }
     }
 
+    private List<String> getAllOnionServicePorts() {
+        List<String> ports = new ArrayList<>();
+        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
+        File[] torrcFiles = torrcDirectory.listFiles((dir, name) -> name.endsWith("_onion"));
+
+        if (torrcFiles != null) {
+            for (File file : torrcFiles) {
+                String fileName = file.getName();
+                String port = fileName.substring(fileName.indexOf('-') + 1, fileName.indexOf('_'));
+                ports.add(port);
+            }
+        }
+
+        return ports;
+    }
+
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
 
@@ -51,10 +68,12 @@ public class OnionServiceController {
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
         Map<String, String> hostnames = new HashMap<>();
 
-        for (TorConfiguration config : onionConfigs) {
-            String hostname = readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
-            hostnames.put(config.getHiddenServicePort(), hostname);
+        for (String port : onionServicePorts) {
+            String hostname = readHostnameFile(Integer.parseInt(port));
+            hostnames.put(port, hostname);
         }
+        String hostname = readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
+        model.addAttribute("hostname", hostname);
 
         model.addAttribute("onionConfigs", onionConfigs);
         model.addAttribute("hostnames", hostnames);
