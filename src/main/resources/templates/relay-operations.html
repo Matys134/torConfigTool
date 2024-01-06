@@ -64,7 +64,7 @@
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button class="btn btn-secondary"
+                        <button class="btn btn-secondary edit-bridge-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-contact="${config.bridgeRelayConfig.contact}"
                                 th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
@@ -73,16 +73,18 @@
                                 th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}">
                             Edit
                         </button>
-                        <button class="btn btn-secondary" th:attr="data-config-type='bridge'"
-                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
-                                th:data-config-type="bridge">
+                        <button class="btn btn-secondary remove-bridge-button"
+                                th:attr="data-config-type='bridge'"
+                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Remove
                         </button>
-                        <button class="btn btn-secondary" th:attr="data-config-type='bridge'"
+                        <button class="btn btn-secondary start-bridge-button"
+                                th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Start
                         </button>
-                        <button class="btn btn-secondary" th:attr="data-config-type='bridge'"
+                        <button class="btn btn-secondary stop-bridge-button"
+                                th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Stop
                         </button>
