@@ -49,11 +49,11 @@ $(document).ready(function () {
 
     // Function to update relay status for Onion relays
     function updateOnionRelayStatus() {
-        $(".edit-onion-button").each(function () {
-            var port = $(this).data("config-port");
+        $(".start-button").each(function () {
+            var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "onion") {
-                updateRelayStatus(port, relayType);
+                updateRelayStatus(nickname, relayType);
             }
         });
     }
