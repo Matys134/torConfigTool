@@ -16,6 +16,21 @@ public class ProcessManagementService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProcessManagementService.class);
 
+    private static List<String> getCommandOutput(String command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+        Process process = processBuilder.start();
+
+        // Read the entire output to ensure we're not missing anything.
+        List<String> outputLines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outputLines.add(line);
+            }
+        }
+        return outputLines;
+    }
+
     public int executeCommand(String command) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
         Process process = processBuilder.start();
@@ -61,20 +76,5 @@ public class ProcessManagementService {
             logger.error("Error executing command to get PID: {}", command, e);
             return -1;
         }
-    }
-
-    private static List<String> getCommandOutput(String command) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        Process process = processBuilder.start();
-
-        // Read the entire output to ensure we're not missing anything.
-        List<String> outputLines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outputLines.add(line);
-            }
-        }
-        return outputLines;
     }
 }

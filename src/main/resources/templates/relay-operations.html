@@ -16,28 +16,33 @@
         <p th:text="'Contact: ' + ${config.guardRelayConfig.contact}"></p>
         <p th:text="'Control Port: ' + ${config.guardRelayConfig.controlPort}"></p>
         <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
-        <span th:id="${'status-message-' + config.guardRelayConfig.nickname}" style="color: blue;">Idle</span>
+        <span style="color: blue;" th:id="${'status-message-' + config.guardRelayConfig.nickname}">Idle</span>
         <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
         <button
                 class="edit-button"
-                th:data-config-nickname="${config.guardRelayConfig.nickname}"
-                th:data-config-orport="${config.guardRelayConfig.orPort}"
+                th:attr="data-config-type='guard'"
                 th:data-config-contact="${config.guardRelayConfig.contact}"
                 th:data-config-controlport="${config.guardRelayConfig.controlPort}"
-                th:attr="data-config-type='guard'"
+                th:data-config-nickname="${config.guardRelayConfig.nickname}"
+                th:data-config-orport="${config.guardRelayConfig.orPort}"
         >
-        Edit
+            Edit
         </button>
         <button class="remove-button"
                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
-                th:data-config-type="guard">Remove</button>
-        <button class="start-button" th:data-config-nickname="${config.guardRelayConfig.nickname}" th:attr="data-config-type='guard'">Start</button>
-        <button class="stop-button" th:data-config-nickname="${config.guardRelayConfig.nickname}" th:attr="data-config-type='guard'">Stop</button>
+                th:data-config-type="guard">Remove
+        </button>
+        <button class="start-button" th:attr="data-config-type='guard'"
+                th:data-config-nickname="${config.guardRelayConfig.nickname}">Start
+        </button>
+        <button class="stop-button" th:attr="data-config-type='guard'"
+                th:data-config-nickname="${config.guardRelayConfig.nickname}">Stop
+        </button>
     </li>
 </ul>
 
 <!-- Display Bridge relay configurations -->
- <h2>Bridge Relay Configurations</h2>
+<h2>Bridge Relay Configurations</h2>
 <ul>
     <li th:each="config : ${bridgeConfigs}">
         <!-- Display Bridge relay configuration fields -->
@@ -46,17 +51,22 @@
         <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
         <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
         <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
-        <span th:id="${'status-message-' + config.bridgeRelayConfig.nickname}" style="color: blue;">Idle</span>
+        <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
         <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
         <button class="edit-bridge-button"
-                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
-                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
-                th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}"
+                th:attr="data-config-type='bridge'"
                 th:data-config-contact="${config.bridgeRelayConfig.contact}"
                 th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
-                th:attr="data-config-type='bridge'">Edit</button>
-        <button class="start-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Start</button>
-        <button class="stop-button" th:data-config-nickname="${config.bridgeRelayConfig.nickname}" th:attr="data-config-type='bridge'">Stop</button>
+                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
+                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
+                th:data-config-servertransport="${config.bridgeRelayConfig.bridgeTransportListenAddr}">Edit
+        </button>
+        <button class="start-button" th:attr="data-config-type='bridge'"
+                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">Start
+        </button>
+        <button class="stop-button" th:attr="data-config-type='bridge'"
+                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">Stop
+        </button>
     </li>
 </ul>
 
@@ -70,45 +80,53 @@
         <p>Hostname: <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
         <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
 
-        <span th:id="${'status-message-' + config.hiddenServicePort}" style="color: blue;">Idle</span>
+        <span style="color: blue;" th:id="${'status-message-' + config.hiddenServicePort}">Idle</span>
         <button class="edit-onion-button"
+                th:attr="data-config-type='onion'"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}"
-                th:attr="data-config-type='onion'">Edit</button>
+                th:data-config-port="${config.hiddenServicePort}">Edit
+        </button>
         <button class="remove-button"
-        th:data-config-nickname="${config.hiddenServicePort}"
-        th:data-config-type="guard">Remove</button>
-        <button class="start-button" th:data-config-nickname="${config.hiddenServicePort}" th:attr="data-config-type='onion'">Start</button>
-        <button class="stop-button"
                 th:data-config-nickname="${config.hiddenServicePort}"
+                th:data-config-type="guard">Remove
+        </button>
+        <button class="start-button" th:attr="data-config-type='onion'"
+                th:data-config-nickname="${config.hiddenServicePort}">Start
+        </button>
+        <button class="stop-button"
+                th:attr="data-config-type='onion'"
                 th:data-config-dir="${config.hiddenServiceDir}"
-                th:data-config-port="${config.hiddenServicePort}"
-                th:attr="data-config-type='onion'">Stop</button>
+                th:data-config-nickname="${config.hiddenServicePort}"
+                th:data-config-port="${config.hiddenServicePort}">Stop
+        </button>
+        <button class="edit-files-button">
+            <a th:href="@{/onion-service/upload/{port}(port=${config.hiddenServicePort})}">Edit Files</a>
+        </button>
     </li>
 </ul>
 
 <!-- Add modal for editing configurations (hidden by default) -->
-<div id="edit-modal" class="modal">
+<div class="modal" id="edit-modal">
     <div class="modal-content">
         <h2>Edit Configuration</h2>
         <form id="edit-form">
             <label for="edit-nickname">Nickname:</label>
-            <input type="hidden" id="edit-nickname" name="edit-nickname">
+            <input id="edit-nickname" name="edit-nickname" type="hidden">
 
             <label for="edit-orport">ORPort:</label>
-            <input type="text" id="edit-orport" name="edit-orport">
+            <input id="edit-orport" name="edit-orport" type="text">
 
             <label for="edit-server-transport">ServerTransportListenAddr:</label>
-            <input type="text" id="edit-server-transport" name="edit-server-transport">
+            <input id="edit-server-transport" name="edit-server-transport" type="text">
 
             <label for="edit-contact">Contact:</label>
-            <input type="text" id="edit-contact" name="edit-contact">
+            <input id="edit-contact" name="edit-contact" type="text">
 
             <label for="edit-controlport">Control Port:</label>
-            <input type="text" id="edit-controlport" name="edit-controlport">
+            <input id="edit-controlport" name="edit-controlport" type="text">
 
-            <button type="button" id="save-button">Save</button>
-            <button type="button" id="cancel-button">Cancel</button>
+            <button id="save-button" type="button">Save</button>
+            <button id="cancel-button" type="button">Cancel</button>
         </form>
     </div>
 </div>

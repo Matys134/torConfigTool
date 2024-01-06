@@ -75,10 +75,10 @@ public class TorrcFileCreator {
                     continue;
 
                 Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while(addresses.hasMoreElements()) {
+                while (addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
                     if (addr instanceof Inet6Address) {
-                        if(!addr.isLinkLocalAddress()){
+                        if (!addr.isLinkLocalAddress()) {
                             String hostAddress = addr.getHostAddress();
                             int idx = hostAddress.indexOf('%');
                             return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
