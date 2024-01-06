@@ -337,6 +337,7 @@ public class OnionServiceController {
     @GetMapping("/edit")
     public String editOnionService(Model model) {
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
+        System.out.println("Onion configs: " + onionConfigs); // Add this line
         model.addAttribute("onionConfigs", onionConfigs);
         return "edit-onion-service";
     }
