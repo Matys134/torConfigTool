@@ -24,14 +24,13 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
 
-    private List<String> onionServicePorts;
+    private final List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
 
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
         this.onionServicePorts = getAllOnionServicePorts();
-        this.torConfiguration = new TorConfiguration();
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
@@ -117,7 +116,6 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
-            torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort)); // Set the hiddenServicePort here
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
@@ -255,8 +253,11 @@ public class OnionServiceController {
 
 
     private String readHostnameFile(int port) {
-        // Adjust the file path as needed
-        Path path = Paths.get("onion/hiddenServiceDirs/onion-service-" + port + "/hostname");
+        // Get the current working directory
+        String currentDirectory = System.getProperty("user.dir");
+
+        // Build the relative path to the hostname file
+        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
         System.out.println(path);
         try {
             return new String(Files.readAllBytes(path));
