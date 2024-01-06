@@ -32,11 +32,6 @@ public class OnionServiceController {
         this.torConfigurationService = torConfigurationService;
         this.onionServicePorts = getAllOnionServicePorts();
 
-        // Set the hiddenServicePort here if it's not being set elsewhere
-        if (!onionServicePorts.isEmpty()) {
-            torConfiguration.setHiddenServicePort(onionServicePorts.get(0));
-        }
-
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
         File hiddenServiceDirs = new File(hiddenServiceDirsPath);
@@ -45,6 +40,13 @@ public class OnionServiceController {
             if (!dirCreated) {
                 logger.error("Failed to create directory: " + hiddenServiceDirsPath);
             }
+        }
+
+        // Fetch hostnames for all onion services
+        Map<String, String> hostnames = new HashMap<>();
+        for (String port : onionServicePorts) {
+            String hostname = readHostnameFile(Integer.parseInt(port));
+            hostnames.put(port, hostname);
         }
     }
 
