@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class ProxyConfigurator {
 
@@ -20,14 +21,18 @@ public class ProxyConfigurator {
                 throw new IOException("Failed to create " + TORRC_PROXY_FILE);
             }
 
+            // Get local IP address
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            String localIpAddress = inetAddress.getHostAddress();
+
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(torrcFile))) {
-                bw.write("SocksPort 192.168.2.119:9050");
+                bw.write("SocksPort " + localIpAddress + ":9050");
                 bw.newLine();
                 bw.write("SocksPolicy accept 192.168.1.0/24");
                 bw.newLine();
                 bw.write("RunAsDaemon 1");
                 bw.newLine();
-                bw.write("DNSPort 192.168.2.119:53");
+                bw.write("DNSPort " + localIpAddress + ":53");
             }
             return true;
 
