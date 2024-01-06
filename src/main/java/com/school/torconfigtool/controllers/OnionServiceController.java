@@ -31,7 +31,6 @@ public class OnionServiceController {
     public OnionServiceController(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
         this.onionServicePorts = getAllOnionServicePorts();
-        this.torConfiguration = new TorConfiguration();
 
         // Check if hiddenServiceDirs directory exists, if not, create it
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
