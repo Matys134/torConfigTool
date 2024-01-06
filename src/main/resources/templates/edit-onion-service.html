@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Onion Service</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<h1>Edit Onion Service</h1>
+
+<!-- Display list of onion services -->
+<ul>
+    <li th:each="config : ${onionConfigs}">
+        <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
+        <a th:href="@{'/onion-service/upload/' + ${config.hiddenServicePort}}">Edit Files</a>
+    </li>
+</ul>
+
+<a href="/">Back to Home</a>
+</body>
+</html>
