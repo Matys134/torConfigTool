@@ -85,7 +85,18 @@ public class OnionServiceController {
     @GetMapping("/current-hostname")
     @ResponseBody
     public String getCurrentHostname() {
-        return readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
+        logger.info("Inside getCurrentHostname method");
+        String hiddenServicePortString = torConfiguration.getHiddenServicePort();
+        logger.info("Hidden Service Port: {}", hiddenServicePortString);
+
+        if (hiddenServicePortString != null) {
+            String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
+            logger.info("Fetched Hostname: {}", hostname);
+            return hostname;
+        } else {
+            logger.warn("Hidden service port is null");
+            return "Hidden service port is null";
+        }
     }
 
 
@@ -93,9 +104,9 @@ public class OnionServiceController {
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         // Check port availability before configuring the onion service
-        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) { // You may need to replace "onion" with actual relay name
+        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
             model.addAttribute("errorMessage", "Port is not available.");
-            return "relay-config"; // The name of the Thymeleaf template to render when the configuration fails
+            return "relay-config";
         }
 
         try {
@@ -105,6 +116,8 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
                 restartNginx();
             }
+            torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
+            logger.info("Hidden Service Port set to: {}", onionServicePort);
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             logger.error("Error configuring Tor Onion Service", e);
