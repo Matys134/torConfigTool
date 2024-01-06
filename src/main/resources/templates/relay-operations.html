@@ -122,9 +122,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         function updateHostname() {
-            fetch('/onion-service/current-hostname')
-                .then(response => response.text())
-                .then(hostname => {
+            fetch('/onion-service/current-hostnames')
+                .then(response => response.json())
+                .then(hostnames => {
+                    // Assuming the hiddenServicePort is available in the scope
+                    let hostname = hostnames[hiddenServicePort];
                     document.getElementById('hostname-display').textContent = hostname;
                 })
                 .catch(error => console.error('Error fetching hostname:', error));
