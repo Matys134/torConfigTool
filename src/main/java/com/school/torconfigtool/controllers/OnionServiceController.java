@@ -55,8 +55,6 @@ public class OnionServiceController {
             String hostname = readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
-        String hostname = readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
-        model.addAttribute("hostname", hostname);
 
         model.addAttribute("onionConfigs", onionConfigs);
         model.addAttribute("hostnames", hostnames);
