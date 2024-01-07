@@ -28,14 +28,15 @@ $(document).ready(function () {
         configSelectors.contact.parent().hide();
         configSelectors.controlPort.parent().hide();
 
-        // Show fields based on relay type
         if (relayType === 'guard' || relayType === 'bridge') {
+            console.log('Showing fields for guard or bridge'); // Add this line
             configSelectors.orPort.parent().show();
             configSelectors.contact.parent().show();
             configSelectors.controlPort.parent().show();
         }
 
         if (relayType === 'bridge') {
+            console.log('Showing fields for bridge'); // Add this line
             configSelectors.serverTransport.parent().show();
         }
 
@@ -74,6 +75,7 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
