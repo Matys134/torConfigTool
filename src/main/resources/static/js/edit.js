@@ -17,36 +17,7 @@ $(document).ready(function () {
         cancel: $("#cancel-button"),
     };
 
-    // Function to show the modal with the data for editing the relay configuration file based on the relay type (guard or bridge). We can do it by hiding empty fields and only showing the ones that are needed.
-    function showModalWith(data, relayType) {
-        // Set the modal title
-        configSelectors.modal.find(".modal-title").text(`Edit ${relayType} configuration`);
-
-        // Set the nickname
-        configSelectors.nickname.val(data.nickname);
-
-        // Set the ORPort
-        configSelectors.orPort.val(data.orPort);
-
-        // Set the ServerTransportListenAddr
-        if (relayType === 'bridge') {
-            configSelectors.serverTransport.val(data.serverTransport);
-            configSelectors.serverTransport.parent().show();
-            isBridgeEdit = true;
-        } else {
-            configSelectors.serverTransport.parent().hide();
-            isBridgeEdit = false;
-        }
-
-        // Set the Contact
-        configSelectors.contact.val(data.contact);
-
-        // Set the Control Port
-        configSelectors.controlPort.val(data.controlPort);
-
-        // Show the modal
-        configSelectors.modal.show();
-    }
+    // Function to show the modal with the data for editing
 
     function hideModal() {
         configSelectors.modal.hide();
