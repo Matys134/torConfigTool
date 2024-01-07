@@ -20,45 +20,18 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType) {
         // Set the values of the input fields
-        configSelectors.nickname.val(data.nickname);
+        //configSelectors.nickname.val(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Hide all the input fields first
-        configSelectors.nickname.closest('label').hide();
-        configSelectors.orPort.closest('label').hide();
-        configSelectors.serverTransport.closest('label').hide();
-        configSelectors.contact.closest('label').hide();
-        configSelectors.controlPort.closest('label').hide();
-
-        // Show the input fields only if the corresponding data attribute has a value
-        if (relayType === 'guard' || relayType === 'bridge') {
-            if (!!data.nickname) {
-                console.log('Showing nickname field');
-                configSelectors.nickname.closest('label').show();
-            }
-            if (!!data.orPort) {
-                console.log('Showing orPort field');
-                configSelectors.orPort.closest('label').show();
-            }
-            if (!!data.contact) {
-                console.log('Showing contact field');
-                configSelectors.contact.closest('label').show();
-            }
-            if (!!data.controlPort) {
-                console.log('Showing controlPort field');
-                configSelectors.controlPort.closest('label').show();
-            }
-        }
-
-        if (relayType === 'bridge') {
-            if (!!data.serverTransport) {
-                console.log('Showing serverTransport field');
-                configSelectors.serverTransport.closest('label').show();
-            }
-        }
+        // Show or hide the input fields based on whether the corresponding data attribute has a value
+        //configSelectors.nickname.closest('label').toggle(!!data.nickname);
+        configSelectors.orPort.closest('label').toggle(!!data.orPort);
+        configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
+        configSelectors.contact.closest('label').toggle(!!data.contact);
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
 
         // Show the modal
         configSelectors.modal.show();
