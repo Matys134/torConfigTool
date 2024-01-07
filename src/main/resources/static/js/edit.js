@@ -24,12 +24,13 @@ $(document).ready(function () {
 
         // Hide all fields initially
         configSelectors.orPort.parent().hide();
-        configSelectors.serverTransport.parent().hide();
         configSelectors.contact.parent().hide();
         configSelectors.controlPort.parent().hide();
+        configSelectors.serverTransport.parent().hide();
 
+        // Show the fields based on the relay type
         if (relayType === 'guard') {
-            console.log('Showing fields for guard or bridge'); // Add this line
+            console.log('Showing fields for guard'); // Add this line
             configSelectors.orPort.parent().show();
             configSelectors.contact.parent().show();
             configSelectors.controlPort.parent().show();
@@ -40,7 +41,7 @@ $(document).ready(function () {
             configSelectors.serverTransport.parent().show();
         }
 
-        configSelectors.modal.show();
+        //configSelectors.modal.show();
     }
 
     function hideModal() {
