@@ -17,31 +17,25 @@ $(document).ready(function () {
         cancel: $("#cancel-button"),
     };
 
-    function showModalWith(values, relayType) {
-        for (let key in values) {
-            configSelectors[key].val(values[key]);
-        }
+    // Function to show the modal with the data for editing based on the relay type and hide the other fields
+    function showModalWith(data, relayType) {
+        isBridgeEdit = relayType === 'bridge'; // Set the isBridgeEdit variable to true if the relayType is bridge
 
-        // Hide all fields initially
-        configSelectors.orPort.parent().hide();
-        configSelectors.contact.parent().hide();
-        configSelectors.controlPort.parent().hide();
-        configSelectors.serverTransport.parent().hide();
-
-        // Show the fields based on the relay type
-        if (relayType === 'guard') {
-            console.log('Showing fields for guard'); // Add this line
-            configSelectors.orPort.parent().show();
-            configSelectors.contact.parent().show();
-            configSelectors.controlPort.parent().show();
-        }
-
-        if (relayType === 'bridge') {
-            console.log('Showing fields for bridge'); // Add this line
+        // Show the server transport field if the relayType is bridge
+        if (isBridgeEdit) {
             configSelectors.serverTransport.parent().show();
+        } else {
+            configSelectors.serverTransport.parent().hide();
         }
 
-        //configSelectors.modal.show();
+        // Set the values for the fields
+        configSelectors.nickname.val(data.nickname);
+        configSelectors.orPort.val(data.orPort);
+        configSelectors.serverTransport.val(data.serverTransport);
+        configSelectors.contact.val(data.contact);
+        configSelectors.controlPort.val(data.controlPort);
+
+        configSelectors.modal.show();
     }
 
     function hideModal() {
