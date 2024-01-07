@@ -22,7 +22,7 @@
                     <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.guardRelayConfig.nickname}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary"
+                        <button class="btn btn-secondary edit-guard-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-contact="${config.guardRelayConfig.contact}"
                                 th:data-config-controlport="${config.guardRelayConfig.controlPort}"
@@ -30,16 +30,18 @@
                                 th:data-config-orport="${config.guardRelayConfig.orPort}">
                             Edit
                         </button>
-                        <button type="button" class="btn btn-secondary"
+                        <button class="btn btn-secondary remove-button"
                                 th:data-config-nickname="${config.guardRelayConfig.nickname}"
                                 th:data-config-type="guard">
                             Remove
                         </button>
-                        <button type="button" class="btn btn-secondary" th:attr="data-config-type='guard'"
+                        <button class="btn btn-secondary remove-button"
+                                th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.guardRelayConfig.nickname}">
                             Start
                         </button>
-                        <button type="button" class="btn btn-secondary" th:attr="data-config-type='guard'"
+                        <button class="btn btn-secondary stop-button"
+                                th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.guardRelayConfig.nickname}">
                             Stop
                         </button>
