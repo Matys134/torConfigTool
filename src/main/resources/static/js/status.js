@@ -4,6 +4,7 @@ $(document).ready(function () {
         $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
             console.log(data); // Log the server response
 
+
             var statusElement = $("#status-" + nickname);
             var statusMessageElement = $("#status-message-" + nickname);
 
@@ -27,7 +28,7 @@ $(document).ready(function () {
 
     // Function to update relay status for guard relays
     function updateGuardRelayStatus() {
-        $(".edit-button").each(function () {
+        $(".start-button").each(function () {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "guard") {
@@ -38,7 +39,7 @@ $(document).ready(function () {
 
     // Function to update relay status for bridge relays
     function updateBridgeRelayStatus() {
-        $(".edit-bridge-button").each(function () {
+        $(".start-button").each(function () {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "bridge") {
