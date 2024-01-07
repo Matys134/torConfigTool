@@ -26,12 +26,19 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on whether the corresponding data attribute has a value
-        configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
-        configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
-        configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+        // Hide all the input fields first
+        configSelectors.nickname.closest('label').hide();
+        configSelectors.orPort.closest('label').hide();
+        configSelectors.serverTransport.closest('label').hide();
+        configSelectors.contact.closest('label').hide();
+        configSelectors.controlPort.closest('label').hide();
+
+        // Show the input fields only if the corresponding data attribute has a value
+        if (!!data.nickname) configSelectors.nickname.closest('label').show();
+        if (!!data.orPort) configSelectors.orPort.closest('label').show();
+        if (!!data.serverTransport) configSelectors.serverTransport.closest('label').show();
+        if (!!data.contact) configSelectors.contact.closest('label').show();
+        if (!!data.controlPort) configSelectors.controlPort.closest('label').show();
 
         // Show the modal
         configSelectors.modal.show();
