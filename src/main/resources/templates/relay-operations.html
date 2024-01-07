@@ -141,40 +141,40 @@
     </div>
 </div>
 
-    <!-- Add modal for editing configurations (hidden by default) -->
-    <div class="modal" id="edit-modal">
-        <div class="modal-content">
-            <h2>Edit Configuration</h2>
-            <form id="edit-form">
-                <input id="edit-config-type" name="edit-config-type" type="hidden">
+<!-- Add modal for editing configurations (hidden by default) -->
+<div class="modal" id="edit-modal">
+    <div class="modal-content">
+        <h2>Edit Configuration</h2>
+        <form id="edit-form">
+            <input id="edit-config-type" name="edit-config-type" type="hidden">
 
-                <label for="edit-nickname">Nickname:</label>
-                <input id="edit-nickname" name="edit-nickname" type="text">
+            <label for="edit-nickname" data-config-type="guard bridge onion">Nickname:</label>
+            <input id="edit-nickname" name="edit-nickname" type="text" data-config-type="guard bridge onion">
 
-                <label for="edit-orport">ORPort:</label>
-                <input id="edit-orport" name="edit-orport" type="text">
+            <label for="edit-orport" data-config-type="guard bridge">ORPort:</label>
+            <input id="edit-orport" name="edit-orport" type="text" data-config-type="guard bridge">
 
-                <label for="edit-server-transport">ServerTransportListenAddr:</label>
-                <input id="edit-server-transport" name="edit-server-transport" type="text">
+            <label for="edit-server-transport" data-config-type="bridge">ServerTransportListenAddr:</label>
+            <input id="edit-server-transport" name="edit-server-transport" type="text" data-config-type="bridge">
 
-                <label for="edit-contact">Contact:</label>
-                <input id="edit-contact" name="edit-contact" type="text">
+            <label for="edit-contact" data-config-type="guard bridge">Contact:</label>
+            <input id="edit-contact" name="edit-contact" type="text" data-config-type="guard bridge">
 
-                <label for="edit-controlport">Control Port:</label>
-                <input id="edit-controlport" name="edit-controlport" type="text">
+            <label for="edit-controlport" data-config-type="guard bridge">Control Port:</label>
+            <input id="edit-controlport" name="edit-controlport" type="text" data-config-type="guard bridge">
 
-                <!-- Additional fields for Onion relay configurations -->
-                <label for="edit-dir">HiddenServiceDir:</label>
-                <input id="edit-dir" name="edit-dir" type="text">
+            <!-- Additional fields for Onion relay configurations -->
+            <label for="edit-dir" data-config-type="onion">HiddenServiceDir:</label>
+            <input id="edit-dir" name="edit-dir" type="text" data-config-type="onion">
 
-                <label for="edit-hidden-service-port">HiddenServicePort:</label>
-                <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text">
+            <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
+            <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
 
-                <button id="save-button" type="button">Save</button>
-                <button id="cancel-button" type="button">Cancel</button>
-            </form>
-        </div>
+            <button id="save-button" type="button">Save</button>
+            <button id="cancel-button" type="button">Cancel</button>
+        </form>
     </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>

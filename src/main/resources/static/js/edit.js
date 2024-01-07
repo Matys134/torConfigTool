@@ -17,13 +17,37 @@ $(document).ready(function () {
         cancel: $("#cancel-button"),
     };
 
-    function showModalWith(values) {
-        for (let key in values) {
-            configSelectors[key].val(values[key]);
+    // Function to show the modal with the data for editing
+    function showModalWith(data, relayType) {
+        // Set the values of the input fields
+        configSelectors.nickname.val(data.nickname);
+        configSelectors.orPort.val(data.orPort);
+        configSelectors.serverTransport.val(data.serverTransport);
+        configSelectors.contact.val(data.contact);
+        configSelectors.controlPort.val(data.controlPort);
+
+        // Show or hide the input fields based on whether the corresponding data attribute has a value
+        configSelectors.nickname.closest('label').toggle(!!data.nickname);
+        configSelectors.orPort.closest('label').toggle(!!data.orPort);
+        configSelectors.contact.closest('label').toggle(!!data.contact);
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+
+        // Show or hide the serverTransport field based on the relay type
+        if (relayType === 'bridge') {
+            configSelectors.serverTransport.closest('label').show();
+        } else {
+            configSelectors.serverTransport.closest('label').hide();
         }
 
+        // Set the data-config-type attribute of each field to the relay type
+        $('#edit-form [data-config-type]').each(function() {
+            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
+        });
+
+        // Show the modal
         configSelectors.modal.show();
     }
+
 
     function hideModal() {
         configSelectors.modal.hide();
@@ -56,17 +80,18 @@ $(document).ready(function () {
     }
 
     buttons.edit.click(function () {
-        isBridgeEdit = $(this).hasClass('edit-bridge-button'); // Set this flag when the edit button is clicked
+        const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: isBridgeEdit ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
-        showModalWith(data);
+        showModalWith(data, relayType);
     });
 
     buttons.save.click(function () {
