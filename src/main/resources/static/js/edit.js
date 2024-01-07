@@ -28,7 +28,7 @@ $(document).ready(function () {
         configSelectors.contact.parent().hide();
         configSelectors.controlPort.parent().hide();
 
-        if (relayType === 'guard' || relayType === 'bridge') {
+        if (relayType === 'guard') {
             console.log('Showing fields for guard or bridge'); // Add this line
             configSelectors.orPort.parent().show();
             configSelectors.contact.parent().show();
