@@ -73,17 +73,16 @@ $(document).ready(function () {
     }
 
     buttons.edit.click(function () {
-        isBridgeEdit = $(this).hasClass('edit-bridge-button'); // Set this flag when the edit button is clicked
+        const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
 
         const data = {
             nickname: $(this).data('config-nickname'),
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: isBridgeEdit ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
-        const relayType = isBridgeEdit ? 'bridge' : 'guard';
         showModalWith(data, relayType);
     });
 
