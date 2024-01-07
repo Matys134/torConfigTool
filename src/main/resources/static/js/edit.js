@@ -39,6 +39,11 @@ $(document).ready(function () {
             configSelectors.serverTransport.closest('label').hide();
         }
 
+        // Set the data-config-type attribute of each field to the relay type
+        $('#edit-form [data-config-type]').each(function() {
+            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
+        });
+
         // Show the modal
         configSelectors.modal.show();
     }
