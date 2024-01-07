@@ -22,7 +22,7 @@
                     <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.guardRelayConfig.nickname}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button class="btn btn-secondary edit-guard-button"
+                        <button class="btn btn-secondary edit-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-contact="${config.guardRelayConfig.contact}"
                                 th:data-config-controlport="${config.guardRelayConfig.controlPort}"

@@ -39,7 +39,7 @@ $(document).ready(function () {
 
     // Function to update relay status for bridge relays
     function updateBridgeRelayStatus() {
-        $(".edit-bridge-button").each(function () {
+        $(".start-button").each(function () {
             var nickname = $(this).data("config-nickname");
             var relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "bridge") {
