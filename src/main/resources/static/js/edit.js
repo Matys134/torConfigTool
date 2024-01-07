@@ -17,23 +17,22 @@ $(document).ready(function () {
         cancel: $("#cancel-button"),
     };
 
-    // Function to show the modal with the data for editing based on the relay type and hide the other fields
+    // Function to show the modal with the data for editing based on the relay type and hide the other fields accordingly
     function showModalWith(data, relayType) {
-        isBridgeEdit = relayType === 'bridge'; // Set the isBridgeEdit variable to true if the relayType is bridge
-
-        // Show the server transport field if the relayType is bridge
-        if (isBridgeEdit) {
-            configSelectors.serverTransport.parent().show();
-        } else {
-            configSelectors.serverTransport.parent().hide();
-        }
-
-        // Set the values for the fields
         configSelectors.nickname.val(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
+
+        // Show the ServerTransportListenAddr field only for bridge relays
+        if (relayType === 'bridge') {
+            isBridgeEdit = true;
+            configSelectors.serverTransport.parent().show();
+        } else {
+            isBridgeEdit = false;
+            configSelectors.serverTransport.parent().hide();
+        }
 
         configSelectors.modal.show();
     }
