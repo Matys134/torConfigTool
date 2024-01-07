@@ -34,25 +34,30 @@ $(document).ready(function () {
         configSelectors.controlPort.closest('label').hide();
 
         // Show the input fields only if the corresponding data attribute has a value
-        if (!!data.nickname) {
-            console.log('Showing nickname field');
-            configSelectors.nickname.closest('label').show();
+        if (relayType === 'guard' || relayType === 'bridge') {
+            if (!!data.nickname) {
+                console.log('Showing nickname field');
+                configSelectors.nickname.closest('label').show();
+            }
+            if (!!data.orPort) {
+                console.log('Showing orPort field');
+                configSelectors.orPort.closest('label').show();
+            }
+            if (!!data.contact) {
+                console.log('Showing contact field');
+                configSelectors.contact.closest('label').show();
+            }
+            if (!!data.controlPort) {
+                console.log('Showing controlPort field');
+                configSelectors.controlPort.closest('label').show();
+            }
         }
-        if (!!data.orPort) {
-            console.log('Showing orPort field');
-            configSelectors.orPort.closest('label').show();
-        }
-        if (!!data.serverTransport) {
-            console.log('Showing serverTransport field');
-            configSelectors.serverTransport.closest('label').show();
-        }
-        if (!!data.contact) {
-            console.log('Showing contact field');
-            configSelectors.contact.closest('label').show();
-        }
-        if (!!data.controlPort) {
-            console.log('Showing controlPort field');
-            configSelectors.controlPort.closest('label').show();
+
+        if (relayType === 'bridge') {
+            if (!!data.serverTransport) {
+                console.log('Showing serverTransport field');
+                configSelectors.serverTransport.closest('label').show();
+            }
         }
 
         // Show the modal
