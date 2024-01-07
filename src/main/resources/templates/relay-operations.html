@@ -31,8 +31,8 @@
                             Edit
                         </button>
                         <button class="btn btn-secondary remove-button"
-                                th:data-config-nickname="${config.guardRelayConfig.nickname}"
-                                th:data-config-type="guard">
+                                th:attr="data-config-type='guard'"
+                                th:data-config-nickname="${config.guardRelayConfig.nickname}">
                             Remove
                         </button>
                         <button class="btn btn-secondary start-button"
