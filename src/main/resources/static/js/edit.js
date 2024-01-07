@@ -17,9 +17,26 @@ $(document).ready(function () {
         cancel: $("#cancel-button"),
     };
 
-    function showModalWith(values) {
+    function showModalWith(values, relayType) {
         for (let key in values) {
             configSelectors[key].val(values[key]);
+        }
+
+        // Hide all fields initially
+        configSelectors.orPort.parent().hide();
+        configSelectors.serverTransport.parent().hide();
+        configSelectors.contact.parent().hide();
+        configSelectors.controlPort.parent().hide();
+
+        // Show fields based on relay type
+        if (relayType === 'guard' || relayType === 'bridge') {
+            configSelectors.orPort.parent().show();
+            configSelectors.contact.parent().show();
+            configSelectors.controlPort.parent().show();
+        }
+
+        if (relayType === 'bridge') {
+            configSelectors.serverTransport.parent().show();
         }
 
         configSelectors.modal.show();
@@ -66,7 +83,8 @@ $(document).ready(function () {
             serverTransport: isBridgeEdit ? $(this).data('config-servertransport') : ""
         };
 
-        showModalWith(data);
+        const relayType = isBridgeEdit ? 'bridge' : 'guard';
+        showModalWith(data, relayType);
     });
 
     buttons.save.click(function () {
