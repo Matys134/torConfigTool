@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 @Controller
 @RequestMapping("/bridge")
@@ -115,19 +116,43 @@ public class BridgeController {
 
     private void setupWebtunnel(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
+
+        // Check if acme.sh is installed
+        if (!isAcmeShInstalled()) {
+            // Install acme.sh
+            String installCommand = "curl https://get.acme.sh | sh -s koubamates4@gmail.com";
+            executeCommand(installCommand);
+        }
+
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/";
 
+        executeCommand(command);
+    }
+
+    private boolean isAcmeShInstalled() {
+        String command = "/home/matys/.acme.sh/acme.sh --version";
+        try {
+            Process process = executeCommand(command);
+            Scanner scanner = new Scanner(process.getInputStream());
+            return scanner.hasNextLine() && scanner.nextLine().contains("v");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Process executeCommand(String command) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", command);
-
         try {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                logger.error("Error during webtunnel setup. Exit code: " + exitCode);
+                logger.error("Error during command execution. Exit code: " + exitCode);
             }
+            return process;
         } catch (IOException | InterruptedException e) {
-            logger.error("Error during webtunnel setup", e);
+            logger.error("Error during command execution", e);
+            return null;
         }
     }
 
@@ -245,4 +270,6 @@ public class BridgeController {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

@@ -19,10 +19,6 @@ while true; do
     case $user_choice in
         1)
             components=("-t bullseye-backports obfs4proxy")
-            # Prompt the user for their email address
-            read -p "Enter your email address for acme.sh: " user_email
-            # Install acme.sh
-            curl https://get.acme.sh | sh -s email=$user_email
             ;;
         2)
             components=("nginx")
