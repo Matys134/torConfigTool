@@ -125,6 +125,7 @@ public class BridgeController {
         }
 
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/";
+        System.out.println(command);
 
         executeCommand(command);
     }
