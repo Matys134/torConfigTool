@@ -120,7 +120,7 @@ public class BridgeController {
         // Check if acme.sh is installed
         if (!isAcmeShInstalled()) {
             // Install acme.sh
-            String installCommand = "curl https://get.acme.sh | sh -s koubamates4@gmail.com";
+            String installCommand = "curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
             executeCommand(installCommand);
         }
 
