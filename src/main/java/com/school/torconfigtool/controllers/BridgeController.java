@@ -200,24 +200,44 @@ public class BridgeController {
                 }
             }
 
-            // Add the new lines
-            lines.add("ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;");
-            lines.add("ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;");
-            lines.add("location /" + randomString + " {");
-            lines.add("proxy_pass http://127.0.0.1:15000;");
-            lines.add("proxy_http_version 1.1;");
-            lines.add("proxy_set_header Upgrade $http_upgrade;");
-            lines.add("proxy_set_header Connection \"upgrade\";");
-            lines.add("proxy_set_header Accept-Encoding \"\";");
-            lines.add("proxy_set_header Host $host;");
-            lines.add("proxy_set_header X-Real-IP $remote_addr;");
-            lines.add("proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
-            lines.add("proxy_set_header X-Forwarded-Proto $scheme;");
-            lines.add("add_header Front-End-Https on;");
-            lines.add("proxy_redirect off;");
-            lines.add("access_log off;");
-            lines.add("error_log off;");
-            lines.add("}");
+            // Find the line with the listen [::]:443 ssl default_server; and add the new lines
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().equals("listen [::]:443 ssl default_server;")) {
+                    lines.add(i + 1, "ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;");
+                    lines.add(i + 2, "ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;");
+                    break;
+                }
+            }
+
+            // Find the location block and replace its content
+            int locationStartIndex = -1;
+            int locationEndIndex = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().startsWith("location /")) {
+                    locationStartIndex = i;
+                }
+                if (lines.get(i).trim().equals("}") && locationStartIndex != -1) {
+                    locationEndIndex = i;
+                    break;
+                }
+            }
+
+            if (locationStartIndex != -1 && locationEndIndex != -1) {
+                lines.subList(locationStartIndex + 1, locationEndIndex).clear();
+                lines.add(locationStartIndex + 1, "proxy_pass http://127.0.0.1:15000;");
+                lines.add(locationStartIndex + 2, "proxy_http_version 1.1;");
+                lines.add(locationStartIndex + 3, "proxy_set_header Upgrade $http_upgrade;");
+                lines.add(locationStartIndex + 4, "proxy_set_header Connection \"upgrade\";");
+                lines.add(locationStartIndex + 5, "proxy_set_header Accept-Encoding \"\";");
+                lines.add(locationStartIndex + 6, "proxy_set_header Host $host;");
+                lines.add(locationStartIndex + 7, "proxy_set_header X-Real-IP $remote_addr;");
+                lines.add(locationStartIndex + 8, "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
+                lines.add(locationStartIndex + 9, "proxy_set_header X-Forwarded-Proto $scheme;");
+                lines.add(locationStartIndex + 10, "add_header Front-End-Https on;");
+                lines.add(locationStartIndex + 11, "proxy_redirect off;");
+                lines.add(locationStartIndex + 12, "access_log off;");
+                lines.add(locationStartIndex + 13, "error_log off;");
+            }
 
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
