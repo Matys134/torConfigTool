@@ -122,6 +122,7 @@ public class BridgeController {
         executeCommand(chownCommand);
 
         String installAcme = "curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
+        System.out.println("Installing acme.sh" + installAcme);
         executeCommand(installAcme);
 
         // Create the directory for the certificate files
