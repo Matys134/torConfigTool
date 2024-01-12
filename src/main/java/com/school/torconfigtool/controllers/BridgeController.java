@@ -132,7 +132,7 @@ public class BridgeController {
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
 
         executeCommand(command);
     }
