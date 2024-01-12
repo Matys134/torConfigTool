@@ -140,6 +140,7 @@ public class BridgeController {
     private boolean isAcmeShInstalled() {
         String command = "/home/matys/.acme.sh/acme.sh --version";
         try {
+            System.out.println("Executing command: " + command);
             Process process = executeCommand(command);
             Scanner scanner = new Scanner(process.getInputStream());
             return scanner.hasNextLine() && scanner.nextLine().contains("v");
