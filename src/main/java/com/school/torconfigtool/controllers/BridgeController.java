@@ -130,6 +130,7 @@ public class BridgeController {
         new File(certDirectory).mkdirs();
 
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
+        System.out.println("Generating certificate: " + command);
 
         executeCommand(command);
     }
