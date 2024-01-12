@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/bridge")
@@ -75,7 +79,8 @@ public class BridgeController {
             generateNginxConfig();
             setupWebtunnel(webtunnelUrl);
             installCert(webtunnelUrl);
-            modifyNginxConfig();
+            String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
+            modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString);
         }
 
         if (startBridgeAfterConfig) {
@@ -174,55 +179,50 @@ public class BridgeController {
         }
     }
 
-    private void modifyNginxConfig() {
-        String programLocation = System.getProperty("user.dir");
-        String nginxConfigPath = "/etc/nginx/sites-available/webtunnel";
+    public void modifyNginxDefaultConfig(String programLocation, String randomString) {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
-        // Generate random string
-        String command = "echo $(cat /dev/urandom | tr -cd \"qwertyuiopasdfghjklzxcvbnmMNBVCXZLKJHGFDSAQWERTUIOP0987654321\"|head -c 24)";
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
-        String randomString = "";
         try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            randomString = reader.readLine();
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error during random string generation", e);
-        }
+            // Read the file into a list of strings
+            List<String> lines = Files.readAllLines(defaultConfigPath);
 
-        // Modify nginx configuration
-        String configContent = "server {\n" +
-                "    listen 443 ssl;\n" +
-                "    listen [::]:443 ssl;\n\n" +
-                "    server_name webtunnel;\n\n" +
-                "    index index.html" +
-                "    root " + programLocation + "/torConfigTool/onion/www/service-80;\n\n" +
-                "    ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;\n" +
-                "    ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;\n\n" +
-                "    location /" + randomString + " {\n" +
-                "        proxy_pass http://127.0.0.1:15000;\n" +
-                "        proxy_http_version 1.1;\n" +
-                "        proxy_set_header Upgrade $http_upgrade;\n" +
-                "        proxy_set_header Connection \"upgrade\";\n" +
-                "        proxy_set_header Accept-Encoding \"\";\n" +
-                "        proxy_set_header Host $host;\n" +
-                "        proxy_set_header X-Real-IP $remote_addr;\n" +
-                "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n" +
-                "        proxy_set_header X-Forwarded-Proto $scheme;\n" +
-                "        add_header Front-End-Https on;\n" +
-                "        proxy_redirect off;\n" +
-                "        access_log off;\n" +
-                "        error_log off;\n" +
-                "    }\n" +
-                "}";
+            // Uncomment the lines
+            lines = lines.stream()
+                    .map(line -> line.replace("# listen 443 ssl default_server;", "listen 443 ssl default_server;"))
+                    .map(line -> line.replace("# listen [::]:443 ssl default_server;", "listen [::]:443 ssl default_server;"))
+                    .collect(Collectors.toList());
 
-        try (FileWriter fileWriter = new FileWriter(nginxConfigPath, false);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(configContent);
+            // Find the line with the root path and change it
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().startsWith("root")) {
+                    lines.set(i, "root " + programLocation + "/torConfigTool/onion/www/service-80;");
+                    break;
+                }
+            }
+
+            // Add the new lines
+            lines.add("ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;");
+            lines.add("ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;");
+            lines.add("location /" + randomString + " {");
+            lines.add("proxy_pass http://127.0.0.1:15000;");
+            lines.add("proxy_http_version 1.1;");
+            lines.add("proxy_set_header Upgrade $http_upgrade;");
+            lines.add("proxy_set_header Connection \"upgrade\";");
+            lines.add("proxy_set_header Accept-Encoding \"\";");
+            lines.add("proxy_set_header Host $host;");
+            lines.add("proxy_set_header X-Real-IP $remote_addr;");
+            lines.add("proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
+            lines.add("proxy_set_header X-Forwarded-Proto $scheme;");
+            lines.add("add_header Front-End-Https on;");
+            lines.add("proxy_redirect off;");
+            lines.add("access_log off;");
+            lines.add("error_log off;");
+            lines.add("}");
+
+            // Write the list back to the file
+            Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            logger.error("Error during nginx configuration modification", e);
+            logger.error("Error modifying Nginx default configuration", e);
         }
     }
 
