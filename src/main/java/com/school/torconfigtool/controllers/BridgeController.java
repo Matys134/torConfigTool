@@ -121,12 +121,8 @@ public class BridgeController {
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
         executeCommand(chownCommand);
 
-        // Check if acme.sh is installed
-        if (!isAcmeShInstalled()) {
-            // Install acme.sh
-            String installCommand = "curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
-            executeCommand(installCommand);
-        }
+        String installAcme = "curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
+        executeCommand(installAcme);
 
         // Create the directory for the certificate files
         String certDirectory = programLocation + "/onion/certs/service-80/";
@@ -135,18 +131,6 @@ public class BridgeController {
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
 
         executeCommand(command);
-    }
-
-    private boolean isAcmeShInstalled() {
-        String command = "/home/matys/.acme.sh/acme.sh --version";
-        try {
-            System.out.println("Executing command: " + command);
-            Process process = executeCommand(command);
-            Scanner scanner = new Scanner(process.getInputStream());
-            return scanner.hasNextLine() && scanner.nextLine().contains("v");
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private Process executeCommand(String command) {
