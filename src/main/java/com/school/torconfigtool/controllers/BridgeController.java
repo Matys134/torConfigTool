@@ -121,7 +121,7 @@ public class BridgeController {
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
         executeCommand(chownCommand);
 
-        String installAcme = "curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
+        String installAcme = " curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
         System.out.println("Installing acme.sh" + installAcme);
         executeCommand(installAcme);
 
