@@ -190,5 +190,16 @@
         }
     });
 </script>
+<script>
+    $.get("/bridge/running-type", function(runningBridgeType) {
+        if (runningBridgeType) {
+            $("#bridgeType option").each(function() {
+                if ($(this).val() !== runningBridgeType) {
+                    $(this).prop("disabled", true);
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>

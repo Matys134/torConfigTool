@@ -293,4 +293,9 @@ public class BridgeController {
         model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
         return "setup";
     }
+
+    @GetMapping("/running-type")
+    public ResponseEntity<String> getRunningBridgeType() {
+        return ResponseEntity.ok(relayService.getRunningBridgeType());
+    }
 }
