@@ -283,6 +283,6 @@ public class BridgeController {
     public ResponseEntity<Boolean> checkBridgeLimit() {
         int bridgeCount = relayService.getBridgeCount();
         System.out.println("Bridge count: " + bridgeCount);
-        return new ResponseEntity<>(bridgeCount >= 2, HttpStatus.OK);
+        return new ResponseEntity<>(bridgeCount >= 5, HttpStatus.OK);
     }
 }
