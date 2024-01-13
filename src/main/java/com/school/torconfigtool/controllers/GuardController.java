@@ -42,9 +42,6 @@ public class GuardController {
         List<String> availableRelayTypes = RelayUtils.determineAvailableRelayTypes();
         model.addAttribute("availableRelayTypes", availableRelayTypes);
 
-        // Add this line to check if the bridge limit has been reached
-        model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
-
         return "setup";
     }
 

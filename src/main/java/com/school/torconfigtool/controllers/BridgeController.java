@@ -56,6 +56,10 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
+        if (relayService.getBridgeCount() >= 2) {
+            model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
+            return "setup";
+        }
         try {
 
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
