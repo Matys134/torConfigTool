@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.util.Scanner;
 
 @Service
 public class RelayService {
@@ -42,6 +44,34 @@ public class RelayService {
         });
 
         return files != null ? files.length : 0;
+    }
+
+    public String getRunningBridgeType() {
+        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
+        File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
+        String runningBridgeType = null;
+
+        if (files != null) {
+            for (File file : files) {
+                try (Scanner scanner = new Scanner(file)) {
+                    while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        if (line.startsWith("ServerTransportPlugin")) {
+                            runningBridgeType = line.split(" ")[1];
+                            break;
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    logger.error("Error reading torrc file", e);
+                }
+            }
+        }
+
+        if (new File(torrcDirectory, "snowflake_proxy_running").exists()) {
+            runningBridgeType = "snowflake";
+        }
+
+        return runningBridgeType;
     }
 
 }
