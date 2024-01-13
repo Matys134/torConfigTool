@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -179,18 +180,20 @@ public class BridgeController {
         Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
         try {
-            // Read the file into a list of strings
-            List<String> lines = Files.readAllLines(defaultConfigPath);
+            // Clear the file and write the initial configuration
+            List<String> lines = new ArrayList<>();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root " + programLocation + "/onion/www/service-80;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
 
-            // Find the line with the root path and change it
-            for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).trim().startsWith("root")) {
-                    lines.set(i, "root " + programLocation + "/onion/www/service-80;");
-                    break;
-                }
-            }
-
-            // Write the list back to the file
+            // Write the list to the file
             Files.write(defaultConfigPath, lines);
 
             // Issue and install the certificates
