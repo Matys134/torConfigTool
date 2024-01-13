@@ -19,9 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Scanner;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/bridge")
@@ -78,9 +76,8 @@ public class BridgeController {
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
             setupWebtunnel(webtunnelUrl);
-            installCert(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString);
+            modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
         }
 
         if (startBridgeAfterConfig) {
@@ -114,7 +111,6 @@ public class BridgeController {
             config.setWebtunnelPort(webtunnelPort);
         if (bridgeTransportListenAddr != null)
             config.setBridgeTransportListenAddr(String.valueOf(bridgeTransportListenAddr));
-
 
         return config;
     }
@@ -158,7 +154,7 @@ public class BridgeController {
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
@@ -179,65 +175,55 @@ public class BridgeController {
         }
     }
 
-    public void modifyNginxDefaultConfig(String programLocation, String randomString) {
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
         Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
         try {
             // Read the file into a list of strings
             List<String> lines = Files.readAllLines(defaultConfigPath);
 
-            // Uncomment the lines
-            lines = lines.stream()
-                    .map(line -> line.replace("# listen 443 ssl default_server;", "listen 443 ssl default_server;"))
-                    .map(line -> line.replace("# listen [::]:443 ssl default_server;", "listen [::]:443 ssl default_server;"))
-                    .collect(Collectors.toList());
-
             // Find the line with the root path and change it
             for (int i = 0; i < lines.size(); i++) {
                 if (lines.get(i).trim().startsWith("root")) {
-                    lines.set(i, "root " + programLocation + "/torConfigTool/onion/www/service-80;");
+                    lines.set(i, "root " + programLocation + "/onion/www/service-80;");
                     break;
                 }
             }
 
-            // Find the line with the listen [::]:443 ssl default_server; and add the new lines
-            for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).trim().equals("listen [::]:443 ssl default_server;")) {
-                    lines.add(i + 1, "ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;");
-                    lines.add(i + 2, "ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;");
-                    break;
-                }
-            }
+            // Write the list back to the file
+            Files.write(defaultConfigPath, lines);
 
-            // Find the location block and replace its content
-            int locationStartIndex = -1;
-            int locationEndIndex = -1;
-            for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).trim().startsWith("location /")) {
-                    locationStartIndex = i;
-                }
-                if (lines.get(i).trim().equals("}") && locationStartIndex != -1) {
-                    locationEndIndex = i;
-                    break;
-                }
-            }
+            // Issue and install the certificates
+            installCert(webTunnelUrl);
 
-            if (locationStartIndex != -1 && locationEndIndex != -1) {
-                lines.subList(locationStartIndex + 1, locationEndIndex).clear();
-                lines.add(locationStartIndex + 1, "proxy_pass http://127.0.0.1:15000;");
-                lines.add(locationStartIndex + 2, "proxy_http_version 1.1;");
-                lines.add(locationStartIndex + 3, "proxy_set_header Upgrade $http_upgrade;");
-                lines.add(locationStartIndex + 4, "proxy_set_header Connection \"upgrade\";");
-                lines.add(locationStartIndex + 5, "proxy_set_header Accept-Encoding \"\";");
-                lines.add(locationStartIndex + 6, "proxy_set_header Host $host;");
-                lines.add(locationStartIndex + 7, "proxy_set_header X-Real-IP $remote_addr;");
-                lines.add(locationStartIndex + 8, "proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
-                lines.add(locationStartIndex + 9, "proxy_set_header X-Forwarded-Proto $scheme;");
-                lines.add(locationStartIndex + 10, "add_header Front-End-Https on;");
-                lines.add(locationStartIndex + 11, "proxy_redirect off;");
-                lines.add(locationStartIndex + 12, "access_log off;");
-                lines.add(locationStartIndex + 13, "error_log off;");
-            }
+            // Read the file into a list of strings again
+            lines = Files.readAllLines(defaultConfigPath);
+
+            // Clear the list and add the new configuration lines
+            lines.clear();
+            lines.add("server {");
+            lines.add("    listen [::]:443 ssl http2;");
+            lines.add("    listen 443 ssl http2;");
+            lines.add("    server_name $SERVER_ADDRESS;");
+            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
+            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
+            // Add the rest of the configuration lines...
+            lines.add("    location = /" + randomString + " {");
+            lines.add("        proxy_pass http://127.0.0.1:15000;");
+            lines.add("        proxy_http_version 1.1;");
+            lines.add("        proxy_set_header Upgrade $http_upgrade;");
+            lines.add("        proxy_set_header Connection \"upgrade\";");
+            lines.add("        proxy_set_header Accept-Encoding \"\";");
+            lines.add("        proxy_set_header Host $host;");
+            lines.add("        proxy_set_header X-Real-IP $remote_addr;");
+            lines.add("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
+            lines.add("        proxy_set_header X-Forwarded-Proto $scheme;");
+            lines.add("        add_header Front-End-Https on;");
+            lines.add("        proxy_redirect off;");
+            lines.add("        access_log off;");
+            lines.add("        error_log off;");
+            lines.add("    }");
+            lines.add("}");
 
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
@@ -271,7 +257,6 @@ public class BridgeController {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
 
-
         return new File(serviceDir, "index.html");
     }
 
@@ -285,6 +270,4 @@ public class BridgeController {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }
