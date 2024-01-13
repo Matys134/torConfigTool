@@ -16,7 +16,7 @@
 <!-- Create the tabs -->
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
-    <button class="tablinks" onclick="openTab(event, 'bridgeTab')">Bridge</button>
+    <button class="tablinks" onclick="openTab(event, 'bridgeTab')" id="bridgeTabButton">Bridge</button>
     <button class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
 </div>
 
@@ -118,7 +118,6 @@
     </form>
 </div>
 
-<!-- Add this section to display running relays -->
 <h2>Running Relays</h2>
 <ul>
     <li th:each="runningRelay : ${runningRelays}">
@@ -182,6 +181,15 @@
                 alert("Error starting snowflake proxy: " + error.responseText);
             }
         });
+    });
+</script>
+<script>
+    // Check if the bridge limit has been reached
+    $.get("/bridgeLimitReached", function(data) {
+        if (data) {
+            // Disable the bridge configuration part of the user interface
+            document.getElementById('bridgeTabButton').disabled = true;
+        }
     });
 </script>
 </body>
