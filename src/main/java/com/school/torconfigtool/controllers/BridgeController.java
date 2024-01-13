@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/bridge")
@@ -73,8 +77,8 @@ public class BridgeController {
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
             setupWebtunnel(webtunnelUrl);
-            installCert(webtunnelUrl);
-            modifyNginxConfig();
+            String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
+            modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
         }
 
         if (startBridgeAfterConfig) {
@@ -109,31 +113,49 @@ public class BridgeController {
         if (bridgeTransportListenAddr != null)
             config.setBridgeTransportListenAddr(String.valueOf(bridgeTransportListenAddr));
 
-
         return config;
     }
 
     private void setupWebtunnel(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/torConfigTool/onion/www/service-80/";
 
+        // Change the ownership of the directory
+        String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
+        executeCommand(chownCommand);
+
+        String installAcme = " curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
+        System.out.println("Installing acme.sh" + installAcme);
+        executeCommand(installAcme);
+
+        // Create the directory for the certificate files
+        String certDirectory = programLocation + "/onion/certs/service-80/";
+        new File(certDirectory).mkdirs();
+
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
+        System.out.println("Generating certificate: " + command);
+
+        executeCommand(command);
+    }
+
+    private Process executeCommand(String command) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", command);
-
         try {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                logger.error("Error during webtunnel setup. Exit code: " + exitCode);
+                logger.error("Error during command execution. Exit code: " + exitCode);
             }
+            return process;
         } catch (IOException | InterruptedException e) {
-            logger.error("Error during webtunnel setup", e);
+            logger.error("Error during command execution", e);
+            return null;
         }
     }
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
@@ -154,55 +176,64 @@ public class BridgeController {
         }
     }
 
-    private void modifyNginxConfig() {
-        String programLocation = System.getProperty("user.dir");
-        String nginxConfigPath = "/etc/nginx/sites-available/webtunnel";
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
-        // Generate random string
-        String command = "echo $(cat /dev/urandom | tr -cd \"qwertyuiopasdfghjklzxcvbnmMNBVCXZLKJHGFDSAQWERTUIOP0987654321\"|head -c 24)";
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
-        String randomString = "";
         try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            randomString = reader.readLine();
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error during random string generation", e);
-        }
+            // Clear the file and write the initial configuration
+            List<String> lines = new ArrayList<>();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root " + programLocation + "/onion/www/service-80;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
 
-        // Modify nginx configuration
-        String configContent = "server {\n" +
-                "    listen 443 ssl;\n" +
-                "    listen [::]:443 ssl;\n\n" +
-                "    server_name webtunnel;\n\n" +
-                "    index index.html" +
-                "    root " + programLocation + "/torConfigTool/onion/www/service-80;\n\n" +
-                "    ssl_certificate " + programLocation + "/torConfigTool/onion/certs/service-80/fullchain.pem;\n" +
-                "    ssl_certificate_key " + programLocation + "/torConfigTool/onion/certs/service-80/key.pem;\n\n" +
-                "    location /" + randomString + " {\n" +
-                "        proxy_pass http://127.0.0.1:15000;\n" +
-                "        proxy_http_version 1.1;\n" +
-                "        proxy_set_header Upgrade $http_upgrade;\n" +
-                "        proxy_set_header Connection \"upgrade\";\n" +
-                "        proxy_set_header Accept-Encoding \"\";\n" +
-                "        proxy_set_header Host $host;\n" +
-                "        proxy_set_header X-Real-IP $remote_addr;\n" +
-                "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n" +
-                "        proxy_set_header X-Forwarded-Proto $scheme;\n" +
-                "        add_header Front-End-Https on;\n" +
-                "        proxy_redirect off;\n" +
-                "        access_log off;\n" +
-                "        error_log off;\n" +
-                "    }\n" +
-                "}";
+            // Write the list to the file
+            Files.write(defaultConfigPath, lines);
 
-        try (FileWriter fileWriter = new FileWriter(nginxConfigPath, false);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(configContent);
+            // Issue and install the certificates
+            installCert(webTunnelUrl);
+
+            // Read the file into a list of strings again
+            lines = Files.readAllLines(defaultConfigPath);
+
+            // Clear the list and add the new configuration lines
+            lines.clear();
+            lines.add("server {");
+            lines.add("    listen [::]:443 ssl http2;");
+            lines.add("    listen 443 ssl http2;");
+            lines.add("    root " + programLocation + "/onion/www/service-80;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name $SERVER_ADDRESS;");
+            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
+            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
+            // Add the rest of the configuration lines...
+            lines.add("    location = /" + randomString + " {");
+            lines.add("        proxy_pass http://127.0.0.1:15000;");
+            lines.add("        proxy_http_version 1.1;");
+            lines.add("        proxy_set_header Upgrade $http_upgrade;");
+            lines.add("        proxy_set_header Connection \"upgrade\";");
+            lines.add("        proxy_set_header Accept-Encoding \"\";");
+            lines.add("        proxy_set_header Host $host;");
+            lines.add("        proxy_set_header X-Real-IP $remote_addr;");
+            lines.add("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
+            lines.add("        proxy_set_header X-Forwarded-Proto $scheme;");
+            lines.add("        add_header Front-End-Https on;");
+            lines.add("        proxy_redirect off;");
+            lines.add("        access_log off;");
+            lines.add("        error_log off;");
+            lines.add("    }");
+            lines.add("}");
+
+            // Write the list back to the file
+            Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            logger.error("Error during nginx configuration modification", e);
+            logger.error("Error modifying Nginx default configuration", e);
         }
     }
 
@@ -230,7 +261,6 @@ public class BridgeController {
         if (!serviceDir.exists() && !serviceDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
-
 
         return new File(serviceDir, "index.html");
     }
