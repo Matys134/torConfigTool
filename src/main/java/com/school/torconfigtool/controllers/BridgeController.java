@@ -2,6 +2,7 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,11 @@ public class BridgeController {
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
+    private final RelayService relayService;
     private final RelayOperationsController relayOperationController;
 
-    public BridgeController(RelayOperationsController relayOperationController) {
+    public BridgeController(RelayService relayService, RelayOperationsController relayOperationController) {
+        this.relayService = relayService;
         this.relayOperationController = relayOperationController;
     }
 
