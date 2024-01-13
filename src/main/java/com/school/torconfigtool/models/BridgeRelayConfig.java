@@ -2,6 +2,8 @@ package com.school.torconfigtool.models;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +19,8 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     private String webtunnelUrl;
     private String email;
     private String bridgeType;
+    private static final Logger logger = LoggerFactory.getLogger(BridgeRelayConfig.class);
+    private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     @Override
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
@@ -65,6 +69,11 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             // Command to build the snowflake proxy
             Process runProxyProcess = getProcess();
             runProxyProcess.waitFor();
+
+            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
+            if (!snowflakeProxyRunningFile.createNewFile()) {
+                logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
+            }
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
