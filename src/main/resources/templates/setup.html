@@ -183,13 +183,12 @@
         });
     });
 </script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    var bridgeLimitReached = /*[[${bridgeLimitReached}]]*/ 'default';
-    if (bridgeLimitReached) {
-        document.getElementById('bridgeTabButton').disabled = true;
-    }
-    /*]]>*/
+<script>
+    $.get("/bridge/limit-reached", function(data) {
+        if (data.bridgeLimitReached) {
+            document.getElementById('bridgeTabButton').disabled = true;
+        }
+    });
 </script>
 </body>
 </html>

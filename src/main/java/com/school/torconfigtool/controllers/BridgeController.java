@@ -19,9 +19,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/bridge")
@@ -281,5 +279,18 @@ public class BridgeController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/limit-reached")
+    public ResponseEntity<Map<String, Boolean>> checkBridgeLimit() {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("bridgeLimitReached", relayService.getBridgeCount() >= 2);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/setup")
+    public String setup(Model model) {
+        model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
+        return "setup";
     }
 }
