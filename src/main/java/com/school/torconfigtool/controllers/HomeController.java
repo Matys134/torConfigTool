@@ -12,4 +12,10 @@ public class HomeController {
         // Add any necessary data to the model
         return "home.html"; // "index" corresponds to your Thymeleaf template file (e.g., index.html)
     }
+
+    @GetMapping("/setup")
+    public String setup(Model model) {
+        // Add any necessary data to the model
+        return "setup"; // "index" corresponds to your Thymeleaf template file (e.g., index.html)
+    }
 }

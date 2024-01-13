@@ -40,7 +40,7 @@ public class BridgeController {
 
     @GetMapping
     public String bridgeConfigurationForm() {
-        return "relay-config";
+        return "setup";
     }
 
     @PostMapping("/configure")
@@ -63,7 +63,7 @@ public class BridgeController {
 
             if (RelayUtils.relayExists(bridgeNickname)) {
                 model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "relay-config";
+                return "setup";
             }
 
             BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
@@ -94,7 +94,7 @@ public class BridgeController {
             }
         }
 
-        return "relay-config";
+        return "setup";
     }
 
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
