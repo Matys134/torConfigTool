@@ -183,14 +183,13 @@
         });
     });
 </script>
-<script>
-    // Check if the bridge limit has been reached
-    $.get("/bridgeLimitReached", function(data) {
-        if (data) {
-            // Disable the bridge configuration part of the user interface
-            document.getElementById('bridgeTabButton').disabled = true;
-        }
-    });
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var bridgeLimitReached = /*[[${bridgeLimitReached}]]*/ 'default';
+    if (bridgeLimitReached) {
+        document.getElementById('bridgeTabButton').disabled = true;
+    }
+    /*]]>*/
 </script>
 </body>
 </html>
