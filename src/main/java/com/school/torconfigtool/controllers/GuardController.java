@@ -42,10 +42,7 @@ public class GuardController {
         List<String> availableRelayTypes = RelayUtils.determineAvailableRelayTypes();
         model.addAttribute("availableRelayTypes", availableRelayTypes);
 
-        // Add this line to check if the bridge limit has been reached
-        model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
-
-        return "relay-config";
+        return "setup";
     }
 
     @PostMapping("/configure")
@@ -59,7 +56,7 @@ public class GuardController {
         try {
             if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
+                return "setup";
             }
 
             String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
@@ -67,12 +64,12 @@ public class GuardController {
 
             if (RelayUtils.relayExists(relayNickname)) {
                 model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "relay-config";
+                return "setup";
             }
 
             if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
                 model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "relay-config";
+                return "setup";
             }
 
             GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
@@ -96,7 +93,7 @@ public class GuardController {
             }
         }
 
-        return "relay-config";
+        return "setup";
     }
 
     private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {

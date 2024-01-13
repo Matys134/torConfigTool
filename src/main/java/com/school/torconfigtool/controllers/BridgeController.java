@@ -19,9 +19,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/bridge")
@@ -40,7 +38,7 @@ public class BridgeController {
 
     @GetMapping
     public String bridgeConfigurationForm() {
-        return "relay-config";
+        return "setup";
     }
 
     @PostMapping("/configure")
@@ -56,6 +54,10 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
+        if (relayService.getBridgeCount() >= 2) {
+            model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
+            return "setup";
+        }
         try {
 
             String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
@@ -63,7 +65,7 @@ public class BridgeController {
 
             if (RelayUtils.relayExists(bridgeNickname)) {
                 model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "relay-config";
+                return "setup";
             }
 
             BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
@@ -94,7 +96,7 @@ public class BridgeController {
             }
         }
 
-        return "relay-config";
+        return "setup";
     }
 
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
@@ -277,5 +279,18 @@ public class BridgeController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/limit-reached")
+    public ResponseEntity<Map<String, Boolean>> checkBridgeLimit() {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("bridgeLimitReached", relayService.getBridgeCount() >= 2);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/setup")
+    public String setup(Model model) {
+        model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
+        return "setup";
     }
 }

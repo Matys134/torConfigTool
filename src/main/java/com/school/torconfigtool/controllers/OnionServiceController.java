@@ -80,7 +80,7 @@ public class OnionServiceController {
         model.addAttribute("onionConfigs", onionConfigs);
         model.addAttribute("hostnames", hostnames);
 
-        return "relay-config"; // The name of the Thymeleaf template to render
+        return "setup"; // The name of the Thymeleaf template to render
     }
 
 
@@ -110,7 +110,7 @@ public class OnionServiceController {
         // Check port availability before configuring the onion service
         if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
             model.addAttribute("errorMessage", "Port is not available.");
-            return "relay-config";
+            return "setup";
         }
 
         try {
@@ -127,7 +127,7 @@ public class OnionServiceController {
             logger.error("Error configuring Tor Onion Service", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
         }
-        return "relay-config";
+        return "setup";
     }
 
     private void generateNginxConfig(int onionServicePort) throws IOException {
@@ -202,7 +202,7 @@ public class OnionServiceController {
         } else {
             model.addAttribute("errorMessage", "Failed to start Tor Onion Service.");
         }
-        return "relay-config";
+        return "setup";
     }
 
     private boolean startTorOnionService() {
