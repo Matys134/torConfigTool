@@ -33,9 +33,11 @@ public class RelayService {
         }
 
         String[] files = torrcDirectory.list(new FilenameFilter() {
+            private static final String TORRC_FILE_SUFFIX = "_bridge";
+
             @Override
             public boolean accept(File dir, String name) {
-                return name.startsWith(TORRC_FILE_PREFIX);
+                return name.startsWith(TORRC_FILE_PREFIX) && name.endsWith(TORRC_FILE_SUFFIX);
             }
         });
 

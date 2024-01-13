@@ -278,11 +278,4 @@ public class BridgeController {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping("/bridgeLimitReached")
-    public ResponseEntity<Boolean> checkBridgeLimit() {
-        int bridgeCount = relayService.getBridgeCount();
-        System.out.println("Bridge count: " + bridgeCount);
-        return new ResponseEntity<>(bridgeCount >= 5, HttpStatus.OK);
-    }
 }
