@@ -205,19 +205,10 @@ public class BridgeController {
             // Clear the list and add the new configuration lines
             lines.clear();
             lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
-            lines.add("");
-            lines.add("server {");
             lines.add("    listen [::]:443 ssl http2;");
             lines.add("    listen 443 ssl http2;");
+            lines.add("    root " + programLocation + "/onion/www/service-80;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
             lines.add("    server_name $SERVER_ADDRESS;");
             lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
             lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
