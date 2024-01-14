@@ -3,6 +3,8 @@ package com.school.torconfigtool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
+
 @SpringBootApplication
 public class TorConfigToolApplication {
 
@@ -11,6 +13,13 @@ public class TorConfigToolApplication {
         System.getProperties().put("server.port", 8081);
 
         checkRequiredPrograms();
+
+        // Run the Python script
+        try {
+            runPythonScript();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         SpringApplication.run(TorConfigToolApplication.class, args);
     }
@@ -39,5 +48,11 @@ public class TorConfigToolApplication {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static void runPythonScript() throws IOException {
+        String pythonScriptPath = "src/main/resources/static/pyScripts/__init__.py";
+        ProcessBuilder pb = new ProcessBuilder("python", pythonScriptPath);
+        Process p = pb.start();
     }
 }
