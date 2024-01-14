@@ -15,11 +15,11 @@ public class TorConfigToolApplication {
         checkRequiredPrograms();
 
         // Run the Python script
-        /*try {
+        try {
             runPythonScript();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
         SpringApplication.run(TorConfigToolApplication.class, args);
     }
@@ -50,9 +50,9 @@ public class TorConfigToolApplication {
         }
     }
 
-    /*public static void runPythonScript() throws IOException {
+    public static void runPythonScript() throws IOException {
         String pythonScriptPath = "src/main/resources/static/pyScripts/__init__.py";
         ProcessBuilder pb = new ProcessBuilder("python3", pythonScriptPath);
         Process p = pb.start();
-    }*/
+    }
 }
