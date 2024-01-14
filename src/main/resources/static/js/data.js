@@ -12,6 +12,9 @@ $(document).ready(function () {
         // Create a container for the upload and download rates
         var ratesContainer = $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
 
+        // Create a container for the events
+        var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
+
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
@@ -99,13 +102,13 @@ $(document).ready(function () {
         function updateRelayEventData() {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                // Update the eventData div with the event data
-                eventContainer.html('');
+                // Update the eventsContainer div with the event data
+                $('#relayEvents' + port).html('');
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
                         var eventElement = document.createElement('p');
                         eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
-                        eventContainer.append(eventElement);
+                        $('#relayEvents' + port).append(eventElement);
                     }
                 });
             });
