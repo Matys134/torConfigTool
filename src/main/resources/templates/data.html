@@ -12,9 +12,14 @@
     <div class="row mt-4">
         <div class="col-md-6">
             <h2 class="text-center">
-                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#relayCharts">
-                    Relay Charts
-                </button>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="relayDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Select Relay
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="relayDropdown" id="relayDropdownMenu">
+                        <!-- Dropdown menu items will be added here dynamically -->
+                    </div>
+                </div>
             </h2>
             <div id="relayCharts" class="collapse"></div>
         </div>

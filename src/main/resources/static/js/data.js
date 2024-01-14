@@ -118,6 +118,19 @@ $(document).ready(function () {
         // Create charts for each relay based on the retrieved control ports
         controlPorts.forEach(function (port) {
             createRelayChart(port);
+
+            // Add an item to the dropdown menu for this relay
+            var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+            menuItem.appendTo($('#relayDropdownMenu'));
+
+            // Add a click event handler to the menu item
+            menuItem.click(function () {
+                // Hide all relay charts
+                $('.relay-chart').hide();
+
+                // Show the selected relay's chart
+                $('#relayChart' + port).show();
+            });
         });
     });
 });
