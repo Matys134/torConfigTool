@@ -2,12 +2,8 @@
 <html>
 <head>
     <title>Upload your files</title>
-    <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
-<!-- Include the navigation menu -->
-<div th:include="navigation :: nav"></div>
-
 <h1>File Upload</h1>
 <form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}">
     <input multiple name="files" type="file"><br/><br/>
