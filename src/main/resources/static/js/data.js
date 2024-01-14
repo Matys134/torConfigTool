@@ -132,8 +132,11 @@ $(document).ready(function () {
                 menuItem.click(function () {
                     // Hide all relay charts
                     $('.relay-chart').hide();
+
                     // Show the selected relay's chart
-                    $('#relayChart' + port).show();
+                    var chartDiv = $('#relayChart' + port);
+                    console.log('Chart div:', chartDiv);  // Log the chart div
+                    chartDiv.show();
                 });
             });
         }).fail(function (jqXHR, textStatus, errorThrown) {
