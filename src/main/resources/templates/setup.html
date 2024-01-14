@@ -133,7 +133,7 @@
 
         <!-- Onion Tab Content -->
         <div class="tab-pane fade" id="onionTab" role="tabpanel" aria-labelledby="onion-tab">
-            <form>
+            <form action="/onion-service/configure" id="onionForm" method="post">
                 <div class="form-group">
                     <label for="onionHiddenServicePort">HiddenServicePort:</label>
                     <input id="onionHiddenServicePort" name="onionHiddenServicePort" required type="text" class="form-control">
@@ -142,13 +142,6 @@
             </form>
         </div>
     </div>
-
-    <h2 class="text-center my-4">Running Relays</h2>
-    <ul class="list-group">
-        <li class="list-group-item" th:each="runningRelay : ${runningRelays}">
-            <p th:text="${runningRelay}"></p>
-        </li>
-    </ul>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
