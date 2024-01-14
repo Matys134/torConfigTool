@@ -15,8 +15,16 @@ $(document).ready(function () {
         // Create a container for the events
         var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
 
-        // Create a container for the flags
-        var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
+        // Create a container for the event data
+        var eventDataContainer = $('<div class="relay-event-data" id="eventData' + port + '"></div>').appendTo(chartContainer);
+
+        var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
+        eventContainer.appendTo($('#eventData'));
+
+        // Create a container for the relay flags
+        var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
+        flagsContainer.appendTo($('#flagsData'));
+
 
         // Append the chart container to the relayCharts div
         chartContainer.appendTo($('#relayCharts'));
@@ -81,6 +89,9 @@ $(document).ready(function () {
                     // Update the flagsContainer div with the flags data
                     $('#relayFlags' + port).text('Flags: ' + flagsData);
 
+                    // Update the flagsData div with the flags data
+                    flagsContainer.text('Flags: ' + flagsData);
+
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
@@ -97,13 +108,13 @@ $(document).ready(function () {
         function updateRelayEventData() {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                // Update the eventsContainer div with the event data
-                $('#relayEvents' + port).html('');
+                // Update the eventData div with the event data
+                eventContainer.html('');
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
                         var eventElement = document.createElement('p');
                         eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
-                        $('#relayEvents' + port).append(eventElement);
+                        eventContainer.append(eventElement);
                     }
                 });
             });
