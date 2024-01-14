@@ -9,17 +9,6 @@
 <div th:include="navbar :: nav"></div>
 <h1>Tor Configuration Tool</h1>
 
-<!-- Navigation menu -->
-<nav>
-    <ul>
-        <li><a class="active" th:href="@{/}">Home</a></li>
-        <li><a th:href="@{/setup}">Setup</a></li>
-        <li><a th:href="@{/hidden-services}">Hidden Services</a></li>
-        <li><a th:href="@{/proxy}">Tor Proxy</a></li>
-        <li><a th:href="@{/relay-operations}">Relay Operations</a></li>
-    </ul>
-</nav>
-
 <!-- Home Page -->
 <div th:if="${currentPage == 'home'}">
     <h2>Welcome to the Tor Configuration Tool</h2>
