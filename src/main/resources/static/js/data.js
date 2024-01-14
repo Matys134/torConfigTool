@@ -113,24 +113,31 @@ $(document).ready(function () {
         }, 1000); // 1 seconds
     }
 
-    // Fetch the list of control ports dynamically
-    $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-        // Create charts for each relay based on the retrieved control ports
-        controlPorts.forEach(function (port) {
-            createRelayChart(port);
+    $(document).ready(function () {
+        // Fetch the list of control ports dynamically
+        $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
+            console.log('Control ports:', controlPorts);  // Log the control ports
 
-            // Add an item to the dropdown menu for this relay
-            var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
-            menuItem.appendTo($('#relayDropdownMenu'));
+            // Create charts for each relay based on the retrieved control ports
+            controlPorts.forEach(function (port) {
+                createRelayChart(port);
 
-            // Add a click event handler to the menu item
-            menuItem.click(function () {
-                // Hide all relay charts
-                $('.relay-chart').hide();
+                // Add an item to the dropdown menu for this relay
+                var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+                console.log('Menu item:', menuItem);  // Log the menu item
 
-                // Show the selected relay's chart
-                $('#relayChart' + port).show();
+                menuItem.appendTo($('#relayDropdownMenu'));
+
+                // Add a click event handler to the menu item
+                menuItem.click(function () {
+                    // Hide all relay charts
+                    $('.relay-chart').hide();
+                    // Show the selected relay's chart
+                    $('#relayChart' + port).show();
+                });
             });
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
         });
     });
 });
