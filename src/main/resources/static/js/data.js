@@ -15,15 +15,11 @@ $(document).ready(function () {
         // Create a container for the events
         var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
 
-        // Create a container for the event data
-        var eventDataContainer = $('<div class="relay-event-data" id="eventData' + port + '"></div>').appendTo(chartContainer);
+        // Create a container for the flags
+        var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
 
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
-
-        // Create a container for the relay flags
-        var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
-        flagsContainer.appendTo($('#flagsData'));
 
 
         // Append the chart container to the relayCharts div
