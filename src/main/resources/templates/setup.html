@@ -5,15 +5,16 @@
     <title>Tor Relay Configuration</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/tabs.css" rel="stylesheet">
+    <link href="/css/navbar.css" rel="stylesheet"> <!-- Move this line here -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div th:include="navbar :: nav"></div>
 <div class="container">
     <h1 class="text-center my-4">Tor Relay Configuration</h1>
 
+    <div th:include="navbar :: nav"></div>
     <!-- Display success message if provided -->
     <div class="alert alert-success" th:if="${successMessage}" role="alert">
         <p th:text="${successMessage}"></p>
