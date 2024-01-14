@@ -5,7 +5,7 @@ $(document).ready(function () {
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart
-        var chartContainer = $('<div class="relay-chart"></div>');
+        var chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>');
         var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
         var relayName = 'Relay on Port ' + port;
 
