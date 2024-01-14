@@ -16,22 +16,22 @@ def main():
     torrc_dir = "/home/matys/git/torConfigTool/torrc"
     control_ports = []
 
-    # Iterate through the files in the directory and collect control ports
-    for filename in os.listdir(torrc_dir):
-        control_port = read_control_port(os.path.join(torrc_dir, filename))
-        if control_port:
-            control_ports.append(control_port)
-
     # Create a thread for each relay and start monitoring
     threads = []
-    for control_port in control_ports:
-        thread = threading.Thread(target=monitor_traffic_and_flags, args=(control_port,))
-        thread.setDaemon(True)  # Set the thread as a daemon
-        threads.append(thread)
-        thread.start()
 
-    # Wait for user input to stop monitoring
-    input("Press Enter to stop monitoring")
+    while True:
+        # Iterate through the files in the directory and collect control ports
+        for filename in os.listdir(torrc_dir):
+            control_port = read_control_port(os.path.join(torrc_dir, filename))
+            if control_port and control_port not in control_ports:
+                control_ports.append(control_port)
+                thread = threading.Thread(target=monitor_traffic_and_flags, args=(control_port,))
+                thread.setDaemon(True)  # Set the thread as a daemon
+                threads.append(thread)
+                thread.start()
+
+        # Wait for 5 seconds before scanning for new relays
+        time.sleep(5)
 
 def read_control_port(file_path):
     # Read the control port from the Tor configuration file
