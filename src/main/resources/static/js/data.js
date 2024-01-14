@@ -115,9 +115,6 @@ $(document).ready(function () {
 
     // Fetch the list of control ports dynamically
     $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-        // Log the response to the console
-        console.log(controlPorts);
-
         // Create charts for each relay based on the retrieved control ports
         controlPorts.forEach(function (port) {
             createRelayChart(port);
@@ -135,8 +132,5 @@ $(document).ready(function () {
                 $('#relayChart' + port).show();
             });
         });
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-        // Log any errors to the console
-        console.error("Request failed: " + textStatus + ", " + errorThrown);
     });
 });
