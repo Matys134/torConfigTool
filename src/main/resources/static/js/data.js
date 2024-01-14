@@ -28,6 +28,10 @@ $(document).ready(function () {
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
+        // Create a container for the relay flags
+        var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
+        flagsContainer.appendTo($('#flagsData'));
+
         // Append the chart container to the relayCharts div
         chartContainer.appendTo($('#relayCharts'));
 
@@ -82,7 +86,7 @@ $(document).ready(function () {
                     }
 
                     // Update the flagsData div with the flags data
-                    document.getElementById('flagsData').innerText = 'Flags: ' + flagsData;
+                    flagsContainer.text('Flags: ' + flagsData);
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
