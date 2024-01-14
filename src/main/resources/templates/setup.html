@@ -3,128 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <title>Tor Relay Configuration</title>
-    <link href="/css/tabs.css" rel="stylesheet"> <!-- Include your CSS styles here -->
+    <link href="/css/tabs.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<h1>Tor Relay Configuration</h1>
+<div class="container">
+    <h1 class="text-center my-4">Tor Relay Configuration</h1>
 
-<!-- Display success message if provided -->
-<div class="success-message" th:if="${successMessage}">
-    <p th:text="${successMessage}"></p>
-</div>
+    <!-- Display success message if provided -->
+    <div class="alert alert-success" th:if="${successMessage}" role="alert">
+        <p th:text="${successMessage}"></p>
+    </div>
 
-<!-- Create the tabs -->
-<div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'relayTab')">Guard Relay</button>
-    <button class="tablinks" onclick="openTab(event, 'bridgeTab')" id="bridgeTabButton">Bridge</button>
-    <button class="tablinks" onclick="openTab(event, 'onionTab')">Onion Service</button>
-</div>
+    <!-- Create the tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="relay-tab" data-toggle="tab" href="#relayTab" role="tab" aria-controls="relayTab" aria-selected="true">Guard Relay</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="bridge-tab" data-toggle="tab" href="#bridgeTab" role="tab" aria-controls="bridgeTab" aria-selected="false">Bridge</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="onion-tab" data-toggle="tab" href="#onionTab" role="tab" aria-controls="onionTab" aria-selected="false">Onion Service</a>
+        </li>
+    </ul>
 
-<!-- Relay Tab Content -->
-<div class="tabcontent" id="relayTab">
-    <form action="/guard/configure" method="post">
-        <label for="relayNickname">Nickname:</label>
-        <input id="relayNickname" name="relayNickname" required type="text"><br><br>
-
-        <label for="relayContact">Contact Information:</label>
-        <input id="relayContact" name="relayContact" required type="email"><br><br>
-
-        <label for="relayPort">ORPort (e.g., 9001):</label>
-        <input id="relayPort" name="relayPort" required type="text"><br><br>
-
-        <label for="controlPort">ControlPort (e.g., 9051):</label>
-        <input id="controlPort" name="controlPort" required type="text"><br><br>
-
-        <input id="includeBandwidth" name="includeBandwidth" type="checkbox"> Include Bandwidth (KB/s):<br>
-
-        <input id="startRelayAfterConfig" name="startRelayAfterConfig" type="checkbox">
-        <label for="startRelayAfterConfig">Start Relay after configuration</label><br>
-
-        <div id="bandwidthField" style="display: none;">
-            <label for="relayBandwidth">Bandwidth Limit (KB/s):</label>
-            <input id="relayBandwidth" min="0" name="relayBandwidth" type="number">
+    <div class="tab-content" id="myTabContent">
+        <!-- Relay Tab Content -->
+        <div class="tab-pane fade show active" id="relayTab" role="tabpanel" aria-labelledby="relay-tab">
+            <form>
+                <div class="form-group">
+                    <label for="relayNickname">Nickname:</label>
+                    <input id="relayNickname" name="relayNickname" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="relayORPort">ORPort:</label>
+                    <input id="relayORPort" name="relayORPort" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="relayContact">Contact:</label>
+                    <input id="relayContact" name="relayContact" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="relayControlPort">Control Port:</label>
+                    <input id="relayControlPort" name="relayControlPort" required type="text" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
 
-        <button type="submit">Configure Relay</button>
-    </form>
+        <!-- Bridge Tab Content -->
+        <div class="tab-pane fade" id="bridgeTab" role="tabpanel" aria-labelledby="bridge-tab">
+            <form>
+                <div class="form-group">
+                    <label for="bridgeNickname">Nickname:</label>
+                    <input id="bridgeNickname" name="bridgeNickname" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="bridgeORPort">ORPort:</label>
+                    <input id="bridgeORPort" name="bridgeORPort" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="bridgeTransportListenAddr">ServerTransportListenAddr:</label>
+                    <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="bridgeContact">Contact:</label>
+                    <input id="bridgeContact" name="bridgeContact" required type="text" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <!-- Onion Tab Content -->
+        <div class="tab-pane fade" id="onionTab" role="tabpanel" aria-labelledby="onion-tab">
+            <form>
+                <div class="form-group">
+                    <label for="onionHiddenServiceDir">HiddenServiceDir:</label>
+                    <input id="onionHiddenServiceDir" name="onionHiddenServiceDir" required type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="onionHiddenServicePort">HiddenServicePort:</label>
+                    <input id="onionHiddenServicePort" name="onionHiddenServicePort" required type="text" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <h2 class="text-center my-4">Running Relays</h2>
+    <ul class="list-group">
+        <li class="list-group-item" th:each="runningRelay : ${runningRelays}">
+            <p th:text="${runningRelay}"></p>
+        </li>
+    </ul>
 </div>
-
-<!-- Bridge Tab Content -->
-<div class="tabcontent" id="bridgeTab">
-    <form action="/bridge/configure" id="bridgeForm" method="post">
-        <label for="bridgeType">Bridge Type:</label>
-        <select id="bridgeType" name="bridgeType" onchange="toggleBridgeFields()">
-            <option value="bridge">Bridge</option>
-            <option value="webtunnel">WebTunnel Bridge</option>
-            <option value="snowflake">Snowflake</option>
-        </select><br><br>
-
-        <!-- Common Fields -->
-        <div id="commonFields">
-            <label for="bridgeContact">Contact Email:</label>
-            <input id="bridgeContact" name="bridgeContact" required type="email"><br><br>
-
-            <label for="bridgeNickname">Nickname:</label>
-            <input id="bridgeNickname" name="bridgeNickname" required type="text"><br><br>
-
-            <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
-            <input id="bridgeControlPort" name="bridgeControlPort" required type="text"><br><br>
-
-            <input id="includeBridgeBandwidth" name="includeBridgeBandwidth" type="checkbox"> Include Bandwidth
-            (KB/s):<br>
-
-            <div id="bridgeBandwidthField" style="display: none;">
-                <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
-                <input id="bridgeBandwidth" min="0" name="bridgeBandwidth" type="number">
-            </div>
-        </div>
-
-        <!-- Specific Fields for Bridge -->
-        <div class="bridge-specific" id="bridgeFields">
-            <label for="bridgePort">ORPort (e.g., 9001):</label>
-            <input id="bridgePort" name="bridgePort" type="text"><br><br>
-
-            <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
-            <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" type="text"><br><br>
-        </div>
-
-        <input id="startBridgeAfterConfig" name="startBridgeAfterConfig" type="checkbox">
-        <label for="startBridgeAfterConfig">Start Relay after configuration</label><br>
-
-        <!-- Specific Fields for WebTunnel Bridge -->
-        <div class="bridge-specific" id="webtunnelFields" style="display: none;">
-            <label for="webtunnelUrl">Domain:</label>
-            <input id="webtunnelUrl" name="webtunnelUrl" type="text"><br><br>
-        </div>
-
-        <!-- Specific Fields for Snowflake -->
-        <div class="bridge-specific" id="snowflakeFields" style="display: none;">
-            <!-- Snowflake has no specific fields to enter -->
-            <button id="runSnowflakeProxyButton" type="button">Run Snowflake Proxy</button>
-        </div>
-
-        <button type="submit">Configure Bridge</button>
-    </form>
-</div>
-
-
-<!-- Other Relay Type Tab Content -->
-<div class="tabcontent" id="onionTab">
-    <form action="/onion-service/configure" method="post">
-        <label for="onionServicePort">Onion Service Port (e.g., 80):</label>
-        <input id="onionServicePort" name="onionServicePort" required type="text"><br><br>
-
-        <button type="submit">Configure Onion Service</button>
-    </form>
-</div>
-
-<h2>Running Relays</h2>
-<ul>
-    <li th:each="runningRelay : ${runningRelays}">
-        <p th:text="${runningRelay}"></p>
-    </li>
-</ul>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/tabs.js"></script> <!-- Include your JavaScript -->
