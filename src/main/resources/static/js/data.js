@@ -4,10 +4,13 @@ $(document).ready(function () {
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
-        // Create a container for the relay chart
+        // Create a container for the relay chart and hide it initially
         var chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
         var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
         var relayName = 'Relay on Port ' + port;
+
+        // Create a container for the upload and download rates
+        var ratesContainer = $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
 
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
@@ -61,6 +64,13 @@ $(document).ready(function () {
                     var downloadData = data.map(function (relayData) {
                         return relayData.download;
                     });
+
+                    // Get the most recent upload and download rates
+                    var recentUpload = uploadData[uploadData.length - 1];
+                    var recentDownload = downloadData[downloadData.length - 1];
+
+                    // Update the ratesContainer div with the recent upload and download rates
+                    $('#relayRates' + port).text('Upload: ' + recentUpload + ' bytes/s, Download: ' + recentDownload + ' bytes/s');
 
                     // Get the flags from the most recent data
                     var flagsData = data[data.length - 1].flags;
