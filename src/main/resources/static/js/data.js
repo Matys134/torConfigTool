@@ -15,13 +15,8 @@ $(document).ready(function () {
         // Create a container for the events
         var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
 
-        var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
-        eventContainer.appendTo($('#eventData'));
-
-        // Create a container for the relay flags
-        var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
-        flagsContainer.appendTo($('#flagsData'));
-
+        // Create a container for the flags
+        var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
 
         // Append the chart container to the relayCharts div
         chartContainer.appendTo($('#relayCharts'));
@@ -83,8 +78,8 @@ $(document).ready(function () {
                         flagsData = 'no flags';
                     }
 
-                    // Update the flagsData div with the flags data
-                    flagsContainer.text('Flags: ' + flagsData);
+                    // Update the flagsContainer div with the flags data
+                    $('#relayFlags' + port).text('Flags: ' + flagsData);
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
