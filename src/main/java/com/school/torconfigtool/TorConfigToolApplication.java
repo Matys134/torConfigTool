@@ -52,7 +52,7 @@ public class TorConfigToolApplication {
 
     public static void runPythonScript() throws IOException {
         String pythonScriptPath = "src/main/resources/static/pyScripts/__init__.py";
-        ProcessBuilder pb = new ProcessBuilder("python", pythonScriptPath);
+        ProcessBuilder pb = new ProcessBuilder("python3", pythonScriptPath);
         Process p = pb.start();
     }
 }
