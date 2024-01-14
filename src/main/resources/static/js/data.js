@@ -2,22 +2,6 @@ $(document).ready(function () {
     // Define the base API endpoint
     var baseApiUrl = 'http://' + location.hostname + ':8081/api/relay-data';
 
-    function updateRelayEventData(port, eventContainer) {
-        var apiUrl = baseApiUrl + '/' + port + '/events';
-        $.get(apiUrl, function (data) {
-            // Update the eventData div with the event data
-            eventContainer.html('');
-            data.forEach(function (event, index) {
-                if (event !== null) { // Check if the event is not null
-                    var eventElement = document.createElement('p');
-                    eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
-                    eventContainer.append(eventElement);
-                }
-            });
-        });
-    }
-
-
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart
@@ -31,6 +15,7 @@ $(document).ready(function () {
         // Create a container for the relay flags
         var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
         flagsContainer.appendTo($('#flagsData'));
+
 
         // Append the chart container to the relayCharts div
         chartContainer.appendTo($('#relayCharts'));
@@ -99,6 +84,23 @@ $(document).ready(function () {
                 }
             });
         }
+
+        // Function to update the event data for the relay
+        function updateRelayEventData() {
+            var apiUrl = baseApiUrl + '/' + port + '/events';
+            $.get(apiUrl, function (data) {
+                // Update the eventData div with the event data
+                eventContainer.html('');
+                data.forEach(function (event, index) {
+                    if (event !== null) { // Check if the event is not null
+                        var eventElement = document.createElement('p');
+                        eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                        eventContainer.append(eventElement);
+                    }
+                });
+            });
+        }
+
 
         // Update the data and chart for the relay initially
         updateRelayTrafficDataAndChart();
