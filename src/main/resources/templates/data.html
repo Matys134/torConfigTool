@@ -2,38 +2,46 @@
 <html>
 <head>
     <title>Tor Relay Traffic</title>
-    <style>
-        .container {
-            display: flex;
-        }
-
-        .relay-chart, #eventData {
-            width: 50%;
-        }
-    </style>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1>Latest Traffic Data</h1>
-
-<!-- Include jQuery for AJAX requests -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Include Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div id="flagsData"></div>
-<!-- Create a container for relay charts and events -->
-<div class="container">
-    <!-- Create a container for relay charts -->
-    <div class="relay-chart" id="relayCharts">
-        <!-- Relay charts will be dynamically added here -->
-    </div>
-
-    <!-- Create a container for events -->
-    <div id="eventData">
-        <!-- Events will be dynamically added here -->
+<div class="container mt-4">
+    <h1 class="text-center">Latest Traffic Data</h1>
+    <div id="flagsData" class="mt-4"></div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2 class="text-center">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="relayDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Select Relay
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="relayDropdown" id="relayDropdownMenu">
+                        <!-- Dropdown menu items will be added here dynamically -->
+                    </div>
+                </div>
+            </h2>
+            <div id="relayCharts"></div>
+        </div>
+        <div class="col-md-6">
+            <h2 class="text-center">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#eventData">
+                    Events
+                </button>
+            </h2>
+            <div id="eventData" class="collapse"></div>
+        </div>
     </div>
 </div>
 
+<!-- Include jQuery for AJAX requests -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<!-- Include Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/data.js"></script>
 </body>
 </html>

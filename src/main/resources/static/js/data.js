@@ -4,17 +4,22 @@ $(document).ready(function () {
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
-        // Create a container for the relay chart
-        var chartContainer = $('<div class="relay-chart"></div>');
+        // Create a container for the relay chart and hide it initially
+        var chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
         var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
         var relayName = 'Relay on Port ' + port;
 
+        // Create a container for the upload and download rates
+        var ratesContainer = $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
+
+        // Create a container for the events
+        var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
+
+        // Create a container for the flags
+        var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
+
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
-
-        // Create a container for the relay flags
-        var flagsContainer = $('<div class="relay-flags" id="flagsData' + port + '"></div>');
-        flagsContainer.appendTo($('#flagsData'));
 
 
         // Append the chart container to the relayCharts div
@@ -62,6 +67,13 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
+                    // Get the most recent upload and download rates
+                    var recentUpload = uploadData[uploadData.length - 1];
+                    var recentDownload = downloadData[downloadData.length - 1];
+
+                    // Update the ratesContainer div with the recent upload and download rates
+                    $('#relayRates' + port).text('Upload: ' + recentUpload + ' bytes/s, Download: ' + recentDownload + ' bytes/s');
+
                     // Get the flags from the most recent data
                     var flagsData = data[data.length - 1].flags;
 
@@ -69,6 +81,9 @@ $(document).ready(function () {
                     if (typeof flagsData === 'undefined' || flagsData === null || flagsData.length === 0) {
                         flagsData = 'no flags';
                     }
+
+                    // Update the flagsContainer div with the flags data
+                    $('#relayFlags' + port).text('Flags: ' + flagsData);
 
                     // Update the flagsData div with the flags data
                     flagsContainer.text('Flags: ' + flagsData);
@@ -113,11 +128,32 @@ $(document).ready(function () {
         }, 1000); // 1 seconds
     }
 
-    // Fetch the list of control ports dynamically
-    $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-        // Create charts for each relay based on the retrieved control ports
-        controlPorts.forEach(function (port) {
-            createRelayChart(port);
+    $(document).ready(function () {
+        // Fetch the list of control ports dynamically
+        // Hide all relay charts initially
+        $('.relay-chart').hide();
+
+        // Fetch the list of control ports dynamically
+        $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
+            // Create charts for each relay based on the retrieved control ports
+            controlPorts.forEach(function (port) {
+                createRelayChart(port);
+
+                // Add an item to the dropdown menu for this relay
+                var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+                menuItem.appendTo($('#relayDropdownMenu'));
+
+                // Add a click event handler to the menu item
+                menuItem.click(function () {
+                    // Hide all relay charts
+                    $('.relay-chart').hide();
+
+                    // Show the selected relay's chart
+                    $('#relayChart' + port).show();
+                });
+            });
+        });fail(function (jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
         });
     });
 });
