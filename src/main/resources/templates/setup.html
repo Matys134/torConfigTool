@@ -57,24 +57,77 @@
 
         <!-- Bridge Tab Content -->
         <div class="tab-pane fade" id="bridgeTab" role="tabpanel" aria-labelledby="bridge-tab">
-            <form>
+            <form action="/bridge/configure" id="bridgeForm" method="post">
                 <div class="form-group">
-                    <label for="bridgeNickname">Nickname:</label>
-                    <input id="bridgeNickname" name="bridgeNickname" required type="text" class="form-control">
+                    <label for="bridgeType">Bridge Type:</label>
+                    <select id="bridgeType" name="bridgeType" class="form-control" onchange="toggleBridgeFields()">
+                        <option value="bridge">Bridge</option>
+                        <option value="webtunnel">WebTunnel Bridge</option>
+                        <option value="snowflake">Snowflake</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="bridgeORPort">ORPort:</label>
-                    <input id="bridgeORPort" name="bridgeORPort" required type="text" class="form-control">
+
+                <!-- Common Fields -->
+                <div id="commonFields">
+                    <div class="form-group">
+                        <label for="bridgeContact">Contact Email:</label>
+                        <input id="bridgeContact" name="bridgeContact" required type="email" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bridgeNickname">Nickname:</label>
+                        <input id="bridgeNickname" name="bridgeNickname" required type="text" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
+                        <input id="bridgeControlPort" name="bridgeControlPort" required type="text" class="form-control">
+                    </div>
+
+                    <div class="form-check">
+                        <input id="includeBridgeBandwidth" name="includeBridgeBandwidth" type="checkbox" class="form-check-input">
+                        <label class="form-check-label" for="includeBridgeBandwidth">Include Bandwidth (KB/s)</label>
+                    </div>
+
+                    <div id="bridgeBandwidthField" style="display: none;" class="form-group">
+                        <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
+                        <input id="bridgeBandwidth" min="0" name="bridgeBandwidth" type="number" class="form-control">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="bridgeTransportListenAddr">ServerTransportListenAddr:</label>
-                    <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="text" class="form-control">
+
+                <!-- Specific Fields for Bridge -->
+                <div class="bridge-specific" id="bridgeFields">
+                    <div class="form-group">
+                        <label for="bridgePort">ORPort (e.g., 9001):</label>
+                        <input id="bridgePort" name="bridgePort" type="text" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
+                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" type="text" class="form-control">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="bridgeContact">Contact:</label>
-                    <input id="bridgeContact" name="bridgeContact" required type="text" class="form-control">
+
+                <div class="form-check">
+                    <input id="startBridgeAfterConfig" name="startBridgeAfterConfig" type="checkbox" class="form-check-input">
+                    <label class="form-check-label" for="startBridgeAfterConfig">Start Relay after configuration</label>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+
+                <!-- Specific Fields for WebTunnel Bridge -->
+                <div class="bridge-specific" id="webtunnelFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="webtunnelUrl">Domain:</label>
+                        <input id="webtunnelUrl" name="webtunnelUrl" type="text" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Specific Fields for Snowflake -->
+                <div class="bridge-specific" id="snowflakeFields" style="display: none;">
+                    <!-- Snowflake has no specific fields to enter -->
+                    <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Run Snowflake Proxy</button>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Configure Bridge</button>
             </form>
         </div>
 
