@@ -48,14 +48,6 @@ public class TorrcFileCreator {
                 logger.error("Unknown relay type");
             }
 
-            String systemIpv6 = getSystemIpv6();
-
-            if (systemIpv6 != null && InetAddress.getByName("::0").isReachable(2000)) {
-                writer.newLine();
-                writer.write("ORPort " + systemIpv6 + ":" + config.getOrPort());
-                writer.newLine();
-            }
-
             // Add any other common configurations from BaseRelayConfig
             String currentDirectory = System.getProperty("user.dir");
             String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();

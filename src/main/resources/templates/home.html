@@ -3,22 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Tor Configuration Tool</title>
-    <!-- Include any necessary CSS stylesheets -->
-    <link href="styles.css" rel="stylesheet">
+    <link href="/css/navbar.css" rel="stylesheet">
 </head>
 <body>
+<div th:replace="navbar :: nav"></div>
 <h1>Tor Configuration Tool</h1>
-
-<!-- Navigation menu -->
-<nav>
-    <ul>
-        <li><a class="active" th:href="@{/}">Home</a></li>
-        <li><a th:href="@{/setup}">Setup</a></li>
-        <li><a th:href="@{/hidden-services}">Hidden Services</a></li>
-        <li><a th:href="@{/proxy}">Tor Proxy</a></li>
-        <li><a th:href="@{/relay-operations}">Relay Operations</a></li>
-    </ul>
-</nav>
 
 <!-- Home Page -->
 <div th:if="${currentPage == 'home'}">

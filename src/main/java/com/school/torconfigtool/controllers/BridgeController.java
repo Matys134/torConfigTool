@@ -59,25 +59,29 @@ public class BridgeController {
             return "setup";
         }
         try {
-
-            String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
-            Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
-
-            if (RelayUtils.relayExists(bridgeNickname)) {
-                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "setup";
-            }
-
-            BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
-            if (!torrcFilePath.toFile().exists()) {
-                TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
-            }
-
-            model.addAttribute("successMessage", "Tor Relay configured successfully!");
+            configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
+        return "setup";
+    }
+
+    private void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) throws Exception {
+        String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
+        Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
+
+        if (RelayUtils.relayExists(bridgeNickname)) {
+            model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
+            return;
+        }
+
+        BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+        if (!torrcFilePath.toFile().exists()) {
+            TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
+        }
+
+        model.addAttribute("successMessage", "Tor Relay configured successfully!");
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
@@ -95,8 +99,6 @@ public class BridgeController {
                 model.addAttribute("errorMessage", "Failed to start Tor Relay.");
             }
         }
-
-        return "setup";
     }
 
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
