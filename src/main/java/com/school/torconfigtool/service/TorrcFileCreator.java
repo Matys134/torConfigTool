@@ -24,12 +24,11 @@ public class TorrcFileCreator {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + config.getNickname());
             writer.newLine();
-            writer.write("ORPort " + config.getOrPort());
+            String orPort = config.getOrPort() != null ? config.getOrPort() : "127.0.0.1:auto";
+            writer.write("ORPort " + orPort);
             writer.newLine();
-            if (config.getContact() != null) {
-                writer.write("ContactInfo " + config.getContact());
-                writer.newLine();
-            }
+            writer.write("ContactInfo " + config.getContact());
+            writer.newLine();
             writer.write("ControlPort " + config.getControlPort());
             writer.newLine();
             writer.write("SocksPort 0");

@@ -36,7 +36,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 writer.newLine();
                 writer.write("ContactInfo " + getContact());
                 writer.newLine();
-                // ... Add relevant configuration lines
                 break;
             case "webtunnel":
                 writer.write("ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel");
@@ -47,11 +46,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();
-                writer.write("ContactInfo " + getEmail());
-                writer.newLine();
-                writer.write("SocksPort 0");
-                writer.newLine();
-                // ... Add relevant configuration lines
                 break;
             case "snowflake":
                 runSnowflakeProxy();
