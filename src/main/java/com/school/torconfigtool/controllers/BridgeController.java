@@ -272,6 +272,30 @@ public class BridgeController {
         return new File(serviceDir, "index.html");
     }
 
+    private void revertNginxDefaultConfig() {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+
+        try {
+            // Clear the file and write the initial configuration
+            List<String> lines = new ArrayList<>();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root /var/www/html;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
+
+            // Write the list to the file
+            Files.write(defaultConfigPath, lines);
+        } catch (IOException e) {
+            logger.error("Error reverting Nginx default configuration", e);
+        }
+    }
+
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
@@ -299,5 +323,15 @@ public class BridgeController {
     @GetMapping("/running-type")
     public ResponseEntity<String> getRunningBridgeType() {
         return ResponseEntity.ok(relayService.getRunningBridgeType());
+    }
+
+    @PostMapping("/revert-nginx-config")
+    public ResponseEntity<String> revertNginxConfig() {
+        try {
+            revertNginxDefaultConfig();
+            return new ResponseEntity<>("Nginx configuration reverted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error reverting Nginx configuration: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
