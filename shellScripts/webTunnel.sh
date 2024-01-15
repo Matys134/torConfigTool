@@ -28,7 +28,7 @@ sudo cp server /usr/local/bin/webtunnel
 echo "apparmor=1 security=apparmor" | sudo tee -a /boot/cmdline.txt
 
 # Step 5: Add a line to /etc/apparmor.d/system_tor
-echo "/usr/local/bin/webtunnel ix," | sudo tee -a /etc/apparmor.d/system_tor
+awk '/# directories via check_private_dir().  Let it./ { print; printf "/usr/local/bin/webtunnel ix,\n"; next }1' /etc/apparmor.d/system_tor > temp && mv temp /etc/apparmor.d/system_tor
 
 # Step 6: Reload the AppArmor profiles
 sudo apparmor_parser -r /etc/apparmor.d/system_tor
