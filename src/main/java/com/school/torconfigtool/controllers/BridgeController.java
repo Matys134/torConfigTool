@@ -134,7 +134,7 @@ public class BridgeController {
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
         System.out.println("Generating certificate: " + command);
 
         executeCommand(command);
@@ -158,7 +158,7 @@ public class BridgeController {
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + "-d" + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
