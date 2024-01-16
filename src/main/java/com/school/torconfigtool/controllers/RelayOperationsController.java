@@ -283,7 +283,7 @@ public class RelayOperationsController {
         String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
         String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";
         String fingerprint = readFingerprint(fingerprintFilePath);
-        String webtunnelLink = "webtunnel 10.0.0.2:443 " + fingerprint + " url=https://yourdomain/path";
+        String webtunnelLink = "webtunnel 10.0.0.2:443 " + fingerprint + getWebtunnelLink(relayNickname);
         return webtunnelLink;
     }
 }
