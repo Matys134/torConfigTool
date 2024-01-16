@@ -89,6 +89,7 @@ public class BridgeController {
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
             config.setPath(randomString); // Set the path
+            updateTorrcFile(config); // Update the torrc file
         }
 
         if (startBridgeAfterConfig) {
@@ -330,5 +331,19 @@ public class BridgeController {
         } catch (Exception e) {
             return new ResponseEntity<>("Error reverting Nginx configuration: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void updateTorrcFile(BridgeRelayConfig config) throws IOException {
+        String torrcFileName = TORRC_FILE_PREFIX + config.getNickname() + "_bridge";
+        Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
+
+        List<String> lines = Files.readAllLines(torrcFilePath);
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).startsWith("ServerTransportOptions webtunnel url")) {
+                lines.set(i, "ServerTransportOptions webtunnel url=https://" + config.getWebtunnelUrl() + "/" + config.getPath());
+                break;
+            }
+        }
+        Files.write(torrcFilePath, lines);
     }
 }
