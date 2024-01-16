@@ -24,7 +24,8 @@ public class TorrcFileCreator {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write("Nickname " + config.getNickname());
             writer.newLine();
-            writer.write("ORPort " + config.getOrPort());
+            String orPort = config.getOrPort() != null ? config.getOrPort() : "127.0.0.1:auto";
+            writer.write("ORPort " + orPort);
             writer.newLine();
             writer.write("ContactInfo " + config.getContact());
             writer.newLine();
@@ -47,40 +48,8 @@ public class TorrcFileCreator {
             } else {
                 logger.error("Unknown relay type");
             }
-
-            // Add any other common configurations from BaseRelayConfig
-            String currentDirectory = System.getProperty("user.dir");
-            String dataDirectoryPath = currentDirectory + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
-            writer.write("DataDirectory " + dataDirectoryPath);
-
         } catch (IOException e) {
             logger.error("Error creating Torrc file", e);
         }
-    }
-
-    static String getSystemIpv6() {
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface iface = interfaces.nextElement();
-                if (iface.isLoopback() || !iface.isUp())
-                    continue;
-
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress addr = addresses.nextElement();
-                    if (addr instanceof Inet6Address) {
-                        if (!addr.isLinkLocalAddress()) {
-                            String hostAddress = addr.getHostAddress();
-                            int idx = hostAddress.indexOf('%');
-                            return (idx > 0) ? hostAddress.substring(0, idx) : hostAddress;
-                        }
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            logger.error("Socket exception when getting IPv6 address", e);
-        }
-        return null;
     }
 }

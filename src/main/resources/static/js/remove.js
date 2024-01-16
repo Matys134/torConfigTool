@@ -17,6 +17,19 @@ $(document).ready(function () {
                     if (response.success) {
                         // Optionally update the view or perform other actions on success
                         alert("Torrc file and DataDirectory removed successfully!");
+
+                        // Make an AJAX call to revert the Nginx configuration
+                        $.ajax({
+                            type: "POST",
+                            url: "/bridge/revert-nginx-config",
+                            success: function (response) {
+                                if (response.status === 200) {
+                                    alert("Nginx configuration reverted successfully!");
+                                } else {
+                                    alert("Failed to revert Nginx configuration.");
+                                }
+                            }
+                        });
                     } else {
                         alert("Failed to remove Torrc file and DataDirectory.");
                     }
@@ -24,5 +37,4 @@ $(document).ready(function () {
             });
         }
     });
-
 });

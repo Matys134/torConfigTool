@@ -130,15 +130,11 @@ public class BridgeController {
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
         executeCommand(chownCommand);
 
-        String installAcme = " curl https://get.acme.sh | sh -s email=koubamates4@gmail.com";
-        System.out.println("Installing acme.sh" + installAcme);
-        executeCommand(installAcme);
-
         // Create the directory for the certificate files
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
         System.out.println("Generating certificate: " + command);
 
         executeCommand(command);
@@ -162,7 +158,7 @@ public class BridgeController {
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd \"sudo systemctl restart nginx.service\"";
@@ -272,6 +268,30 @@ public class BridgeController {
         return new File(serviceDir, "index.html");
     }
 
+    private void revertNginxDefaultConfig() {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+
+        try {
+            // Clear the file and write the initial configuration
+            List<String> lines = new ArrayList<>();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root /var/www/html;");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
+
+            // Write the list to the file
+            Files.write(defaultConfigPath, lines);
+        } catch (IOException e) {
+            logger.error("Error reverting Nginx default configuration", e);
+        }
+    }
+
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
@@ -299,5 +319,15 @@ public class BridgeController {
     @GetMapping("/running-type")
     public ResponseEntity<String> getRunningBridgeType() {
         return ResponseEntity.ok(relayService.getRunningBridgeType());
+    }
+
+    @PostMapping("/revert-nginx-config")
+    public ResponseEntity<String> revertNginxConfig() {
+        try {
+            revertNginxDefaultConfig();
+            return new ResponseEntity<>("Nginx configuration reverted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error reverting Nginx configuration: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

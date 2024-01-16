@@ -21,3 +21,25 @@
 .navbar li a:hover {
     background-color: #111;
 }
+
+body {
+    font-size: 0.9em;
+}
+
+.container {
+    margin: 1em auto;
+    padding: 1em;
+}
+
+h1, h2 {
+    font-size: 1.2em;
+}
+
+.dropdown {
+    margin: 0.5em 0;
+}
+
+#relayCharts, #eventData {
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
