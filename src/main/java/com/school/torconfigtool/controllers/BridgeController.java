@@ -88,6 +88,7 @@ public class BridgeController {
             setupWebtunnel(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
+            config.setPath(randomString); // Set the path
         }
 
         if (startBridgeAfterConfig) {
