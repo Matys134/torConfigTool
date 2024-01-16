@@ -61,6 +61,15 @@ public class RelayOperationsController {
             hostnames.put(config.getHiddenServicePort(), hostname);
             logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
+
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
+        Map<String, String> webtunnelLinks = new HashMap<>();
+        for (TorConfiguration config : bridgeConfigs) {
+            String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
+            webtunnelLinks.put(config.getBridgeRelayConfig().getNickname(), webtunnelLink);
+        }
+        model.addAttribute("webtunnelLinks", webtunnelLinks);
+
         logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
 
@@ -267,5 +276,14 @@ public class RelayOperationsController {
 
     private String buildDataDirectoryPath(String relayNickname) {
         return System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
+    }
+
+    // New method to get the webtunnel link
+    private String getWebtunnelLink(String relayNickname) {
+        String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
+        String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";
+        String fingerprint = readFingerprint(fingerprintFilePath);
+        String webtunnelLink = "webtunnel 10.0.0.2:443 " + fingerprint + " url=https://yourdomain/path";
+        return webtunnelLink;
     }
 }
