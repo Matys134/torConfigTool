@@ -65,6 +65,7 @@
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
+                    <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->

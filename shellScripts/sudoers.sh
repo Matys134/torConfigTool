@@ -23,6 +23,9 @@ if [ ! -f "$sudoers_file" ]; then
     touch "$sudoers_file"
 fi
 
+# Define the sudoers entry for the specified user to control Nginx without a password
+sudoers_nginx_entry="$user_name ALL=(ALL) NOPASSWD: /bin/systemctl start nginx, /bin/systemctl stop nginx, /bin/systemctl restart nginx"
+
 # Check if the sudoers file is writable
 if [ -w "$sudoers_file" ]; then
     # Clear the sudoers file
@@ -31,11 +34,11 @@ if [ -w "$sudoers_file" ]; then
     # Add the sudoers entries
     {
         echo "$sudoers_tor_entry"
-        echo "$sudoers_cp_nginx_entry"
         echo "$sudoers_edit_nginx_entry"
+        echo "$sudoers_nginx_entry" # Add this line
     } | sudo tee "$sudoers_file" > /dev/null
 
-    echo "Sudoers entries added for $user_name to control Tor, copy Nginx config files, edit Nginx config files, and restart Nginx without a password."
+    echo "Sudoers entries added for $user_name to control Tor, Nginx, copy Nginx config files, edit Nginx config files, and restart Nginx without a password."
 else
     echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
 fi

@@ -18,6 +18,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     private int webtunnelPort;
     private String webtunnelUrl;
     private String email;
+    private String path;
     private String bridgeType;
     private static final Logger logger = LoggerFactory.getLogger(BridgeRelayConfig.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
@@ -42,7 +43,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 writer.newLine();
                 writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:15000");
                 writer.newLine();
-                writer.write("ServerTransportOptions webtunnel url=" + getWebtunnelUrl());
+                writer.write("ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();

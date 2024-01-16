@@ -36,6 +36,11 @@ public class TorrcFileCreator {
             writer.write("RunAsDaemon 1");
             writer.newLine();
 
+            // Write DataDirectory configuration
+            String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
+            writer.write("DataDirectory " + dataDirectoryPath);
+            writer.newLine();
+
             if (config.getBandwidthRate() != null) {
                 writer.write("BandwidthRate " + config.getBandwidthRate() + " KBytes");
                 writer.newLine();
