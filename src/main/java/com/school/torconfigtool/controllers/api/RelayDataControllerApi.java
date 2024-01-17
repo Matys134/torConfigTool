@@ -55,7 +55,9 @@ public class RelayDataControllerApi {
 
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
-        return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
+        synchronized (relayDataMap) {
+            return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
+        }
     }
 
     @GetMapping("/control-ports")
