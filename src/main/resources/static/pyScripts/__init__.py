@@ -68,10 +68,17 @@ def monitor_traffic_and_flags(control_port):
 
                 print(f"Monitoring relay on ControlPort {control_port}")
 
+                # Create a list to hold all the relay data entries
+                relay_data_entries = []
+
                 while controller.is_alive():  # Check if the relay is still running
                     # Send the bandwidth data every second
-                    _send_bandwidth_data(controller, control_port)
+                    relay_data_entry = _send_bandwidth_data(controller, control_port)
+                    relay_data_entries.append(relay_data_entry)
                     time.sleep(1)  # Wait for 1 second to collect data
+
+                # Send all the relay data entries to the Java web app
+                _send_all_relay_data_entries(control_port, relay_data_entries)
 
                 print(f"Relay on ControlPort {control_port} has stopped.")
         except stem.SocketError as e:
@@ -84,6 +91,19 @@ def monitor_traffic_and_flags(control_port):
 
             # Sleep for a while before retrying
             time.sleep(5)  # Sleep for 5 seconds before retrying
+
+def _send_all_relay_data_entries(control_port, relay_data_entries):
+    # Construct the complete API endpoint URL with the relayId
+    api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
+
+    # Send all the relay data entries to the API endpoint for the corresponding relay
+    for relay_data_entry in relay_data_entries:
+        response = requests.post(api_endpoint, json=relay_data_entry)
+
+        if response.status_code == 200:
+            print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
+        else:
+            print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
