@@ -133,11 +133,8 @@ def _send_bandwidth_data(controller, control_port):
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def get_nickname(controller):
-    # Get the list of SOCKS listeners
-    socks_listeners = controller.get_info("net/listeners/socks")
-
-    # The nickname is the last part of the address, after the last '/'
-    nickname = socks_listeners.split('/')[-1]
+    # Get the nickname
+    nickname = controller.get_info("desc/nickname")
 
     return nickname
 
