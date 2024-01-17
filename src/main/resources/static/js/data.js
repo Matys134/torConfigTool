@@ -96,6 +96,10 @@ $(document).ready(function () {
                 console.log('Data received from API:', data); // Log the raw data
 
                 if (data && data.length > 0) {
+                    data = data.filter(function (item) {
+                        return item !== null;
+                    });
+
                     var uploadData = data.map(function (relayData) {
                         return relayData.upload;
                     });
