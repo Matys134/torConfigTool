@@ -133,14 +133,10 @@ def _send_bandwidth_data(controller, control_port):
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def get_nickname(controller):
-    # Get the nickname from the controller
-    try:
-        nickname = controller.get_info("net/listeners/socks")
-    except Exception as e:
-        print(f"Error getting nickname: {str(e)}")
-        nickname = None
-
+    # Get the relay's nickname
+    nickname = controller.get_info("net/listeners/socks")
     return nickname
+
 
 
 def _handle_bandwidth_event(controller, control_port, event):
