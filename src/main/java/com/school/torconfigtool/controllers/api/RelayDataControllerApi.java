@@ -66,7 +66,7 @@ public class RelayDataControllerApi {
             relayDataQueue.poll(); // Remove the oldest data entry
         }
         if (relayData != null) {
-            relayDataQueue.offer(relayData); // Add the new data entry
+            relayDataQueue.offer(relayData); // Add the new data entry only if it's not null
         }
     }
 
