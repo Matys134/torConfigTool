@@ -65,7 +65,9 @@ public class RelayDataControllerApi {
         if (relayDataQueue.size() >= MAX_DATA_SIZE) {
             relayDataQueue.poll(); // Remove the oldest data entry
         }
-        relayDataQueue.offer(relayData); // Add the new data entry
+        if (relayData != null) {
+            relayDataQueue.offer(relayData); // Add the new data entry
+        }
     }
 
     private void addRelayEvent(Deque<String> relayEventQueue, String event) {
