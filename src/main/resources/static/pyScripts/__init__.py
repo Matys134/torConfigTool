@@ -71,6 +71,7 @@ def monitor_traffic_and_flags(control_port):
                 while controller.is_alive():  # Check if the relay is still running
                     # Send the bandwidth data every second
                     relay_data_entry = _send_bandwidth_data(controller, control_port)
+                    print(f"Relay data entry for ControlPort {control_port}: {relay_data_entry}")  # Log the relay data entry
                     if relay_data_entry is not None:  # Only send data when there is new data to send
                         _send_relay_data_entry(control_port, relay_data_entry)
                     time.sleep(1)  # Wait for 1 second to collect data
