@@ -36,6 +36,10 @@ def main():
 def read_control_port(file_path):
     # Read the control port from the Tor configuration file
     try:
+        if not os.path.isfile(file_path):
+            print(f"Skipping directory: {file_path}")
+            return None
+
         with open(file_path, 'r') as file:
             for line in file:
                 if line.startswith("ControlPort"):
