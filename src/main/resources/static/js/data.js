@@ -95,10 +95,10 @@ $(document).ready(function () {
             $.get(apiUrl, function (data) {
                 if (data && data.length > 0) {
                     var uploadData = data.map(function (relayData) {
-                        return relayData.upload;
+                        return relayData ? relayData.upload : 0;  // Check if relayData is not null before accessing its properties
                     });
                     var downloadData = data.map(function (relayData) {
-                        return relayData.download;
+                        return relayData ? relayData.download : 0;  // Check if relayData is not null before accessing its properties
                     });
 
                     // Determine the maximum value among the upload and download data
