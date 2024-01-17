@@ -90,6 +90,7 @@ $(document).ready(function () {
         });
 
         // Function to update the traffic data and chart for the relay
+        // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
             var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
@@ -142,6 +143,10 @@ $(document).ready(function () {
 
                     // Update the chart
                     relayChart.update();
+
+                    // Update the relay-rates div with the latest upload and download rates
+                    var ratesContainer = $('#relayRates' + port);
+                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit);
                 }
             });
         }
