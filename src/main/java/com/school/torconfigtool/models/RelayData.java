@@ -6,7 +6,6 @@ import java.util.List;
 
 @Data
 public class RelayData {
-    private String nickname;
     private double download;
     private double upload;
     private double bandwidth;

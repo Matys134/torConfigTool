@@ -22,7 +22,7 @@ public class RelayDataControllerApi {
         Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
         addRelayData(relayDataQueue, relayData);
 
-        return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId + ", Nickname: " + relayData.getNickname());
+        return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
     @PostMapping("/relay-data/{relayId}/event")
