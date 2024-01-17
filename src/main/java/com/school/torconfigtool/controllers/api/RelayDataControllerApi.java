@@ -19,6 +19,8 @@ public class RelayDataControllerApi {
     @PostMapping("/relay-data/{relayId}")
     public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
 
+        System.out.println("Data received for Relay ID: " + relayId + ": " + relayData);
+
         Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
         addRelayData(relayDataQueue, relayData);
 
