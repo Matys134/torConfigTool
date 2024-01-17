@@ -94,11 +94,16 @@ $(document).ready(function () {
             var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
                 if (data && data.length > 0) {
+                    // Filter out null values from the data
+                    data = data.filter(function (relayData) {
+                        return relayData !== null;
+                    });
+
                     var uploadData = data.map(function (relayData) {
-                        return relayData ? relayData.upload : 0;  // Check if relayData is not null before accessing its properties
+                        return relayData.upload;
                     });
                     var downloadData = data.map(function (relayData) {
-                        return relayData ? relayData.download : 0;  // Check if relayData is not null before accessing its properties
+                        return relayData.download;
                     });
 
                     // Determine the maximum value among the upload and download data
