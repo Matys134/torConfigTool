@@ -136,10 +136,21 @@ $(document).ready(function () {
                         relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
                     }
 
+                    // Get the current time and format it as a string
+                    var currentTime = new Date();
+                    var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+
                     // Update the chart's data and labels
-                    relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
-                    relayChart.data.datasets[0].data = uploadData;
-                    relayChart.data.datasets[1].data = downloadData;
+                    relayChart.data.labels.push(timeLabel);
+                    relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
+                    relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
+
+                    // If the number of data points exceeds a certain limit (e.g., 50), remove the oldest data point
+                    if (relayChart.data.labels.length > 50) {
+                        relayChart.data.labels.shift();
+                        relayChart.data.datasets[0].data.shift();
+                        relayChart.data.datasets[1].data.shift();
+                    }
 
                     // Update the chart
                     relayChart.update();
