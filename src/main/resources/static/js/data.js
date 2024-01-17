@@ -131,7 +131,9 @@ $(document).ready(function () {
                     });
 
                     // Update the y-axis label
-                    relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
+                    if (relayChart.options.scales.yAxes[0]) {
+                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
+                    }
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
