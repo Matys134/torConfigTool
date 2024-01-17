@@ -98,6 +98,7 @@ def _send_relay_data_entry(control_port, relay_data_entry):
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
+
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
     status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
