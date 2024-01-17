@@ -1,13 +1,14 @@
 $(document).ready(function () {
     // Define the base API endpoint
     var baseApiUrl = 'http://' + location.hostname + ':8081/api/relay-data';
+    var relayNicknamesUrl = 'http://' + location.hostname + ':8081/api/relay-nicknames'; // New endpoint to fetch relay nicknames
 
     // Function to create and update a chart for a given relay
-    function createRelayChart(port) {
+    function createRelayChart(port, nickname) { // Add nickname parameter
         // Create a container for the relay chart and hide it initially
         var chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
         var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
-        var relayName = 'Relay on Port ' + port;
+        var relayName = nickname; // Use nickname instead of port
 
         // Create a container for the upload and download rates
         var ratesContainer = $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
@@ -133,14 +134,14 @@ $(document).ready(function () {
         // Hide all relay charts initially
         $('.relay-chart').hide();
 
-        // Fetch the list of control ports dynamically
-        $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-            // Create charts for each relay based on the retrieved control ports
-            controlPorts.forEach(function (port) {
-                createRelayChart(port);
+        // Fetch the list of relay nicknames dynamically
+        $.get(relayNicknamesUrl, function (relayNicknames) {
+            // Create charts for each relay based on the retrieved control ports and nicknames
+            relayNicknames.forEach(function (relay) {
+                createRelayChart(relay.port, relay.nickname); // Pass nickname to createRelayChart
 
                 // Add an item to the dropdown menu for this relay
-                var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+                var menuItem = $('<a class="dropdown-item" href="#">' + relay.nickname + '</a>'); // Use nickname instead of port
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
@@ -149,11 +150,11 @@ $(document).ready(function () {
                     $('.relay-chart').hide();
 
                     // Show the selected relay's chart
-                    $('#relayChart' + port).show();
+                    $('#relayChart' + relay.port).show();
                 });
             });
-        });fail(function (jqXHR, textStatus, errorThrown) {
-            console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching relay nicknames:', textStatus, errorThrown);  // Log any errors
         });
     });
 });
