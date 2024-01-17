@@ -110,6 +110,9 @@ def _send_bandwidth_data(controller, control_port):
     # Get the relay flags
     flags = relay_flags(controller)
 
+    # Print the data before sending it to the API
+    print(f"Data to be sent for ControlPort {control_port}: Downloaded: {download_rate} bytes/s, Uploaded: {upload_rate} bytes/s, Flags: {flags}")
+
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download_rate,
@@ -122,6 +125,9 @@ def _send_bandwidth_data(controller, control_port):
 
     # Send data to the API endpoint for the corresponding relay
     response = requests.post(api_endpoint, json=data)
+
+    # Print the response object
+    print(f"Response for ControlPort {control_port}: {response}")
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: Downloaded: {download_rate} bytes/s, Uploaded: {upload_rate} bytes/s, Flags: {flags}")
