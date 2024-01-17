@@ -93,13 +93,7 @@ $(document).ready(function () {
         function updateRelayTrafficDataAndChart() {
             var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
-                console.log('Data received from API:', data); // Log the raw data
-
                 if (data && data.length > 0) {
-                    data = data.filter(function (item) {
-                        return item !== null;
-                    });
-
                     var uploadData = data.map(function (relayData) {
                         return relayData.upload;
                     });
@@ -107,20 +101,23 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
+                    // Determine the maximum value among the upload and download data
                     var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
+                    // Determine the scale and unit based on the maximum value
                     var scale, unit;
-                    if (maxDataValue >= 1e6) {
+                    if (maxDataValue >= 1e6) { // More than a million bytes (1 MB)
                         scale = 1e6;
                         unit = 'MB/s';
-                    } else if (maxDataValue >= 1e3) {
+                    } else if (maxDataValue >= 1e3) { // More than a thousand bytes (1 KB)
                         scale = 1e3;
                         unit = 'KB/s';
-                    } else {
+                    } else { // Less than a thousand bytes
                         scale = 1;
                         unit = 'Bytes/s';
                     }
 
+                    // Scale the upload and download data
                     uploadData = uploadData.map(function (value) {
                         return value / scale;
                     });
@@ -128,17 +125,15 @@ $(document).ready(function () {
                         return value / scale;
                     });
 
-                    console.log('Processed data:', uploadData, downloadData); // Log the processed data
-
+                    // Update the y-axis label
                     relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
 
+                    // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
-                    if (relayChart && relayChart.data && relayChart.data.datasets && relayChart.data.datasets.length > 0) {
-                        relayChart.data.datasets[0].data = uploadData;
-                        relayChart.data.datasets[1].data = downloadData;
-                        relayChart.update();
-                    }
+                    relayChart.data.datasets[0].data = uploadData;
+                    relayChart.data.datasets[1].data = downloadData;
 
+                    // Update the chart
                     relayChart.update();
                 }
             });

@@ -52,10 +52,7 @@ public class RelayDataControllerApi {
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         synchronized (relayDataMap) {
-            Deque<RelayData> relayDataQueue = relayDataMap.getOrDefault(relayId, new LinkedList<>());
-            List<RelayData> relayDataList = new ArrayList<>(relayDataQueue);
-            relayDataList.removeIf(Objects::isNull); // Remove null values
-            return relayDataList;
+            return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
         }
     }
 
