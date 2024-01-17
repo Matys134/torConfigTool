@@ -37,12 +37,22 @@ $(document).ready(function () {
                     {
                         label: 'Upload',
                         borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        lineTension: 0.1, // This will make the line smoother
                         data: [],
+                        fill: false,
                     },
                     {
                         label: 'Download',
                         borderColor: 'rgb(255, 99, 132)',
+                        pointBackgroundColor: 'rgb(255, 99, 132)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        lineTension: 0.1, // This will make the line smoother
                         data: [],
+                        fill: false,
                     },
                 ],
             },
@@ -52,6 +62,30 @@ $(document).ready(function () {
                     display: true,
                     text: relayName,
                 },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Bytes/s'
+                        }
+                    }]
+                }
             }
         });
 
