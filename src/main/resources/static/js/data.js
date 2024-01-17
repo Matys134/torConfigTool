@@ -133,8 +133,10 @@ $(document).ready(function () {
                     relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
 
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
-                    relayChart.data.datasets[0].data = uploadData;
-                    relayChart.data.datasets[1].data = downloadData;
+                    if (relayChart.data.datasets && relayChart.data.datasets.length > 0) {
+                        relayChart.data.datasets[0].data = uploadData;
+                        relayChart.data.datasets[1].data = downloadData;
+                    }
 
                     relayChart.update();
                 }
