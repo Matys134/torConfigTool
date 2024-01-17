@@ -1,6 +1,7 @@
 package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.models.RelayData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
