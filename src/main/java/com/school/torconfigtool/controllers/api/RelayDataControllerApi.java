@@ -51,7 +51,9 @@ public class RelayDataControllerApi {
 
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
-        return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
+        synchronized (relayDataMap) {
+            return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
+        }
     }
 
     @GetMapping("/control-ports")
@@ -63,7 +65,9 @@ public class RelayDataControllerApi {
         if (relayDataQueue.size() >= MAX_DATA_SIZE) {
             relayDataQueue.poll(); // Remove the oldest data entry
         }
-        relayDataQueue.offer(relayData); // Add the new data entry
+        if (relayData != null) {
+            relayDataQueue.offer(relayData); // Add the new data entry only if it's not null
+        }
     }
 
     private void addRelayEvent(Deque<String> relayEventQueue, String event) {

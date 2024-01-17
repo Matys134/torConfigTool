@@ -37,12 +37,22 @@ $(document).ready(function () {
                     {
                         label: 'Upload',
                         borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        lineTension: 0.1, // This will make the line smoother
                         data: [],
+                        fill: false,
                     },
                     {
                         label: 'Download',
                         borderColor: 'rgb(255, 99, 132)',
+                        pointBackgroundColor: 'rgb(255, 99, 132)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        lineTension: 0.1, // This will make the line smoother
                         data: [],
+                        fill: false,
                     },
                 ],
             },
@@ -52,14 +62,44 @@ $(document).ready(function () {
                     display: true,
                     text: relayName,
                 },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Bytes/s'
+                        }
+                    }]
+                }
             }
         });
 
+        // Function to update the traffic data and chart for the relay
         // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
             var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
                 if (data && data.length > 0) {
+                    // Filter out null values from the data
+                    data = data.filter(function (relayData) {
+                        return relayData !== null;
+                    });
+
                     var uploadData = data.map(function (relayData) {
                         return relayData.upload;
                     });
@@ -67,35 +107,46 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
-                    // Get the most recent upload and download rates
-                    var recentUpload = uploadData[uploadData.length - 1];
-                    var recentDownload = downloadData[downloadData.length - 1];
+                    // Determine the maximum value among the upload and download data
+                    var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
-                    // Update the ratesContainer div with the recent upload and download rates
-                    $('#relayRates' + port).text('Upload: ' + recentUpload + ' bytes/s, Download: ' + recentDownload + ' bytes/s');
-
-                    // Get the flags from the most recent data
-                    var flagsData = data[data.length - 1].flags;
-
-                    // Check if flagsData is undefined and if so, set it to "no flags"
-                    if (typeof flagsData === 'undefined' || flagsData === null || flagsData.length === 0) {
-                        flagsData = 'no flags';
+                    // Determine the scale and unit based on the maximum value
+                    var scale, unit;
+                    if (maxDataValue >= 1e6) { // More than a million bytes (1 MB)
+                        scale = 1e6;
+                        unit = 'MB/s';
+                    } else if (maxDataValue >= 1e3) { // More than a thousand bytes (1 KB)
+                        scale = 1e3;
+                        unit = 'KB/s';
+                    } else { // Less than a thousand bytes
+                        scale = 1;
+                        unit = 'Bytes/s';
                     }
 
-                    // Update the flagsContainer div with the flags data
-                    $('#relayFlags' + port).text('Flags: ' + flagsData);
+                    // Scale the upload and download data
+                    uploadData = uploadData.map(function (value) {
+                        return value / scale;
+                    });
+                    downloadData = downloadData.map(function (value) {
+                        return value / scale;
+                    });
 
-                    // Update the flagsData div with the flags data
-                    flagsContainer.text('Flags: ' + flagsData);
+                    // Update the y-axis label
+                    if (relayChart && relayChart.options && relayChart.options.scales && relayChart.options.scales.yAxes && relayChart.options.scales.yAxes[0]) {
+                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
+                    }
 
                     // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
-                    relayChart.options.title.text = relayName + ' Flags: ' + flagsData;
 
                     // Update the chart
                     relayChart.update();
+
+                    // Update the relay-rates div with the latest upload and download rates
+                    var ratesContainer = $('#relayRates' + port);
+                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit);
                 }
             });
         }
