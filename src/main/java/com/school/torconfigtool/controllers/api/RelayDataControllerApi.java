@@ -55,6 +55,18 @@ public class RelayDataControllerApi {
         return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
     }
 
+    // endpoint to get nicknames of all relays
+    @GetMapping("/relay-data")
+    public List<String> getRelayNicknames() {
+        List<String> nicknames = new ArrayList<>();
+        for (Deque<RelayData> relayData : relayDataMap.values()) {
+            if (relayData.size() > 0) {
+                nicknames.add(relayData.peek().getNickname());
+            }
+        }
+        return nicknames;
+    }
+
     @GetMapping("/control-ports")
     public List<Integer> getControlPorts() {
         return new ArrayList<>(relayDataMap.keySet());
