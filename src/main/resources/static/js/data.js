@@ -93,6 +93,8 @@ $(document).ready(function () {
         function updateRelayTrafficDataAndChart() {
             var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
+                console.log('Data received from API:', data); // Log the raw data
+
                 if (data && data.length > 0) {
                     var uploadData = data.map(function (relayData) {
                         return relayData.upload;
@@ -101,23 +103,20 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
-                    // Determine the maximum value among the upload and download data
                     var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
-                    // Determine the scale and unit based on the maximum value
                     var scale, unit;
-                    if (maxDataValue >= 1e6) { // More than a million bytes (1 MB)
+                    if (maxDataValue >= 1e6) {
                         scale = 1e6;
                         unit = 'MB/s';
-                    } else if (maxDataValue >= 1e3) { // More than a thousand bytes (1 KB)
+                    } else if (maxDataValue >= 1e3) {
                         scale = 1e3;
                         unit = 'KB/s';
-                    } else { // Less than a thousand bytes
+                    } else {
                         scale = 1;
                         unit = 'Bytes/s';
                     }
 
-                    // Scale the upload and download data
                     uploadData = uploadData.map(function (value) {
                         return value / scale;
                     });
@@ -125,15 +124,14 @@ $(document).ready(function () {
                         return value / scale;
                     });
 
-                    // Update the y-axis label
+                    console.log('Processed data:', uploadData, downloadData); // Log the processed data
+
                     relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
 
-                    // Update the chart's data and labels
                     relayChart.data.labels = Array.from({length: data.length}, (_, i) => i + 1);
                     relayChart.data.datasets[0].data = uploadData;
                     relayChart.data.datasets[1].data = downloadData;
 
-                    // Update the chart
                     relayChart.update();
                 }
             });
