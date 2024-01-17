@@ -133,15 +133,9 @@ def _send_bandwidth_data(controller, control_port):
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def get_nickname(controller):
-    # Get the relay's fingerprint
-    fingerprint = controller.get_info("fingerprint")
-
-    # Get the network status document for the relay
-    ns_doc = controller.get_info("ns/id/" + fingerprint)
-
-    # The nickname is the second part of the document, after the first ' '
-    nickname = ns_doc.split(' ')[1]
-
+    my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
+    status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
+    nickname = getattr(status, 'nickname', None)  # Get the nickname, return None if not present
     return nickname
 
 
