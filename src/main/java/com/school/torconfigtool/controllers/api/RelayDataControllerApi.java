@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controllers.api;
 
 import com.school.torconfigtool.models.RelayData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,18 +52,6 @@ public class RelayDataControllerApi {
     @GetMapping("/relay-data/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
-    }
-
-    // endpoint to get nicknames of all relays
-    @GetMapping("/relay-data")
-    public List<String> getRelayNicknames() {
-        List<String> nicknames = new ArrayList<>();
-        for (Deque<RelayData> relayData : relayDataMap.values()) {
-            if (relayData.size() > 0) {
-                nicknames.add(relayData.peek().getNickname());
-            }
-        }
-        return nicknames;
     }
 
     @GetMapping("/control-ports")
