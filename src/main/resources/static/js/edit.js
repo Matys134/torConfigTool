@@ -20,7 +20,6 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType) {
         // Set the values of the input fields
-        configSelectors.nickname.val(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
