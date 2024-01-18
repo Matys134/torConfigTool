@@ -10,6 +10,4 @@ public class TorConfiguration {
     private String hiddenServicePort;
     private String bandwidthRate;
     private String hostname;
-    // Other Tor-specific configurations...
-    // Add methods if needed...
 }
