@@ -26,23 +26,20 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on whether the corresponding data attribute has a value
-        configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
-        configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
-
-        // Show or hide the serverTransport field based on the relay type
-        if (relayType === 'bridge') {
-            configSelectors.serverTransport.closest('label').show();
-        } else {
+        // Show or hide the input fields based on the relay type
+        if (relayType === 'guard') {
+            configSelectors.nickname.closest('label').hide();
+            configSelectors.orPort.closest('label').show();
+            configSelectors.contact.closest('label').show();
+            configSelectors.controlPort.closest('label').show();
+            configSelectors.serverTransport.closest('label').hide();
+        } else if (relayType === 'bridge') {
+            configSelectors.nickname.closest('label').hide();
+            configSelectors.orPort.closest('label').hide();
+            configSelectors.contact.closest('label').show();
+            configSelectors.controlPort.closest('label').show();
             configSelectors.serverTransport.closest('label').hide();
         }
-
-        // Set the data-config-type attribute of each field to the relay type
-        $('#edit-form [data-config-type]').each(function() {
-            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
-        });
 
         // Show the modal
         configSelectors.modal.show();
