@@ -20,13 +20,14 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType) {
         // Set the values of the input fields
+        configSelectors.nickname.val(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
         // Show or hide the input fields based on whether the corresponding data attribute has a value
-        //configSelectors.nickname.closest('label').toggle(!!data.nickname);
+        configSelectors.nickname.closest('label').toggle(!!data.nickname);
         configSelectors.orPort.closest('label').toggle(!!data.orPort);
         configSelectors.contact.closest('label').toggle(!!data.contact);
         configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
