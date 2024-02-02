@@ -136,7 +136,7 @@ public class BridgeController {
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
         System.out.println("Generating certificate: " + command);
 
         executeCommand(command);
