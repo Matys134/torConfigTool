@@ -15,6 +15,4 @@ public abstract class BaseRelayConfig implements RelayConfig {
 
     @Override
     public abstract void writeSpecificConfig(BufferedWriter writer) throws IOException;
-
-    // Add other common attributes and methods here...
 }
