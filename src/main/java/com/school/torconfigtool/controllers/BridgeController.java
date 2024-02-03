@@ -313,23 +313,26 @@ public class BridgeController {
     }
 
     @GetMapping("/limit-reached")
-    public ResponseEntity<Map<String, Boolean>> checkBridgeLimit(@RequestParam String bridgeType) {
-        Map<String, Boolean> response = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
+        Map<String, Object> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
 
         switch (bridgeType) {
             case "obfs4":
                 response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
+                response.put("bridgeCount", bridgeCountByType.get("obfs4"));
                 break;
             case "webtunnel":
                 response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
                 break;
             case "snowflake":
                 response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("snowflake"));
                 break;
             default:
-                response.put("bridgeLimitReached", true);
-                break;
+                response.put("bridgeLimitReached", false);
+                response.put("bridgeCount", 0);
         }
 
         return ResponseEntity.ok(response);

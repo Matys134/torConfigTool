@@ -14,6 +14,8 @@
 <div th:replace="navbar :: nav"></div>
 
 <div class="container">
+    <div class="row">
+        <div class="col-md-8">
     <h1 class="text-center my-4">Tor Relay Configuration</h1>
 
     <!-- Display success message if provided -->
@@ -143,6 +145,36 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+        </div>
+    </div>
+        </div>
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Relay Type</th>
+                    <th>Current/Max</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Obfs4 Bridges</td>
+                    <td id="bridgeCount">0/2</td>
+                </tr>
+                <tr>
+                    <td>Guard</td>
+                    <td id="guardCount">0/8</td>
+                </tr>
+                <tr>
+                    <td>WebTunnel</td>
+                    <td id="webtunnelCount">0/1</td>
+                </tr>
+                <tr>
+                    <td>Snowflake</td>
+                    <td id="snowflakeCount">0/1</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -289,6 +321,23 @@
             // Append the message div to the container
             document.querySelector('.container').appendChild(messageDiv);
         }
+    });
+</script>
+<script>
+    $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
+        $('#bridgeCount').text(data.bridgeCount + "/2");
+    });
+
+    $.get("/guard/limit-reached", function(data) {
+        $('#guardCount').text(data.guardCount + "/8");
+    });
+
+    $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
+        $('#webtunnelCount').text(data.bridgeCount + "/1");
+    });
+
+    $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
+        $('#snowflakeCount').text(data.bridgeCount + "/1");
     });
 </script>
 </body>
