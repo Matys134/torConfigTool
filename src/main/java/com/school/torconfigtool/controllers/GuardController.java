@@ -118,4 +118,11 @@ public class GuardController {
         response.put("guardLimitReached", relayService.getGuardCount() >= 8);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/bridge-configured")
+    public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
+        return ResponseEntity.ok(response);
+    }
 }

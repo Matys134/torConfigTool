@@ -239,5 +239,21 @@
         }
     });
 </script>
+<script>
+    $.get("/guard/bridge-configured", function(data) {
+        if (data.bridgeConfigured) {
+            document.getElementById('guardForm').disabled = true;
+
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "Bridges are already configured. Creation of guard relays is blocked.";
+
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
+        }
+    });
+</script>
 </body>
 </html>
