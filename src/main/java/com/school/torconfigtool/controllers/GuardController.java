@@ -127,12 +127,4 @@ public class GuardController {
         response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping("/toggle-limit")
-    public ResponseEntity<Map<String, Boolean>> toggleLimit() {
-        relayService.toggleLimit();
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("limitState", relayService.getLimitState());
-        return ResponseEntity.ok(response);
-    }
 }

@@ -16,15 +16,6 @@ public class RelayService {
     private static final Logger logger = LoggerFactory.getLogger(RelayService.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
-    private boolean limitState = true;
-
-    public void toggleLimit() {
-        this.limitState = !this.limitState;
-    }
-
-    public boolean getLimitState() {
-        return this.limitState;
-    }
 
     public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
         try {
@@ -38,9 +29,6 @@ public class RelayService {
     }
 
     public int getBridgeCount() {
-        if (!this.limitState) {
-            return 0;
-        }
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
             logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
@@ -60,9 +48,6 @@ public class RelayService {
     }
 
     public int getGuardCount() {
-        if (!this.limitState) {
-            return 0;
-        }
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
             logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
