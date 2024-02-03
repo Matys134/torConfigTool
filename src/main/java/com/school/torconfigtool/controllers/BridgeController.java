@@ -404,4 +404,12 @@ public class BridgeController {
         // Restart the nginx service using kill command and then start command
         processBuilder.command("bash", "-c", "sudo killall nginx && sudo nginx");
     }
+
+    @PostMapping("/toggle-limit")
+    public ResponseEntity<Map<String, Boolean>> toggleLimit() {
+        relayService.toggleLimit();
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("limitState", relayService.getLimitState());
+        return ResponseEntity.ok(response);
+    }
 }
