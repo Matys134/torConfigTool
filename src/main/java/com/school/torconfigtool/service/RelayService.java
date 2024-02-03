@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.RelayUtils;
+import com.school.torconfigtool.models.BridgeRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
 public class RelayService {
@@ -91,6 +92,57 @@ public class RelayService {
         }
 
         return runningBridgeType;
+    }
+
+    public Map<String, Integer> getBridgeCountByType() {
+        Map<String, Integer> bridgeCountByType = new HashMap<>();
+        bridgeCountByType.put("obfs4", 0);
+        bridgeCountByType.put("webtunnel", 0);
+        bridgeCountByType.put("snowflake", 0);
+
+        // Get the list of all bridges
+        List<BridgeRelayConfig> bridges = getAllBridges();
+
+        // Count the number of each type of bridge
+        for (BridgeRelayConfig bridge : bridges) {
+            String bridgeType = bridge.getBridgeType();
+            bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
+        }
+
+        return bridgeCountByType;
+    }
+
+    public List<BridgeRelayConfig> getAllBridges() {
+        List<BridgeRelayConfig> bridges = new ArrayList<>();
+        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
+        File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
+
+        if (files != null) {
+            for (File file : files) {
+                try (Scanner scanner = new Scanner(file)) {
+                    BridgeRelayConfig bridge = new BridgeRelayConfig();
+                    while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        if (line.startsWith("Nickname")) {
+                            bridge.setNickname(line.split(" ")[1]);
+                        } else if (line.startsWith("ORPort")) {
+                            bridge.setOrPort(line.split(" ")[1]);
+                        } else if (line.startsWith("Contact")) {
+                            bridge.setContact(line.split(" ")[1]);
+                        } else if (line.startsWith("ControlPort")) {
+                            bridge.setControlPort(line.split(" ")[1]);
+                        } else if (line.startsWith("ServerTransportPlugin")) {
+                            bridge.setBridgeType(line.split(" ")[1]);
+                        }
+                    }
+                    bridges.add(bridge);
+                } catch (FileNotFoundException e) {
+                    logger.error("Error reading torrc file", e);
+                }
+            }
+        }
+
+        return bridges;
     }
 
 }
