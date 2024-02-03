@@ -85,6 +85,7 @@ public class BridgeController {
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
+            configureWebTunnelRootPath("root /var/www/html;", "root " + System.getProperty("user.dir") + "/onion/www/service-80;");
             setupWebtunnel(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
@@ -345,5 +346,22 @@ public class BridgeController {
             }
         }
         Files.write(torrcFilePath, lines);
+    }
+
+    public void configureWebTunnelRootPath(String oldRoot, String newRoot) {
+        String command = String.format("sudo sed -i 's|%s|%s|' /etc/nginx/sites-available/default", oldRoot, newRoot);
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", command);
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error during web tunnel configuration. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error during web tunnel configuration", e);
+        }
     }
 }
