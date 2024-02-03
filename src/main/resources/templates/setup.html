@@ -419,22 +419,26 @@
         $.post("/bridge/toggle-limit", function() {
             if (toggleLimitButton.textContent === "Turn Limit Off") {
                 toggleLimitButton.textContent = "Turn Limit On";
+                // Disable the form fields
+                disableFormFields(true);
             } else {
                 toggleLimitButton.textContent = "Turn Limit Off";
+                // Enable the form fields
+                disableFormFields(false);
             }
-
-            // Fetch the new limit state
-            $.get("/bridge/limit-state", function(data) {
-                // Select all the forms with the class 'limitable-form'
-                var forms = document.getElementsByClassName('limitable-form');
-
-                // Disable or enable the forms based on the limit state
-                for (var i = 0; i < forms.length; i++) {
-                    forms[i].disabled = data;
-                }
-            });
         });
     });
+
+    function disableFormFields(disable) {
+        // Get the form elements
+        var bridgeForm = document.getElementById('bridgeForm');
+        var formElements = bridgeForm.elements;
+
+        // Loop through the form elements and disable/enable them
+        for (var i = 0; i < formElements.length; i++) {
+            formElements[i].disabled = disable;
+        }
+    }
 </script>
 <script>
     $(document).ready(function() {
