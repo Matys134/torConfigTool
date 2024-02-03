@@ -102,6 +102,9 @@ else
     echo "Cannot write to $sudoers_file. Please run this script with superuser privileges."
 fi
 
+# Change the ownership of the nginx default site configuration file
+sudo chown matys /etc/nginx/sites-available/default
+
 # Check if email argument is provided
 if [ -z "$1" ]
   then echo "Please provide an email address as an argument"
