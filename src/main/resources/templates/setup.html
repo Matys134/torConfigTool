@@ -414,23 +414,25 @@
     });
 </script>
 <script>
-    document.getElementById("toggleLimitButton").addEventListener("click", function () {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        $.post("/bridge/toggle-limit", function(relayCounts) {
-            if (toggleLimitButton.textContent === "Turn Limit Off") {
-                toggleLimitButton.textContent = "Turn Limit On";
-                // Disable the form fields
-                disableFormFields(true);
-            } else {
-                toggleLimitButton.textContent = "Turn Limit Off";
-                // Enable the form fields
-                disableFormFields(false);
-            }
+    $(document).ready(function() {
+        $("#toggleLimitButton").click(function() {
+            $.post("/bridge/toggle-limit", function() {
+                $.get("/bridge/limit-state", function(data) {
+                    var toggleLimitButton = $("#toggleLimitButton");
+                    var forms = $("form"); // select all forms
+                    var warningTexts = $(".alert-warning"); // select all warning texts
 
-            // Update the relay counts
-            $('#bridgeCount').text(relayCounts.obfs4 + "/2");
-            $('#webtunnelCount').text(relayCounts.webtunnel + "/1");
-            $('#snowflakeCount').text(relayCounts.snowflake + "/1");
+                    if (data) {
+                        toggleLimitButton.text("Turn Limit Off");
+                        forms.prop("disabled", true); // disable forms
+                        warningTexts.show(); // show warning texts
+                    } else {
+                        toggleLimitButton.text("Turn Limit On");
+                        forms.prop("disabled", false); // enable forms
+                        warningTexts.hide(); // hide warning texts
+                    }
+                });
+            });
         });
     });
 </script>

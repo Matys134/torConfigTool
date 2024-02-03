@@ -412,13 +412,9 @@ public class BridgeController {
     }
 
     @PostMapping("/toggle-limit")
-    public ResponseEntity<Map<String, Integer>> toggleLimit() {
+    public ResponseEntity<Void> toggleLimit() {
         RelayService.toggleLimit();
-
-        // Get the updated relay counts
-        Map<String, Integer> relayCounts = relayService.getBridgeCountByType();
-
-        return ResponseEntity.ok(relayCounts);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/limit-state")
