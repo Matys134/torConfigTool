@@ -228,7 +228,8 @@
 </script>
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
-        if (runningBridgeType) {
+        var selectedBridgeType = $("#bridgeType").val();
+        if (runningBridgeType && runningBridgeType === selectedBridgeType) {
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
 
