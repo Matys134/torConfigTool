@@ -85,7 +85,7 @@ public class BridgeController {
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
-            configureWebTunnelRootPath("root /var/www/html;", "root " + System.getProperty("user.dir") + "/onion/www/service-80;");
+            changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-80");
             setupWebtunnel(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
@@ -348,20 +348,31 @@ public class BridgeController {
         Files.write(torrcFilePath, lines);
     }
 
-    public void configureWebTunnelRootPath(String oldRoot, String newRoot) {
-        String command = String.format("sudo sed -i 's|%s|%s|' /etc/nginx/sites-available/default", oldRoot, newRoot);
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
+    // method to change root directory of nginx in default config file
+    public void changeRootDirectory(String rootDirectory) {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
         try {
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                logger.error("Error during web tunnel configuration. Exit code: " + exitCode);
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error during web tunnel configuration", e);
+            // Read the file into a list of strings
+            List<String> lines = Files.readAllLines(defaultConfigPath);
+
+            // Clear the list and add the new configuration lines
+            lines.clear();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root " + rootDirectory + ";");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
+
+            // Write the list back to the file
+            Files.write(defaultConfigPath, lines);
+        } catch (IOException e) {
+            logger.error("Error modifying Nginx default configuration", e);
         }
     }
 }
