@@ -325,23 +325,19 @@
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-        var bridgeCount = data.bridgeLimitReached ? 2 : 1;
-        $('#bridgeCount').text(bridgeCount + "/2");
+        $('#bridgeCount').text(data.bridgeCount + "/2");
     });
 
     $.get("/guard/limit-reached", function(data) {
-        var guardCount = data.guardLimitReached ? 8 : 7;
-        $('#guardCount').text(guardCount + "/8");
+        $('#guardCount').text(data.guardCount + "/8");
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-        var webtunnelCount = data.bridgeLimitReached ? 1 : 0;
-        $('#webtunnelCount').text(webtunnelCount + "/1");
+        $('#webtunnelCount').text(data.bridgeCount + "/1");
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        var snowflakeCount = data.bridgeLimitReached ? 1 : 0;
-        $('#snowflakeCount').text(snowflakeCount + "/1");
+        $('#snowflakeCount').text(data.bridgeCount + "/1");
     });
 </script>
 </body>
