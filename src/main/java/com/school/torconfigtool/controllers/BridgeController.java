@@ -415,4 +415,9 @@ public class BridgeController {
         RelayService.toggleLimit();
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/limit-state")
+    public ResponseEntity<Boolean> getLimitState() {
+        return ResponseEntity.ok(RelayService.isLimitOn());
+    }
 }

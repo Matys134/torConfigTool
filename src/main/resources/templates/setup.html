@@ -396,5 +396,17 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function() {
+        $.get("/bridge/limit-state", function(data) {
+            var toggleLimitButton = document.getElementById("toggleLimitButton");
+            if (data) {
+                toggleLimitButton.textContent = "Turn Limit Off";
+            } else {
+                toggleLimitButton.textContent = "Turn Limit On";
+            }
+        });
+    });
+</script>
 </body>
 </html>
