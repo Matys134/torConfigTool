@@ -419,17 +419,20 @@
             $.post("/bridge/toggle-limit", function() {
                 $.get("/bridge/limit-state", function(data) {
                     var toggleLimitButton = $("#toggleLimitButton");
-                    var forms = $("form"); // select all forms
                     var warningTexts = $(".alert-warning"); // select all warning texts
 
                     if (data) {
                         toggleLimitButton.text("Turn Limit Off");
-                        forms.prop("disabled", true); // disable forms
                         warningTexts.show(); // show warning texts
+                        $('form').each(function() {
+                            $(this).find(':input').prop('disabled', true); // disable all inputs in the form
+                        });
                     } else {
                         toggleLimitButton.text("Turn Limit On");
-                        forms.prop("disabled", false); // enable forms
                         warningTexts.hide(); // hide warning texts
+                        $('form').each(function() {
+                            $(this).find(':input').prop('disabled', false); // enable all inputs in the form
+                        });
                     }
                 });
             });
