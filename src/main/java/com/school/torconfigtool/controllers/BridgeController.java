@@ -85,6 +85,7 @@ public class BridgeController {
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
             generateNginxConfig();
+            changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-80");
             setupWebtunnel(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
@@ -125,21 +126,27 @@ public class BridgeController {
         return config;
     }
 
-    private void setupWebtunnel(String webTunnelUrl) {
+    private void setupWebtunnel(String webTunnelUrl) throws Exception {
         String programLocation = System.getProperty("user.dir");
 
         // Change the ownership of the directory
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
-        executeCommand(chownCommand);
+        Process chownProcess = executeCommand(chownCommand);
+        if (chownProcess == null || chownProcess.exitValue() != 0) {
+            throw new Exception("Failed to change ownership of the directory");
+        }
 
         // Create the directory for the certificate files
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d www." + webTunnelUrl + " -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx";
-        System.out.println("Generating certificate: " + command);
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt";
+        System.out.println("Generating certificate: " + command + " --force");
 
-        executeCommand(command);
+        Process certProcess = executeCommand(command);
+        if (certProcess == null || certProcess.exitValue() != 0) {
+            throw new Exception("Failed to generate certificate");
+        }
     }
 
     private Process executeCommand(String command) {
@@ -160,10 +167,10 @@ public class BridgeController {
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + " -d " + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
-                " --reloadcmd \"sudo systemctl restart nginx.service\"";
+                " --reloadcmd";
 
         System.out.println(command);
 
@@ -345,5 +352,37 @@ public class BridgeController {
             }
         }
         Files.write(torrcFilePath, lines);
+    }
+
+    // method to change root directory of nginx in default config file
+    public void changeRootDirectory(String rootDirectory) {
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+
+        try {
+            // Read the file into a list of strings
+            List<String> lines = Files.readAllLines(defaultConfigPath);
+
+            // Clear the list and add the new configuration lines
+            lines.clear();
+            lines.add("server {");
+            lines.add("    listen 80 default_server;");
+            lines.add("    listen [::]:80 default_server;");
+            lines.add("    root " + rootDirectory + ";");
+            lines.add("    index index.html index.htm index.nginx-debian.html;");
+            lines.add("    server_name _;");
+            lines.add("    location / {");
+            lines.add("        try_files $uri $uri/ =404;");
+            lines.add("    }");
+            lines.add("}");
+
+            // Write the list back to the file
+            Files.write(defaultConfigPath, lines);
+        } catch (IOException e) {
+            logger.error("Error modifying Nginx default configuration", e);
+        }
+        // Restart the nginx service
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        // Restart the nginx service using kill command and then start command
+        processBuilder.command("bash", "-c", "sudo killall nginx && sudo nginx");
     }
 }
