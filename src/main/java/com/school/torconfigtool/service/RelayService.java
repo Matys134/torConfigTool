@@ -46,6 +46,25 @@ public class RelayService {
         return files != null ? files.length : 0;
     }
 
+    public int getGuardCount() {
+        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
+        if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
+            logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
+            return 0;
+        }
+
+        String[] files = torrcDirectory.list(new FilenameFilter() {
+            private static final String TORRC_FILE_SUFFIX = "_guard";
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(TORRC_FILE_PREFIX) && name.endsWith(TORRC_FILE_SUFFIX);
+            }
+        });
+
+        return files != null ? files.length : 0;
+    }
+
     public String getRunningBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));

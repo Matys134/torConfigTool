@@ -222,5 +222,12 @@
         }
     });
 </script>
+<script>
+    $.get("/guard/limit-reached", function(data) {
+        if (data.guardLimitReached) {
+            document.getElementById('guardForm').disabled = true;
+        }
+    });
+</script>
 </body>
 </html>
