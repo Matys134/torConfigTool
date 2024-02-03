@@ -416,13 +416,14 @@
 <script>
     document.getElementById("toggleLimitButton").addEventListener("click", function () {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
-        $.post("/bridge/toggle-limit", function() {
-            if (toggleLimitButton.textContent === "Turn Limit Off") {
-                toggleLimitButton.textContent = "Turn Limit On";
-            } else {
-                toggleLimitButton.textContent = "Turn Limit Off";
-            }
-        });
+        // Toggle the button text immediately when clicked
+        if (toggleLimitButton.textContent === "Turn Limit Off") {
+            toggleLimitButton.textContent = "Turn Limit On";
+        } else {
+            toggleLimitButton.textContent = "Turn Limit Off";
+        }
+        // Then send the AJAX request
+        $.post("/bridge/toggle-limit");
     });
 </script>
 <script>
