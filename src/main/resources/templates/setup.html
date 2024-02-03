@@ -426,18 +426,28 @@
                 // Enable the form fields
                 disableFormFields(false);
             }
+
+            // Update the relay counts
+            updateRelayCounts();
         });
     });
 
-    function disableFormFields(disable) {
-        // Get the form elements
-        var bridgeForm = document.getElementById('bridgeForm');
-        var formElements = bridgeForm.elements;
+    function updateRelayCounts() {
+        $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
+            $('#bridgeCount').text(data.bridgeCount + "/2");
+        });
 
-        // Loop through the form elements and disable/enable them
-        for (var i = 0; i < formElements.length; i++) {
-            formElements[i].disabled = disable;
-        }
+        $.get("/guard/limit-reached", function(data) {
+            $('#guardCount').text(data.guardCount + "/8");
+        });
+
+        $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
+            $('#webtunnelCount').text(data.bridgeCount + "/1");
+        });
+
+        $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
+            $('#snowflakeCount').text(data.bridgeCount + "/1");
+        });
     }
 </script>
 <script>
