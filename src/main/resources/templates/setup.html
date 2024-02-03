@@ -16,45 +16,6 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <!-- Existing content goes here -->
-        </div>
-        <div class="col-md-4">
-            <table id="relayLimitsTable" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Relay Type</th>
-                    <th>Current Count</th>
-                    <th>Max Limit</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Bridge</td>
-                    <td id="bridgeCount"></td>
-                    <td>2</td>
-                </tr>
-                <tr>
-                    <td>Guard</td>
-                    <td id="guardCount"></td>
-                    <td>8</td>
-                </tr>
-                <tr>
-                    <td>WebTunnel</td>
-                    <td id="webtunnelCount"></td>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <td>Snowflake</td>
-                    <td id="snowflakeCount"></td>
-                    <td>1</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="container">
     <h1 class="text-center my-4">Tor Relay Configuration</h1>
 
     <!-- Display success message if provided -->
@@ -184,6 +145,36 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+        </div>
+    </div>
+        </div>
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Relay Type</th>
+                    <th>Current/Max</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Bridge</td>
+                    <td id="bridgeCount">0/2</td>
+                </tr>
+                <tr>
+                    <td>Guard</td>
+                    <td id="guardCount">0/8</td>
+                </tr>
+                <tr>
+                    <td>WebTunnel</td>
+                    <td id="webtunnelCount">0/1</td>
+                </tr>
+                <tr>
+                    <td>Snowflake</td>
+                    <td id="snowflakeCount">0/1</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -334,19 +325,23 @@
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-        $('#bridgeCount').text(data.bridgeLimitReached ? 2 : 1);
+        var bridgeCount = data.bridgeLimitReached ? 2 : 1;
+        $('#bridgeCount').text(bridgeCount + "/2");
     });
 
     $.get("/guard/limit-reached", function(data) {
-        $('#guardCount').text(data.guardLimitReached ? 8 : 7);
+        var guardCount = data.guardLimitReached ? 8 : 7;
+        $('#guardCount').text(guardCount + "/8");
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-        $('#webtunnelCount').text(data.bridgeLimitReached ? 1 : 0);
+        var webtunnelCount = data.bridgeLimitReached ? 1 : 0;
+        $('#webtunnelCount').text(webtunnelCount + "/1");
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        $('#snowflakeCount').text(data.bridgeLimitReached ? 1 : 0);
+        var snowflakeCount = data.bridgeLimitReached ? 1 : 0;
+        $('#snowflakeCount').text(snowflakeCount + "/1");
     });
 </script>
 </body>
