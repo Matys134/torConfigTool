@@ -150,4 +150,14 @@ public class RelayService {
         return bridges;
     }
 
+    private static boolean isLimitOn = true;
+
+    public static void toggleLimit() {
+        isLimitOn = !isLimitOn;
+    }
+
+    public static boolean isLimitOn() {
+        return isLimitOn;
+    }
+
 }

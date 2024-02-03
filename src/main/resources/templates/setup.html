@@ -386,5 +386,13 @@
         }
     });
 </script>
+<script>
+    document.getElementById("toggleLimitButton").addEventListener("click", function () {
+        $.post("/bridge/toggle-limit", function() {
+            var limitStateCheckbox = document.getElementById("limitState");
+            limitStateCheckbox.checked = !limitStateCheckbox.checked;
+        });
+    });
+</script>
 </body>
 </html>
