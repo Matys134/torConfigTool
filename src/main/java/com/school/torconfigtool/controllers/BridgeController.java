@@ -325,7 +325,8 @@ public class BridgeController {
                 response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
                 break;
             case "snowflake":
-                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1 || relayService.getRunningBridgeType().equals("snowflake"));
+                String runningBridgeType = relayService.getRunningBridgeType();
+                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1 || "snowflake".equals(runningBridgeType));
                 break;
             default:
                 response.put("bridgeLimitReached", true);
