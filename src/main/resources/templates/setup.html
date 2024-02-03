@@ -414,22 +414,6 @@
     });
 </script>
 <script>
-    document.getElementById("toggleLimitButton").addEventListener("click", function () {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        // Toggle the button text immediately when clicked
-        if (toggleLimitButton.textContent === "Turn Limit Off") {
-            toggleLimitButton.textContent = "Turn Limit On";
-        } else {
-            toggleLimitButton.textContent = "Turn Limit Off";
-        }
-        // Then send the AJAX request
-        $.post("/bridge/toggle-limit", function() {
-            // After the limit is toggled, update the limit state and the counts of different types of bridges
-            updateLimitState();
-            updateBridgeCounts();
-        });
-    });
-
     function updateLimitState() {
         $.get("/bridge/limit-state", function(data) {
             var toggleLimitButton = document.getElementById("toggleLimitButton");
@@ -441,37 +425,15 @@
         });
     }
 
-    function updateBridgeCounts() {
-        var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
-        bridgeTypes.forEach(function(bridgeType) {
-            $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
-                var bridgeCountElement = $('#' + bridgeType + 'Count');
-                bridgeCountElement.text(data.bridgeCount + "/2");
-                if (data.bridgeCount > 2) {
-                    bridgeCountElement.removeClass('limit-reached');
-                    bridgeCountElement.addClass('over-limit');
-                } else if (data.bridgeCount >= 2) {
-                    bridgeCountElement.removeClass('over-limit');
-                    bridgeCountElement.addClass('limit-reached');
-                } else {
-                    bridgeCountElement.removeClass('limit-reached over-limit');
-                }
-            });
+    document.getElementById("toggleLimitButton").addEventListener("click", function () {
+        var toggleLimitButton = document.getElementById("toggleLimitButton");
+        $.post("/bridge/toggle-limit", function() {
+            updateLimitState();
         });
-        $.get("/guard/limit-reached", function(data) {
-            var guardCountElement = $('#guardCount');
-            guardCountElement.text(data.guardCount + "/8");
-            if (data.guardCount > 8) {
-                guardCountElement.removeClass('limit-reached');
-                guardCountElement.addClass('over-limit');
-            } else if (data.guardCount >= 8) {
-                guardCountElement.removeClass('over-limit');
-                guardCountElement.addClass('limit-reached');
-            } else {
-                guardCountElement.removeClass('limit-reached over-limit');
-            }
-        });
-    }
+    });
+
+    // Call the function to initialize the limit state when the page loads
+    window.onload = updateLimitState;
 </script>
 <script>
     $(document).ready(function() {
