@@ -319,6 +319,7 @@ public class BridgeController {
 
         if (!RelayService.isLimitOn()) {
             response.put("bridgeLimitReached", false);
+            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
             return ResponseEntity.ok(response);
         }
 
@@ -414,5 +415,10 @@ public class BridgeController {
     public ResponseEntity<Void> toggleLimit() {
         RelayService.toggleLimit();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/limit-state")
+    public ResponseEntity<Boolean> getLimitState() {
+        return ResponseEntity.ok(RelayService.isLimitOn());
     }
 }

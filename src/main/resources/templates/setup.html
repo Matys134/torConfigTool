@@ -9,6 +9,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="/css/navbar.css" rel="stylesheet">
+
+    <style>
+        .limit-reached {
+            color: blue;
+        }
+        .over-limit {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
@@ -175,10 +184,8 @@
                 </tr>
                 </tbody>
             </table>
+            <button id="toggleLimitButton" type="button" class="btn btn-primary">Turn Limit Off</button>
         </div>
-        <button id="toggleLimitButton" type="button" class="btn btn-primary">Toggle Limit</button>
-        <input type="checkbox" id="limitState" checked>
-        <label for="limitState">Limit is on</label>
     </div>
 </div>
 
@@ -351,46 +358,96 @@
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#bridgeCount').text(data.bridgeCount + "/2");
+        var bridgeCountElement = $('#bridgeCount');
+        bridgeCountElement.text(data.bridgeCount + "/2");
+        if (data.bridgeCount > 2) {
+            bridgeCountElement.removeClass('limit-reached');
+            bridgeCountElement.addClass('over-limit');
+        } else if (data.bridgeCount >= 2) {
+            bridgeCountElement.removeClass('over-limit');
+            bridgeCountElement.addClass('limit-reached');
         } else {
-            $('#bridgeCount').text(data.bridgeCount + "/Unlimited");
+            bridgeCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/guard/limit-reached", function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#guardCount').text(data.guardCount + "/8");
+        var guardCountElement = $('#guardCount');
+        guardCountElement.text(data.guardCount + "/8");
+        if (data.guardCount > 8) {
+            guardCountElement.removeClass('limit-reached');
+            guardCountElement.addClass('over-limit');
+        } else if (data.guardCount >= 8) {
+            guardCountElement.removeClass('over-limit');
+            guardCountElement.addClass('limit-reached');
         } else {
-            $('#guardCount').text(data.guardCount + "/Unlimited");
+            guardCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#webtunnelCount').text(data.bridgeCount + "/1");
+        var webtunnelCountElement = $('#webtunnelCount');
+        webtunnelCountElement.text(data.bridgeCount + "/1");
+        if (data.bridgeCount > 1) {
+            webtunnelCountElement.removeClass('limit-reached');
+            webtunnelCountElement.addClass('over-limit');
+        } else if (data.bridgeCount >= 1) {
+            webtunnelCountElement.removeClass('over-limit');
+            webtunnelCountElement.addClass('limit-reached');
         } else {
-            $('#webtunnelCount').text(data.bridgeCount + "/Unlimited");
+            webtunnelCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#snowflakeCount').text(data.bridgeCount + "/1");
+        var snowflakeCountElement = $('#snowflakeCount');
+        snowflakeCountElement.text(data.bridgeCount + "/1");
+        if (data.bridgeCount > 1) {
+            snowflakeCountElement.removeClass('limit-reached');
+            snowflakeCountElement.addClass('over-limit');
+        } else if (data.bridgeCount >= 1) {
+            snowflakeCountElement.removeClass('over-limit');
+            snowflakeCountElement.addClass('limit-reached');
         } else {
-            $('#snowflakeCount').text(data.bridgeCount + "/Unlimited");
+            snowflakeCountElement.removeClass('limit-reached over-limit');
         }
     });
 </script>
 <script>
-    document.getElementById("toggleLimitButton").addEventListener("click", function () {
-        $.post("/bridge/toggle-limit", function() {
-            var limitStateCheckbox = document.getElementById("limitState");
-            limitStateCheckbox.checked = !limitStateCheckbox.checked;
+    $(document).ready(function() {
+        $("#toggleLimitButton").click(function() {
+            $.post("/bridge/toggle-limit", function() {
+                $.get("/bridge/limit-state", function(data) {
+                    var toggleLimitButton = $("#toggleLimitButton");
+                    var warningTexts = $(".alert-warning"); // select all warning texts
+
+                    if (data) {
+                        toggleLimitButton.text("Turn Limit Off");
+                        warningTexts.show(); // show warning texts
+                        $('form').each(function() {
+                            $(this).find(':input').prop('disabled', true); // disable all inputs in the form
+                        });
+                    } else {
+                        toggleLimitButton.text("Turn Limit On");
+                        warningTexts.hide(); // hide warning texts
+                        $('form').each(function() {
+                            $(this).find(':input').prop('disabled', false); // enable all inputs in the form
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.get("/bridge/limit-state", function(data) {
+            var toggleLimitButton = document.getElementById("toggleLimitButton");
+            if (data) {
+                toggleLimitButton.textContent = "Turn Limit Off";
+            } else {
+                toggleLimitButton.textContent = "Turn Limit On";
+            }
         });
     });
 </script>
