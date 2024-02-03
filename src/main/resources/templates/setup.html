@@ -176,8 +176,6 @@
                 </tbody>
             </table>
             <button id="toggleLimitButton" type="button" class="btn btn-primary">Turn Limit Off</button>
-            <input type="checkbox" id="limitState" checked>
-            <label for="limitState">Limit is on</label>
         </div>
     </div>
 </div>
@@ -389,11 +387,13 @@
 <script>
     document.getElementById("toggleLimitButton").addEventListener("click", function () {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (toggleLimitButton.textContent === "Turn Limit Off") {
-            toggleLimitButton.textContent = "Turn Limit On";
-        } else {
-            toggleLimitButton.textContent = "Turn Limit Off";
-        }
+        $.post("/bridge/toggle-limit", function() {
+            if (toggleLimitButton.textContent === "Turn Limit Off") {
+                toggleLimitButton.textContent = "Turn Limit On";
+            } else {
+                toggleLimitButton.textContent = "Turn Limit Off";
+            }
+        });
     });
 </script>
 </body>
