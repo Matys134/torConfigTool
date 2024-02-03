@@ -126,12 +126,15 @@ public class BridgeController {
         return config;
     }
 
-    private void setupWebtunnel(String webTunnelUrl) {
+    private void setupWebtunnel(String webTunnelUrl) throws Exception {
         String programLocation = System.getProperty("user.dir");
 
         // Change the ownership of the directory
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
-        executeCommand(chownCommand);
+        Process chownProcess = executeCommand(chownCommand);
+        if (chownProcess == null || chownProcess.exitValue() != 0) {
+            throw new Exception("Failed to change ownership of the directory");
+        }
 
         // Create the directory for the certificate files
         String certDirectory = programLocation + "/onion/certs/service-80/";
@@ -140,7 +143,10 @@ public class BridgeController {
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test";
         System.out.println("Generating certificate: " + command + " --force");
 
-        executeCommand(command);
+        Process certProcess = executeCommand(command);
+        if (certProcess == null || certProcess.exitValue() != 0) {
+            throw new Exception("Failed to generate certificate");
+        }
     }
 
     private Process executeCommand(String command) {
