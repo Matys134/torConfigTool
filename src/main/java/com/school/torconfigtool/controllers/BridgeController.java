@@ -317,7 +317,7 @@ public class BridgeController {
         Map<String, Boolean> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
 
-        if ("snowflake".equals(bridgeType) && relayService.getRunningBridgeType().equals("snowflake")) {
+        if ("snowflake".equals(bridgeType) && bridgeCountByType.get("snowflake") > 0) {
             response.put("bridgeLimitReached", true);
         } else {
             switch (bridgeType) {
