@@ -229,13 +229,7 @@
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
         if (runningBridgeType) {
-            // Disable the form fields and buttons
-            var bridgeForm = document.getElementById('bridgeForm');
-            bridgeForm.disabled = true;
-            var formElements = bridgeForm.elements;
-            for (var i = 0; i < formElements.length; i++) {
-                formElements[i].disabled = true;
-            }
+
 
             // Create a new div element for the message
             var messageDiv = document.createElement("div");
