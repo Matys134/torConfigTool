@@ -109,6 +109,11 @@ public class RelayService {
             bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
         }
 
+        // Count the number of running snowflake proxies
+        if (new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running").exists()) {
+            bridgeCountByType.put("snowflake", bridgeCountByType.get("snowflake") + 1);
+        }
+
         return bridgeCountByType;
     }
 
