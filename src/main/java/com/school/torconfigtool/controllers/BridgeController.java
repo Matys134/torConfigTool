@@ -382,6 +382,7 @@ public class BridgeController {
         }
         // Restart the nginx service
         ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", "sudo systemctl restart nginx");
+        // Restart the nginx service using kill command and then start command
+        processBuilder.command("bash", "-c", "sudo killall nginx && sudo nginx");
     }
 }
