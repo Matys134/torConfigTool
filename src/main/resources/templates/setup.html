@@ -349,38 +349,38 @@
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#bridgeCount').text(data.bridgeCount + "/2");
-        } else {
+        var toggleLimitButton = document.getElementById("toggleLimitButton");
+        if (toggleLimitButton.textContent === "Turn Limit On") {
             $('#bridgeCount').text(data.bridgeCount + "/Unlimited");
+        } else {
+            $('#bridgeCount').text(data.bridgeCount + "/2");
         }
     });
 
     $.get("/guard/limit-reached", function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#guardCount').text(data.guardCount + "/8");
-        } else {
+        var toggleLimitButton = document.getElementById("toggleLimitButton");
+        if (toggleLimitButton.textContent === "Turn Limit On") {
             $('#guardCount').text(data.guardCount + "/Unlimited");
+        } else {
+            $('#guardCount').text(data.guardCount + "/8");
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#webtunnelCount').text(data.bridgeCount + "/1");
-        } else {
+        var toggleLimitButton = document.getElementById("toggleLimitButton");
+        if (toggleLimitButton.textContent === "Turn Limit On") {
             $('#webtunnelCount').text(data.bridgeCount + "/Unlimited");
+        } else {
+            $('#webtunnelCount').text(data.bridgeCount + "/1");
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        var limitStateCheckbox = document.getElementById("limitState");
-        if (limitStateCheckbox.checked) {
-            $('#snowflakeCount').text(data.bridgeCount + "/1");
-        } else {
+        var toggleLimitButton = document.getElementById("toggleLimitButton");
+        if (toggleLimitButton.textContent === "Turn Limit On") {
             $('#snowflakeCount').text(data.bridgeCount + "/Unlimited");
+        } else {
+            $('#snowflakeCount').text(data.bridgeCount + "/1");
         }
     });
 </script>
