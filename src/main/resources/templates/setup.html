@@ -242,7 +242,13 @@
 <script>
     $.get("/guard/bridge-configured", function(data) {
         if (data.bridgeConfigured) {
-            document.getElementById('guardForm').disabled = true;
+            // Disable the form fields and buttons
+            var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
+            var formElements = guardForm.elements;
+            for (var i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
 
             // Create a new div element for the message
             var messageDiv = document.createElement("div");
