@@ -167,7 +167,7 @@ public class BridgeController {
 
     private void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + " -d " + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd";
