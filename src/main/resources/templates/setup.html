@@ -9,6 +9,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link href="/css/navbar.css" rel="stylesheet">
+
+    <style>
+        .limit-reached {
+            color: blue;
+        }
+        .over-limit {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
@@ -349,38 +358,54 @@
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#bridgeCount').text(data.bridgeCount + "/Unlimited");
+        var bridgeCountElement = $('#bridgeCount');
+        bridgeCountElement.text(data.bridgeCount + "/2");
+        if (data.bridgeCount >= 2) {
+            bridgeCountElement.addClass('limit-reached');
+        } else if (data.bridgeCount > 2) {
+            bridgeCountElement.removeClass('limit-reached');
+            bridgeCountElement.addClass('over-limit');
         } else {
-            $('#bridgeCount').text(data.bridgeCount + "/2");
+            bridgeCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/guard/limit-reached", function(data) {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#guardCount').text(data.guardCount + "/Unlimited");
+        var guardCountElement = $('#guardCount');
+        guardCountElement.text(data.guardCount + "/8");
+        if (data.guardCount >= 8) {
+            guardCountElement.addClass('limit-reached');
+        } else if (data.guardCount > 8) {
+            guardCountElement.removeClass('limit-reached');
+            guardCountElement.addClass('over-limit');
         } else {
-            $('#guardCount').text(data.guardCount + "/8");
+            guardCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#webtunnelCount').text(data.bridgeCount + "/Unlimited");
+        var webtunnelCountElement = $('#webtunnelCount');
+        webtunnelCountElement.text(data.bridgeCount + "/1");
+        if (data.bridgeCount >= 1) {
+            webtunnelCountElement.addClass('limit-reached');
+        } else if (data.bridgeCount > 1) {
+            webtunnelCountElement.removeClass('limit-reached');
+            webtunnelCountElement.addClass('over-limit');
         } else {
-            $('#webtunnelCount').text(data.bridgeCount + "/1");
+            webtunnelCountElement.removeClass('limit-reached over-limit');
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        var toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#snowflakeCount').text(data.bridgeCount + "/Unlimited");
+        var snowflakeCountElement = $('#snowflakeCount');
+        snowflakeCountElement.text(data.bridgeCount + "/1");
+        if (data.bridgeCount >= 1) {
+            snowflakeCountElement.addClass('limit-reached');
+        } else if (data.bridgeCount > 1) {
+            snowflakeCountElement.removeClass('limit-reached');
+            snowflakeCountElement.addClass('over-limit');
         } else {
-            $('#snowflakeCount').text(data.bridgeCount + "/1");
+            snowflakeCountElement.removeClass('limit-reached over-limit');
         }
     });
 </script>
