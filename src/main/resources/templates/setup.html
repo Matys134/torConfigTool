@@ -414,26 +414,27 @@
     });
 </script>
 <script>
-    function updateLimitState() {
-        $.get("/bridge/limit-state", function(data) {
-            var toggleLimitButton = document.getElementById("toggleLimitButton");
-            if (data) {
-                toggleLimitButton.textContent = "Turn Limit Off";
-            } else {
-                toggleLimitButton.textContent = "Turn Limit On";
-            }
-        });
-    }
-
     document.getElementById("toggleLimitButton").addEventListener("click", function () {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
         $.post("/bridge/toggle-limit", function() {
-            updateLimitState();
+            if (toggleLimitButton.textContent === "Turn Limit Off") {
+                toggleLimitButton.textContent = "Turn Limit On";
+            } else {
+                toggleLimitButton.textContent = "Turn Limit Off";
+            }
+
+            // Fetch the new limit state
+            $.get("/bridge/limit-state", function(data) {
+                // Select all the forms with the class 'limitable-form'
+                var forms = document.getElementsByClassName('limitable-form');
+
+                // Disable or enable the forms based on the limit state
+                for (var i = 0; i < forms.length; i++) {
+                    forms[i].disabled = data;
+                }
+            });
         });
     });
-
-    // Call the function to initialize the limit state when the page loads
-    window.onload = updateLimitState;
 </script>
 <script>
     $(document).ready(function() {
