@@ -317,20 +317,19 @@ public class BridgeController {
         Map<String, Boolean> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
 
-        if ("snowflake".equals(bridgeType) && bridgeCountByType.get("snowflake") > 0) {
-            response.put("bridgeLimitReached", true);
-        } else {
-            switch (bridgeType) {
-                case "obfs4":
-                    response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
-                    break;
-                case "webtunnel":
-                    response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
-                    break;
-                default:
-                    response.put("bridgeLimitReached", true);
-                    break;
-            }
+        switch (bridgeType) {
+            case "obfs4":
+                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
+                break;
+            case "webtunnel":
+                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
+                break;
+            case "snowflake":
+                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
+                break;
+            default:
+                response.put("bridgeLimitReached", true);
+                break;
         }
 
         return ResponseEntity.ok(response);
