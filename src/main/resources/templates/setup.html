@@ -205,20 +205,89 @@
     });
 </script>
 <script>
-    $.get("/bridge/limit-reached", function(data) {
-        if (data.bridgeLimitReached) {
-            document.getElementById('bridgeTabButton').disabled = true;
-        }
+    var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
+
+    bridgeTypes.forEach(function(bridgeType) {
+        $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
+            if (data.bridgeLimitReached) {
+                // Disable the bridge form fields and buttons
+                var bridgeForm = document.getElementById('bridgeForm');
+                bridgeForm.disabled = true;
+                var formElements = bridgeForm.elements;
+                for (var i = 0; i < formElements.length; i++) {
+                    formElements[i].disabled = true;
+                }
+
+                // Create a new div element for the message
+                var messageDiv = document.createElement("div");
+                messageDiv.className = "alert alert-warning";
+                messageDiv.role = "alert";
+                messageDiv.innerHTML = "Maximum number of " + bridgeType + " bridges has been reached. You can edit an existing bridge or remove some to create a new one.";
+
+                // Append the message div to the container
+                document.querySelector('.container').appendChild(messageDiv);
+            }
+        });
     });
 </script>
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
         if (runningBridgeType) {
-            $("#bridgeType option").each(function() {
-                if ($(this).val() !== runningBridgeType) {
-                    $(this).prop("disabled", true);
-                }
-            });
+            // Disable the bridge type selection
+            document.getElementById('bridgeType').disabled = true;
+
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
+
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
+        }
+    });
+</script>
+<script>
+    $.get("/guard/limit-reached", function(data) {
+        if (data.guardLimitReached) {
+            // Disable the form fields and buttons
+            var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
+            var formElements = guardForm.elements;
+            for (var i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
+
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "Maximum number of guard relays has been reached. You can edit an existing relay or remove some to create a new one.";
+
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
+        }
+    });
+</script>
+<script>
+    $.get("/guard/bridge-configured", function(data) {
+        if (data.bridgeConfigured) {
+            // Disable the form fields and buttons
+            var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
+            var formElements = guardForm.elements;
+            for (var i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
+
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "Bridges are already configured. Creation of guard relays is blocked.";
+
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
         }
     });
 </script>
