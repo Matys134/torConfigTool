@@ -350,37 +350,41 @@
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
+        var bridgeCount = data.bridgeCount || 0; // Use 0 if data.bridgeCount is undefined
         if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#bridgeCount').text((data.bridgeCount || "undefined") + "/Unlimited");
+            $('#bridgeCount').text(bridgeCount + "/Unlimited");
         } else {
-            $('#bridgeCount').text((data.bridgeCount || "undefined") + "/2");
+            $('#bridgeCount').text(bridgeCount + "/2");
         }
     });
 
     $.get("/guard/limit-reached", function(data) {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
+        var guardCount = data.guardCount || 0; // Use 0 if data.guardCount is undefined
         if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#guardCount').text((data.guardCount || "undefined") + "/Unlimited");
+            $('#guardCount').text(guardCount + "/Unlimited");
         } else {
-            $('#guardCount').text((data.guardCount || "undefined") + "/8");
+            $('#guardCount').text(guardCount + "/8");
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
+        var webtunnelCount = data.bridgeCount || 0; // Use 0 if data.bridgeCount is undefined
         if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#webtunnelCount').text((data.bridgeCount || "undefined") + "/Unlimited");
+            $('#webtunnelCount').text(webtunnelCount + "/Unlimited");
         } else {
-            $('#webtunnelCount').text((data.bridgeCount || "undefined") + "/1");
+            $('#webtunnelCount').text(webtunnelCount + "/1");
         }
     });
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
         var toggleLimitButton = document.getElementById("toggleLimitButton");
+        var snowflakeCount = data.bridgeCount || 0; // Use 0 if data.bridgeCount is undefined
         if (toggleLimitButton.textContent === "Turn Limit On") {
-            $('#snowflakeCount').text((data.bridgeCount || "undefined") + "/Unlimited");
+            $('#snowflakeCount').text(snowflakeCount + "/Unlimited");
         } else {
-            $('#snowflakeCount').text((data.bridgeCount || "undefined") + "/1");
+            $('#snowflakeCount').text(snowflakeCount + "/1");
         }
     });
 </script>
