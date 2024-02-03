@@ -185,7 +185,6 @@
         } else if (bridgeType === "snowflake") {
             snowflakeFields.style.display = "block";
         }
-    }
 
     // Call the function to initialize fields when the page loads
     window.onload = toggleBridgeFields;
@@ -205,7 +204,7 @@
     });
 </script>
 <script>
-    $.get("/bridge/limit-reached", { bridgeType: $("#bridgeType").val() }, function(data) {
+    $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
         if (data.bridgeLimitReached) {
             // Disable the form fields and buttons
             var bridgeForm = document.getElementById('bridgeForm');
@@ -219,7 +218,7 @@
             var messageDiv = document.createElement("div");
             messageDiv.className = "alert alert-warning";
             messageDiv.role = "alert";
-            messageDiv.innerHTML = "Maximum number of " + $("#bridgeType").val() + " bridges has been reached. You can edit an existing bridge or remove some to create a new one.";
+            messageDiv.innerHTML = "Maximum number of " + bridgeType + " bridges has been reached. You can edit an existing bridge or remove some to create a new one.";
 
             // Append the message div to the container
             document.querySelector('.container').appendChild(messageDiv);
@@ -228,8 +227,7 @@
 </script>
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
-        var selectedBridgeType = $("#bridgeType").val();
-        if (runningBridgeType && runningBridgeType === selectedBridgeType) {
+        if (runningBridgeType) {
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
 
