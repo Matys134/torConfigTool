@@ -319,6 +319,7 @@ public class BridgeController {
 
         if (!RelayService.isLimitOn()) {
             response.put("bridgeLimitReached", false);
+            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
             return ResponseEntity.ok(response);
         }
 

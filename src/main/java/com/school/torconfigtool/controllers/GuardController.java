@@ -115,13 +115,14 @@ public class GuardController {
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkGuardLimit() {
         Map<String, Object> response = new HashMap<>();
+        int guardCount = relayService.getGuardCount();
 
         if (!RelayService.isLimitOn()) {
             response.put("guardLimitReached", false);
+            response.put("guardCount", guardCount);
             return ResponseEntity.ok(response);
         }
 
-        int guardCount = relayService.getGuardCount();
         response.put("guardLimitReached", guardCount >= 8);
         response.put("guardCount", guardCount);
         return ResponseEntity.ok(response);
