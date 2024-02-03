@@ -164,7 +164,7 @@ public class BridgeController {
         String command = "/home/matys/.acme.sh/acme.sh --install-cert -d www." + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
-                " --reloadcmd \"sudo systemctl restart nginx.service\"";
+                " --reloadcmd";
 
         System.out.println(command);
 
