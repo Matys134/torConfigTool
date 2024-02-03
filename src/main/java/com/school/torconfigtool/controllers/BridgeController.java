@@ -380,5 +380,8 @@ public class BridgeController {
         } catch (IOException e) {
             logger.error("Error modifying Nginx default configuration", e);
         }
+        // Restart the nginx service
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", "sudo systemctl restart nginx");
     }
 }
