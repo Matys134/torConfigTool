@@ -229,7 +229,8 @@
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
         if (runningBridgeType) {
-
+            // Disable the bridge type selection
+            document.getElementById('bridgeType').disabled = true;
 
             // Create a new div element for the message
             var messageDiv = document.createElement("div");
