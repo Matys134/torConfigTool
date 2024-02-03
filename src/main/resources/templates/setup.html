@@ -176,6 +176,9 @@
                 </tbody>
             </table>
         </div>
+        <button id="toggleLimitButton" type="button" class="btn btn-primary">Toggle Limit</button>
+        <input type="checkbox" id="limitState" checked>
+        <label for="limitState">Limit is on</label>
     </div>
 </div>
 
@@ -338,6 +341,57 @@
 
     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
         $('#snowflakeCount').text(data.bridgeCount + "/1");
+    });
+</script>
+<script>
+    document.getElementById("toggleLimitButton").addEventListener("click", function () {
+        var limitStateCheckbox = document.getElementById("limitState");
+        limitStateCheckbox.checked = !limitStateCheckbox.checked;
+    });
+</script>
+<script>
+    $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
+        var limitStateCheckbox = document.getElementById("limitState");
+        if (limitStateCheckbox.checked) {
+            $('#bridgeCount').text(data.bridgeCount + "/2");
+        } else {
+            $('#bridgeCount').text(data.bridgeCount + "/Unlimited");
+        }
+    });
+
+    $.get("/guard/limit-reached", function(data) {
+        var limitStateCheckbox = document.getElementById("limitState");
+        if (limitStateCheckbox.checked) {
+            $('#guardCount').text(data.guardCount + "/8");
+        } else {
+            $('#guardCount').text(data.guardCount + "/Unlimited");
+        }
+    });
+
+    $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
+        var limitStateCheckbox = document.getElementById("limitState");
+        if (limitStateCheckbox.checked) {
+            $('#webtunnelCount').text(data.bridgeCount + "/1");
+        } else {
+            $('#webtunnelCount').text(data.bridgeCount + "/Unlimited");
+        }
+    });
+
+    $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
+        var limitStateCheckbox = document.getElementById("limitState");
+        if (limitStateCheckbox.checked) {
+            $('#snowflakeCount').text(data.bridgeCount + "/1");
+        } else {
+            $('#snowflakeCount').text(data.bridgeCount + "/Unlimited");
+        }
+    });
+</script>
+<script>
+    document.getElementById("toggleLimitButton").addEventListener("click", function () {
+        $.post("/bridge/toggle-limit", function() {
+            var limitStateCheckbox = document.getElementById("limitState");
+            limitStateCheckbox.checked = !limitStateCheckbox.checked;
+        });
     });
 </script>
 </body>

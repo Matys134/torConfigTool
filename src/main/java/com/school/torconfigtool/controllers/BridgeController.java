@@ -317,6 +317,11 @@ public class BridgeController {
         Map<String, Object> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
 
+        if (!RelayService.isLimitOn()) {
+            response.put("bridgeLimitReached", false);
+            return ResponseEntity.ok(response);
+        }
+
         switch (bridgeType) {
             case "obfs4":
                 response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
@@ -403,5 +408,11 @@ public class BridgeController {
         ProcessBuilder processBuilder = new ProcessBuilder();
         // Restart the nginx service using kill command and then start command
         processBuilder.command("bash", "-c", "sudo killall nginx && sudo nginx");
+    }
+
+    @PostMapping("/toggle-limit")
+    public ResponseEntity<Void> toggleLimit() {
+        RelayService.toggleLimit();
+        return ResponseEntity.ok().build();
     }
 }
