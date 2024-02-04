@@ -28,15 +28,22 @@ $(document).ready(function () {
 
         // Show or hide the input fields based on whether the corresponding data attribute has a value
         configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort && relayType !== 'webtunnel');
+        configSelectors.orPort.closest('label').toggle(!!data.orPort);
         configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort && relayType !== 'webtunnel');
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
 
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
             configSelectors.serverTransport.closest('label').show();
         } else {
             configSelectors.serverTransport.closest('label').hide();
+        }
+
+        // If the relay type is webTunnel, only show the ContactInfo field
+        if (relayType === 'webTunnel') {
+            configSelectors.orPort.closest('label').hide();
+            configSelectors.serverTransport.closest('label').hide();
+            configSelectors.controlPort.closest('label').hide();
         }
 
         // Set the data-config-type attribute of each field to the relay type
