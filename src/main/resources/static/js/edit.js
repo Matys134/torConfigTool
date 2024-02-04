@@ -39,30 +39,29 @@ $(document).ready(function () {
             configSelectors.serverTransport.closest('label').hide();
         }
 
-        // Check the type of bridge and show/hide fields accordingly
-        if (relayType === 'bridge') {
-            if (data.serverTransport === 'obfs4') {
-                configSelectors.orPort.closest('label').show();
-                configSelectors.serverTransport.closest('label').show();
-                configSelectors.contact.closest('label').show();
-                configSelectors.controlPort.closest('label').show();
-            } else if (data.serverTransport === 'WebTunnel') {
-                configSelectors.orPort.closest('label').hide();
-                configSelectors.serverTransport.closest('label').hide();
-                configSelectors.contact.closest('label').show();
-                configSelectors.controlPort.closest('label').hide();
-            } else if (data.serverTransport === 'Snowflake') {
-                configSelectors.orPort.closest('label').hide();
-                configSelectors.serverTransport.closest('label').hide();
-                configSelectors.contact.closest('label').hide();
-                configSelectors.controlPort.closest('label').hide();
-            }
-        }
-
         // Set the data-config-type attribute of each field to the relay type
         $('#edit-form [data-config-type]').each(function() {
             $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
         });
+
+        // Check the bridge type and show only relevant fields
+        if (data.bridgeType === 'obfs4') {
+            configSelectors.orPort.closest('label').show();
+            configSelectors.serverTransport.closest('label').show();
+            configSelectors.contact.closest('label').show();
+            configSelectors.controlPort.closest('label').show();
+        } else if (data.bridgeType === 'webtunnel') {
+            configSelectors.orPort.closest('label').hide();
+            configSelectors.serverTransport.closest('label').hide();
+            configSelectors.contact.closest('label').show();
+            configSelectors.controlPort.closest('label').hide();
+        } else if (data.bridgeType === 'snowflake') {
+            // Snowflake can't be edited
+            configSelectors.orPort.closest('label').hide();
+            configSelectors.serverTransport.closest('label').hide();
+            configSelectors.contact.closest('label').hide();
+            configSelectors.controlPort.closest('label').hide();
+        }
 
         // Show the modal
         $('#edit-modal').modal('show');
