@@ -18,9 +18,7 @@ $(document).ready(function () {
     };
 
     // Function to show the modal with the data for editing
-    function showModalWith(data, relayType, bridgeType) {
-        // log what is being sent to the modal
-        console.log('Bridge type when showModalWith called:', bridgeType);
+    function showModalWith(data, relayType) {
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
@@ -28,34 +26,28 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on whether the corresponding data attribute has a value
-        configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
-        configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
-
-        // Show or hide the input fields based on the relay type
-        if (relayType === 'bridge') {
-            switch (bridgeType) {
-                case 'obfs4':
-                    configSelectors.orPort.closest('label').show();
-                    configSelectors.serverTransport.closest('label').show();
-                    configSelectors.contact.closest('label').show();
-                    configSelectors.controlPort.closest('label').show();
-                    break;
-                case 'webTunnel':
-                    configSelectors.orPort.closest('label').hide();
-                    configSelectors.serverTransport.closest('label').hide();
-                    configSelectors.contact.closest('label').show();
-                    configSelectors.controlPort.closest('label').hide();
-                    break;
-                case 'snowflake':
-                    configSelectors.orPort.closest('label').hide();
-                    configSelectors.serverTransport.closest('label').hide();
-                    configSelectors.contact.closest('label').hide();
-                    configSelectors.controlPort.closest('label').hide();
-                    break;
+        // Show or hide the serverTransport field based on the relay type
+        if (relayType === 'guard') {
+            configSelectors.nickname.closest('label').toggle(!!data.nickname);
+            configSelectors.orPort.closest('label').toggle(!!data.orPort);
+            configSelectors.contact.closest('label').toggle(!!data.contact);
+            configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+        } else if (relayType === 'bridge') {
+            if (data.bridgeType === 'obfs4') {
+                configSelectors.nickname.closest('label').toggle(!!data.nickname);
+                configSelectors.orPort.closest('label').toggle(!!data.orPort);
+                configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
+                configSelectors.contact.closest('label').toggle(!!data.contact);
+            } else if (data.bridgeType === 'webTunnel') {
+                configSelectors.contact.closest('label').toggle(!!data.contact);
             }
+        }
+
+        // Show or hide fields based on the bridge type
+        if (data.bridgeType === 'obfs4') {
+            // Show obfs4 fields
+        } else if (data.bridgeType === 'webTunnel') {
+            // Show webTunnel fields
         }
 
         // Set the data-config-type attribute of each field to the relay type
@@ -99,9 +91,8 @@ $(document).ready(function () {
     }
 
     buttons.edit.click(function () {
-        const relayType = $(this).attr('data-config-type');
-        const bridgeType = $(this).attr('data-bridge-type'); // Get the bridge type from the data attribute
-        console.log('Bridge type when edit button clicked:', bridgeType); // Log the bridge type
+        const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
@@ -111,7 +102,7 @@ $(document).ready(function () {
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
-        showModalWith(data, relayType, bridgeType);
+        showModalWith(data, relayType);
     });
 
     buttons.save.click(function () {
