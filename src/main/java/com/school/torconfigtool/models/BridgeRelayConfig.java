@@ -26,6 +26,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     @Override
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
         writer.write("BridgeRelay 1");
+        writer.write("Test");
         writer.newLine();
         logger.info("Bridge type in BridgeRelayConfig: " + getBridgeType());
         switch (getBridgeType()) {
