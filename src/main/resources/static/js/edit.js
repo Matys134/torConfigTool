@@ -36,6 +36,10 @@ $(document).ready(function () {
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
+                // Populate the input fields with the current values
+                if ($(this).next('input').attr('id') in data) {
+                    $(this).next('input').val(data[$(this).next('input').attr('id').replace('edit-', '')]);
+                }
             }
         });
 
