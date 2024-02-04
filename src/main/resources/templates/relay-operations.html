@@ -19,7 +19,6 @@
                 <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
                     <h5 th:text="'Nickname: ' + ${config.guardRelayConfig.nickname}"></h5>
-                    <p th:text="'Bridge Type: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
                     <p th:text="'ORPort: ' + ${config.guardRelayConfig.orPort}"></p>
                     <p th:text="'Contact: ' + ${config.guardRelayConfig.contact}"></p>
                     <p th:text="'Control Port: ' + ${config.guardRelayConfig.controlPort}"></p>
@@ -64,6 +63,7 @@
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
+                    <p th:text="'Bridge Type: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
