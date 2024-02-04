@@ -92,19 +92,26 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        const bridgeType = $(this).attr('data-bridge-type'); // Get the bridge type from the data attribute
-        console.log('Relay type:', relayType); // Add this line
-        console.log('Bridge type:', bridgeType);
+        const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
-        const data = {
-            nickname: $(this).data('config-nickname'),
-            orPort: $(this).data('config-orport'),
-            contact: $(this).data('config-contact'),
-            controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
-        };
+        // Send a GET request to the /bridge/running-type endpoint
+        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+            // Get the bridge type for the current nickname
+            const bridgeType = runningBridgeTypes[nickname];
 
-        showModalWith(data, relayType);
+            console.log('Relay type:', relayType);
+            console.log('Bridge type:', bridgeType);
+
+            const data = {
+                nickname: nickname,
+                orPort: $(this).data('config-orport'),
+                contact: $(this).data('config-contact'),
+                controlPort: $(this).data('config-controlport'),
+                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            };
+
+            showModalWith(data, relayType, bridgeType);
+        });
     });
 
     buttons.save.click(function () {
