@@ -18,7 +18,7 @@ $(document).ready(function () {
     };
 
     // Function to show the modal with the data for editing
-    function showModalWith(data, relayType) {
+    function showModalWith(data, relayType, bridgeType) {
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
@@ -26,22 +26,17 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on whether the corresponding data attribute has a value
-        configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
-        configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+        // Hide all fields initially
+        $('#edit-form label, #edit-form input').hide();
 
-        // Show or hide the serverTransport field based on the relay type
-        if (relayType === 'bridge') {
-            configSelectors.serverTransport.closest('label').show();
-        } else {
-            configSelectors.serverTransport.closest('label').hide();
-        }
-
-        // Set the data-config-type attribute of each field to the relay type
+        // Show or hide the fields based on the relay type and bridge type
         $('#edit-form [data-config-type]').each(function() {
-            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
+            var configTypes = $(this).attr('data-config-type').split(' ');
+            var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
+            if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
+                $(this).show();
+                $(this).next('input').show();
+            }
         });
 
         // Show the modal
@@ -81,17 +76,26 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        console.log('Relay type:', relayType); // Add this line
+        const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
-        const data = {
-            nickname: $(this).data('config-nickname'),
-            orPort: $(this).data('config-orport'),
-            contact: $(this).data('config-contact'),
-            controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
-        };
+        // Send a GET request to the /bridge/running-type endpoint
+        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+            // Get the bridge type for the current nickname
+            const bridgeType = runningBridgeTypes[nickname];
 
-        showModalWith(data, relayType);
+            console.log('Relay type:', relayType);
+            console.log('Bridge type:', bridgeType);
+
+            const data = {
+                nickname: nickname,
+                orPort: $(this).data('config-orport'),
+                contact: $(this).data('config-contact'),
+                controlPort: $(this).data('config-controlport'),
+                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            };
+
+            showModalWith(data, relayType, bridgeType);
+        });
     });
 
     buttons.save.click(function () {
