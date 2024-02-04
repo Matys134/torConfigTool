@@ -68,21 +68,26 @@ public class RelayService {
         return files != null ? files.length : 0;
     }
 
-    public List<String> getRunningBridgeType() {
+    public Map<String, String> getRunningBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
-        List<String> runningBridgeTypes = new ArrayList<>();
+        Map<String, String> runningBridgeTypes = new HashMap<>();
 
         if (files != null) {
             for (File file : files) {
                 try {
                     String content = new String(Files.readAllBytes(file.toPath()));
+                    String bridgeType = null;
                     if (content.contains("obfs4")) {
-                        runningBridgeTypes.add("obfs4");
+                        bridgeType = "obfs4";
                     } else if (content.contains("webtunnel")) {
-                        runningBridgeTypes.add("webtunnel");
+                        bridgeType = "webtunnel";
                     } else if (content.contains("snowflake")) {
-                        runningBridgeTypes.add("snowflake");
+                        bridgeType = "snowflake";
+                    }
+                    if (bridgeType != null) {
+                        String bridgeNickname = file.getName().substring(TORRC_FILE_PREFIX.length(), file.getName().length() - "_bridge".length());
+                        runningBridgeTypes.put(bridgeNickname, bridgeType);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -91,7 +96,7 @@ public class RelayService {
         }
 
         if (new File(torrcDirectory, "snowflake_proxy_running").exists()) {
-            runningBridgeTypes.add("snowflake");
+            runningBridgeTypes.put("snowflake_proxy", "snowflake");
         }
 
         return runningBridgeTypes;
