@@ -64,9 +64,7 @@
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
 
-                    <!-- Debug log -->
-                    <p>Debug: <span th:text="${config.bridgeRelayConfig}"></span></p>
-                    <p>Type: <span th:text="${config.bridgeRelayConfig.bridgeType}"></span></p>
+                    <p th:text="'Bridge tpye: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
 
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
@@ -228,6 +226,24 @@
         updateHostname();
     });
 </script>
+<script>
+    $(document).ready(function() {
+        var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
+
+        bridgeTypes.forEach(function(bridgeType) {
+            $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
+                var bridgeCountElement = $('#' + bridgeType + 'Count');
+                bridgeCountElement.text(data.bridgeCount + "/2");
+                if (data.bridgeCount > 2) {
+                    bridgeCountElement.addClass('over-limit');
+                } else {
+                    bridgeCountElement.removeClass('over-limit');
+                }
+            });
+        });
+    });
+</script>
+
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
