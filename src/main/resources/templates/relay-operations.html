@@ -146,9 +146,16 @@
 </div>
 
 <!-- Add modal for editing configurations (hidden by default) -->
-<div class="modal" id="edit-modal">
-    <div class="modal-content">
-        <h2>Edit Configuration</h2>
+<div class="modal" id="edit-modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Configuration</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
         <form id="edit-form">
             <input id="edit-config-type" name="edit-config-type" type="hidden">
 
@@ -173,10 +180,13 @@
 
             <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
             <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
-
-            <button id="save-button" type="button">Save</button>
-            <button id="cancel-button" type="button">Cancel</button>
         </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="save-button" type="button">Save</button>
+                <button class="btn btn-secondary" data-dismiss="modal" id="cancel-button" type="button">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -211,6 +221,7 @@
         updateHostname();
     });
 </script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

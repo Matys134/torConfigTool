@@ -45,12 +45,12 @@ $(document).ready(function () {
         });
 
         // Show the modal
-        configSelectors.modal.show();
+        $('#edit-modal').modal('show');
     }
 
 
     function hideModal() {
-        configSelectors.modal.hide();
+        $('#edit-modal').modal('hide');
     }
 
     function updateView(data) {
