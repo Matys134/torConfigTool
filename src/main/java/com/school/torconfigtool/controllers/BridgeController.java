@@ -54,6 +54,7 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
+        System.out.println("Bridge type: " + bridgeType);
         if (relayService.getBridgeCount() >= 2) {
             model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
             return "setup";
