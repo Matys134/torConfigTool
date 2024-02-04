@@ -64,8 +64,6 @@
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
 
-                    <p th:text="'Bridge tpye: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
-
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
@@ -226,23 +224,31 @@
         updateHostname();
     });
 </script>
-<script>
-    $(document).ready(function() {
-        var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
 
-        bridgeTypes.forEach(function(bridgeType) {
-            $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
-                var bridgeCountElement = $('#' + bridgeType + 'Count');
-                bridgeCountElement.text(data.bridgeCount + "/2");
-                if (data.bridgeCount > 2) {
-                    bridgeCountElement.addClass('over-limit');
-                } else {
-                    bridgeCountElement.removeClass('over-limit');
+<script>
+    var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
+
+    bridgeTypes.forEach(function(bridgeType) {
+        $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
+            if (data.bridgeLimitReached) {
+                // Get all bridge elements
+                var bridgeElements = document.getElementsByClassName('bridge');
+
+                // Iterate over each bridge element
+                for (var i = 0; i < bridgeElements.length; i++) {
+                    // Create a new span element for the bridge type
+                    var typeSpan = document.createElement("span");
+                    typeSpan.className = "bridge-type";
+                    typeSpan.innerHTML = "Type: " + bridgeType;
+
+                    // Append the bridge type to the bridge element
+                    bridgeElements[i].appendChild(typeSpan);
                 }
-            });
+            }
         });
     });
 </script>
+
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
