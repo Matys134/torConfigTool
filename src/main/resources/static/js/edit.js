@@ -26,31 +26,25 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
+        // Reset all fields to hidden
+        $('#edit-form [data-config-type]').hide();
+
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'guard') {
-            configSelectors.nickname.closest('label').toggle(!!data.nickname);
-            configSelectors.orPort.closest('label').toggle(!!data.orPort);
-            configSelectors.contact.closest('label').toggle(!!data.contact);
-            configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+            configSelectors.nickname.closest('label').show(!!data.nickname);
+            configSelectors.orPort.closest('label').show(!!data.orPort);
+            configSelectors.contact.closest('label').show(!!data.contact);
+            configSelectors.controlPort.closest('label').show(!!data.controlPort);
         } else if (relayType === 'bridge') {
             if (data.bridgeType === 'obfs4') {
-                configSelectors.nickname.closest('label').toggle(!!data.nickname);
-                configSelectors.orPort.closest('label').toggle(!!data.orPort);
-                configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
-                configSelectors.contact.closest('label').toggle(!!data.contact);
+                configSelectors.nickname.closest('label').show(!!data.nickname);
+                configSelectors.orPort.closest('label').show(!!data.orPort);
+                configSelectors.serverTransport.closest('label').show(!!data.serverTransport);
+                configSelectors.contact.closest('label').show(!!data.contact);
             } else if (data.bridgeType === 'webTunnel') {
-                configSelectors.contact.closest('label').toggle(!!data.contact);
-                // disable the orPort and serverTransport fields
-                configSelectors.orPort.closest('label').toggle(false);
-                configSelectors.serverTransport.closest('label').toggle(false);
+                configSelectors.contact.closest('label').show(!!data.contact);
             }
         }
-
-
-        // Set the data-config-type attribute of each field to the relay type
-        $('#edit-form [data-config-type]').each(function() {
-            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
-        });
 
         // Show the modal
         $('#edit-modal').modal('show');
