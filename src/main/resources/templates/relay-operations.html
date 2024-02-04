@@ -231,7 +231,7 @@
 
 <script>
     $(document).ready(function() {
-        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+        $.get("/bridge/running-type", function(runningBridgeTypes) {
             for (var bridgeNickname in runningBridgeTypes) {
                 if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
                     var bridgeType = runningBridgeTypes[bridgeNickname];
