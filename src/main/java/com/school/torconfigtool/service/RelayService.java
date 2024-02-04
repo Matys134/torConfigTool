@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service
@@ -66,32 +68,38 @@ public class RelayService {
         return files != null ? files.length : 0;
     }
 
-    public String getRunningBridgeType() {
+    public Map<String, String> getRunningBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
-        String runningBridgeType = null;
+        Map<String, String> runningBridgeTypes = new HashMap<>();
 
         if (files != null) {
             for (File file : files) {
-                try (Scanner scanner = new Scanner(file)) {
-                    while (scanner.hasNextLine()) {
-                        String line = scanner.nextLine();
-                        if (line.startsWith("ServerTransportPlugin")) {
-                            runningBridgeType = line.split(" ")[1];
-                            break;
-                        }
+                try {
+                    String content = new String(Files.readAllBytes(file.toPath()));
+                    String bridgeType = null;
+                    if (content.contains("obfs4")) {
+                        bridgeType = "obfs4";
+                    } else if (content.contains("webtunnel")) {
+                        bridgeType = "webtunnel";
+                    } else if (content.contains("snowflake")) {
+                        bridgeType = "snowflake";
                     }
-                } catch (FileNotFoundException e) {
-                    logger.error("Error reading torrc file", e);
+                    if (bridgeType != null) {
+                        String bridgeNickname = file.getName().substring(TORRC_FILE_PREFIX.length(), file.getName().length() - "_bridge".length());
+                        runningBridgeTypes.put(bridgeNickname, bridgeType);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
 
         if (new File(torrcDirectory, "snowflake_proxy_running").exists()) {
-            runningBridgeType = "snowflake";
+            runningBridgeTypes.put("snowflake_proxy", "snowflake");
         }
 
-        return runningBridgeType;
+        return runningBridgeTypes;
     }
 
     public Map<String, Integer> getBridgeCountByType() {

@@ -76,7 +76,14 @@ public class BridgeController {
             return;
         }
 
+        // Log the bridgeType before creating the BridgeRelayConfig object
+        logger.info("Bridge type before creating BridgeRelayConfig: " + bridgeType);
+
         BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+
+        // Log the bridgeType after creating the BridgeRelayConfig object
+        logger.info("Bridge type after creating BridgeRelayConfig: " + config.getBridgeType());
+
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
@@ -107,7 +114,10 @@ public class BridgeController {
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
         config.setBridgeType(bridgeType);
-        System.out.println("Bridge type: " + bridgeType);
+
+        // Log the bridgeType after setting it in the BridgeRelayConfig object
+        logger.info("Bridge type after setting in BridgeRelayConfig: " + config.getBridgeType());
+
         config.setNickname(bridgeNickname);
         if (bridgePort != null)
             config.setOrPort(String.valueOf(bridgePort));
@@ -352,7 +362,7 @@ public class BridgeController {
     }
 
     @GetMapping("/running-type")
-    public ResponseEntity<String> getRunningBridgeType() {
+    public ResponseEntity<Map<String, String>> getRunningBridgeType() {
         return ResponseEntity.ok(relayService.getRunningBridgeType());
     }
 

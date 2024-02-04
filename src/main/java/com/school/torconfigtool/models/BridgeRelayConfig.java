@@ -88,4 +88,9 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         runProxyProcessBuilder.redirectErrorStream(true);
         return runProxyProcessBuilder.start();
     }
+
+    public void setBridgeType(String bridgeType) {
+        this.bridgeType = bridgeType;
+        logger.info("Bridge type set in BridgeRelayConfig: " + this.bridgeType);
+    }
 }

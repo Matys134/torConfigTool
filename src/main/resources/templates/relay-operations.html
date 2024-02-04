@@ -63,11 +63,16 @@
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
+
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+
+                    <!-- Display type of bridge -->
+                    <p>Type: <span th:id="${'bridge-type-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
 
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
@@ -223,6 +228,23 @@
         updateHostname();
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        $.get("/bridge/running-type", function(runningBridgeTypes) {
+            for (var bridgeNickname in runningBridgeTypes) {
+                if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
+                    var bridgeType = runningBridgeTypes[bridgeNickname];
+                    // Assuming each bridge has an element with id 'bridge-type-{nickname}'
+                    var bridgeTypeElement = $("#bridge-type-" + bridgeNickname);
+                    bridgeTypeElement.text(bridgeType);
+                }
+            }
+        });
+    });
+</script>
+
+
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
