@@ -132,7 +132,7 @@ public class BridgeController {
         if (webtunnelPort != null)
             config.setWebtunnelPort(webtunnelPort);
         if (bridgeTransportListenAddr != null)
-            config.setBridgeTransportListenAddr(String.valueOf(bridgeTransportListenAddr));
+            config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
 
         return config;
     }
