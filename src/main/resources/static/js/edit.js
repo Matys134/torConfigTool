@@ -94,6 +94,13 @@ $(document).ready(function () {
                 serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
             };
 
+            // Set the values of the input fields in the modal
+            configSelectors.nickname.text(data.nickname);
+            configSelectors.orPort.val(data.orPort);
+            configSelectors.serverTransport.val(data.serverTransport);
+            configSelectors.contact.val(data.contact);
+            configSelectors.controlPort.val(data.controlPort);
+
             showModalWith(data, relayType, bridgeType);
         });
     });
