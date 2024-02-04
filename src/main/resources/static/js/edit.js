@@ -22,13 +22,9 @@ $(document).ready(function () {
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
+        configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
-
-        // Check if the relay type is 'bridge' before setting the serverTransport field
-        if (relayType === 'bridge') {
-            configSelectors.serverTransport.val(data.serverTransport);
-        }
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
