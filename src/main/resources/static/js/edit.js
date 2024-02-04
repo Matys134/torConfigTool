@@ -36,6 +36,8 @@ $(document).ready(function () {
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
+                // Set the value of the input field
+                $(this).next('input').val(data[$(this).attr('for').split('-')[1]]);
             }
         });
 
