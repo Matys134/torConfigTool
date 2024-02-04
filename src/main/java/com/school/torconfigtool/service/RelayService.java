@@ -100,20 +100,19 @@ public class RelayService {
         bridgeCountByType.put("webtunnel", 0);
         bridgeCountByType.put("snowflake", 0);
 
-        File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
-        if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
-            logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
-            return bridgeCountByType;
+        // Get the list of all bridges
+        List<BridgeRelayConfig> bridges = getAllBridges();
+
+        // Count the number of each type of bridge
+        for (BridgeRelayConfig bridge : bridges) {
+            String bridgeType = bridge.getBridgeType();
+            bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
         }
 
-        File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.contains("_obfs4"));
-        bridgeCountByType.put("obfs4", files != null ? files.length : 0);
-
-        files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.contains("_webtunnel"));
-        bridgeCountByType.put("webtunnel", files != null ? files.length : 0);
-
-        files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.contains("_snowflake"));
-        bridgeCountByType.put("snowflake", files != null ? files.length : 0);
+        // Count the number of running snowflake proxies
+        if (new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running").exists()) {
+            bridgeCountByType.put("snowflake", bridgeCountByType.get("snowflake") + 1);
+        }
 
         return bridgeCountByType;
     }

@@ -68,7 +68,7 @@ public class BridgeController {
     }
 
     private void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) throws Exception {
-        String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_" + bridgeType;
+        String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
         if (RelayUtils.relayExists(bridgeNickname)) {
