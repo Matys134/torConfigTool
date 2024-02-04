@@ -26,19 +26,31 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
+        // Show or hide the input fields based on whether the corresponding data attribute has a value
+        configSelectors.nickname.closest('label').toggle(!!data.nickname);
+        configSelectors.orPort.closest('label').toggle(!!data.orPort);
+        configSelectors.contact.closest('label').toggle(!!data.contact);
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
-            if (bridgeType === 'obfs4') {
-                configSelectors.orPort.closest('label').show();
-                configSelectors.serverTransport.closest('label').show();
-                configSelectors.controlPort.closest('label').show();
-            } else if (bridgeType === 'webtunnel') {
-                configSelectors.orPort.closest('label').hide();
-                configSelectors.serverTransport.closest('label').hide();
-                configSelectors.controlPort.closest('label').hide();
-            }
+            configSelectors.serverTransport.closest('label').show();
         } else {
             configSelectors.serverTransport.closest('label').hide();
+        }
+
+        // Reset the visibility of the fields
+        configSelectors.orPort.closest('label').hide();
+        configSelectors.serverTransport.closest('label').hide();
+        configSelectors.controlPort.closest('label').hide();
+
+        // Show or hide the fields based on the bridge type
+        if (bridgeType === 'obfs4') {
+            configSelectors.orPort.closest('label').show();
+            configSelectors.serverTransport.closest('label').show();
+            configSelectors.controlPort.closest('label').show();
+        } else if (bridgeType === 'webtunnel') {
+            configSelectors.contact.closest('label').show();
         }
 
         // Set the data-config-type attribute of each field to the relay type
