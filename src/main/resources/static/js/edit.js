@@ -92,7 +92,9 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
+        const bridgeType = $(this).attr('data-bridge-type'); // Get the bridge type from the data attribute
         console.log('Relay type:', relayType); // Add this line
+        console.log('Bridge type:', bridgeType);
 
         const data = {
             nickname: $(this).data('config-nickname'),
