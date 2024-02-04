@@ -28,9 +28,9 @@ $(document).ready(function () {
 
         // Show or hide the input fields based on whether the corresponding data attribute has a value
         configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
+        configSelectors.orPort.closest('label').toggle(!!data.orPort && relayType !== 'webtunnel');
         configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort && relayType !== 'webtunnel');
 
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
