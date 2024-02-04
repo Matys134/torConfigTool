@@ -119,12 +119,6 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
-        // If editing a bridge relay, add the serverTransportPlugin and serverTransportListenAddr properties
-        if (isBridgeEdit) {
-            data.serverTransportPlugin = "obfs4 exec /usr/bin/obfs4proxy";
-            data.serverTransportListenAddr = "obfs4 0.0.0.0:" + data.controlPort;
-        }
-
         // Check for the uniqueness of ports
         if (!arePortsUnique(data.orPort, data.controlPort)) {
             alert("The ports specified must be unique. Please check your entries.");
