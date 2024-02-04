@@ -65,7 +65,7 @@
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
-                    <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname]}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
+                    <p th:if="${config.bridgeRelayConfig.bridgeType == 'webtunnel' && webtunnelLinks[config.bridgeRelayConfig.nickname]}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname]}">Bridge Type: WebTunnel</p>
                     <p th:unless="${webtunnelLinks[config.bridgeRelayConfig.nickname]}">Bridge Type: Bridge</p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
