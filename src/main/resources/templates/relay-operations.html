@@ -63,16 +63,13 @@
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
-
+                    <p th:text="'Bridge Type: ' + ${config.bridgeRelayConfig.bridgeType}"></p> <!-- Added line -->
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
-
-                    <!-- Display Bridge Type -->
-                    <p th:text="'Bridge Type: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
 
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
@@ -225,30 +222,6 @@
 
         // Initial call to set hostname on page load
         updateHostname();
-    });
-</script>
-
-<script>
-    var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
-
-    bridgeTypes.forEach(function(bridgeType) {
-        $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
-            if (data.bridgeLimitReached) {
-                // Get all bridge elements
-                var bridgeElements = document.getElementsByClassName('bridge');
-
-                // Iterate over each bridge element
-                for (var i = 0; i < bridgeElements.length; i++) {
-                    // Create a new span element for the bridge type
-                    var typeSpan = document.createElement("span");
-                    typeSpan.className = "bridge-type";
-                    typeSpan.innerHTML = "Type: " + bridgeType;
-
-                    // Append the bridge type to the bridge element
-                    bridgeElements[i].appendChild(typeSpan);
-                }
-            }
-        });
     });
 </script>
 
