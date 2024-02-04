@@ -228,11 +228,14 @@
 </script>
 
 <script>
-    // Fetch the running bridge type from the server
-    $.get("/bridge/running-type", function(runningBridgeType) {
-        if (runningBridgeType) {
-            // Update the HTML element with the bridge type
-            document.getElementById("bridgeType").textContent += runningBridgeType;
+    // Fetch the running bridge types from the server
+    $.get("/bridge/running-type", function(runningBridgeTypes) {
+        for (var bridgeNickname in runningBridgeTypes) {
+            if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
+                var bridgeType = runningBridgeTypes[bridgeNickname];
+                // Update the text content of the HTML element with the ID `bridgeType` to display the bridge type
+                document.getElementById(bridgeNickname + "-bridgeType").textContent = bridgeType;
+            }
         }
     });
 </script>
