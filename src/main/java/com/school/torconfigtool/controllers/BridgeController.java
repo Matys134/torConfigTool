@@ -113,10 +113,6 @@ public class BridgeController {
 
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
-
-        // Log the bridgeType before setting it in the BridgeRelayConfig object
-        logger.info("Bridge type before setting in BridgeRelayConfig: " + bridgeType);
-
         config.setBridgeType(bridgeType);
 
         // Log the bridgeType after setting it in the BridgeRelayConfig object
