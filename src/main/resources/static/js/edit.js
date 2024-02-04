@@ -39,7 +39,7 @@ $(document).ready(function () {
             configSelectors.serverTransport.closest('label').hide();
         }
 
-        // Show or hide fields based on the type of bridge
+        // Check the type of bridge and show/hide fields accordingly
         if (data.bridgeType === 'obfs4') {
             configSelectors.orPort.closest('label').show();
             configSelectors.serverTransport.closest('label').show();
@@ -99,15 +99,14 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        const bridgeType = $(this).attr('data-config-bridge-type'); // Get the bridge type from the data attribute
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
-            bridgeType: bridgeType // Add the bridge type to the data object
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
         showModalWith(data, relayType);
