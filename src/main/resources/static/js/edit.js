@@ -96,7 +96,7 @@ $(document).ready(function () {
 
     buttons.save.click(function () {
         const data = {
-            nickname: configSelectors.nickname.val(),
+            nickname: configSelectors.nickname.text(), // Use .text() instead of .val() as nickname is now a <p> element
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
