@@ -39,13 +39,6 @@ $(document).ready(function () {
             configSelectors.serverTransport.closest('label').hide();
         }
 
-        // If the relay type is webTunnel, only show the ContactInfo field
-        if (relayType === 'webTunnel') {
-            configSelectors.orPort.closest('label').hide();
-            configSelectors.serverTransport.closest('label').hide();
-            configSelectors.controlPort.closest('label').hide();
-        }
-
         // Set the data-config-type attribute of each field to the relay type
         $('#edit-form [data-config-type]').each(function() {
             $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
@@ -95,7 +88,8 @@ $(document).ready(function () {
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
+            bridgeType: $(this).data('config-bridgeType') // Add this line
         };
 
         showModalWith(data, relayType);
