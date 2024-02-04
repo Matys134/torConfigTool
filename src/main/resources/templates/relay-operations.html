@@ -68,6 +68,10 @@
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
+
+                    <!-- Add this line to display the bridge type -->
+                    <p th:text="'Bridge Type: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
+
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-bridge-button"
