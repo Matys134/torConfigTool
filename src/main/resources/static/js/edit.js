@@ -40,7 +40,13 @@ $(document).ready(function () {
                 // Set the value of the input field
                 var forAttribute = $(this).attr('for');
                 if (forAttribute) {
-                    $(this).next('input').val(data[forAttribute.split('-')[1]]);
+                    var inputField = $(this).next('input');
+                    var valueKey = forAttribute.split('-')[1];
+                    if (valueKey === 'nickname') {
+                        inputField.text(data[valueKey]);
+                    } else {
+                        inputField.val(data[valueKey]);
+                    }
                 }
             }
         });
