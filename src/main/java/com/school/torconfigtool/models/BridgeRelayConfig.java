@@ -22,6 +22,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     private String bridgeType;
     private static final Logger logger = LoggerFactory.getLogger(BridgeRelayConfig.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private String serverTransport;
 
     @Override
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
@@ -31,7 +32,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             case "obfs4":
                 writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
                 writer.newLine();
-                writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getBridgeTransportListenAddr());
+                writer.write("ServerTransportListenAddr " + getServerTransport());
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();
