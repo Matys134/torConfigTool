@@ -34,23 +34,17 @@ $(document).ready(function () {
 
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
-            configSelectors.serverTransport.closest('label').show();
+            if (bridgeType === 'obfs4') {
+                configSelectors.orPort.closest('label').show();
+                configSelectors.serverTransport.closest('label').show();
+                configSelectors.controlPort.closest('label').show();
+            } else if (bridgeType === 'webtunnel') {
+                configSelectors.orPort.closest('label').hide();
+                configSelectors.serverTransport.closest('label').hide();
+                configSelectors.controlPort.closest('label').hide();
+            }
         } else {
             configSelectors.serverTransport.closest('label').hide();
-        }
-
-        // Reset the visibility of the fields
-        configSelectors.orPort.closest('label').hide();
-        configSelectors.serverTransport.closest('label').hide();
-        configSelectors.controlPort.closest('label').hide();
-
-        // Show or hide the fields based on the bridge type
-        if (bridgeType === 'obfs4') {
-            configSelectors.orPort.closest('label').show();
-            configSelectors.serverTransport.closest('label').show();
-            configSelectors.controlPort.closest('label').show();
-        } else if (bridgeType === 'webtunnel') {
-            configSelectors.contact.closest('label').show();
         }
 
         // Set the data-config-type attribute of each field to the relay type
