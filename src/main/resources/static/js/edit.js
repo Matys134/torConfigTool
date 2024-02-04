@@ -87,15 +87,12 @@ $(document).ready(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
-        // Assuming the data attributes are set on the parent element of the clicked button
-        const parentElement = $(this).parent();
-
         const data = {
             nickname: nickname,
-            orPort: parentElement.data('config-orport'),
-            contact: parentElement.data('config-contact'),
-            controlPort: parentElement.data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? parentElement.data('config-servertransport') : ""
+            orPort: $(this).data('config-orport'),
+            contact: $(this).data('config-contact'),
+            controlPort: $(this).data('config-controlport'),
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
         // Send a GET request to the /bridge/running-type endpoint
