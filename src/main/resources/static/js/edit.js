@@ -35,11 +35,14 @@ $(document).ready(function () {
         } else if (relayType === 'bridge') {
             if (data.bridgeType === 'obfs4') {
                 configSelectors.nickname.closest('label').toggle(!!data.nickname);
-                //configSelectors.orPort.closest('label').toggle(!!data.orPort);
-                //configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
-                //configSelectors.contact.closest('label').toggle(!!data.contact);
+                configSelectors.orPort.closest('label').toggle(!!data.orPort);
+                configSelectors.serverTransport.closest('label').toggle(!!data.serverTransport);
+                configSelectors.contact.closest('label').toggle(!!data.contact);
             } else if (data.bridgeType === 'webTunnel') {
                 configSelectors.contact.closest('label').toggle(!!data.contact);
+                // disable the orPort and serverTransport fields
+                configSelectors.orPort.closest('label').toggle(false);
+                configSelectors.serverTransport.closest('label').toggle(false);
             }
         }
 
