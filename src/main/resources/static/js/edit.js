@@ -38,7 +38,10 @@ $(document).ready(function () {
                 $(this).show();
                 $(this).next('input').show();
                 // Set the value of the input field
-                $(this).next('input').val(data[$(this).attr('for').split('-')[1]]);
+                var forAttribute = $(this).attr('for');
+                if (forAttribute) {
+                    $(this).next('input').val(data[forAttribute.split('-')[1]]);
+                }
             }
         });
 
