@@ -87,6 +87,9 @@ $(document).ready(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
+        // Set isBridgeEdit based on the relay type
+        isBridgeEdit = relayType === 'bridge';
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -133,6 +136,7 @@ $(document).ready(function () {
             },
             function (response) {
                 if (response['available']) {
+                    // Use the isBridgeEdit variable to determine the correct URL
                     let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
                     sendUpdateRequest(url, data);
                     hideModal();
