@@ -77,6 +77,7 @@ public class BridgeController {
         }
 
         BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+        config.setBridgeType(bridgeType); // Set the bridge type
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
