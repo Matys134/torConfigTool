@@ -37,8 +37,11 @@ $(document).ready(function () {
                 $(this).show();
                 $(this).next('input').show();
                 // Populate the input fields with the current values
-                if ($(this).next('input').attr('id') in data) {
-                    $(this).next('input').val(data[$(this).next('input').attr('id').replace('edit-', '')]);
+                var inputId = $(this).next('input').attr('id');
+                if (inputId in data) {
+                    var value = data[inputId.replace('edit-', '')];
+                    console.log('Setting value for input field with id ' + inputId + ': ' + value);
+                    $(this).next('input').val(value);
                 }
             }
         });
