@@ -88,10 +88,10 @@ $(document).ready(function () {
 
             const data = {
                 nickname: nickname,
-                orPort: $(`[data-config-nickname="${nickname}"]`).data('orport'),
-                serverTransport: $(`[data-config-nickname="${nickname}"]`).data('server-transport'),
-                contact: $(`[data-config-nickname="${nickname}"]`).data('contact'),
-                controlPort: $(`[data-config-nickname="${nickname}"]`).data('controlport'),
+                orPort: $(this).data('config-orport'),
+                contact: $(this).data('config-contact'),
+                controlPort: $(this).data('config-controlport'),
+                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
             };
 
             showModalWith(data, relayType, bridgeType);
