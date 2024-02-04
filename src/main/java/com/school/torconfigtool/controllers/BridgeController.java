@@ -422,15 +422,4 @@ public class BridgeController {
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());
     }
-
-    @GetMapping("/relay-operations")
-    public String relayOperations(Model model) {
-        // Get the list of all bridge configurations
-        List<BridgeRelayConfig> bridgeConfigs = relayService.getAllBridges();
-
-        // Add the bridge configurations to the model
-        model.addAttribute("bridgeConfigs", bridgeConfigs);
-
-        return "relay-operations";
-    }
 }
