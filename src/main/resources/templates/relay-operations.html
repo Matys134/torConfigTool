@@ -163,31 +163,31 @@
                 </button>
             </div>
             <div class="modal-body">
-        <form id="edit-form">
-            <input id="edit-config-type" name="edit-config-type" type="hidden">
+                <form id="edit-form">
+                    <input id="edit-config-type" name="edit-config-type" type="hidden">
 
-            <label>Nickname:</label>
-            <p id="edit-nickname" data-config-type="guard bridge"></p>
+                    <label>Nickname:</label>
+                    <p id="edit-nickname" data-config-type="guard bridge"></p>
 
-            <label for="edit-orport" data-config-type="guard bridge">ORPort:</label>
-            <input id="edit-orport" name="edit-orport" type="text" data-config-type="guard bridge">
+                    <label for="edit-orport" data-config-type="guard obfs4">ORPort:</label>
+                    <input id="edit-orport" name="edit-orport" type="text" data-config-type="guard obfs4">
 
-            <label for="edit-server-transport" data-config-type="bridge">ServerTransportListenAddr:</label>
-            <input id="edit-server-transport" name="edit-server-transport" type="text" data-config-type="bridge">
+                    <label for="edit-server-transport" data-config-type="obfs4">ServerTransportListenAddr:</label>
+                    <input id="edit-server-transport" name="edit-server-transport" type="text" data-config-type="obfs4">
 
-            <label for="edit-contact" data-config-type="guard bridge">Contact:</label>
-            <input id="edit-contact" name="edit-contact" type="text" data-config-type="guard bridge">
+                    <label for="edit-contact" data-config-type="guard obfs4 webtunnel">Contact:</label>
+                    <input id="edit-contact" name="edit-contact" type="text" data-config-type="guard obfs4 webtunnel">
 
-            <label for="edit-controlport" data-config-type="guard bridge">Control Port:</label>
-            <input id="edit-controlport" name="edit-controlport" type="text" data-config-type="guard bridge">
+                    <label for="edit-controlport" data-config-type="guard obfs4">Control Port:</label>
+                    <input id="edit-controlport" name="edit-controlport" type="text" data-config-type="guard obfs4">
 
-            <!-- Additional fields for Onion relay configurations -->
-            <label for="edit-dir" data-config-type="onion">HiddenServiceDir:</label>
-            <input id="edit-dir" name="edit-dir" type="text" data-config-type="onion">
+                    <!-- Additional fields for Onion relay configurations -->
+                    <label for="edit-dir" data-config-type="onion">HiddenServiceDir:</label>
+                    <input id="edit-dir" name="edit-dir" type="text" data-config-type="onion">
 
-            <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
-            <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
-        </form>
+                    <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
+                    <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="save-button" type="button">Save</button>
