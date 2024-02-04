@@ -86,18 +86,15 @@ $(document).ready(function () {
             console.log('Relay type:', relayType);
             console.log('Bridge type:', bridgeType);
 
-            // Fetch the current values of the relay
-            $.get("/relay-config/" + nickname, function(currentRelayConfig) {
-                const data = {
-                    nickname: currentRelayConfig.nickname,
-                    orPort: currentRelayConfig.orPort,
-                    serverTransport: currentRelayConfig.serverTransport,
-                    contact: currentRelayConfig.contact,
-                    controlPort: currentRelayConfig.controlPort,
-                };
+            const data = {
+                nickname: nickname,
+                orPort: $(this).data('config-orport'),
+                contact: $(this).data('config-contact'),
+                controlPort: $(this).data('config-controlport'),
+                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            };
 
-                showModalWith(data, relayType, bridgeType);
-            });
+            showModalWith(data, relayType, bridgeType);
         });
     });
 
