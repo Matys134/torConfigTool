@@ -87,15 +87,12 @@ $(document).ready(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
-        // Set isBridgeEdit to true if relayType is 'bridge', false otherwise
-        isBridgeEdit = relayType === 'bridge';
-
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: isBridgeEdit ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
         // Send a GET request to the /bridge/running-type endpoint
