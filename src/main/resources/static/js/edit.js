@@ -39,16 +39,14 @@ $(document).ready(function () {
             configSelectors.serverTransport.closest('label').hide();
         }
 
-        // Show or hide fields based on the bridge type
-        if (relayType === 'bridge' && bridgeType === 'obfs4') {
+        // Show or hide the fields based on the bridge type
+        if (bridgeType === 'obfs4') {
             configSelectors.orPort.closest('label').show();
             configSelectors.serverTransport.closest('label').show();
-            configSelectors.contact.closest('label').show();
             configSelectors.controlPort.closest('label').show();
-        } else if (relayType === 'bridge' && bridgeType === 'webtunnel') {
+        } else if (bridgeType === 'webtunnel') {
             configSelectors.orPort.closest('label').hide();
             configSelectors.serverTransport.closest('label').hide();
-            configSelectors.contact.closest('label').show();
             configSelectors.controlPort.closest('label').hide();
         }
 
@@ -94,7 +92,7 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        const bridgeType = $(this).attr('data-bridge-type'); // Get the bridge type from the data attribute
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
@@ -104,7 +102,7 @@ $(document).ready(function () {
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
-        showModalWith(data, relayType, bridgeType); // Pass bridgeType to showModalWith function
+        showModalWith(data, relayType);
     });
 
     buttons.save.click(function () {
