@@ -27,8 +27,9 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
         writer.write("BridgeRelay 1");
         writer.newLine();
+        logger.info("Bridge type in BridgeRelayConfig: " + getBridgeType());
         switch (getBridgeType()) {
-            case "obfs4":
+            case "bridge":
                 writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
                 writer.newLine();
                 writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getBridgeTransportListenAddr());
