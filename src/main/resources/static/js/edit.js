@@ -19,8 +19,10 @@ $(document).ready(function () {
 
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
+        console.log('Data:', data); // Log the data object
+
         // Set the values of the input fields
-        configSelectors.nickname.text(data.nickname);
+        configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
@@ -36,6 +38,13 @@ $(document).ready(function () {
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
+                // Populate the input fields with the current values
+                var inputId = $(this).next('input').attr('id');
+                if (inputId in data) {
+                    var value = data[inputId.replace('edit-', '')];
+                    console.log('Setting value for input field with id ' + inputId + ': ' + value);
+                    $(this).next('input').val(value);
+                }
             }
         });
 
@@ -78,6 +87,14 @@ $(document).ready(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
+        const data = {
+            nickname: nickname,
+            orPort: $(this).data('config-orport'),
+            contact: $(this).data('config-contact'),
+            controlPort: $(this).data('config-controlport'),
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+        };
+
         // Send a GET request to the /bridge/running-type endpoint
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
@@ -85,14 +102,6 @@ $(document).ready(function () {
 
             console.log('Relay type:', relayType);
             console.log('Bridge type:', bridgeType);
-
-            const data = {
-                nickname: nickname,
-                orPort: $(this).data('config-orport'),
-                contact: $(this).data('config-contact'),
-                controlPort: $(this).data('config-controlport'),
-                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
-            };
 
             showModalWith(data, relayType, bridgeType);
         });
