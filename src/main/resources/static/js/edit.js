@@ -27,7 +27,7 @@ $(document).ready(function () {
         configSelectors.controlPort.val(data.controlPort);
 
         // Hide all fields initially
-        $('#edit-form label').hide();
+        $('#edit-form label, #edit-form input').hide();
 
         // Show or hide the fields based on the relay type and bridge type
         $('#edit-form [data-config-type]').each(function() {
@@ -35,6 +35,7 @@ $(document).ready(function () {
             var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
+                $(this).next('input').show();
             }
         });
 
