@@ -40,6 +40,9 @@ $(document).ready(function () {
                 configSelectors.contact.closest('label').toggle(!!data.contact);
             } else if (data.bridgeType === 'webTunnel') {
                 configSelectors.contact.closest('label').toggle(!!data.contact);
+            } else {
+                // Hide all fields if the bridge type is not specified
+                configSelectors.modal.find('label').hide();
             }
         }
 
