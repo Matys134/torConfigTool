@@ -19,7 +19,8 @@ $(document).ready(function () {
 
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
-        console.log(bridgeType);
+        // log what is being sent to the modal
+        console.log(data);
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
