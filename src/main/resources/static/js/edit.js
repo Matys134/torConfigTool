@@ -20,7 +20,7 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
         // Set the values of the input fields
-        configSelectors.nickname.val(data.nickname); // Use .text() for nickname
+        configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
@@ -86,15 +86,18 @@ $(document).ready(function () {
             console.log('Relay type:', relayType);
             console.log('Bridge type:', bridgeType);
 
-            const data = {
-                nickname: nickname,
-                orPort: $(this).data('config-orport'),
-                contact: $(this).data('config-contact'),
-                controlPort: $(this).data('config-controlport'),
-                serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
-            };
+            // Fetch the current values of the relay
+            $.get("/relay-config/" + nickname, function(currentRelayConfig) {
+                const data = {
+                    nickname: currentRelayConfig.nickname,
+                    orPort: currentRelayConfig.orPort,
+                    serverTransport: currentRelayConfig.serverTransport,
+                    contact: currentRelayConfig.contact,
+                    controlPort: currentRelayConfig.controlPort,
+                };
 
-            showModalWith(data, relayType, bridgeType);
+                showModalWith(data, relayType, bridgeType);
+            });
         });
     });
 
