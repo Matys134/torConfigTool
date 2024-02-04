@@ -26,8 +26,12 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Reset all fields to hidden
-        $('#edit-form [data-config-type]').hide();
+        // Hide all fields that are not relevant to the current relay type
+        $('#edit-form [data-config-type]').each(function() {
+            if (!$(this).attr('data-config-type').split(' ').includes(relayType)) {
+                $(this).hide();
+            }
+        });
 
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'guard') {
