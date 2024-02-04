@@ -64,8 +64,6 @@
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
 
-                    <p id="${config.bridgeRelayConfig.nickname + '-bridgeType'}">Bridge Type: </p>
-
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
@@ -228,15 +226,17 @@
 </script>
 
 <script>
-    // Fetch the running bridge types from the server
-    $.get("/bridge/running-type", function(runningBridgeTypes) {
-        for (var bridgeNickname in runningBridgeTypes) {
-            if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
-                var bridgeType = runningBridgeTypes[bridgeNickname];
-                // Update the text content of the HTML element with the ID `bridgeType` to display the bridge type
-                document.getElementById(bridgeNickname + "-bridgeType").textContent = bridgeType;
+    $(document).ready(function() {
+        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+            for (var bridgeNickname in runningBridgeTypes) {
+                if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
+                    var bridgeType = runningBridgeTypes[bridgeNickname];
+                    // Assuming each bridge has an element with id 'bridge-type-{nickname}'
+                    var bridgeTypeElement = $("#bridge-type-" + bridgeNickname);
+                    bridgeTypeElement.text(bridgeType);
+                }
             }
-        }
+        });
     });
 </script>
 
