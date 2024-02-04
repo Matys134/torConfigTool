@@ -48,7 +48,17 @@ public class RelayOperationsController {
         System.out.println("Inside relayOperations method");
         String folderPath = torConfigurationService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
-        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
+
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
+        model.addAttribute("bridgeConfigs", bridgeConfigs);
+
+        // Create a map to store bridge types for each bridge
+        Map<String, String> bridgeTypes = new HashMap<>();
+        for (TorConfiguration config : bridgeConfigs) {
+            bridgeTypes.put(config.getBridgeRelayConfig().getNickname(), config.getBridgeRelayConfig().getBridgeType());
+        }
+        model.addAttribute("bridgeTypes", bridgeTypes);
+
         model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
 
@@ -62,7 +72,6 @@ public class RelayOperationsController {
             logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
 
-        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfiguration config : bridgeConfigs) {
             String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
