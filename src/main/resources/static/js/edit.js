@@ -47,6 +47,9 @@ $(document).ready(function () {
                 configSelectors.contact.closest('label').show(!!data.contact);
             } else if (data.bridgeType === 'webTunnel') {
                 configSelectors.contact.closest('label').show(!!data.contact);
+                configSelectors.serverTransport.closest('label').hide();
+                configSelectors.nickname.closest('label').hide();
+                configSelectors.orPort.closest('label').hide();
             }
         }
 
