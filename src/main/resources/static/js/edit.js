@@ -101,7 +101,10 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        console.log('Relay type:', relayType); // Add this line
+        const bridgeType = $(this).data('config-bridge-type'); // Get the bridge type from the data attribute
+
+        console.log('Relay type:', relayType);
+        console.log('Bridge type:', bridgeType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
@@ -109,7 +112,7 @@ $(document).ready(function () {
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
-            bridgeType: relayType === 'bridge' ? $(this).data('config-bridge-type') : "" // Add this line
+            bridgeType: bridgeType // Use the retrieved bridge type
         };
 
         showModalWith(data, relayType);
