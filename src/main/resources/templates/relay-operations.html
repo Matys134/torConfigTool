@@ -55,6 +55,7 @@
     </div>
 
     <!-- Display Bridge relay configurations -->
+
     <h2>Bridge Relay Configurations</h2>
     <div class="row">
         <div class="col-md-12">
@@ -68,6 +69,7 @@
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
+
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-bridge-button"
@@ -146,14 +148,21 @@
 </div>
 
 <!-- Add modal for editing configurations (hidden by default) -->
-<div class="modal" id="edit-modal">
-    <div class="modal-content">
-        <h2>Edit Configuration</h2>
+<div class="modal" id="edit-modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Configuration</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
         <form id="edit-form">
             <input id="edit-config-type" name="edit-config-type" type="hidden">
 
-            <label for="edit-nickname" data-config-type="guard bridge">Nickname:</label>
-            <input id="edit-nickname" name="edit-nickname" type="text" data-config-type="guard bridge">
+            <label>Nickname:</label>
+            <p id="edit-nickname" data-config-type="guard bridge"></p>
 
             <label for="edit-orport" data-config-type="guard bridge">ORPort:</label>
             <input id="edit-orport" name="edit-orport" type="text" data-config-type="guard bridge">
@@ -173,10 +182,13 @@
 
             <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
             <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
-
-            <button id="save-button" type="button">Save</button>
-            <button id="cancel-button" type="button">Cancel</button>
         </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="save-button" type="button">Save</button>
+                <button class="btn btn-secondary" data-dismiss="modal" id="cancel-button" type="button">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -211,6 +223,7 @@
         updateHostname();
     });
 </script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

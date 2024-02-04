@@ -107,6 +107,7 @@ public class BridgeController {
     private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeRelayConfig config = new BridgeRelayConfig();
         config.setBridgeType(bridgeType);
+        System.out.println("Bridge type: " + bridgeType);
         config.setNickname(bridgeNickname);
         if (bridgePort != null)
             config.setOrPort(String.valueOf(bridgePort));

@@ -20,7 +20,7 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType) {
         // Set the values of the input fields
-        configSelectors.nickname.val(data.nickname);
+        configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
@@ -45,12 +45,12 @@ $(document).ready(function () {
         });
 
         // Show the modal
-        configSelectors.modal.show();
+        $('#edit-modal').modal('show');
     }
 
 
     function hideModal() {
-        configSelectors.modal.hide();
+        $('#edit-modal').modal('hide');
     }
 
     function updateView(data) {
@@ -96,7 +96,7 @@ $(document).ready(function () {
 
     buttons.save.click(function () {
         const data = {
-            nickname: configSelectors.nickname.val(),
+            nickname: configSelectors.nickname.text(), // Use .text() instead of .val() as nickname is now a <p> element
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
