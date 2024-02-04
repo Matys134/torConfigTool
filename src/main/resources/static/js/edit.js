@@ -29,36 +29,36 @@ $(document).ready(function () {
         // Show or hide the input fields based on the relay type
         switch (relayType) {
             case 'guard':
-                configSelectors.orPort.closest('label').show();
-                configSelectors.contact.closest('label').show();
-                configSelectors.controlPort.closest('label').show();
-                configSelectors.serverTransport.closest('label').hide();
-                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
+                configSelectors.orPort.parent().show();
+                configSelectors.contact.parent().show();
+                configSelectors.controlPort.parent().show();
+                configSelectors.serverTransport.parent().hide();
+                $("#edit-dir").parent().hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parent().hide(); // Hide HiddenServicePort
                 break;
             case 'bridge':
-                configSelectors.orPort.closest('label').show();
-                configSelectors.serverTransport.closest('label').show();
-                configSelectors.contact.closest('label').show();
-                configSelectors.controlPort.closest('label').show();
-                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
+                configSelectors.orPort.parent().show();
+                configSelectors.serverTransport.parent().show();
+                configSelectors.contact.parent().show();
+                configSelectors.controlPort.parent().show();
+                $("#edit-dir").parent().hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parent().hide(); // Hide HiddenServicePort
                 break;
             case 'webtunnel':
-                configSelectors.contact.closest('label').show();
-                configSelectors.orPort.closest('label').hide();
-                configSelectors.serverTransport.closest('label').hide();
-                configSelectors.controlPort.closest('label').hide();
-                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
+                configSelectors.contact.parent().show();
+                configSelectors.orPort.parent().hide();
+                configSelectors.serverTransport.parent().hide();
+                configSelectors.controlPort.parent().hide();
+                $("#edit-dir").parent().hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parent().hide(); // Hide HiddenServicePort
                 break;
             case 'onion':
-                configSelectors.orPort.closest('label').hide();
-                configSelectors.serverTransport.closest('label').hide();
-                configSelectors.contact.closest('label').hide();
-                configSelectors.controlPort.closest('label').hide();
-                $("#edit-dir").closest('label').show(); // Show HiddenServiceDir
-                $("#edit-hidden-service-port").closest('label').show(); // Show HiddenServicePort
+                configSelectors.orPort.parent().hide();
+                configSelectors.serverTransport.parent().hide();
+                configSelectors.contact.parent().hide();
+                configSelectors.controlPort.parent().hide();
+                $("#edit-dir").parent().show(); // Show HiddenServiceDir
+                $("#edit-hidden-service-port").parent().show(); // Show HiddenServicePort
                 break;
         }
 
