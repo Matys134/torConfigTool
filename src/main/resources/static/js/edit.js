@@ -19,7 +19,6 @@ $(document).ready(function () {
 
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType) {
-        console.log(data);
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
@@ -44,25 +43,6 @@ $(document).ready(function () {
         $('#edit-form [data-config-type]').each(function() {
             $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
         });
-
-        // Check the bridge type and show only relevant fields
-        if (data.bridgeType === 'obfs4') {
-            configSelectors.orPort.closest('label').show();
-            configSelectors.serverTransport.closest('label').show();
-            configSelectors.contact.closest('label').show();
-            configSelectors.controlPort.closest('label').show();
-        } else if (data.bridgeType === 'webtunnel') {
-            configSelectors.orPort.closest('label').hide();
-            configSelectors.serverTransport.closest('label').hide();
-            configSelectors.contact.closest('label').show();
-            configSelectors.controlPort.closest('label').hide();
-        } else if (data.bridgeType === 'snowflake') {
-            // Snowflake can't be edited
-            configSelectors.orPort.closest('label').hide();
-            configSelectors.serverTransport.closest('label').hide();
-            configSelectors.contact.closest('label').hide();
-            configSelectors.controlPort.closest('label').hide();
-        }
 
         // Show the modal
         $('#edit-modal').modal('show');
@@ -101,18 +81,14 @@ $(document).ready(function () {
 
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
-        const bridgeType = $(this).data('config-bridge-type'); // Get the bridge type from the data attribute
-
-        console.log('Relay type:', relayType);
-        console.log('Bridge type:', bridgeType); // Add this line
+        console.log('Relay type:', relayType); // Add this line
 
         const data = {
             nickname: $(this).data('config-nickname'),
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
-            bridgeType: bridgeType // Use the retrieved bridge type
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
         showModalWith(data, relayType);
