@@ -61,7 +61,6 @@
         <div class="col-md-12">
             <div id="bridge-configs" class="list-group">
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
-                    <div class="list-group-item" th:each="config : ${bridgeConfigs}">
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
 
@@ -70,6 +69,7 @@
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+                    <p>Bridge Type: <span th:text="${config.bridgeRelayConfig.bridgeType}"></span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
 
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
@@ -98,7 +98,6 @@
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
                             Stop
                         </button>
-                    </div>
                     </div>
                 </div>
             </div>
