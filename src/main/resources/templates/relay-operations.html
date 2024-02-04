@@ -63,7 +63,11 @@
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
                     <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
-                    <p th:text="'Bridge tpye: ' + ${config.bridgeRelayConfig.bridgeType}"></p>
+
+                    <!-- Debug log -->
+                    <p>Debug: <span th:text="${config.bridgeRelayConfig}"></span></p>
+                    <p>Type: <span th:text="${config.bridgeRelayConfig.bridgeType}"></span></p>
+
                     <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.bridgeTransportListenAddr}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
