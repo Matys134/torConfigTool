@@ -31,7 +31,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             case "obfs4":
                 writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
                 writer.newLine();
-                writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getBridgeTransportListenAddr());
+                writer.write("ServerTransportListenAddr obfs4 " + getBridgeTransportListenAddr());
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();
