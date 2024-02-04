@@ -54,7 +54,6 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        System.out.println("Bridge type: " + bridgeType);
         if (relayService.getBridgeCount() >= 2) {
             model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
             return "setup";
@@ -422,5 +421,16 @@ public class BridgeController {
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());
+    }
+
+    @GetMapping("/relay-operations")
+    public String relayOperations(Model model) {
+        // Get the list of all bridge configurations
+        List<BridgeRelayConfig> bridgeConfigs = relayService.getAllBridges();
+
+        // Add the bridge configurations to the model
+        model.addAttribute("bridgeConfigs", bridgeConfigs);
+
+        return "relay-operations";
     }
 }
