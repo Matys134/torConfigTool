@@ -79,6 +79,7 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-bridge-button"
                                 th:attr="data-config-type='bridge'"
+                                th:attr="data-config-bridge-type=${config.bridgeRelayConfig.bridgeType}"
                                 th:data-config-contact="${config.bridgeRelayConfig.contact}"
                                 th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
