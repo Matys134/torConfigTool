@@ -26,41 +26,23 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on the relay type
-        switch (relayType) {
-            case 'guard':
-                configSelectors.orPort.closest('.form-group').show();
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.controlPort.closest('.form-group').show();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
-                break;
-            case 'bridge':
-                configSelectors.orPort.closest('.form-group').show();
-                configSelectors.serverTransport.closest('.form-group').show();
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.controlPort.closest('.form-group').show();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
-                break;
-            case 'webtunnel':
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.orPort.closest('.form-group').hide();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                configSelectors.controlPort.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
-                break;
-            case 'onion':
-                configSelectors.orPort.closest('.form-group').hide();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                configSelectors.contact.closest('.form-group').hide();
-                configSelectors.controlPort.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').show(); // Show HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').show(); // Show HiddenServicePort
-                break;
+        // Show or hide the input fields based on whether the corresponding data attribute has a value
+        configSelectors.nickname.closest('label').toggle(!!data.nickname);
+        configSelectors.orPort.closest('label').toggle(!!data.orPort);
+        configSelectors.contact.closest('label').toggle(!!data.contact);
+        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
+
+        // Show or hide the serverTransport field based on the relay type
+        if (relayType === 'bridge') {
+            configSelectors.serverTransport.closest('label').show();
+        } else {
+            configSelectors.serverTransport.closest('label').hide();
         }
+
+        // Set the data-config-type attribute of each field to the relay type
+        $('#edit-form [data-config-type]').each(function() {
+            $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
+        });
 
         // Show the modal
         $('#edit-modal').modal('show');
