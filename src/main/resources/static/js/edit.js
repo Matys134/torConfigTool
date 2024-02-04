@@ -33,24 +33,32 @@ $(document).ready(function () {
                 configSelectors.contact.closest('label').show();
                 configSelectors.controlPort.closest('label').show();
                 configSelectors.serverTransport.closest('label').hide();
+                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
                 break;
             case 'bridge':
                 configSelectors.orPort.closest('label').show();
                 configSelectors.serverTransport.closest('label').show();
                 configSelectors.contact.closest('label').show();
                 configSelectors.controlPort.closest('label').show();
+                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
                 break;
             case 'webtunnel':
                 configSelectors.contact.closest('label').show();
                 configSelectors.orPort.closest('label').hide();
                 configSelectors.serverTransport.closest('label').hide();
                 configSelectors.controlPort.closest('label').hide();
+                $("#edit-dir").closest('label').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").closest('label').hide(); // Hide HiddenServicePort
                 break;
             case 'onion':
                 configSelectors.orPort.closest('label').hide();
                 configSelectors.serverTransport.closest('label').hide();
                 configSelectors.contact.closest('label').hide();
                 configSelectors.controlPort.closest('label').hide();
+                $("#edit-dir").closest('label').show(); // Show HiddenServiceDir
+                $("#edit-hidden-service-port").closest('label').show(); // Show HiddenServicePort
                 break;
         }
 
