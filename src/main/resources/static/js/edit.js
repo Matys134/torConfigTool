@@ -26,12 +26,6 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
-        // Show or hide the input fields based on whether the corresponding data attribute has a value
-        configSelectors.nickname.closest('label').toggle(!!data.nickname);
-        configSelectors.orPort.closest('label').toggle(!!data.orPort);
-        configSelectors.contact.closest('label').toggle(!!data.contact);
-        configSelectors.controlPort.closest('label').toggle(!!data.controlPort);
-
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
             if (bridgeType === 'obfs4') {
