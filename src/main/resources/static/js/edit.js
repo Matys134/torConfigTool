@@ -32,22 +32,10 @@ $(document).ready(function () {
         // Show or hide the fields based on the relay type and bridge type
         $('#edit-form [data-config-type]').each(function() {
             var configTypes = $(this).attr('data-config-type').split(' ');
-            var bridgeTypes = $(this).attr('data-bridge-type');
-            bridgeTypes = bridgeTypes ? bridgeTypes.split(' ') : [];
+            var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
-                // Set the value of the input field
-                var forAttribute = $(this).attr('for');
-                if (forAttribute) {
-                    var inputField = $(this).next('input');
-                    var valueKey = forAttribute.split('-')[1];
-                    if (valueKey === 'nickname') {
-                        inputField.text(data[valueKey]);
-                    } else {
-                        inputField.val(data[valueKey]);
-                    }
-                }
             }
         });
 
