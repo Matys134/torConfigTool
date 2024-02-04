@@ -46,13 +46,6 @@ $(document).ready(function () {
             }
         }
 
-        // Show or hide fields based on the bridge type
-        if (data.bridgeType === 'obfs4') {
-            // Show obfs4 fields
-        } else if (data.bridgeType === 'webTunnel') {
-            // Show webTunnel fields
-        }
-
         // Set the data-config-type attribute of each field to the relay type
         $('#edit-form [data-config-type]').each(function() {
             $(this).toggle($(this).attr('data-config-type').split(' ').includes(relayType));
