@@ -32,7 +32,8 @@ $(document).ready(function () {
         // Show or hide the fields based on the relay type and bridge type
         $('#edit-form [data-config-type]').each(function() {
             var configTypes = $(this).attr('data-config-type').split(' ');
-            var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
+            var bridgeTypes = $(this).attr('data-bridge-type');
+            bridgeTypes = bridgeTypes ? bridgeTypes.split(' ') : [];
             if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
