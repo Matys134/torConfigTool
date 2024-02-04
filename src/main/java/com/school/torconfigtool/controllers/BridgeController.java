@@ -362,7 +362,7 @@ public class BridgeController {
     }
 
     @GetMapping("/running-type")
-    public ResponseEntity<String> getRunningBridgeType() {
+    public ResponseEntity<List<String>> getRunningBridgeType() {
         return ResponseEntity.ok(relayService.getRunningBridgeType());
     }
 
