@@ -29,36 +29,36 @@ $(document).ready(function () {
         // Show or hide the input fields based on the relay type
         switch (relayType) {
             case 'guard':
-                configSelectors.orPort.closest('.form-group').show();
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.controlPort.closest('.form-group').show();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
+                configSelectors.orPort.parents('.form-group').show();
+                configSelectors.contact.parents('.form-group').show();
+                configSelectors.controlPort.parents('.form-group').show();
+                configSelectors.serverTransport.parents('.form-group').hide();
+                $("#edit-dir").parents('.form-group').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parents('.form-group').hide(); // Hide HiddenServicePort
                 break;
             case 'bridge':
-                configSelectors.orPort.closest('.form-group').show();
-                configSelectors.serverTransport.closest('.form-group').show();
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.controlPort.closest('.form-group').show();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
+                configSelectors.orPort.parents('.form-group').show();
+                configSelectors.serverTransport.parents('.form-group').show();
+                configSelectors.contact.parents('.form-group').show();
+                configSelectors.controlPort.parents('.form-group').show();
+                $("#edit-dir").parents('.form-group').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parents('.form-group').hide(); // Hide HiddenServicePort
                 break;
             case 'webtunnel':
-                configSelectors.contact.closest('.form-group').show();
-                configSelectors.orPort.closest('.form-group').hide();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                configSelectors.controlPort.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').hide(); // Hide HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').hide(); // Hide HiddenServicePort
+                configSelectors.contact.parents('.form-group').show();
+                configSelectors.orPort.parents('.form-group').hide();
+                configSelectors.serverTransport.parents('.form-group').hide();
+                configSelectors.controlPort.parents('.form-group').hide();
+                $("#edit-dir").parents('.form-group').hide(); // Hide HiddenServiceDir
+                $("#edit-hidden-service-port").parents('.form-group').hide(); // Hide HiddenServicePort
                 break;
             case 'onion':
-                configSelectors.orPort.closest('.form-group').hide();
-                configSelectors.serverTransport.closest('.form-group').hide();
-                configSelectors.contact.closest('.form-group').hide();
-                configSelectors.controlPort.closest('.form-group').hide();
-                $("#edit-dir").closest('.form-group').show(); // Show HiddenServiceDir
-                $("#edit-hidden-service-port").closest('.form-group').show(); // Show HiddenServicePort
+                configSelectors.orPort.parents('.form-group').hide();
+                configSelectors.serverTransport.parents('.form-group').hide();
+                configSelectors.contact.parents('.form-group').hide();
+                configSelectors.controlPort.parents('.form-group').hide();
+                $("#edit-dir").parents('.form-group').show(); // Show HiddenServiceDir
+                $("#edit-hidden-service-port").parents('.form-group').show(); // Show HiddenServicePort
                 break;
         }
 
