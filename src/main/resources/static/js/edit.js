@@ -20,7 +20,7 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
         // log what is being sent to the modal
-        console.log(data);
+        console.log('Bridge type when showModalWith called:', bridgeType);
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
@@ -101,6 +101,7 @@ $(document).ready(function () {
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type');
         const bridgeType = $(this).attr('data-bridge-type'); // Get the bridge type from the data attribute
+        console.log('Bridge type when edit button clicked:', bridgeType); // Log the bridge type
 
         const data = {
             nickname: $(this).data('config-nickname'),
