@@ -107,7 +107,8 @@ $(document).ready(function () {
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
+            bridgeType: relayType === 'bridge' ? $(this).data('config-bridge-type') : "" // Add this line
         };
 
         showModalWith(data, relayType);
