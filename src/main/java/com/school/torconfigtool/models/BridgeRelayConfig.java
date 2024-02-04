@@ -28,7 +28,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         writer.write("BridgeRelay 1");
         writer.newLine();
         switch (getBridgeType()) {
-            case "bridge":
+            case "obfs4":
                 writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
                 writer.newLine();
                 writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getBridgeTransportListenAddr());
