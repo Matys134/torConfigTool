@@ -28,6 +28,7 @@ $(document).ready(function () {
 
         // Show or hide the serverTransport field based on the relay type
         if (relayType === 'bridge') {
+            configSelectors.serverTransport.closest('label').hide();
             if (bridgeType === 'obfs4') {
                 configSelectors.orPort.closest('label').show();
                 configSelectors.serverTransport.closest('label').show();
