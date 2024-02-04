@@ -1,7 +1,6 @@
 $(document).ready(function () {
 
     var isBridgeEdit = false; // Add this variable to track which config is being edited
-    var currentConfig = {};
 
     const configSelectors = {
         modal: $("#edit-modal"),
@@ -28,8 +27,6 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
-
-        currentConfig = data;
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
@@ -115,8 +112,6 @@ $(document).ready(function () {
 
     buttons.save.click(function () {
         const data = {
-            // Include all the current values
-            ...currentConfig,
             nickname: configSelectors.nickname.text(), // Use .text() instead of .val() as nickname is now a <p> element
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
@@ -141,7 +136,6 @@ $(document).ready(function () {
             },
             function (response) {
                 if (response['available']) {
-                    // Use the isBridgeEdit variable to determine the correct URL
                     let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
                     sendUpdateRequest(url, data);
                     hideModal();
