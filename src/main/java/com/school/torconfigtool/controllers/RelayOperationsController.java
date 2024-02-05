@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -31,8 +28,6 @@ public class RelayOperationsController {
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsController.class);
     private final TorConfigurationService torConfigurationService;
     private final ProcessManagementService processManagementService;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
-    private final Semaphore semaphore = new Semaphore(10);
 
     public RelayOperationsController(TorConfigurationService torConfigurationService,
                                      ProcessManagementService processManagementService) {
@@ -106,12 +101,9 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                semaphore.acquire(); // Acquire a permit before executing the thread
                 waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to stop", e);
-            } finally {
-                semaphore.release(); // Release the permit after executing the thread
             }
         }).start();
 
@@ -139,12 +131,9 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                semaphore.acquire(); // Acquire a permit before executing the thread
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
-            } finally {
-                semaphore.release(); // Release the permit after executing the thread
             }
         }).start();
 
