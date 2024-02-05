@@ -62,12 +62,7 @@
 			<artifactId>mockito-inline</artifactId>
 			<version>3.12.4</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adolfintel</groupId>
-			<artifactId>WaifUPnP</artifactId>
-			<version>1.0</version>
-		</dependency>
+		</dependency>q
 	</dependencies>
 
 	<build>
