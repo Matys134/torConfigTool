@@ -131,7 +131,7 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                waitForStatusChange(relayNickname, relayType, "online");
+                waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
