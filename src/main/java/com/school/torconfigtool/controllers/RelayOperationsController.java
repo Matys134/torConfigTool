@@ -275,7 +275,7 @@ public class RelayOperationsController {
                 throw new IOException("Failed to delete Nginx configuration file and symbolic link");
             }
 
-            restartNginx();
+            reloadNginx();
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
@@ -357,9 +357,9 @@ public class RelayOperationsController {
         return orPort;
     }
 
-    public void restartNginx() {
+    public void reloadNginx() {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "restart", "nginx");
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {

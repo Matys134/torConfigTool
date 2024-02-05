@@ -124,7 +124,7 @@ public class OnionServiceController {
                 generateNginxConfig(onionServicePort);
 
                 // Restart nginx
-                relayOperationController.restartNginx();
+                relayOperationController.reloadNginx();
             }
             torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
             logger.info("Hidden Service Port set to: {}", onionServicePort);

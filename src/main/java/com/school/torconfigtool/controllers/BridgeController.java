@@ -100,7 +100,7 @@ public class BridgeController {
             updateTorrcFile(config); // Update the torrc file
 
             // Restart nginx
-            relayOperationController.restartNginx();
+            relayOperationController.reloadNginx();
         }
 
         if (startBridgeAfterConfig) {
