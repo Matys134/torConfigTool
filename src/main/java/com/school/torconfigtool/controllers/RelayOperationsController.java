@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controllers;
 
+import com.dosse.upnp.UPnP;
 import com.school.torconfigtool.RelayOperationException;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.ProcessManagementService;
@@ -101,6 +102,7 @@ public class RelayOperationsController {
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
+        openOrPort(relayNickname, relayType);
         return changeRelayState(relayNickname, relayType, model, true);
     }
 
@@ -143,6 +145,8 @@ public class RelayOperationsController {
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
             }
+
+
         } else {
             int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
@@ -309,4 +313,43 @@ public class RelayOperationsController {
 
         return webtunnelLink;
     }
+
+    // Method for opening orport of a relay using UPnP
+    @PostMapping("/open-orport")
+    @ResponseBody
+    public Map<String, Object> openOrPort(@RequestParam String relayNickname, @RequestParam String relayType) {
+        Map<String, Object> response = new HashMap<>();
+        // Build the path to the torrc file
+        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+
+        // Get the orport from the torrc file
+        int orPort = getOrPort(torrcFilePath);
+
+        // Open the orport using UPnP
+        boolean success = UPnP.openPortTCP(orPort);
+        if (success) {
+            response.put("success", true);
+        } else {
+            response.put("success", false);
+            response.put("message", "Failed to open ORPort using UPnP");
+        }
+        return response;
+    }
+
+    private int getOrPort(Path torrcFilePath) {
+        int orPort = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ORPort")) {
+                    orPort = Integer.parseInt(line.split(" ")[1]);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return orPort;
+    }
+
 }
