@@ -126,6 +126,7 @@ public class RelayOperationsController {
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
+        System.out.println("Inside startRelay method");
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
@@ -136,7 +137,6 @@ public class RelayOperationsController {
                 logger.error("Error while waiting for relay to start", e);
             }
         }).start();
-        checkAndManageNginxStatus();
 
         return view;
     }
@@ -404,7 +404,6 @@ public class RelayOperationsController {
     }
 
     public void checkAndManageNginxStatus() {
-        System.out.println("Checking and managing Nginx status");
         // Get the list of all webTunnels and Onion services
         List<String> allServices = getAllServices();
 
