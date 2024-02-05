@@ -97,15 +97,45 @@ public class RelayOperationsController {
 
     @PostMapping("/stop")
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        checkAndManageNginxStatus();
-        return changeRelayState(relayNickname, relayType, model, false);
+        String view = changeRelayState(relayNickname, relayType, model, false);
+
+        new Thread(() -> {
+            try {
+                waitForStatusChange(relayNickname, relayType, "offline");
+            } catch (InterruptedException e) {
+                logger.error("Error while waiting for relay to stop", e);
+            }
+        }).start();
+
+        return view;
+    }
+
+    private void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < 30000) { // 30 seconds timeout
+            String status = getRelayStatus(relayNickname, relayType);
+            if (expectedStatus.equals(status)) {
+                checkAndManageNginxStatus();
+                break;
+            }
+            Thread.sleep(500); // wait for 500 milliseconds before the next check
+        }
     }
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         openOrPort(relayNickname, relayType);
-        checkAndManageNginxStatus();
-        return changeRelayState(relayNickname, relayType, model, true);
+        String view = changeRelayState(relayNickname, relayType, model, true);
+
+        new Thread(() -> {
+            try {
+                waitForStatusChange(relayNickname, relayType, "online");
+            } catch (InterruptedException e) {
+                logger.error("Error while waiting for relay to start", e);
+            }
+        }).start();
+
+        return view;
     }
 
     @GetMapping("/status")
