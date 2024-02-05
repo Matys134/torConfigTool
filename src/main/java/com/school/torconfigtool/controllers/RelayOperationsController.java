@@ -466,4 +466,57 @@ public class RelayOperationsController {
             logger.error("Failed to stop Nginx", e);
         }
     }
+
+    @PostMapping("/upnp")
+    @ResponseBody
+    public void setUpnp(@RequestParam boolean enabled) {
+        if (enabled) {
+            startUpnpThread();
+        } else {
+            stopUpnpThread();
+        }
+    }
+
+    private Thread upnpThread;
+
+    private void startUpnpThread() {
+        upnpThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                // Get all relays
+                List<String> allServices = getAllServices();
+                for (String service : allServices) {
+                    String status = getRelayStatus(service, "onion");
+                    if ("online".equals(status)) {
+                        // Open ORPort
+                        openOrPort(service, "onion");
+                    } else {
+                        // Close ORPort
+                        closeOrPort(service, "onion");
+                    }
+                }
+                // Sleep for a while before the next check
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        upnpThread.start();
+    }
+
+    private void stopUpnpThread() {
+        if (upnpThread != null) {
+            upnpThread.interrupt();
+            upnpThread = null;
+        }
+    }
+
+    private void closeOrPort(String relayNickname, String relayType) {
+        // Get the ORPort from the torrc file
+        int orPort = getOrPort(buildTorrcFilePath(relayNickname, relayType));
+
+        // Close the ORPort using UPnP
+        UPnP.closePortTCP(orPort);
+    }
 }

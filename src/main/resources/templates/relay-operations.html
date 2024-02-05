@@ -10,6 +10,7 @@
 
 <div class="container">
     <h1>Tor Relay Operations</h1>
+    <button id="upnp-button" class="btn btn-primary">Turn ON UPnP</button>
 
     <!-- Guard Relay Configurations -->
     <div class="row">
@@ -241,6 +242,15 @@
                 }
             }
         });
+    });
+</script>
+
+<script>
+    let upnpEnabled = false;
+    document.getElementById('upnp-button').addEventListener('click', function() {
+        upnpEnabled = !upnpEnabled;
+        this.textContent = upnpEnabled ? 'Turn OFF UPnP' : 'Turn ON UPnP';
+        $.post("/relay-operations/upnp", { enabled: upnpEnabled });
     });
 </script>
 
