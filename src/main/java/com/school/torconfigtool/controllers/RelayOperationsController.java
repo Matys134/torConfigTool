@@ -114,6 +114,7 @@ public class RelayOperationsController {
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime < 30000) { // 30 seconds timeout
             String status = getRelayStatus(relayNickname, relayType);
+            System.out.println("Status: " + status);
             if (expectedStatus.equals(status)) {
                 checkAndManageNginxStatus();
                 break;
