@@ -111,8 +111,9 @@ public class RelayOperationsController {
     }
 
     private void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
+        System.out.println("Waiting for status change");
         long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < 500) { // 30 seconds timeout
+        while (System.currentTimeMillis() - startTime < 30000) { // 30 seconds timeout
             String status = getRelayStatus(relayNickname, relayType);
             System.out.println("Status: " + status);
             if (expectedStatus.equals(status)) {
