@@ -39,8 +39,12 @@ public class ProcessManagementService {
         logger.info("Executing command: {}", command);
 
         try {
+            int exitCode = process.waitFor();
 
-            return process.exitValue();
+            // Log the exit code
+            logger.info("Command exit code: {}", exitCode);
+
+            return exitCode;
         } finally {
             process.destroy();
         }
