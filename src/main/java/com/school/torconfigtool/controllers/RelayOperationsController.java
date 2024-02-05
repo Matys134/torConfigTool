@@ -129,20 +129,13 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
-        });
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            logger.error("Error while waiting for thread to finish", e);
-        }
+        }).start();
 
         return view;
     }
@@ -152,6 +145,7 @@ public class RelayOperationsController {
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
         String torrcFilePath = buildTorrcFilePath(relayNickname, relayType).toString();
         int pid = processManagementService.getTorRelayPID(torrcFilePath);
+        checkAndManageNginxStatus();
         return pid > 0 ? "online" : (pid == -1 ? "offline" : "error");
     }
 
