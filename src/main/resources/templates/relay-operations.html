@@ -10,6 +10,7 @@
 
 <div class="container">
     <h1>Tor Relay Operations</h1>
+    <button id="upnp-toggle-button" class="btn btn-primary" onclick="toggleUPnP()">Toggle UPnP for Guard Relays</button>
 
     <!-- Guard Relay Configurations -->
     <div class="row">
@@ -244,6 +245,20 @@
     });
 </script>
 
+<script>
+    function toggleUPnP() {
+        $.ajax({
+            url: '/relay-operations/toggle-upnp',
+            type: 'POST',
+            success: function(response) {
+                alert(response.message);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
