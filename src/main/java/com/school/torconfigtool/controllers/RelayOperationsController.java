@@ -131,11 +131,12 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                waitForStatusChange(relayNickname, relayType, "offline");
+                waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
         }).start();
+        checkAndManageNginxStatus();
 
         return view;
     }
