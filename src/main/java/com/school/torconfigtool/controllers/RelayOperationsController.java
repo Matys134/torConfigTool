@@ -99,20 +99,13 @@ public class RelayOperationsController {
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         String view = changeRelayState(relayNickname, relayType, model, false);
 
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to stop", e);
             }
-        });
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            logger.error("Error while waiting for thread to finish", e);
-        }
+        }).start();
 
         return view;
     }
@@ -136,20 +129,13 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
-        });
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            logger.error("Error while waiting for thread to finish", e);
-        }
+        }).start();
 
         return view;
     }
