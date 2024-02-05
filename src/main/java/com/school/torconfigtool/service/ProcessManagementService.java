@@ -1,10 +1,7 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.controllers.RelayOperationsController;
-import com.simtechdata.waifupnp.UPnP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -12,21 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ProcessManagementService {
-    private final RelayOperationsController relayOperationsController;
-
-    // Keep track of all ORPorts that were opened by the application
-    private final Set<Integer> openedORPorts = new HashSet<>();
-
-    @Autowired
-    public ProcessManagementService(RelayOperationsController relayOperationsController) {
-        this.relayOperationsController = relayOperationsController;
-    }
 
     private static final Logger logger = LoggerFactory.getLogger(ProcessManagementService.class);
 
@@ -90,34 +76,5 @@ public class ProcessManagementService {
             logger.error("Error executing command to get PID: {}", command, e);
             return -1;
         }
-    }
-
-    public void startUPnP() {
-        // Iterate over all relays
-        for (String relayNickname : relayOperationsController.getAllServices()) {
-            // Check the status of the relay
-            String status = relayOperationsController.getRelayStatus(relayNickname, "onion");
-
-            // If the relay is online, open its ORPort using UPnP
-            if ("online".equals(status)) {
-                int orPort = relayOperationsController.getOrPort(relayOperationsController.buildTorrcFilePath(relayNickname, "onion"));
-                boolean success = UPnP.openPortTCP(orPort);
-
-                // If the ORPort was opened successfully, add it to the set of opened ORPorts
-                if (success) {
-                    openedORPorts.add(orPort);
-                }
-            }
-        }
-    }
-
-    public void stopUPnP() {
-        // Close all ORPorts that were opened by the application
-        for (int orPort : openedORPorts) {
-            UPnP.closePortTCP(orPort);
-        }
-
-        // Clear the set of opened ORPorts
-        openedORPorts.clear();
     }
 }
