@@ -404,6 +404,7 @@ public class RelayOperationsController {
     }
 
     public void checkAndManageNginxStatus() {
+        System.out.println("Checking and managing Nginx status");
         // Get the list of all webTunnels and Onion services
         List<String> allServices = getAllServices();
 
