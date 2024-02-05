@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -129,13 +133,22 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        new Thread(() -> {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<?> future = executorService.submit(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
-        }).start();
+        });
+
+        try {
+            future.get();  // this will block until the task is finished
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error while waiting for the new thread to finish", e);
+        }
+
+        executorService.shutdown();  // always remember to shutdown your executor service
 
         return view;
     }
