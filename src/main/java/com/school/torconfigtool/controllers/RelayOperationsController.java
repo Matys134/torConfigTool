@@ -107,6 +107,8 @@ public class RelayOperationsController {
             }
         }).start();
 
+        Thread.yield(); // Suggest to the thread scheduler to switch to another thread
+
         return view;
     }
 
@@ -136,6 +138,8 @@ public class RelayOperationsController {
                 logger.error("Error while waiting for relay to start", e);
             }
         }).start();
+
+        Thread.yield(); // Suggest to the thread scheduler to switch to another thread
 
         return view;
     }
