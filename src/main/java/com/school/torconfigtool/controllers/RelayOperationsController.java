@@ -132,7 +132,7 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                waitForStatusChange(relayNickname, relayType, "online");
+                waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
@@ -411,7 +411,7 @@ public class RelayOperationsController {
         for (String service : allServices) {
             String status = getRelayStatus(service, "onion");
             // If at least one service is online, start the Nginx service and return
-            if ("online".equals(status)) {
+            if ("offline".equals(status)) {
                 startNginx();
                 return;
             }
