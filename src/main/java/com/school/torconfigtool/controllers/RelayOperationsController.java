@@ -126,9 +126,6 @@ public class RelayOperationsController {
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        System.out.println("Inside startRelay method");
-        openOrPort(relayNickname, relayType);
-        System.out.println("Orport opened");
         String view = changeRelayState(relayNickname, relayType, model, true);
         System.out.println("Relay state changed");
 
@@ -465,5 +462,40 @@ public class RelayOperationsController {
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to stop Nginx", e);
         }
+    }
+
+    @PostMapping("/toggle-upnp")
+    @ResponseBody
+    public Map<String, Object> toggleUPnP(@RequestParam boolean enable) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Get the list of all guard relays
+            List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+            for (TorConfiguration config : guardConfigs) {
+                if (enable) {
+                    String status = getRelayStatus(config.getGuardRelayConfig().getNickname(), "guard");
+                    if ("online".equals(status)) {
+                        // Open the ORPort
+                        openOrPort(config.getGuardRelayConfig().getNickname(), "guard");
+                    }
+                } else {
+                    // Close the ORPort
+                    closeOrPort(config.getGuardRelayConfig().getNickname(), "guard");
+                }
+            }
+            response.put("success", true);
+            response.put("message", "UPnP for Guard Relays " + (enable ? "enabled" : "disabled") + " successfully!");
+        } catch (Exception e) {
+            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays", e);
+            response.put("success", false);
+            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays.");
+        }
+        return response;
+    }
+
+    private void closeOrPort(String relayNickname, String relayType) {
+        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        int orPort = getOrPort(torrcFilePath);
+        UPnP.closePortTCP(orPort);
     }
 }
