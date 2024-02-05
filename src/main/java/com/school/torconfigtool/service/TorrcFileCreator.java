@@ -25,7 +25,7 @@ public class TorrcFileCreator {
             writer.write("Nickname " + config.getNickname());
             writer.newLine();
             String orPort = config.getOrPort() != null ? config.getOrPort() : "127.0.0.1:auto";
-            writer.write("ORPort " + orPort);
+            writer.write("ORPort " + orPort + " IPv4Only");
             writer.newLine();
             writer.write("ContactInfo " + config.getContact());
             writer.newLine();

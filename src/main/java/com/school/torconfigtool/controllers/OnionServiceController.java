@@ -253,6 +253,7 @@ public class OnionServiceController {
             torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
             torrcWriter.newLine();
             torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
+            torrcWriter.write("RunAsDaemon 1");
 
             File indexHtml = new File(serviceDir, "index.html");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
