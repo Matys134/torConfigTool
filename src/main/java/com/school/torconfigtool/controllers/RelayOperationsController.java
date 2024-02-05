@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -28,11 +31,13 @@ public class RelayOperationsController {
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsController.class);
     private final TorConfigurationService torConfigurationService;
     private final ProcessManagementService processManagementService;
+    private final ExecutorService executorService;
 
     public RelayOperationsController(TorConfigurationService torConfigurationService,
                                      ProcessManagementService processManagementService) {
         this.torConfigurationService = torConfigurationService;
         this.processManagementService = processManagementService;
+        this.executorService = Executors.newSingleThreadExecutor();
 
         try {
             Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
@@ -99,13 +104,19 @@ public class RelayOperationsController {
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         String view = changeRelayState(relayNickname, relayType, model, false);
 
-        new Thread(() -> {
+        Future<?> future = executorService.submit(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to stop", e);
             }
-        }).start();
+        });
+
+        try {
+            future.get();  // wait for the task to complete
+        } catch (Exception e) {
+            logger.error("Error while waiting for future to complete", e);
+        }
 
         return view;
     }
@@ -129,13 +140,19 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        new Thread(() -> {
+        Future<?> future = executorService.submit(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
-        }).start();
+        });
+
+        try {
+            future.get();  // wait for the task to complete
+        } catch (Exception e) {
+            logger.error("Error while waiting for future to complete", e);
+        }
 
         return view;
     }
