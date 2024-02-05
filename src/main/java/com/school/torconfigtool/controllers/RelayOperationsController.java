@@ -130,6 +130,7 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         System.out.println("Orport opened");
         String view = changeRelayState(relayNickname, relayType, model, true);
+        System.out.println("Relay state changed");
 
         new Thread(() -> {
             try {
