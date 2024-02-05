@@ -128,6 +128,7 @@ public class RelayOperationsController {
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         System.out.println("Inside startRelay method");
         openOrPort(relayNickname, relayType);
+        System.out.println("Orport opened");
         String view = changeRelayState(relayNickname, relayType, model, true);
 
         new Thread(() -> {
