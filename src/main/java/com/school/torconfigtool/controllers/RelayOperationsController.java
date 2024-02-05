@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controllers;
 
-import com.dosse.upnp.UPnP;
+import com.simtechdata.waifupnp.UPnP;
 import com.school.torconfigtool.RelayOperationException;
 import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.ProcessManagementService;
