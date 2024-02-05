@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -133,22 +133,27 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<?> future = executorService.submit(() -> {
+        FutureTask<String> futureTask = new FutureTask<>(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
+            return "Task Completed";
         });
 
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.execute(futureTask);
+
         try {
-            future.get();  // this will block until the task is finished
+            // This will make the current thread to wait until the task is completed
+            String result = futureTask.get();
+            logger.info("Result from futureTask: {}", result);
         } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error while waiting for the new thread to finish", e);
+            logger.error("Error while waiting for futureTask to complete", e);
         }
 
-        executorService.shutdown();  // always remember to shutdown your executor service
+        executor.shutdown(); // Always remember to shutdown executor
 
         return view;
     }
