@@ -138,6 +138,7 @@ public class RelayOperationsController {
                 logger.error("Error while waiting for relay to start", e);
             }
         }).start();
+        System.out.println("Returning view");
 
         return view;
     }
