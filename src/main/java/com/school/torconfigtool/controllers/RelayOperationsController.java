@@ -127,6 +127,7 @@ public class RelayOperationsController {
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         String view = changeRelayState(relayNickname, relayType, model, true);
+        System.out.println("Relay state changed");
 
         new Thread(() -> {
             try {
@@ -199,7 +200,7 @@ public class RelayOperationsController {
     }
 
 
-    private Path buildTorrcFilePath(String relayNickname, String relayType) {
+    public Path buildTorrcFilePath(String relayNickname, String relayType) {
         return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
     }
 
@@ -374,7 +375,7 @@ public class RelayOperationsController {
         return response;
     }
 
-    private int getOrPort(Path torrcFilePath) {
+    public int getOrPort(Path torrcFilePath) {
         int orPort = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
             String line;
@@ -421,7 +422,7 @@ public class RelayOperationsController {
         stopNginx();
     }
 
-    private List<String> getAllServices() {
+    public List<String> getAllServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
@@ -460,6 +461,16 @@ public class RelayOperationsController {
             }
         } catch (IOException | InterruptedException e) {
             logger.error("Failed to stop Nginx", e);
+        }
+    }
+
+    @PostMapping("/upnp-toggle")
+    @ResponseBody
+    public void toggleUPnP(@RequestParam boolean enabled) {
+        if (enabled) {
+            processManagementService.startUPnP();
+        } else {
+            processManagementService.stopUPnP();
         }
     }
 }

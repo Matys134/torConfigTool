@@ -71,4 +71,20 @@ $(document).ready(function () {
         updateBridgeRelayStatus();
         updateOnionRelayStatus();
     }, 10000);
+
+    // Handle UPnP toggle button click
+    $('#upnp-toggle').click(function () {
+        var isUPnPEnabled = $(this).data('upnp-enabled');
+
+        // Send a request to the server to turn on/off UPnP
+        $.post('/relay-operations/upnp-toggle', { enabled: !isUPnPEnabled })
+            .done(function () {
+                // Update the button state
+                $(this).data('upnp-enabled', !isUPnPEnabled);
+                $(this).text(!isUPnPEnabled ? 'Turn off UPnP' : 'Turn on UPnP');
+            })
+            .fail(function () {
+                console.error('Failed to toggle UPnP');
+            });
+    });
 });
