@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 @Controller
 @RequestMapping("/relay-operations")
@@ -31,6 +32,7 @@ public class RelayOperationsController {
     private final TorConfigurationService torConfigurationService;
     private final ProcessManagementService processManagementService;
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final Semaphore semaphore = new Semaphore(10);
 
     public RelayOperationsController(TorConfigurationService torConfigurationService,
                                      ProcessManagementService processManagementService) {
@@ -102,13 +104,16 @@ public class RelayOperationsController {
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         String view = changeRelayState(relayNickname, relayType, model, false);
 
-        executorService.submit(() -> {
+        new Thread(() -> {
             try {
+                semaphore.acquire(); // Acquire a permit before executing the thread
                 waitForStatusChange(relayNickname, relayType, "offline");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to stop", e);
+            } finally {
+                semaphore.release(); // Release the permit after executing the thread
             }
-        });
+        }).start();
 
         return view;
     }
@@ -132,13 +137,16 @@ public class RelayOperationsController {
         openOrPort(relayNickname, relayType);
         String view = changeRelayState(relayNickname, relayType, model, true);
 
-        executorService.submit(() -> {
+        new Thread(() -> {
             try {
+                semaphore.acquire(); // Acquire a permit before executing the thread
                 waitForStatusChange(relayNickname, relayType, "online");
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
+            } finally {
+                semaphore.release(); // Release the permit after executing the thread
             }
-        });
+        }).start();
 
         return view;
     }
