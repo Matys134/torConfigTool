@@ -27,9 +27,13 @@ public class OnionServiceController {
     private final List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
 
+    // Add a field for RelayOperationsController
+    private final RelayOperationsController relayOperationController;
+
     @Autowired
-    public OnionServiceController(TorConfigurationService torConfigurationService) {
+    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
         this.torConfigurationService = torConfigurationService;
+        this.relayOperationController = relayOperationController; // Initialize the field
         this.onionServicePorts = getAllOnionServicePorts();
 
         // Set the hiddenServicePort here if it's not being set elsewhere
@@ -118,7 +122,9 @@ public class OnionServiceController {
             if (!new File(pathToFile).exists()) {
                 createTorrcFile(pathToFile, onionServicePort);
                 generateNginxConfig(onionServicePort);
-                restartNginx();
+
+                // Restart nginx
+                relayOperationController.reloadNginx();
             }
             torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
             logger.info("Hidden Service Port set to: {}", onionServicePort);

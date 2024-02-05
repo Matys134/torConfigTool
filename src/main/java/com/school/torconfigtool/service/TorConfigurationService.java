@@ -94,7 +94,7 @@ public class TorConfigurationService {
         } else if (line.startsWith("BandwidthRate")) {
             config.setBandwidthRate(line.split(" ")[1].trim());
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
-            ((BridgeRelayConfig) relayConfig).setBridgeTransportListenAddr(line.substring(line.indexOf("obfs4")).trim());
+            ((BridgeRelayConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
         }
     }
 

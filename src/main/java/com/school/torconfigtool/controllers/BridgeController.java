@@ -98,6 +98,9 @@ public class BridgeController {
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
             config.setPath(randomString); // Set the path
             updateTorrcFile(config); // Update the torrc file
+
+            // Restart nginx
+            relayOperationController.reloadNginx();
         }
 
         if (startBridgeAfterConfig) {
@@ -132,7 +135,7 @@ public class BridgeController {
         if (webtunnelPort != null)
             config.setWebtunnelPort(webtunnelPort);
         if (bridgeTransportListenAddr != null)
-            config.setBridgeTransportListenAddr(String.valueOf(bridgeTransportListenAddr));
+            config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
 
         return config;
     }
