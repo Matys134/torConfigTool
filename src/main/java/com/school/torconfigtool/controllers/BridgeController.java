@@ -98,6 +98,9 @@ public class BridgeController {
             modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
             config.setPath(randomString); // Set the path
             updateTorrcFile(config); // Update the torrc file
+
+            // Restart nginx
+            relayOperationController.restartNginx();
         }
 
         if (startBridgeAfterConfig) {

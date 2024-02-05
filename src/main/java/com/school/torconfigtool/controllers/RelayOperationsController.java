@@ -97,12 +97,14 @@ public class RelayOperationsController {
 
     @PostMapping("/stop")
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
+        checkAndManageNginxStatus();
         return changeRelayState(relayNickname, relayType, model, false);
     }
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
         openOrPort(relayNickname, relayType);
+        checkAndManageNginxStatus();
         return changeRelayState(relayNickname, relayType, model, true);
     }
 
@@ -268,9 +270,12 @@ public class RelayOperationsController {
             ProcessBuilder processBuilder = new ProcessBuilder("shellScripts/remove_onion_files.sh", relayNickname);
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
+
             if (exitCode != 0) {
                 throw new IOException("Failed to delete Nginx configuration file and symbolic link");
             }
+
+            restartNginx();
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
@@ -352,4 +357,76 @@ public class RelayOperationsController {
         return orPort;
     }
 
+    public void restartNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "restart", "nginx");
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Failed to restart Nginx");
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to restart Nginx", e);
+        }
+    }
+
+    public void checkAndManageNginxStatus() {
+        // Get the list of all webTunnels and Onion services
+        List<String> allServices = getAllServices();
+
+        // Iterate over the list and check the status of each service
+        for (String service : allServices) {
+            String status = getRelayStatus(service, "onion");
+            // If at least one service is online, start the Nginx service and return
+            if ("online".equals(status)) {
+                startNginx();
+                return;
+            }
+        }
+
+        // If no service is online, stop the Nginx service
+        stopNginx();
+    }
+
+    private List<String> getAllServices() {
+        List<String> allServices = new ArrayList<>();
+        // Get the list of all onion services
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
+        for (TorConfiguration config : onionConfigs) {
+            allServices.add(config.getHiddenServicePort());
+        }
+
+        // Get the list of all webTunnels
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+        for (TorConfiguration config : bridgeConfigs) {
+            allServices.add(config.getBridgeRelayConfig().getNickname());
+        }
+        return allServices;
+    }
+
+    public void startNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "nginx");
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Failed to start Nginx");
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to start Nginx", e);
+        }
+    }
+
+    public void stopNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "nginx");
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Failed to stop Nginx");
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to stop Nginx", e);
+        }
+    }
 }
