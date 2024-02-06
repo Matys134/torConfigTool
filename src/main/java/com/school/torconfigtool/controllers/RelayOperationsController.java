@@ -148,8 +148,8 @@ public class RelayOperationsController {
 
         new Thread(() -> {
             try {
-                System.out.println("Waiting for relay to start");
                 waitForStatusChange(relayNickname, relayType, "online");
+                openOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to start", e);
             }
