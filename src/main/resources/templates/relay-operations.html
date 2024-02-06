@@ -202,21 +202,6 @@
     </div>
 </div>
 
-<!-- UPnP Managed Ports -->
-<h2>UPnP Managed Ports</h2>
-<table id="upnp-ports-table" class="table">
-    <thead>
-    <tr>
-        <th>Relay Nickname</th>
-        <th>Relay Type</th>
-        <th>Managed Port</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Rows will be added dynamically here -->
-    </tbody>
-</table>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
 <script src="/js/status.js"></script>
@@ -278,30 +263,6 @@
             }
         });
     }
-</script>
-
-<script>
-    $(document).ready(function() {
-        // Fetch the UPnP managed ports from the server
-        $.get("/relay-operations/upnp-ports", function(data) {
-            // Get the table body
-            var tbody = $("#upnp-ports-table tbody");
-
-            // Iterate over each item in the data
-            data.forEach(function(item) {
-                // Create a new row
-                var row = $("<tr>");
-
-                // Add the relay nickname, relay type, and managed port to the row
-                row.append($("<td>").text(item.relayNickname));
-                row.append($("<td>").text(item.relayType));
-                row.append($("<td>").text(item.managedPort));
-
-                // Add the row to the table body
-                tbody.append(row);
-            });
-        });
-    });
 </script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
