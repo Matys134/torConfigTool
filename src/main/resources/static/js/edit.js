@@ -35,7 +35,7 @@ $(document).ready(function () {
         $('#edit-form [data-config-type]').each(function() {
             var configTypes = $(this).attr('data-config-type').split(' ');
             var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
-            if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
+            if (configTypes.includes(relayType) && (relayType !== 'bridge' || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
                 // Populate the input fields with the current values
