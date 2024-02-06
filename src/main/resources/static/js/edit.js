@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
     var isBridgeEdit = false; // Add this variable to track which config is being edited
+    var serverTransportProtocolAndAddress;
 
     const configSelectors = {
         modal: $("#edit-modal"),
@@ -21,10 +22,15 @@ $(document).ready(function () {
     function showModalWith(data, relayType, bridgeType) {
         console.log('Data:', data); // Log the data object
 
+        // Split the serverTransport into protocol and port
+        var serverTransportParts = data.serverTransport.split(':');
+        serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
+        var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
+
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(data.serverTransport);
+        configSelectors.serverTransport.val(serverTransportPort); // Set only the port part for editing
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
@@ -67,6 +73,9 @@ $(document).ready(function () {
     }
 
     function sendUpdateRequest(url, data) {
+        // Combine the protocol and address with the new port to form the updated serverTransport
+        data.serverTransport = serverTransportProtocolAndAddress + ':' + data.serverTransport;
+
         $.ajax({
             type: "POST",
             url: url,
