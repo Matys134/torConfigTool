@@ -30,7 +30,7 @@ $(document).ready(function () {
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(serverTransportPort); // Set only the port part for editing
+        configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
@@ -78,7 +78,7 @@ $(document).ready(function () {
         var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Combine the protocol and address with the new port to form the updated serverTransport
-        data.serverTransport = serverTransportProtocolAndAddress + ':' + serverTransportPort;
+        data.serverTransport = serverTransportProtocolAndAddress + ':' + data.serverTransport;
 
         $.ajax({
             type: "POST",
