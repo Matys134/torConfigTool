@@ -117,6 +117,8 @@ public class RelayOperationsController {
         new Thread(() -> {
             try {
                 waitForStatusChange(relayNickname, relayType, "offline");
+                // Close the ORPort after the relay has stopped
+                closeOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to stop", e);
             }
