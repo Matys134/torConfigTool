@@ -143,7 +143,12 @@ public class RelayOperationsController {
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        String view = changeRelayState(relayNickname, relayType, model, true);
+        String view;
+        if ("guard".equals(relayType)) {
+            view = changeRelayState(relayNickname, relayType, model, true);
+        } else {
+            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model, true);
+        }
         System.out.println("Relay state changed");
 
         new Thread(() -> {
@@ -157,6 +162,47 @@ public class RelayOperationsController {
         System.out.println("Returning view");
 
         return view;
+    }
+
+    private String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model, boolean start) {
+        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        String operation = start ? "start" : "stop";
+        try {
+            processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname, start);
+            model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
+        } catch (RelayOperationException | IOException | InterruptedException e) {
+            logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
+            model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
+        }
+        return relayOperations(model);
+    }
+
+    private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
+        if (!torrcFilePath.toFile().exists()) {
+            throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
+        }
+        if (start) {
+            // Step 3: Start the Relay
+            String command = "tor -f " + torrcFilePath.toAbsolutePath();
+            System.out.println("Executing command: " + command);
+            int exitCode = processManagementService.executeCommand(command);
+            if (exitCode != 0) {
+                throw new RelayOperationException("Failed to start Tor Relay service.");
+            }
+        } else {
+            int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
+            if (pid > 0) {
+                String command = "kill -SIGINT " + pid;
+                int exitCode = processManagementService.executeCommand(command);
+                if (exitCode != 0) {
+                    throw new RelayOperationException("Failed to stop Tor Relay service.");
+                }
+            } else if (pid == -1) {
+                throw new RelayOperationException("Tor Relay is not running.");
+            } else {
+                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
+            }
+        }
     }
 
     @GetMapping("/status")
