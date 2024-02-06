@@ -69,6 +69,8 @@
     <input type="submit" value="Delete Selected" class="btn btn-danger">
 </form>
 
+<button id="refresh-nginx" class="btn btn-secondary">Refresh Nginx</button>
+
 <!-- Add jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -83,6 +85,20 @@
         });
         $('#delete-form').on('submit', function () {
             return confirm('Are you sure you want to delete these files?');
+        });
+    });
+</script>
+<script>
+    $('#refresh-nginx').on('click', function () {
+        $.ajax({
+            url: '/onion-service/refresh-nginx',
+            type: 'POST',
+            success: function() {
+                alert('Nginx refreshed successfully');
+            },
+            error: function() {
+                alert('Failed to refresh Nginx');
+            }
         });
     });
 </script>
