@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
     var isBridgeEdit = false; // Add this variable to track which config is being edited
+    var serverTransportProtocolAndAddress;
 
     const configSelectors = {
         modal: $("#edit-modal"),
@@ -21,10 +22,15 @@ $(document).ready(function () {
     function showModalWith(data, relayType, bridgeType) {
         console.log('Data:', data); // Log the data object
 
+        // Split the serverTransport into protocol and port
+        var serverTransportParts = data.serverTransport.split(':');
+        serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
+        var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
+
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(data.serverTransport);
+        configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
@@ -35,7 +41,7 @@ $(document).ready(function () {
         $('#edit-form [data-config-type]').each(function() {
             var configTypes = $(this).attr('data-config-type').split(' ');
             var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
-            if (configTypes.includes(relayType) && (bridgeTypes.length === 0 || bridgeTypes.includes(bridgeType))) {
+            if (configTypes.includes(relayType) && (relayType !== 'bridge' || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
                 // Populate the input fields with the current values
@@ -67,6 +73,13 @@ $(document).ready(function () {
     }
 
     function sendUpdateRequest(url, data) {
+        // Extract the port from the serverTransport field
+        var serverTransportParts = data.serverTransport.split(':');
+        var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
+
+        // Combine the protocol and address with the new port to form the updated serverTransport
+        data.serverTransport = serverTransportPort;
+
         $.ajax({
             type: "POST",
             url: url,
@@ -112,41 +125,45 @@ $(document).ready(function () {
 
     buttons.save.click(function () {
         const data = {
-            nickname: configSelectors.nickname.text(), // Use .text() instead of .val() as nickname is now a <p> element
+            nickname: configSelectors.nickname.text(),
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
-        // Add bridgeType to the data object
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
-            // Check for the uniqueness of ports
-            if (!arePortsUnique(data.orPort, data.controlPort)) {
-                alert("The ports specified must be unique. Please check your entries.");
-                return;
-            }
-
             hideModal();
 
-            // Now send a GET request to your new API for checking the port availability
-            $.get("/update-guard-config/check-port-availability",
-                {
-                    nickname: data.nickname,
-                    orPort: data.orPort,
-                    controlPort: data.controlPort,
-                },
-                function (response) {
-                    if (response['available']) {
-                        let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
-                        sendUpdateRequest(url, data);
-                        hideModal();
-                    } else {
-                        alert("One or more ports are already in use. Please choose different ports.");
-                    }
-                });
+            // If only the contact field is being edited, skip the port availability check
+            if (isBridgeEdit && data.bridgeType === 'webtunnel') {
+                let url = '/update-bridge-config';
+                sendUpdateRequest(url, data);
+            } else {
+                // Check for the uniqueness of ports
+                if (!arePortsUnique(data.orPort, data.controlPort)) {
+                    alert("The ports specified must be unique. Please check your entries.");
+                    return;
+                }
+
+                // Now send a GET request to your new API for checking the port availability
+                $.get("/update-guard-config/check-port-availability",
+                    {
+                        nickname: data.nickname,
+                        orPort: data.orPort,
+                        controlPort: data.controlPort,
+                    },
+                    function (response) {
+                        if (response['available']) {
+                            let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
+                            sendUpdateRequest(url, data);
+                        } else {
+                            alert("One or more ports are already in use. Please choose different ports.");
+                        }
+                    });
+            }
         });
     });
 

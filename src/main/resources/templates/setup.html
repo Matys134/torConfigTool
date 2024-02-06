@@ -75,7 +75,7 @@
                 <div class="form-group">
                     <label for="bridgeType">Bridge Type:</label>
                     <select id="bridgeType" name="bridgeType" class="form-control" onchange="toggleBridgeFields()">
-                        <option value="bridge">Bridge</option>
+                        <option value="obfs4">Obfs4 Bridge</option>
                         <option value="webtunnel">WebTunnel Bridge</option>
                         <option value="snowflake">Snowflake</option>
                     </select>
@@ -214,11 +214,11 @@
         bridgeTransportListenAddr.removeAttribute("required");
 
         // Show specific fields and add 'required' attributes based on the selected bridge type
-        if (bridgeType === "bridge" || bridgeType === "webtunnel") {
+        if (bridgeType === "obfs4" || bridgeType === "webtunnel") {
             commonFields.style.display = "block";
         }
 
-        if (bridgeType === "bridge") {
+        if (bridgeType === "obfs4") {
             bridgeFields.style.display = "block";
             bridgePort.setAttribute("required", "");
             bridgeTransportListenAddr.setAttribute("required", "");

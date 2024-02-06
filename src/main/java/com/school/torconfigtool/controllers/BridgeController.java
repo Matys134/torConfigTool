@@ -2,18 +2,18 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.service.FileService;
 import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -24,6 +24,9 @@ import java.util.*;
 @Controller
 @RequestMapping("/bridge")
 public class BridgeController {
+
+    @Autowired
+    private FileService fileService;
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
@@ -154,7 +157,7 @@ public class BridgeController {
         String certDirectory = programLocation + "/onion/certs/service-80/";
         new File(certDirectory).mkdirs();
 
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt --force";
+        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
         System.out.println("Generating certificate: " + command);
 
         Process certProcess = executeCommand(command);
@@ -300,7 +303,7 @@ public class BridgeController {
             lines.add("server {");
             lines.add("    listen 80 default_server;");
             lines.add("    listen [::]:80 default_server;");
-            lines.add("    root /var/www/html;");
+            lines.add("    root /home/matys/git/torConfigTool/onion/www/service-80;");
             lines.add("    index index.html index.htm index.nginx-debian.html;");
             lines.add("    server_name _;");
             lines.add("    location / {");
@@ -434,5 +437,47 @@ public class BridgeController {
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());
+    }
+
+    @PostMapping("/upload/{port}")
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
+        try {
+            String fileDir = "onion/www/service-" + port + "/";
+            fileService.uploadFiles(files, fileDir);
+            List<String> fileNames = fileService.getUploadedFiles(fileDir);
+            model.addAttribute("uploadedFiles", fileNames);
+            model.addAttribute("message", "Files uploaded successfully!");
+            return "file_upload_form";
+        } catch (Exception e) {
+            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
+            return "file_upload_form";
+        }
+    }
+
+    @PostMapping("/remove-file/{fileName}/{port}")
+    public String removeFile(@PathVariable("fileName") String fileName, @PathVariable("port") int port, Model model) {
+        try {
+            String fileDir = "onion/www/service-" + port + "/";
+            fileService.deleteFile(fileName, fileDir);
+            List<String> fileNames = fileService.getUploadedFiles(fileDir);
+            model.addAttribute("uploadedFiles", fileNames);
+            model.addAttribute("message", "File deleted successfully.");
+            return "file_upload_form";
+        } catch (Exception e) {
+            model.addAttribute("message", "Error: " + e.getMessage());
+            return "file_upload_form";
+        }
+    }
+
+    private List<String> getUploadedFiles(int port) {
+        String uploadDir = "onion/www/service-" + port + "/";
+        return fileService.getUploadedFiles(uploadDir);
+    }
+
+    @GetMapping("/upload/{port}")
+    public String showUploadForm(@PathVariable("port") int port, Model model) {
+        List<String> fileNames = getUploadedFiles(port);
+        model.addAttribute("uploadedFiles", fileNames);
+        return "file_upload_form";
     }
 }
