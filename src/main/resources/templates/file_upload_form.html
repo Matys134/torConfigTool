@@ -3,26 +3,58 @@
 <head>
     <title>Upload your files</title>
     <link href="/css/navbar.css" rel="stylesheet">
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Add Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        form {
+            margin-bottom: 1rem;
+        }
+        ul {
+            padding: 0;
+            list-style-type: none;
+        }
+        li {
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
 
-<h1>File Upload</h1>
-<form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}">
-    <input multiple name="files" type="file"><br/><br/>
-    <input type="submit" value="Submit">
+<h1 class="mb-4">File Upload</h1>
+<form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
+    <input multiple name="files" type="file" class="form-control mb-3"><br/><br/>
+    <input type="submit" value="Submit" class="btn btn-primary">
 </form>
-<h2>Uploaded files:</h2>
+<h2 class="mb-3">Uploaded files:</h2>
 <ul>
     <th:block th:each="file : ${uploadedFiles}">
         <li>
             <span th:text="${file}"></span>
             <form method="POST"
                   th:action="@{/onion-service/remove-file/{fileName}/{port}(fileName=${file}, port=${port})}">
-                <button type="submit">Delete</button>
+                <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
             </form>
         </li>
     </th:block>
 </ul>
+
+<!-- Add jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('form').on('submit', function () {
+            return confirm('Are you sure you want to delete this file?');
+        });
+    });
+</script>
 </body>
 </html>
