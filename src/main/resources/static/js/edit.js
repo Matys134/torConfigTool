@@ -78,7 +78,7 @@ $(document).ready(function () {
         var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Combine the protocol and address with the new port to form the updated serverTransport
-        data.serverTransport = serverTransportProtocolAndAddress + ':' + data.serverTransport;
+        data.serverTransport = serverTransportPort;
 
         $.ajax({
             type: "POST",
