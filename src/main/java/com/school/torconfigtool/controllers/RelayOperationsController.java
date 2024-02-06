@@ -507,21 +507,27 @@ public class RelayOperationsController {
         // Get all guard relay configurations
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
-            Map<String, Object> portInfo = new HashMap<>();
-            portInfo.put("relayNickname", config.getGuardRelayConfig().getNickname());
-            portInfo.put("relayType", "guard");
-            portInfo.put("managedPort", config.getGuardRelayConfig().getOrPort());
-            managedPorts.add(portInfo);
+            // Check if the port is opened by UPnP
+            if (UPnP.isMappedTCP(Integer.parseInt(config.getGuardRelayConfig().getOrPort()))) {
+                Map<String, Object> portInfo = new HashMap<>();
+                portInfo.put("relayNickname", config.getGuardRelayConfig().getNickname());
+                portInfo.put("relayType", "guard");
+                portInfo.put("managedPort", config.getGuardRelayConfig().getOrPort());
+                managedPorts.add(portInfo);
+            }
         }
 
         // Get all bridge relay configurations
         List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
         for (TorConfiguration config : bridgeConfigs) {
-            Map<String, Object> portInfo = new HashMap<>();
-            portInfo.put("relayNickname", config.getBridgeRelayConfig().getNickname());
-            portInfo.put("relayType", "bridge");
-            portInfo.put("managedPort", config.getBridgeRelayConfig().getOrPort());
-            managedPorts.add(portInfo);
+            // Check if the port is opened by UPnP
+            if (UPnP.isMappedTCP(Integer.parseInt(config.getBridgeRelayConfig().getOrPort()))) {
+                Map<String, Object> portInfo = new HashMap<>();
+                portInfo.put("relayNickname", config.getBridgeRelayConfig().getNickname());
+                portInfo.put("relayType", "bridge");
+                portInfo.put("managedPort", config.getBridgeRelayConfig().getOrPort());
+                managedPorts.add(portInfo);
+            }
         }
 
         return managedPorts;
