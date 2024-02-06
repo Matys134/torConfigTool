@@ -471,7 +471,7 @@ public class BridgeController {
         // Restart the nginx service
         ProcessBuilder processBuilder = new ProcessBuilder();
         // Restart the nginx service using kill command and then start command
-        processBuilder.command("bash", "-c", "sudo killall nginx && sudo nginx");
+        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
     }
 
     @PostMapping("/toggle-limit")
