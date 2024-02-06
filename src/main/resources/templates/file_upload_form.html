@@ -3,26 +3,88 @@
 <head>
     <title>Upload your files</title>
     <link href="/css/navbar.css" rel="stylesheet">
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Add Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            /* Add a padding to the body to give some space from the edges */
+            padding: 0 20px;
+        }
+        form {
+            margin-bottom: 1rem;
+            /* Center the text inside the form */
+            text-align: center;
+        }
+        ul {
+            padding: 0;
+            list-style-type: none;
+            /* Center the text inside the list */
+            text-align: center;
+        }
+        li {
+            margin-bottom: 1rem;
+            /* Center the text inside the list item */
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
 
-<h1>File Upload</h1>
-<form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}">
-    <input multiple name="files" type="file"><br/><br/>
-    <input type="submit" value="Submit">
+<h1 class="mb-4">File Upload</h1>
+
+<!-- Upload form -->
+<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
+    <input id="file-input" multiple name="files" type="file" class="form-control mb-3">
+    <input type="submit" value="Upload" class="btn btn-primary">
 </form>
-<h2>Uploaded files:</h2>
-<ul>
-    <th:block th:each="file : ${uploadedFiles}">
-        <li>
-            <span th:text="${file}"></span>
-            <form method="POST"
-                  th:action="@{/onion-service/remove-file/{fileName}/{port}(fileName=${file}, port=${port})}">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    </th:block>
-</ul>
+
+<h2 class="mb-3">Uploaded files:</h2>
+
+<!-- Delete form -->
+<form id="delete-form" method="POST" th:action="@{/onion-service/remove-files/{port}(port=${port})}">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">File</th>
+            <th scope="col">Select</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="file, stat : ${uploadedFiles}">
+            <tr>
+                <th scope="row" th:text="${stat.count}"></th>
+                <td th:text="${file}"></td>
+                <td><input type="checkbox" name="selectedFiles" th:value="${file}"></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <input type="submit" value="Delete Selected" class="btn btn-danger">
+</form>
+
+<!-- Add jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#upload-form').on('submit', function () {
+            var files = $('#file-input').get(0).files;
+            if (files.length === 0) {
+                alert('Please select a file to upload');
+                return false;
+            }
+        });
+        $('#delete-form').on('submit', function () {
+            return confirm('Are you sure you want to delete these files?');
+        });
+    });
+</script>
 </body>
 </html>

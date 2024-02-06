@@ -202,6 +202,20 @@
     </div>
 </div>
 
+<table>
+    <thead>
+    <tr>
+        <th>UPnP Managed Ports</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop through the list of ports managed by UPnP -->
+    <tr th:each="port : ${upnpPorts}">
+        <td th:text="${port}"></td>
+    </tr>
+    </tbody>
+</table>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
 <script src="/js/status.js"></script>

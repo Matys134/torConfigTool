@@ -454,14 +454,16 @@ public class BridgeController {
         }
     }
 
-    @PostMapping("/remove-file/{fileName}/{port}")
-    public String removeFile(@PathVariable("fileName") String fileName, @PathVariable("port") int port, Model model) {
+    @PostMapping("/remove-files/{port}")
+    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
         try {
             String fileDir = "onion/www/service-" + port + "/";
-            fileService.deleteFile(fileName, fileDir);
-            List<String> fileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", fileNames);
-            model.addAttribute("message", "File deleted successfully.");
+            for (String fileName : fileNames) {
+                fileService.deleteFile(fileName, fileDir);
+            }
+            List<String> remainingFileNames = fileService.getUploadedFiles(fileDir);
+            model.addAttribute("uploadedFiles", remainingFileNames);
+            model.addAttribute("message", "Files deleted successfully.");
             return "file_upload_form";
         } catch (Exception e) {
             model.addAttribute("message", "Error: " + e.getMessage());

@@ -76,7 +76,22 @@ public class RelayOperationsController {
         logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
 
+        List<Integer> upnpPorts = getUPnPPorts();
+        model.addAttribute("upnpPorts", upnpPorts);
+
         return "relay-operations";
+    }
+
+    private List<Integer> getUPnPPorts() {
+        List<Integer> upnpPorts = new ArrayList<>();
+        List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+        for (TorConfiguration config : guardConfigs) {
+            int orPort = getOrPort(buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard"));
+            if (UPnP.isMappedTCP(orPort)) {
+                upnpPorts.add(orPort);
+            }
+        }
+        return upnpPorts;
     }
 
     private String readHostnameFile(String hiddenServicePort) {
