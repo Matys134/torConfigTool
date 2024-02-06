@@ -307,10 +307,6 @@ public class OnionServiceController {
 
     @PostMapping("/upload/{port}")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
-        if (files.length == 0) {
-            model.addAttribute("message", "No files selected for upload.");
-            return "file_upload_form";
-        }
         try {
             String fileDir = "onion/www/service-" + port + "/";
             fileService.uploadFiles(files, fileDir);
