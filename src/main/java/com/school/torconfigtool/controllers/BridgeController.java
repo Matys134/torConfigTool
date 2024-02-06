@@ -102,7 +102,7 @@ public class BridgeController {
             config.setPath(randomString); // Set the path
             updateTorrcFile(config); // Update the torrc file
 
-            relayOperationController.reloadNginx();
+            reloadNginx();
         }
 
         if (startBridgeAfterConfig) {
@@ -298,6 +298,7 @@ public class BridgeController {
     }
 
     private void reloadNginx() {
+        System.out.println("Reloading Nginx");
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
         try {
