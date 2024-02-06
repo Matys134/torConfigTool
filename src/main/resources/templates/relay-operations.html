@@ -10,8 +10,7 @@
 
 <div class="container">
     <h1>Tor Relay Operations</h1>
-    <button id="upnp-enable-button" class="btn btn-primary" onclick="toggleUPnP(true)">Enable UPnP for Guard Relays</button>
-    <button id="upnp-disable-button" class="btn btn-primary" onclick="toggleUPnP(false)">Disable UPnP for Guard Relays</button>
+    <button id="upnp-toggle-button" class="btn btn-primary" data-upnp-enabled="true">Disable UPnP for Guard Relays</button>
 
     <!-- Guard Relay Configurations -->
     <div class="row">
@@ -277,6 +276,22 @@
             }
         });
     }
+</script>
+<script>
+    $(document).ready(function() {
+        $('#upnp-toggle-button').click(function() {
+            var button = $(this);
+            var upnpEnabled = button.data('upnp-enabled');
+            if (upnpEnabled) {
+                toggleUPnP(false);
+                button.text('Enable UPnP for Guard Relays');
+            } else {
+                toggleUPnP(true);
+                button.text('Disable UPnP for Guard Relays');
+            }
+            button.data('upnp-enabled', !upnpEnabled);
+        });
+    });
 </script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
