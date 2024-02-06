@@ -102,7 +102,6 @@ public class BridgeController {
             config.setPath(randomString); // Set the path
             updateTorrcFile(config); // Update the torrc file
 
-            // Restart nginx
             relayOperationController.reloadNginx();
         }
 
@@ -269,8 +268,6 @@ public class BridgeController {
         } catch (IOException e) {
             logger.error("Error modifying Nginx default configuration", e);
         }
-
-        reloadNginx();
     }
 
     private boolean isNginxRunning() {
