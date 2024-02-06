@@ -508,7 +508,9 @@ public class RelayOperationsController {
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
             // Check if the port is opened by UPnP
-            if (UPnP.isMappedTCP(Integer.parseInt(config.getGuardRelayConfig().getOrPort()))) {
+            boolean isMapped = UPnP.isMappedTCP(Integer.parseInt(config.getGuardRelayConfig().getOrPort()));
+            logger.info("Guard relay: {}, port: {}, isMapped: {}", config.getGuardRelayConfig().getNickname(), config.getGuardRelayConfig().getOrPort(), isMapped);
+            if (isMapped) {
                 Map<String, Object> portInfo = new HashMap<>();
                 portInfo.put("relayNickname", config.getGuardRelayConfig().getNickname());
                 portInfo.put("relayType", "guard");
@@ -521,7 +523,9 @@ public class RelayOperationsController {
         List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
         for (TorConfiguration config : bridgeConfigs) {
             // Check if the port is opened by UPnP
-            if (UPnP.isMappedTCP(Integer.parseInt(config.getBridgeRelayConfig().getOrPort()))) {
+            boolean isMapped = UPnP.isMappedTCP(Integer.parseInt(config.getBridgeRelayConfig().getOrPort()));
+            logger.info("Bridge relay: {}, port: {}, isMapped: {}", config.getBridgeRelayConfig().getNickname(), config.getBridgeRelayConfig().getOrPort(), isMapped);
+            if (isMapped) {
                 Map<String, Object> portInfo = new HashMap<>();
                 portInfo.put("relayNickname", config.getBridgeRelayConfig().getNickname());
                 portInfo.put("relayType", "bridge");
