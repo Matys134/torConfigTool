@@ -6,7 +6,7 @@ $(document).ready(function () {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
         orPort: $("#edit-orport"),
-        serverTransportPort: $("#edit-server-transport-port"),
+        serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
     };
@@ -21,16 +21,10 @@ $(document).ready(function () {
     function showModalWith(data, relayType, bridgeType) {
         console.log('Data:', data); // Log the data object
 
-        // Split the serverTransport into IP address and port
-        const serverTransportParts = data.serverTransport.split(':');
-        const serverTransportIp = serverTransportParts[0];
-        const serverTransportPort = serverTransportParts[1];
-
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(serverTransportIp);
-        configSelectors.serverTransportPort.val(serverTransportPort);
+        configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
@@ -120,7 +114,7 @@ $(document).ready(function () {
         const data = {
             nickname: configSelectors.nickname.text(),
             orPort: parseInt(configSelectors.orPort.val()),
-            serverTransport: configSelectors.serverTransport.val() + ':' + configSelectors.serverTransportPort.val(),
+            serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
