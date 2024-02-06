@@ -473,4 +473,11 @@ public class BridgeController {
         String uploadDir = "onion/www/service-" + port + "/";
         return fileService.getUploadedFiles(uploadDir);
     }
+
+    @GetMapping("/upload/{port}")
+    public String showUploadForm(@PathVariable("port") int port, Model model) {
+        List<String> fileNames = getUploadedFiles(port);
+        model.addAttribute("uploadedFiles", fileNames);
+        return "file_upload_form";
+    }
 }
