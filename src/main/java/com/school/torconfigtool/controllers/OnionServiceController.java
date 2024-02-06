@@ -2,6 +2,7 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.TorConfiguration;
+import com.school.torconfigtool.service.FileService;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import java.util.*;
 @RequestMapping("/onion-service")
 public class OnionServiceController {
 
+
     private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private final TorConfigurationService torConfigurationService;
@@ -30,6 +32,8 @@ public class OnionServiceController {
     // Add a field for RelayOperationsController
     private final RelayOperationsController relayOperationController;
 
+    @Autowired
+    private FileService fileService;
     @Autowired
     public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
         this.torConfigurationService = torConfigurationService;
@@ -288,45 +292,24 @@ public class OnionServiceController {
     public String removeFile(@PathVariable("fileName") String fileName, @PathVariable("port") int port, Model model) {
         try {
             String fileDir = "onion/www/service-" + port + "/";
-            File fileToRemove = new File(fileDir + fileName);
-
-            if (fileToRemove.exists()) {
-                if (!fileToRemove.delete()) {
-                    model.addAttribute("message", "Error deleting the file.");
-                } else {
-                    model.addAttribute("message", "File deleted successfully.");
-                }
-            } else {
-                model.addAttribute("message", "File doesn't exist.");
-            }
+            fileService.deleteFile(fileName, fileDir);
+            List<String> fileNames = fileService.getUploadedFiles(fileDir);
+            model.addAttribute("uploadedFiles", fileNames);
+            model.addAttribute("message", "File deleted successfully.");
+            return "file_upload_form";
         } catch (Exception e) {
             model.addAttribute("message", "Error: " + e.getMessage());
+            return "file_upload_form";
         }
-
-        List<String> fileNames = getUploadedFiles(port);
-        model.addAttribute("uploadedFiles", fileNames);
-
-        return "file_upload_form";
     }
 
     @PostMapping("/upload/{port}")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
         try {
-            Arrays.stream(files).forEach(file -> {
-                String fileDir = "onion/www/service-" + port + "/";
-                File outputFile = new File(fileDir + file.getOriginalFilename());
-
-                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                    fos.write(file.getBytes());
-                } catch (IOException e) {
-                    logger.error("Error during file saving", e);
-                    throw new RuntimeException("Error during file saving: " + e.getMessage());
-                }
-            });
-
-            List<String> fileNames = getUploadedFiles(port);
+            String fileDir = "onion/www/service-" + port + "/";
+            fileService.uploadFiles(files, fileDir);
+            List<String> fileNames = fileService.getUploadedFiles(fileDir);
             model.addAttribute("uploadedFiles", fileNames);
-
             model.addAttribute("message", "Files uploaded successfully!");
             return "file_upload_form";
         } catch (Exception e) {
@@ -337,7 +320,6 @@ public class OnionServiceController {
 
     private List<String> getUploadedFiles(int port) {
         String uploadDir = "onion/www/service-" + port + "/";
-        File folder = new File(uploadDir);
-        return Arrays.asList(Objects.requireNonNull(folder.list()));
+        return fileService.getUploadedFiles(uploadDir);
     }
 }
