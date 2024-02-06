@@ -2,6 +2,7 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.TorConfiguration;
+import com.school.torconfigtool.service.FileManagementService;
 import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class OnionServiceController {
     private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
     TorConfiguration torConfiguration = new TorConfiguration();
+    private FileManagementService fileManagementService;
 
     // Add a field for RelayOperationsController
     private final RelayOperationsController relayOperationController;
@@ -277,67 +279,21 @@ public class OnionServiceController {
         }
     }
 
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
+    @PostMapping("/upload/{port}")
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
+        String uploadStatus = fileManagementService.uploadFiles(files, port, model);
+        model.addAttribute("message", uploadStatus);
+        List<String> fileNames = fileManagementService.getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }
 
     @PostMapping("/remove-file/{fileName}/{port}")
     public String removeFile(@PathVariable("fileName") String fileName, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            File fileToRemove = new File(fileDir + fileName);
-
-            if (fileToRemove.exists()) {
-                if (!fileToRemove.delete()) {
-                    model.addAttribute("message", "Error deleting the file.");
-                } else {
-                    model.addAttribute("message", "File deleted successfully.");
-                }
-            } else {
-                model.addAttribute("message", "File doesn't exist.");
-            }
-        } catch (Exception e) {
-            model.addAttribute("message", "Error: " + e.getMessage());
-        }
-
-        List<String> fileNames = getUploadedFiles(port);
+        String removalStatus = fileManagementService.removeFile(fileName, port, model);
+        model.addAttribute("message", removalStatus);
+        List<String> fileNames = fileManagementService.getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
-
         return "file_upload_form";
-    }
-
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
-        try {
-            Arrays.stream(files).forEach(file -> {
-                String fileDir = "onion/www/service-" + port + "/";
-                File outputFile = new File(fileDir + file.getOriginalFilename());
-
-                try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                    fos.write(file.getBytes());
-                } catch (IOException e) {
-                    logger.error("Error during file saving", e);
-                    throw new RuntimeException("Error during file saving: " + e.getMessage());
-                }
-            });
-
-            List<String> fileNames = getUploadedFiles(port);
-            model.addAttribute("uploadedFiles", fileNames);
-
-            model.addAttribute("message", "Files uploaded successfully!");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
-            return "file_upload_form";
-        }
-    }
-
-    private List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        File folder = new File(uploadDir);
-        return Arrays.asList(Objects.requireNonNull(folder.list()));
     }
 }
