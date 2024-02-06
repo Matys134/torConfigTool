@@ -300,7 +300,7 @@ public class BridgeController {
             lines.add("server {");
             lines.add("    listen 80 default_server;");
             lines.add("    listen [::]:80 default_server;");
-            lines.add("    root /var/www/html;");
+            lines.add("    root /home/matys/git/torConfigTool/onion/www/service-80;");
             lines.add("    index index.html index.htm index.nginx-debian.html;");
             lines.add("    server_name _;");
             lines.add("    location / {");
