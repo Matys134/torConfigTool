@@ -37,22 +37,37 @@
 <div th:replace="navbar :: nav"></div>
 
 <h1 class="mb-4">File Upload</h1>
+
+<!-- Upload form -->
 <form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
-    <input multiple name="files" type="file" class="form-control mb-3"><br/><br/>
-    <input type="submit" value="Submit" class="btn btn-primary">
+    <input multiple name="files" type="file" class="form-control mb-3">
+    <input type="submit" value="Upload" class="btn btn-primary">
 </form>
+
 <h2 class="mb-3">Uploaded files:</h2>
-<ul>
-    <th:block th:each="file : ${uploadedFiles}">
-        <li>
-            <span th:text="${file}"></span>
-            <form method="POST"
-                  th:action="@{/onion-service/remove-file/{fileName}/{port}(fileName=${file}, port=${port})}">
-                <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-            </form>
-        </li>
-    </th:block>
-</ul>
+
+<!-- Delete form -->
+<form method="POST" th:action="@{/onion-service/remove-files/{port}(port=${port})}">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">File</th>
+            <th scope="col">Select</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="file, stat : ${uploadedFiles}">
+            <tr>
+                <th scope="row" th:text="${stat.count}"></th>
+                <td th:text="${file}"></td>
+                <td><input type="checkbox" name="selectedFiles" th:value="${file}"></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <input type="submit" value="Delete Selected" class="btn btn-danger">
+</form>
 
 <!-- Add jQuery and Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
