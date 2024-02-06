@@ -112,41 +112,45 @@ $(document).ready(function () {
 
     buttons.save.click(function () {
         const data = {
-            nickname: configSelectors.nickname.text(), // Use .text() instead of .val() as nickname is now a <p> element
+            nickname: configSelectors.nickname.text(),
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
-        // Add bridgeType to the data object
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
-            // Check for the uniqueness of ports
-            if (!arePortsUnique(data.orPort, data.controlPort)) {
-                alert("The ports specified must be unique. Please check your entries.");
-                return;
-            }
-
             hideModal();
 
-            // Now send a GET request to your new API for checking the port availability
-            $.get("/update-guard-config/check-port-availability",
-                {
-                    nickname: data.nickname,
-                    orPort: data.orPort,
-                    controlPort: data.controlPort,
-                },
-                function (response) {
-                    if (response['available']) {
-                        let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
-                        sendUpdateRequest(url, data);
-                        hideModal();
-                    } else {
-                        alert("One or more ports are already in use. Please choose different ports.");
-                    }
-                });
+            // If only the contact field is being edited, skip the port availability check
+            if (isBridgeEdit && data.bridgeType === 'webtunnel') {
+                let url = '/update-bridge-config';
+                sendUpdateRequest(url, data);
+            } else {
+                // Check for the uniqueness of ports
+                if (!arePortsUnique(data.orPort, data.controlPort)) {
+                    alert("The ports specified must be unique. Please check your entries.");
+                    return;
+                }
+
+                // Now send a GET request to your new API for checking the port availability
+                $.get("/update-guard-config/check-port-availability",
+                    {
+                        nickname: data.nickname,
+                        orPort: data.orPort,
+                        controlPort: data.controlPort,
+                    },
+                    function (response) {
+                        if (response['available']) {
+                            let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
+                            sendUpdateRequest(url, data);
+                        } else {
+                            alert("One or more ports are already in use. Please choose different ports.");
+                        }
+                    });
+            }
         });
     });
 
