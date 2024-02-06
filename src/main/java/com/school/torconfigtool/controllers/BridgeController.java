@@ -144,6 +144,11 @@ public class BridgeController {
     }
 
     private void setupWebtunnel(String webTunnelUrl) throws Exception {
+
+        if (!isNginxRunning()) {
+            startNginx();
+        }
+
         String programLocation = System.getProperty("user.dir");
 
         // Change the ownership of the directory
@@ -263,6 +268,49 @@ public class BridgeController {
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
             logger.error("Error modifying Nginx default configuration", e);
+        }
+
+        reloadNginx();
+    }
+
+    private boolean isNginxRunning() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", "systemctl is-active nginx");
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error checking Nginx status", e);
+            return false;
+        }
+    }
+
+    private void startNginx() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", "sudo systemctl start nginx");
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error starting Nginx. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error starting Nginx", e);
+        }
+    }
+
+    private void reloadNginx() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error reloading Nginx. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error reloading Nginx", e);
         }
     }
 
