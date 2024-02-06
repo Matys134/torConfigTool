@@ -39,8 +39,8 @@
 <h1 class="mb-4">File Upload</h1>
 
 <!-- Upload form -->
-<form enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
-    <input multiple name="files" type="file" class="form-control mb-3">
+<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
+    <input id="file-input" multiple name="files" type="file" class="form-control mb-3">
     <input type="submit" value="Upload" class="btn btn-primary">
 </form>
 
@@ -74,6 +74,13 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
+        $('#upload-form').on('submit', function () {
+            var files = $('#file-input').get(0).files;
+            if (files.length === 0) {
+                alert('Please select a file to upload');
+                return false;
+            }
+        });
         $('#delete-form').on('submit', function () {
             return confirm('Are you sure you want to delete these files?');
         });
