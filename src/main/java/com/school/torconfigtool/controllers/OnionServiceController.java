@@ -7,6 +7,8 @@ import com.school.torconfigtool.service.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -323,5 +325,18 @@ public class OnionServiceController {
     private List<String> getUploadedFiles(int port) {
         String uploadDir = "onion/www/service-" + port + "/";
         return fileService.getUploadedFiles(uploadDir);
+    }
+
+    @PostMapping("/refresh-nginx")
+    public ResponseEntity<Void> refreshNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
+            Process process = processBuilder.start();
+            process.waitFor();
+            return ResponseEntity.ok().build();
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error refreshing Nginx", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
