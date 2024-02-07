@@ -420,15 +420,27 @@
                             }
                         }
 
-                        if (bridgeData[0].bridgeConfigured || guardData[0].guardConfigured || onionData[0].onionConfigured) {
-                            // Disable the form fields in the bridge, guard and onion tabs
+                        if (bridgeData[0].bridgeConfigured) {
+                            // Disable the form fields in the bridge tab
                             $('#bridgeForm :input').prop('disabled', true);
+                        } else {
+                            // Enable the form fields in the bridge tab
+                            $('#bridgeForm :input').prop('disabled', false);
+                        }
+
+                        if (guardData[0].guardConfigured) {
+                            // Disable the form fields in the guard tab
                             $('#guardForm :input').prop('disabled', true);
+                        } else {
+                            // Enable the form fields in the guard tab
+                            $('#guardForm :input').prop('disabled', false);
+                        }
+
+                        if (onionData[0].onionConfigured) {
+                            // Disable the form fields in the onion tab
                             $('#onionForm :input').prop('disabled', true);
                         } else {
-                            // Enable the form fields in the bridge, guard and onion tabs
-                            $('#bridgeForm :input').prop('disabled', false);
-                            $('#guardForm :input').prop('disabled', false);
+                            // Enable the form fields in the onion tab
                             $('#onionForm :input').prop('disabled', false);
                         }
                     });
