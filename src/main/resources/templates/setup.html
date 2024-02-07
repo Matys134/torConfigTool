@@ -436,6 +436,11 @@
                             $('#bridgeForm :input').prop('disabled', true);
                         }
 
+                        if (bridgeData[0].bridgeConfigured && data.bridgeCount >= 2) {
+                            // Disable the form fields in the bridge tab
+                            $('#bridgeForm :input').prop('disabled', true);
+                        }
+
                         // Check if a guard is configured and the guard limit has been reached
                         if (guardData[0].guardConfigured && data.guardCount >= 8) {
                             // Disable the form fields in the guard tab
