@@ -416,9 +416,10 @@
 </script>
 <script>
     $(document).ready(function() {
-        // Check the local storage and the limit state from the server when the page is loaded
+        // Check the limit state from the server when the page is loaded
         $.get("/guard/limit-state-and-guard-count", function(data) {
-            if (data.limitOn && (localStorage.getItem('guardCreated') === 'true' || localStorage.getItem('bridgeCreated') === 'true')) {
+            // Check if limit is on and either a guard or a bridge is configured
+            if (data.limitOn && (data.guardCount > 0 || data.bridgeCount > 0)) {
                 // Disable the bridge and onion tabs
                 $('#bridge-tab').addClass('disabled');
                 $('#onion-tab').addClass('disabled');
