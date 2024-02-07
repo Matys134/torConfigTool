@@ -420,33 +420,17 @@
                             }
                         }
 
-                        if (bridgeData[0].bridgeConfigured) {
-                            // Disable the form fields in the bridge tab
+                        if (bridgeData[0].bridgeConfigured || guardData[0].guardConfigured || onionData[0].onionConfigured) {
+                            // Disable the form fields in the bridge, guard and onion tabs
                             $('#bridgeForm :input').prop('disabled', true);
+                            $('#guardForm :input').prop('disabled', true);
+                            $('#onionForm :input').prop('disabled', true);
                         } else {
-                            // Enable the form fields in the bridge tab
+                            // Enable the form fields in the bridge, guard and onion tabs
                             $('#bridgeForm :input').prop('disabled', false);
+                            $('#guardForm :input').prop('disabled', false);
+                            $('#onionForm :input').prop('disabled', false);
                         }
-
-                        $.get("/guard/limit-state", function(data) {
-                            if (data) {
-                                if (guardData[0].guardConfigured) {
-                                    // Disable the form fields in the guard tab
-                                    $('#guardForm :input').prop('disabled', true);
-                                } else {
-                                    // Enable the form fields in the guard tab
-                                    $('#guardForm :input').prop('disabled', false);
-                                }
-
-                                if (onionData[0].onionConfigured) {
-                                    // Disable the form fields in the onion tab
-                                    $('#onionForm :input').prop('disabled', true);
-                                } else {
-                                    // Enable the form fields in the onion tab
-                                    $('#onionForm :input').prop('disabled', false);
-                                }
-                            }
-                        });
                     });
                 } else {
                     // Enable the form fields in the bridge, guard and onion tabs
