@@ -261,22 +261,6 @@
                     formElements[i].disabled = true;
                 }
 
-                // If the bridge type is 'snowflake', disable the fields for the other tabs
-                if (bridgeType === 'snowflake') {
-                    var guardForm = document.getElementById('guardForm');
-                    var onionForm = document.getElementById('onionForm');
-                    var guardFormElements = guardForm.elements;
-                    var onionFormElements = onionForm.elements;
-
-                    for (var i = 0; i < guardFormElements.length; i++) {
-                        guardFormElements[i].disabled = true;
-                    }
-
-                    for (var i = 0; i < onionFormElements.length; i++) {
-                        onionFormElements[i].disabled = true;
-                    }
-                }
-
                 // Create a new div element for the message
                 var messageDiv = document.createElement("div");
                 messageDiv.className = "alert alert-warning";
