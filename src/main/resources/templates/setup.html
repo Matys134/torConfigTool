@@ -479,6 +479,12 @@
                 });
             });
         });
+
+        // Call the function when the bridge form is submitted
+        $("#bridgeForm").submit(function() {
+            // Wait for the form submission to complete before checking the state
+            setTimeout(checkStateAndUpdate, 1000);
+        });
     });
 </script>
 <script>
