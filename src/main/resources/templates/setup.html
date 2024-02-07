@@ -313,33 +313,6 @@
     });
 </script>
 <script>
-    $.get("/guard/bridge-configured", function(data) {
-        if (data.bridgeConfigured) {
-            // Check if the limit is turned on
-            $.get("/guard/limit-state-and-guard-count", function(limitData) {
-                if (limitData.limitOn) {
-                    // Disable the form fields and buttons
-                    var guardForm = document.getElementById('guardForm');
-                    guardForm.disabled = true;
-                    var formElements = guardForm.elements;
-                    for (var i = 0; i < formElements.length; i++) {
-                        formElements[i].disabled = true;
-                    }
-
-                    // Create a new div element for the message
-                    var messageDiv = document.createElement("div");
-                    messageDiv.className = "alert alert-warning";
-                    messageDiv.role = "alert";
-                    messageDiv.innerHTML = "Bridges are already configured and limit is on. Creation of guard relays is blocked.";
-
-                    // Append the message div to the container
-                    document.querySelector('.container').appendChild(messageDiv);
-                }
-            });
-        }
-    });
-</script>
-<script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
         $('#bridgeCount').text(data.bridgeCount + "/2");
     });
