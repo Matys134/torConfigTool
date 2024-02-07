@@ -276,27 +276,17 @@
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
         if (runningBridgeType && !jQuery.isEmptyObject(runningBridgeType)) {
-            // Check the limit state before disabling the Guard Relay form fields
-            $.get("/guard/limit-state-and-guard-count", function(data) {
-                if (data.limitOn) {
-                    // Disable the Guard Relay form fields and buttons
-                    var guardForm = document.getElementById('guardForm');
-                    guardForm.disabled = true;
-                    var formElements = guardForm.elements;
-                    for (var i = 0; i < formElements.length; i++) {
-                        formElements[i].disabled = true;
-                    }
+            // Disable the bridge type selection
+            document.getElementById('bridgeType').disabled = true;
 
-                    // Create a new div element for the message
-                    var messageDiv = document.createElement("div");
-                    messageDiv.className = "alert alert-warning";
-                    messageDiv.role = "alert";
-                    messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
 
-                    // Append the message div to the container
-                    document.querySelector('.container').appendChild(messageDiv);
-                }
-            });
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
         }
     });
 </script>
@@ -325,27 +315,22 @@
 <script>
     $.get("/guard/bridge-configured", function(data) {
         if (data.bridgeConfigured) {
-            // Check the limit state before disabling the Guard Relay form fields
-            $.get("/guard/limit-state-and-guard-count", function(limitData) {
-                if (limitData.limitOn) {
-                    // Disable the Guard Relay form fields and buttons
-                    var guardForm = document.getElementById('guardForm');
-                    guardForm.disabled = true;
-                    var formElements = guardForm.elements;
-                    for (var i = 0; i < formElements.length; i++) {
-                        formElements[i].disabled = true;
-                    }
+            // Disable the form fields and buttons
+            var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
+            var formElements = guardForm.elements;
+            for (var i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
 
-                    // Create a new div element for the message
-                    var messageDiv = document.createElement("div");
-                    messageDiv.className = "alert alert-warning";
-                    messageDiv.role = "alert";
-                    messageDiv.innerHTML = "A bridge is already running. You can stop the running bridge to create a new one.";
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "Bridges are already configured. Creation of guard relays is blocked.";
 
-                    // Append the message div to the container
-                    document.querySelector('.container').appendChild(messageDiv);
-                }
-            });
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
         }
     });
 </script>
