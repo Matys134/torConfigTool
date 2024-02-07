@@ -544,5 +544,30 @@
         }
     });
 </script>
+<script>
+    $(document).ready(function() {
+        // Function to disable the form fields in the guard and onion tabs
+        function disableGuardAndOnionTabs() {
+            $.get("/bridge/running-type", function(runningBridgeTypes) {
+                if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
+                    // Extract the first bridge type from the response
+                    var runningBridgeType = Object.values(runningBridgeTypes)[0];
+
+                    if (runningBridgeType === "snowflake") {
+                        // Disable the form fields in the guard and onion tabs
+                        $('#guardForm :input').prop('disabled', true);
+                        $('#onionForm :input').prop('disabled', true);
+                    }
+                }
+            });
+        }
+
+        // Call the function when the page is loaded
+        disableGuardAndOnionTabs();
+
+        // Call the function when the bridge type is changed
+        $('#bridgeType').change(disableGuardAndOnionTabs);
+    });
+</script>
 </body>
 </html>
