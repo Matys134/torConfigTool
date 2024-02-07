@@ -420,7 +420,7 @@
                             $('#onionForm :input').prop('disabled', false);
                         }
                     });
-                    $.get("/onion/onion-configured", function(onionData) {
+                    $.get("/onion-service/onion-configured", function(onionData) {
                         if (onionData.onionConfigured) {
                             // Disable the form fields in the bridge and guard tabs
                             $('#bridgeForm :input').prop('disabled', true);
