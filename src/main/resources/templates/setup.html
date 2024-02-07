@@ -416,6 +416,27 @@
 </script>
 <script>
     $(document).ready(function() {
+        // Check the local storage and the limit state from the server when the page is loaded
+        $.get("/guard/limit-state-and-guard-count", function(data) {
+            if (data.limitOn && localStorage.getItem('guardCreated') === 'true') {
+                // Disable the bridge and onion tabs
+                $('#bridge-tab').addClass('disabled');
+                $('#onion-tab').addClass('disabled');
+
+                // Disable the form fields in the bridge and onion tabs
+                $('#bridgeForm :input').prop('disabled', true);
+                $('#onionForm :input').prop('disabled', true);
+            } else {
+                // Enable the bridge and onion tabs
+                $('#bridge-tab').removeClass('disabled');
+                $('#onion-tab').removeClass('disabled');
+
+                // Enable the form fields in the bridge and onion tabs
+                $('#bridgeForm :input').prop('disabled', false);
+                $('#onionForm :input').prop('disabled', false);
+            }
+        });
+
         $("#toggleLimitButton").click(function() {
             $.post("/bridge/toggle-limit", function() {
                 $.get("/bridge/limit-state", function(data) {
