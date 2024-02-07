@@ -409,12 +409,12 @@
 
                     $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest).done(function(runningTypeData, bridgeData, guardData, onionData) {
                         // Add a new AJAX call to get the bridge count
-                        $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(bridgeCountData) {
+                        $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(bridgeCountData) {
                             // Move the code that updates the page into the callback function of the AJAX call
                             if (runningTypeData[0] && !jQuery.isEmptyObject(runningTypeData[0])) {
                                 var runningBridgeType = Object.values(runningTypeData[0])[0];
                                 console.log(runningBridgeType);
-                                if (runningBridgeType === 'snowflake') {
+                                if (runningBridgeType === 'obfs4' || runningBridgeType === 'snowflake') {
                                     // Disable the bridge type field
                                     $('#bridgeType').prop('disabled', true);
                                 } else {
@@ -424,7 +424,7 @@
                                 }
                             }
 
-                            if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured || bridgeCountData.bridgeCount >= 1) {
+                            if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured) {
                                 // Disable the form fields in the guard and onion tabs
                                 $('#guardForm :input').prop('disabled', true);
                                 $('#onionForm :input').prop('disabled', true);
@@ -439,7 +439,7 @@
                                 $('#bridgeForm :input').prop('disabled', true);
                             }
 
-                            if (bridgeData[0].bridgeConfigured && bridgeCountData.bridgeCount >= 1) {
+                            if (bridgeData[0].bridgeConfigured && bridgeCountData.bridgeCount >= 2) {
                                 // Disable the form fields in the bridge tab
                                 $('#bridgeForm :input').prop('disabled', true);
                             }
