@@ -415,19 +415,18 @@
                                 // Disable the bridge type field
                                 $('#bridgeType').prop('disabled', true);
                             } else {
-                                // Enable the bridge type field
+                                // Enable the bridge type field and disable all fields in the bridge form
                                 $('#bridgeType').prop('disabled', false);
+                                $('#bridgeForm :input').prop('disabled', true);
                             }
                         }
 
                         if (bridgeData[0].bridgeConfigured || guardData[0].guardConfigured || onionData[0].onionConfigured) {
-                            // Disable the form fields in the bridge, guard and onion tabs
-                            $('#bridgeForm :input').prop('disabled', true);
+                            // Disable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
                         } else {
-                            // Enable the form fields in the bridge, guard and onion tabs
-                            $('#bridgeForm :input').prop('disabled', false);
+                            // Enable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', false);
                             $('#onionForm :input').prop('disabled', false);
                         }
