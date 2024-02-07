@@ -449,6 +449,13 @@
                                 // Disable the form fields in the guard tab
                                 $('#guardForm :input').prop('disabled', true);
                             }
+
+                            if (runningTypeData['snowflake']) {
+                                // Disable the form fields in the bridge, guard and onion tabs
+                                $('#bridgeForm :input').prop('disabled', true);
+                                $('#guardForm :input').prop('disabled', true);
+                                $('#onionForm :input').prop('disabled', true);
+                            }
                         });
                     });
                 } else {
