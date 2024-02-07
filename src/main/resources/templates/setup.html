@@ -395,37 +395,40 @@
 <script>
     $(document).ready(function() {
         // Check the local storage and the limit state from the server when the page is loaded
-        $.get("/guard/limit-state-and-guard-count", function(data) {
-            if (data.limitOn && localStorage.getItem('guardCreated') === 'true') {
-                // Check if a bridge is configured
-                $.get("/bridge/bridge-configured", function(bridgeData) {
-                    if (bridgeData.bridgeConfigured) {
-                        // Disable the guard and onion tabs
-                        $('#relay-tab').addClass('disabled');
-                        $('#onion-tab').addClass('disabled');
+        $(document).ready(function() {
+            // Check the limit state from the server when the page is loaded
+            $.get("/guard/limit-state-and-guard-count", function(data) {
+                if (data.limitOn) {
+                    // Check if a bridge is configured
+                    $.get("/guard/bridge-configured", function(bridgeData) {
+                        if (bridgeData.bridgeConfigured) {
+                            // Disable the guard and onion tabs
+                            $('#relay-tab').addClass('disabled');
+                            $('#onion-tab').addClass('disabled');
 
-                        // Disable the form fields in the guard and onion tabs
-                        $('#guardForm :input').prop('disabled', true);
-                        $('#onionForm :input').prop('disabled', true);
-                    } else {
-                        // Enable the guard and onion tabs
-                        $('#relay-tab').removeClass('disabled');
-                        $('#onion-tab').removeClass('disabled');
+                            // Disable the form fields in the guard and onion tabs
+                            $('#guardForm :input').prop('disabled', true);
+                            $('#onionForm :input').prop('disabled', true);
+                        } else {
+                            // Enable the guard and onion tabs
+                            $('#relay-tab').removeClass('disabled');
+                            $('#onion-tab').removeClass('disabled');
 
-                        // Enable the form fields in the guard and onion tabs
-                        $('#guardForm :input').prop('disabled', false);
-                        $('#onionForm :input').prop('disabled', false);
-                    }
-                });
-            } else {
-                // Enable the guard and onion tabs
-                $('#relay-tab').removeClass('disabled');
-                $('#onion-tab').removeClass('disabled');
+                            // Enable the form fields in the guard and onion tabs
+                            $('#guardForm :input').prop('disabled', false);
+                            $('#onionForm :input').prop('disabled', false);
+                        }
+                    });
+                } else {
+                    // Enable the guard and onion tabs
+                    $('#relay-tab').removeClass('disabled');
+                    $('#onion-tab').removeClass('disabled');
 
-                // Enable the form fields in the guard and onion tabs
-                $('#guardForm :input').prop('disabled', false);
-                $('#onionForm :input').prop('disabled', false);
-            }
+                    // Enable the form fields in the guard and onion tabs
+                    $('#guardForm :input').prop('disabled', false);
+                    $('#onionForm :input').prop('disabled', false);
+                }
+            });
         });
 
         $("#toggleLimitButton").click(function() {
