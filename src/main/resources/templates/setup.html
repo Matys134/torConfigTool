@@ -421,7 +421,7 @@
                             }
                         }
 
-                        if (bridgeData[0].bridgeConfigured || guardData[0].guardConfigured || onionData[0].onionConfigured) {
+                        if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured) {
                             // Disable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
@@ -431,8 +431,8 @@
                             $('#onionForm :input').prop('disabled', false);
                         }
 
-                        // Check if the guard limit has been reached
-                        if (data.guardCount >= 8) {
+                        // Check if a guard is configured and the guard limit has been reached
+                        if (guardData[0].guardConfigured && data.guardCount >= 8) {
                             // Disable the form fields in the guard tab
                             $('#guardForm :input').prop('disabled', true);
                         }
