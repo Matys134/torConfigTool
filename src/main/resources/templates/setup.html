@@ -402,14 +402,17 @@
         function checkStateAndUpdate() {
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
-                    $.get("/guard/bridge-configured", function(bridgeData) {
-                        console.log(bridgeData.bridgeConfigured, bridgeData.bridgeType)
-                        if (bridgeData.bridgeConfigured && bridgeData.bridgeType === 'obfs4') {
-                            // Disable the bridge type field
-                            $('#bridgeType').prop('disabled', true);
-                        } else {
-                            // Enable the bridge type field
-                            $('#bridgeType').prop('disabled', false);
+                    $.get("/bridge/running-type", function(runningBridgeTypes) {
+                        if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
+                            var runningBridgeType = Object.values(runningBridgeTypes)[0];
+                            console.log(runningBridgeType);
+                            if (runningBridgeType === 'obfs4') {
+                                // Disable the bridge type field
+                                $('#bridgeType').prop('disabled', true);
+                            } else {
+                                // Enable the bridge type field
+                                $('#bridgeType').prop('disabled', false);
+                            }
                         }
                     });
                     $.get("/guard/bridge-configured", function(bridgeData) {
