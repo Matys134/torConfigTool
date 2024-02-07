@@ -67,11 +67,14 @@ public class RelayOperationsController {
 
         List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
+        Map<String, String> bridgeTypes = new HashMap<>();
         for (TorConfiguration config : bridgeConfigs) {
             String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
             webtunnelLinks.put(config.getBridgeRelayConfig().getNickname(), webtunnelLink);
+            bridgeTypes.put(config.getBridgeRelayConfig().getNickname(), config.getBridgeRelayConfig().getBridgeType());
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
+        model.addAttribute("bridgeTypes", bridgeTypes);
 
         logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
