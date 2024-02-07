@@ -417,22 +417,22 @@
 <script>
     $(document).ready(function() {
         // Check the local storage and the limit state from the server when the page is loaded
-        $.get("/guard/limit-state-and-guard-count", function(data) {
-            if (data.limitOn && localStorage.getItem('guardCreated') === 'true') {
-                // Disable the bridge and onion tabs
-                $('#bridge-tab').addClass('disabled');
+        $.get("/bridge/limit-state-and-guard-count", function(data) {
+            if (data.limitOn && localStorage.getItem('bridgeCreated') === 'true') {
+                // Disable the guard and onion tabs
+                $('#relay-tab').addClass('disabled');
                 $('#onion-tab').addClass('disabled');
 
-                // Disable the form fields in the bridge and onion tabs
-                $('#bridgeForm :input').prop('disabled', true);
+                // Disable the form fields in the guard and onion tabs
+                $('#guardForm :input').prop('disabled', true);
                 $('#onionForm :input').prop('disabled', true);
             } else {
-                // Enable the bridge and onion tabs
-                $('#bridge-tab').removeClass('disabled');
+                // Enable the guard and onion tabs
+                $('#relay-tab').removeClass('disabled');
                 $('#onion-tab').removeClass('disabled');
 
-                // Enable the form fields in the bridge and onion tabs
-                $('#bridgeForm :input').prop('disabled', false);
+                // Enable the form fields in the guard and onion tabs
+                $('#guardForm :input').prop('disabled', false);
                 $('#onionForm :input').prop('disabled', false);
             }
         });
@@ -456,29 +456,29 @@
                     }
 
                     // Call the function to update the state of the tabs
-                    $.get("/guard/limit-state-and-guard-count", function(data) {
-                        if (data.limitOn && data.guardCount > 0) {
-                            // Disable the bridge and onion tabs
-                            $('#bridge-tab').addClass('disabled');
+                    $.get("/bridge/limit-state-and-guard-count", function(data) {
+                        if (data.limitOn && data.bridgeCount > 0) {
+                            // Disable the guard and onion tabs
+                            $('#relay-tab').addClass('disabled');
                             $('#onion-tab').addClass('disabled');
 
-                            // Disable the form fields in the bridge and onion tabs
-                            $('#bridgeForm :input').prop('disabled', true);
+                            // Disable the form fields in the guard and onion tabs
+                            $('#guardForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
 
                             // Set a value in the local storage
-                            localStorage.setItem('guardCreated', 'true');
+                            localStorage.setItem('bridgeCreated', 'true');
                         } else {
-                            // Enable the bridge and onion tabs
-                            $('#bridge-tab').removeClass('disabled');
+                            // Enable the guard and onion tabs
+                            $('#relay-tab').removeClass('disabled');
                             $('#onion-tab').removeClass('disabled');
 
-                            // Enable the form fields in the bridge and onion tabs
-                            $('#bridgeForm :input').prop('disabled', false);
+                            // Enable the form fields in the guard and onion tabs
+                            $('#guardForm :input').prop('disabled', false);
                             $('#onionForm :input').prop('disabled', false);
 
                             // Clear the value in the local storage
-                            localStorage.removeItem('guardCreated');
+                            localStorage.removeItem('bridgeCreated');
                         }
                     });
                 });
