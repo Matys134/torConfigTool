@@ -415,7 +415,8 @@ public class BridgeController {
 
     @GetMapping("/running-type")
     public ResponseEntity<Map<String, String>> getRunningBridgeType() {
-        return ResponseEntity.ok(relayService.getRunningBridgeType());
+        Map<String, String> response = relayService.getRunningBridgeType();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/revert-nginx-config")

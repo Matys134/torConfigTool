@@ -274,8 +274,12 @@
     });
 </script>
 <script>
-    $.get("/bridge/running-type", function(runningBridgeType) {
-        if (runningBridgeType && !jQuery.isEmptyObject(runningBridgeType)) {
+    $.get("/bridge/running-type", function(runningBridgeTypes) {
+        if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
+            // Extract the first bridge type from the response
+            var runningBridgeType = Object.values(runningBridgeTypes)[0];
+            console.log(runningBridgeType);
+
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
 
@@ -398,8 +402,26 @@
         function checkStateAndUpdate() {
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
-                    $.get("/guard/bridge-configured", function(bridgeData) {
-                        if (bridgeData.bridgeConfigured) {
+                    var runningTypeRequest = $.get("/bridge/running-type");
+                    var bridgeConfiguredRequest = $.get("/guard/bridge-configured");
+                    var guardConfiguredRequest = $.get("/guard/guard-configured");
+                    var onionConfiguredRequest = $.get("/onion-service/onion-configured");
+
+                    $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest).done(function(runningTypeData, bridgeData, guardData, onionData) {
+                        if (runningTypeData[0] && !jQuery.isEmptyObject(runningTypeData[0])) {
+                            var runningBridgeType = Object.values(runningTypeData[0])[0];
+                            console.log(runningBridgeType);
+                            if (runningBridgeType === 'obfs4') {
+                                // Disable the bridge type field
+                                $('#bridgeType').prop('disabled', true);
+                            } else {
+                                // Enable the bridge type field and disable all fields in the bridge form
+                                $('#bridgeType').prop('disabled', false);
+                                $('#bridgeForm :input').prop('disabled', true);
+                            }
+                        }
+
+                        if (bridgeData[0].bridgeConfigured || guardData[0].guardConfigured || onionData[0].onionConfigured) {
                             // Disable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
@@ -407,28 +429,6 @@
                             // Enable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', false);
                             $('#onionForm :input').prop('disabled', false);
-                        }
-                    });
-                    $.get("/guard/guard-configured", function(guardData) {
-                        if (guardData.guardConfigured) {
-                            // Disable the form fields in the bridge and onion tabs
-                            $('#bridgeForm :input').prop('disabled', true);
-                            $('#onionForm :input').prop('disabled', true);
-                        } else {
-                            // Enable the form fields in the bridge and onion tabs
-                            $('#bridgeForm :input').prop('disabled', false);
-                            $('#onionForm :input').prop('disabled', false);
-                        }
-                    });
-                    $.get("/onion-service/onion-configured", function(onionData) {
-                        if (onionData.onionConfigured) {
-                            // Disable the form fields in the bridge and guard tabs
-                            $('#bridgeForm :input').prop('disabled', true);
-                            $('#guardForm :input').prop('disabled', true);
-                        } else {
-                            // Enable the form fields in the bridge and guard tabs
-                            $('#bridgeForm :input').prop('disabled', false);
-                            $('#guardForm :input').prop('disabled', false);
                         }
                     });
                 } else {
