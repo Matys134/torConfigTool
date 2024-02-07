@@ -76,16 +76,21 @@ public class RelayService {
         if (files != null) {
             for (File file : files) {
                 try {
-                    List<String> lines = Files.readAllLines(file.toPath());
-                    for (String line : lines) {
-                        if (line.startsWith("BridgeRelay")) {
-                            String bridgeType = line.split(" ")[1];
-                            runningBridgeTypes.put(file.getName(), bridgeType);
-                            break;
-                        }
+                    String content = new String(Files.readAllBytes(file.toPath()));
+                    String bridgeType = null;
+                    if (content.contains("obfs4")) {
+                        bridgeType = "obfs4";
+                    } else if (content.contains("webtunnel")) {
+                        bridgeType = "webtunnel";
+                    } else if (content.contains("snowflake")) {
+                        bridgeType = "snowflake";
+                    }
+                    if (bridgeType != null) {
+                        String bridgeNickname = file.getName().substring(TORRC_FILE_PREFIX.length(), file.getName().length() - "_bridge".length());
+                        runningBridgeTypes.put(bridgeNickname, bridgeType);
                     }
                 } catch (IOException e) {
-                    logger.error("Error reading bridge configuration file", e);
+                    e.printStackTrace();
                 }
             }
         }
