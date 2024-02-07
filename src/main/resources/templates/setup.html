@@ -454,44 +454,43 @@
 </script>
 <script>
     $(document).ready(function() {
-        // Function to update the state of the tabs
-        function updateTabs() {
-            $.get("/guard/limit-state-and-guard-count", function(data) {
-                if (data.limitOn && data.guardCount > 0) {
-                    // Disable the bridge and onion tabs
-                    $('#bridge-tab').addClass('disabled');
-                    $('#onion-tab').addClass('disabled');
+        $("#toggleLimitButton").click(function() {
+            $.post("/bridge/toggle-limit", function() {
+                $.get("/bridge/limit-state", function(data) {
+                    var toggleLimitButton = $("#toggleLimitButton");
+                    var warningTexts = $(".alert-warning"); // select all warning texts
 
-                    // Set a value in the local storage
-                    localStorage.setItem('guardCreated', 'true');
-                } else {
-                    // Enable the bridge and onion tabs
-                    $('#bridge-tab').removeClass('disabled');
-                    $('#onion-tab').removeClass('disabled');
+                    if (data) {
+                        // Update the button text
+                        toggleLimitButton.text("Turn Limit Off");
+                        // Show the warning texts
+                        warningTexts.show();
+                    } else {
+                        // Update the button text
+                        toggleLimitButton.text("Turn Limit On");
+                        // Hide the warning texts
+                        warningTexts.hide();
+                    }
 
-                    // Clear the value in the local storage
-                    localStorage.removeItem('guardCreated');
-                }
-            });
-        }
+                    // Call the function to update the state of the tabs
+                    $.get("/guard/limit-state-and-guard-count", function(data) {
+                        if (data.limitOn && data.guardCount > 0) {
+                            // Disable the bridge and onion tabs
+                            $('#bridge-tab').addClass('disabled');
+                            $('#onion-tab').addClass('disabled');
 
-        // Call the function to update the tabs when the page is loaded
-        updateTabs();
+                            // Set a value in the local storage
+                            localStorage.setItem('guardCreated', 'true');
+                        } else {
+                            // Enable the bridge and onion tabs
+                            $('#bridge-tab').removeClass('disabled');
+                            $('#onion-tab').removeClass('disabled');
 
-        // Listen for the form submission event
-        $('#guardForm').on('submit', function(e) {
-            // Prevent the form from being submitted normally
-            e.preventDefault();
-
-            // Send a POST request to the form's action URL with the form data
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function() {
-                    // Update the tabs after the form submission is complete
-                    updateTabs();
-                }
+                            // Clear the value in the local storage
+                            localStorage.removeItem('guardCreated');
+                        }
+                    });
+                });
             });
         });
     });
