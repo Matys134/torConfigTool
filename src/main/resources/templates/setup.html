@@ -275,7 +275,7 @@
 </script>
 <script>
     $.get("/bridge/running-type", function(runningBridgeType) {
-        if (runningBridgeType) {
+        if (runningBridgeType && !jQuery.isEmptyObject(runningBridgeType)) {
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
 
