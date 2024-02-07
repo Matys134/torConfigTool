@@ -477,11 +477,8 @@
                         // Hide the warning texts
                         warningTexts.hide();
                     }
-
+                }).always(function() {
                     // Call the function to update the state of the tabs
-                    checkStateAndUpdate();
-                }).done(function() {
-                    // Call the function to update the state of the tabs again after the get request is done
                     checkStateAndUpdate();
                 });
             });
