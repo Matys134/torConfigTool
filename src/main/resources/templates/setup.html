@@ -454,22 +454,28 @@
 </script>
 <script>
     $(document).ready(function() {
-        $.get("/guard/limit-state-and-guard-count", function(data) {
-            if (data.limitOn && data.guardCount > 0) {
-                // Disable the bridge and onion tabs
-                $('#bridge-tab').addClass('disabled');
-                $('#onion-tab').addClass('disabled');
+        // Listen for the form submission event
+        $('#guardForm').on('submit', function(e) {
+            e.preventDefault();
 
-                // Set a value in the local storage
-                localStorage.setItem('guardCreated', 'true');
-            } else {
-                // Enable the bridge and onion tabs
-                $('#bridge-tab').removeClass('disabled');
-                $('#onion-tab').removeClass('disabled');
+            // Call the endpoint to get the limit state and guard count
+            $.get("/guard/limit-state-and-guard-count", function(data) {
+                if (data.limitOn && data.guardCount > 0) {
+                    // Disable the bridge and onion tabs
+                    $('#bridge-tab').addClass('disabled');
+                    $('#onion-tab').addClass('disabled');
 
-                // Clear the value in the local storage
-                localStorage.removeItem('guardCreated');
-            }
+                    // Set a value in the local storage
+                    localStorage.setItem('guardCreated', 'true');
+                } else {
+                    // Enable the bridge and onion tabs
+                    $('#bridge-tab').removeClass('disabled');
+                    $('#onion-tab').removeClass('disabled');
+
+                    // Clear the value in the local storage
+                    localStorage.removeItem('guardCreated');
+                }
+            });
         });
 
         // Check the local storage every time the page is loaded
