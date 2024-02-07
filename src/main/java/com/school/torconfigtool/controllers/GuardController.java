@@ -134,4 +134,12 @@ public class GuardController {
         response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/limit-state-and-guard-count")
+    public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("limitOn", RelayService.isLimitOn());
+        response.put("guardCount", relayService.getGuardCount());
+        return ResponseEntity.ok(response);
+    }
 }
