@@ -398,7 +398,7 @@
         function checkStateAndUpdate() {
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
-                    $.get("/bridge/bridge-configured", function(bridgeData) {
+                    $.get("/guard/bridge-configured", function(bridgeData) {
                         if (bridgeData.bridgeConfigured && bridgeData.bridgeType === 'obfs4') {
                             // Disable the form fields for creating other types of bridges
                             $('#bridgeType option[value="snowflake"]').prop('disabled', true);
