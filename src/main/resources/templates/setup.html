@@ -419,32 +419,32 @@
                                 $('#bridgeType').prop('disabled', false);
                                 $('#bridgeForm :input').prop('disabled', true);
                             }
-                        }
 
-                        if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured) {
-                            // Disable the form fields in the guard and onion tabs
-                            $('#guardForm :input').prop('disabled', true);
-                            $('#onionForm :input').prop('disabled', true);
-                        } else {
-                            // Enable the form fields in the guard and onion tabs
-                            $('#guardForm :input').prop('disabled', false);
-                            $('#onionForm :input').prop('disabled', false);
-                        }
+                            if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured) {
+                                // Disable the form fields in the guard and onion tabs
+                                $('#guardForm :input').prop('disabled', true);
+                                $('#onionForm :input').prop('disabled', true);
+                            } else {
+                                // Enable the form fields in the guard and onion tabs
+                                $('#guardForm :input').prop('disabled', false);
+                                $('#onionForm :input').prop('disabled', false);
+                            }
 
-                        if (guardData[0].guardConfigured) {
-                            $('#onionForm :input').prop('disabled', true);
-                            $('#bridgeForm :input').prop('disabled', true);
-                        }
+                            if (guardData[0].guardConfigured) {
+                                $('#onionForm :input').prop('disabled', true);
+                                $('#bridgeForm :input').prop('disabled', true);
+                            }
 
-                        if (bridgeData[0].bridgeConfigured && data.bridgeCount >= 2) {
-                            // Disable the form fields in the bridge tab
-                            $('#bridgeForm :input').prop('disabled', true);
-                        }
+                            if (bridgeData[0].bridgeConfigured && data.bridgeCount >= 2) {
+                                // Disable the form fields in the bridge tab
+                                $('#bridgeForm :input').prop('disabled', true);
+                            }
 
-                        // Check if a guard is configured and the guard limit has been reached
-                        if (guardData[0].guardConfigured && data.guardCount >= 8) {
-                            // Disable the form fields in the guard tab
-                            $('#guardForm :input').prop('disabled', true);
+                            // Check if a guard is configured and the guard limit has been reached
+                            if (guardData[0].guardConfigured && data.guardCount >= 8) {
+                                // Disable the form fields in the guard tab
+                                $('#guardForm :input').prop('disabled', true);
+                            }
                         }
                     });
                 } else {
