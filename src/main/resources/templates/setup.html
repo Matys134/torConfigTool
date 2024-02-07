@@ -454,14 +454,24 @@
 </script>
 <script>
     $(document).ready(function() {
-    $.get("/guard/limit-state-and-guard-count", function(data) {
-        if (data.limitOn && data.guardCount > 0) {
+        $.get("/guard/limit-state-and-guard-count", function(data) {
+            if (data.limitOn && data.guardCount > 0) {
+                // Disable the bridge and onion tabs
+                $('#bridge-tab').addClass('disabled');
+                $('#onion-tab').addClass('disabled');
+
+                // Set a value in the local storage
+                localStorage.setItem('guardCreated', 'true');
+            }
+        });
+
+        // Check the local storage every time the page is loaded
+        if (localStorage.getItem('guardCreated') === 'true') {
             // Disable the bridge and onion tabs
             $('#bridge-tab').addClass('disabled');
             $('#onion-tab').addClass('disabled');
         }
     });
-});
 </script>
 </body>
 </html>
