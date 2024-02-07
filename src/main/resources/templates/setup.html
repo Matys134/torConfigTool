@@ -313,8 +313,6 @@
     });
 </script>
 <script>
-</script>
-<script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
         $('#bridgeCount').text(data.bridgeCount + "/2");
     });
