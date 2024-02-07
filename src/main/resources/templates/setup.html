@@ -431,13 +431,13 @@
                             $('#onionForm :input').prop('disabled', false);
                         }
 
-                        if (guardData[0].guardConfigured) {
-                            $('#onionForm :input').prop('disabled', true);
+                        if (bridgeData[0].bridgeConfigured && data.bridgeCount >= 2) {
+                            // Disable the form fields in the bridge tab
                             $('#bridgeForm :input').prop('disabled', true);
                         }
 
-                        if (bridgeData[0].bridgeConfigured && data.bridgeCount >= 2) {
-                            // Disable the form fields in the bridge tab
+                        if (guardData[0].guardConfigured) {
+                            $('#onionForm :input').prop('disabled', true);
                             $('#bridgeForm :input').prop('disabled', true);
                         }
 
