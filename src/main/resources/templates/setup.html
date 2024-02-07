@@ -477,7 +477,19 @@
                         // Hide the warning texts
                         warningTexts.hide();
                     }
+
+                    // Call the function to update the state of the tabs
+                    checkStateAndUpdate();
                 }).always(function() {
+                    // Call the function to update the state of the tabs
+                    checkStateAndUpdate();
+                });
+            }).done(function() {
+                // Force a refresh of the state of the application
+                $.get("/bridge/bridge-count", function(data) {
+                    // Update the bridge count
+                    $('#bridgeCount').text(data.bridgeCount + "/2");
+
                     // Call the function to update the state of the tabs
                     checkStateAndUpdate();
                 });
