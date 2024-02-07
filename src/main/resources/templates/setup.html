@@ -295,6 +295,7 @@
         if (data.guardLimitReached) {
             // Disable the form fields and buttons
             var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
             var formElements = guardForm.elements;
             for (var i = 0; i < formElements.length; i++) {
                 formElements[i].disabled = true;
@@ -312,25 +313,7 @@
     });
 </script>
 <script>
-    $.get("/guard/bridge-configured", function(data) {
-        if (data.bridgeConfigured) {
-            // Disable the form fields and buttons
-            var guardForm = document.getElementById('guardForm');
-            var formElements = guardForm.elements;
-            for (var i = 0; i < formElements.length; i++) {
-                formElements[i].disabled = true;
-            }
 
-            // Create a new div element for the message
-            var messageDiv = document.createElement("div");
-            messageDiv.className = "alert alert-warning";
-            messageDiv.role = "alert";
-            messageDiv.innerHTML = "Bridges are already configured. Creation of guard relays is blocked.";
-
-            // Append the message div to the container
-            document.querySelector('.container').appendChild(messageDiv);
-        }
-    });
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
