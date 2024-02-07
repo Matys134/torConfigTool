@@ -261,6 +261,22 @@
                     formElements[i].disabled = true;
                 }
 
+                // If the bridge type is 'snowflake', disable the fields for the other tabs
+                if (bridgeType === 'snowflake') {
+                    var guardForm = document.getElementById('guardForm');
+                    var onionForm = document.getElementById('onionForm');
+                    var guardFormElements = guardForm.elements;
+                    var onionFormElements = onionForm.elements;
+
+                    for (var i = 0; i < guardFormElements.length; i++) {
+                        guardFormElements[i].disabled = true;
+                    }
+
+                    for (var i = 0; i < onionFormElements.length; i++) {
+                        onionFormElements[i].disabled = true;
+                    }
+                }
+
                 // Create a new div element for the message
                 var messageDiv = document.createElement("div");
                 messageDiv.className = "alert alert-warning";
@@ -512,61 +528,6 @@
                 }
             }
         });
-    });
-</script>
-<script>
-    $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-        if (data.bridgeLimitReached) {
-            // Disable the guard form fields and buttons
-            var guardForm = document.getElementById('guardForm');
-            guardForm.disabled = true;
-            var formElements = guardForm.elements;
-            for (var i = 0; i < formElements.length; i++) {
-                formElements[i].disabled = true;
-            }
-
-            // Disable the onion form fields and buttons
-            var onionForm = document.getElementById('onionForm');
-            onionForm.disabled = true;
-            formElements = onionForm.elements;
-            for (var i = 0; i < formElements.length; i++) {
-                formElements[i].disabled = true;
-            }
-
-            // Create a new div element for the message
-            var messageDiv = document.createElement("div");
-            messageDiv.className = "alert alert-warning";
-            messageDiv.role = "alert";
-            messageDiv.innerHTML = "A snowflake bridge is already running. You can stop the running bridge to create a new guard or onion.";
-
-            // Append the message div to the container
-            document.querySelector('.container').appendChild(messageDiv);
-        }
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        // Function to disable the form fields in the guard and onion tabs
-        function disableGuardAndOnionTabs() {
-            $.get("/bridge/running-type", function(runningBridgeTypes) {
-                if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
-                    // Extract the first bridge type from the response
-                    var runningBridgeType = Object.values(runningBridgeTypes)[0];
-
-                    if (runningBridgeType === "snowflake") {
-                        // Disable the form fields in the guard and onion tabs
-                        $('#guardForm :input').prop('disabled', true);
-                        $('#onionForm :input').prop('disabled', true);
-                    }
-                }
-            });
-        }
-
-        // Call the function when the page is loaded
-        disableGuardAndOnionTabs();
-
-        // Call the function when the bridge type is changed
-        $('#bridgeType').change(disableGuardAndOnionTabs);
     });
 </script>
 </body>
