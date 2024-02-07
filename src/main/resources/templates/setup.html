@@ -459,6 +459,7 @@
         // Call the function when the page is loaded
         checkStateAndUpdate();
 
+
         // Call the function when the button is clicked
         $("#toggleLimitButton").click(function() {
             $.post("/bridge/toggle-limit", function() {
@@ -477,24 +478,11 @@
                         // Hide the warning texts
                         warningTexts.hide();
                     }
-
-                    // Call the function to update the state of the tabs
-                    checkStateAndUpdate();
-                }).always(function() {
-                    // Call the function to update the state of the tabs
-                    checkStateAndUpdate();
-                });
-            }).done(function() {
-                // Force a refresh of the state of the application
-                $.get("/bridge/bridge-count", function(data) {
-                    // Update the bridge count
-                    $('#bridgeCount').text(data.bridgeCount + "/2");
-
-                    // Call the function to update the state of the tabs
-                    checkStateAndUpdate();
                 });
             });
         });
+        // Set an interval to periodically check the state of the application and update the UI
+        setInterval(checkStateAndUpdate, 1000); // Check every second
     });
 </script>
 <script>
