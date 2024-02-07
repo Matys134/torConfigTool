@@ -283,14 +283,6 @@
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
 
-            // If the running bridge type is 'snowflake', disable the 'onion' and 'guard' forms
-            if (runningBridgeType === 'snowflake') {
-                var onionForm = document.getElementById('onionForm');
-                var guardForm = document.getElementById('guardForm');
-                onionForm.disabled = true;
-                guardForm.disabled = true;
-            }
-
             // Create a new div element for the message
             var messageDiv = document.createElement("div");
             messageDiv.className = "alert alert-warning";
