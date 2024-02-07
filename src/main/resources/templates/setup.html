@@ -407,6 +407,9 @@
                         // Disable the form fields in the bridge and onion tabs
                         $('#bridgeForm :input').prop('disabled', true);
                         $('#onionForm :input').prop('disabled', true);
+
+                        // Disable the form fields in the guard tab
+                        $('#guardForm :input').prop('disabled', true);
                     } else {
                         // Enable the bridge and onion tabs
                         $('#bridge-tab').removeClass('disabled');
@@ -415,6 +418,9 @@
                         // Enable the form fields in the bridge and onion tabs
                         $('#bridgeForm :input').prop('disabled', false);
                         $('#onionForm :input').prop('disabled', false);
+
+                        // Enable the form fields in the guard tab
+                        $('#guardForm :input').prop('disabled', false);
                     }
                 });
             } else {
@@ -425,6 +431,9 @@
                 // Enable the form fields in the bridge and onion tabs
                 $('#bridgeForm :input').prop('disabled', false);
                 $('#onionForm :input').prop('disabled', false);
+
+                // Enable the form fields in the guard tab
+                $('#guardForm :input').prop('disabled', false);
             }
         });
 
@@ -457,6 +466,9 @@
                             $('#bridgeForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
 
+                            // Disable the form fields in the guard tab
+                            $('#guardForm :input').prop('disabled', true);
+
                             // Set a value in the local storage
                             localStorage.setItem('guardCreated', 'true');
                         } else {
@@ -467,6 +479,9 @@
                             // Enable the form fields in the bridge and onion tabs
                             $('#bridgeForm :input').prop('disabled', false);
                             $('#onionForm :input').prop('disabled', false);
+
+                            // Enable the form fields in the guard tab
+                            $('#guardForm :input').prop('disabled', false);
 
                             // Clear the value in the local storage
                             localStorage.removeItem('guardCreated');
