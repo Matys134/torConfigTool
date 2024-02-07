@@ -423,47 +423,6 @@
                     var warningTexts = $(".alert-warning"); // select all warning texts
 
                     if (data) {
-                        toggleLimitButton.text("Turn Limit Off");
-                        warningTexts.show(); // show warning texts
-                        $('form').each(function() {
-                            $(this).find(':input').prop('disabled', true); // disable all inputs in the form
-                        });
-                    } else {
-                        toggleLimitButton.text("Turn Limit On");
-                        warningTexts.hide(); // hide warning texts
-                        $('form').each(function() {
-                            $(this).find(':input').prop('disabled', false); // enable all inputs in the form
-                        });
-                    }
-                });
-            });
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $.get("/bridge/limit-state", function(data) {
-            var toggleLimitButton = document.getElementById("toggleLimitButton");
-            if (data) {
-                toggleLimitButton.textContent = "Turn Limit Off";
-            } else {
-                toggleLimitButton.textContent = "Turn Limit On";
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $("#toggleLimitButton").click(function() {
-            // Disable the button
-            $(this).prop("disabled", true);
-
-            $.post("/bridge/toggle-limit", function() {
-                $.get("/bridge/limit-state", function(data) {
-                    var toggleLimitButton = $("#toggleLimitButton");
-                    var warningTexts = $(".alert-warning"); // select all warning texts
-
-                    if (data) {
                         // Update the button text
                         toggleLimitButton.text("Turn Limit Off");
                         // Show the warning texts
@@ -492,12 +451,21 @@
                             // Clear the value in the local storage
                             localStorage.removeItem('guardCreated');
                         }
-
-                        // Re-enable the button
-                        toggleLimitButton.prop("disabled", false);
                     });
                 });
             });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $.get("/bridge/limit-state", function(data) {
+            var toggleLimitButton = document.getElementById("toggleLimitButton");
+            if (data) {
+                toggleLimitButton.textContent = "Turn Limit Off";
+            } else {
+                toggleLimitButton.textContent = "Turn Limit On";
+            }
         });
     });
 </script>
