@@ -283,7 +283,7 @@
             var messageDiv = document.createElement("div");
             messageDiv.className = "alert alert-warning";
             messageDiv.role = "alert";
-            messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
+            messageDiv.innerHTML = "A bridge of type " + runningBridgeType.type + " is already running. You can stop the running bridge to create a new one.";
 
             // Append the message div to the container
             document.querySelector('.container').appendChild(messageDiv);
