@@ -455,6 +455,9 @@
 <script>
     $(document).ready(function() {
         $("#toggleLimitButton").click(function() {
+            // Disable the button
+            $(this).prop("disabled", true);
+
             $.post("/bridge/toggle-limit", function() {
                 $.get("/bridge/limit-state", function(data) {
                     var toggleLimitButton = $("#toggleLimitButton");
@@ -489,6 +492,9 @@
                             // Clear the value in the local storage
                             localStorage.removeItem('guardCreated');
                         }
+
+                        // Re-enable the button
+                        toggleLimitButton.prop("disabled", false);
                     });
                 });
             });
