@@ -425,6 +425,10 @@
                             // Disable the form fields in the guard and onion tabs
                             $('#guardForm :input').prop('disabled', true);
                             $('#onionForm :input').prop('disabled', true);
+                        } else {
+                            // Enable the form fields in the guard and onion tabs
+                            $('#guardForm :input').prop('disabled', false);
+                            $('#onionForm :input').prop('disabled', false);
                         }
 
                         if (guardData[0].guardConfigured) {
@@ -441,12 +445,6 @@
                         if (guardData[0].guardConfigured && data.guardCount >= 8) {
                             // Disable the form fields in the guard tab
                             $('#guardForm :input').prop('disabled', true);
-                        }
-
-                        else {
-                            // Enable the form fields in the guard and onion tabs
-                            $('#guardForm :input').prop('disabled', false);
-                            $('#onionForm :input').prop('disabled', false);
                         }
                     });
                 } else {
