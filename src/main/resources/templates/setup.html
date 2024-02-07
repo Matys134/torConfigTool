@@ -402,6 +402,7 @@
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
                     $.get("/guard/bridge-configured", function(bridgeData) {
+                        console.log(bridgeData.bridgeConfigured, bridgeData.bridgeType)
                         if (bridgeData.bridgeConfigured && bridgeData.bridgeType === 'obfs4') {
                             // Disable the bridge type field
                             $('#bridgeType').prop('disabled', true);
@@ -478,12 +479,6 @@
                     checkStateAndUpdate();
                 });
             });
-        });
-
-        // Call the function when the bridge form is submitted
-        $("#bridgeForm").submit(function() {
-            // Wait for the form submission to complete before checking the state
-            setTimeout(checkStateAndUpdate, 1000);
         });
     });
 </script>
