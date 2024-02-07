@@ -403,10 +403,10 @@
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
                     $.get("/bridge/running-type", function(runningBridgeTypes) {
-                        console.log("tady" + runningBridgeTypes)
+                        console.log("tady" + JSON.stringify(runningBridgeTypes));
                         if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
                             var runningBridgeType = Object.values(runningBridgeTypes)[0];
-                            console.log(runningBridgeType);
+                            console.log("zde" + runningBridgeType);
                             if (runningBridgeType === 'obfs4') {
                                 // Disable the bridge type field
                                 $('#bridgeType').prop('disabled', true);
