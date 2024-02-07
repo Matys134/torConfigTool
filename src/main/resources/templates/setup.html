@@ -406,10 +406,16 @@
                             // Disable the form fields for creating other types of bridges
                             $('#bridgeType option[value="snowflake"]').prop('disabled', true);
                             $('#bridgeType option[value="webtunnel"]').prop('disabled', true);
+
+                            // Disable all fields and buttons in the bridge form except the Bridge type field
+                            $('#bridgeForm :input').not('#bridgeType').prop('disabled', true);
                         } else {
                             // Enable the form fields for creating other types of bridges
                             $('#bridgeType option[value="snowflake"]').prop('disabled', false);
                             $('#bridgeType option[value="webtunnel"]').prop('disabled', false);
+
+                            // Enable all fields and buttons in the bridge form
+                            $('#bridgeForm :input').prop('disabled', false);
                         }
                     });
                     $.get("/guard/bridge-configured", function(bridgeData) {
