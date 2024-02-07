@@ -492,5 +492,13 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function() {
+        $('#bridgeForm').on('submit', function() {
+            var bridgeType = $('#bridgeType').val();
+            $(this).append('<input type="hidden" name="bridgeType" value="' + bridgeType + '">');
+        });
+    });
+</script>
 </body>
 </html>
