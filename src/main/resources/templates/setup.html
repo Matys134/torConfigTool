@@ -210,20 +210,6 @@
         webtunnelFields.style.display = "none";
         snowflakeFields.style.display = "none";
 
-        // Retrieve the form elements for the other tabs
-        var guardForm = document.getElementById('guardForm');
-        var onionForm = document.getElementById('onionForm');
-
-        // If the selected bridge type is "snowflake", disable the other forms
-        if (bridgeType === "snowflake") {
-            guardForm.disabled = true;
-            onionForm.disabled = true;
-        } else {
-            // If the selected bridge type is not "snowflake", enable the other forms
-            guardForm.disabled = false;
-            onionForm.disabled = false;
-        }
-
         // Remove 'required' attributes initially
         bridgePort.removeAttribute("required");
         bridgeTransportListenAddr.removeAttribute("required");
