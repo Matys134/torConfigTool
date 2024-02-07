@@ -462,6 +462,13 @@
 
                 // Set a value in the local storage
                 localStorage.setItem('guardCreated', 'true');
+            } else {
+                // Enable the bridge and onion tabs
+                $('#bridge-tab').removeClass('disabled');
+                $('#onion-tab').removeClass('disabled');
+
+                // Clear the value in the local storage
+                localStorage.removeItem('guardCreated');
             }
         });
 
@@ -470,6 +477,10 @@
             // Disable the bridge and onion tabs
             $('#bridge-tab').addClass('disabled');
             $('#onion-tab').addClass('disabled');
+        } else {
+            // Enable the bridge and onion tabs
+            $('#bridge-tab').removeClass('disabled');
+            $('#onion-tab').removeClass('disabled');
         }
     });
 </script>
