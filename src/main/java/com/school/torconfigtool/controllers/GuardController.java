@@ -142,4 +142,13 @@ public class GuardController {
         response.put("guardCount", relayService.getGuardCount());
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/guard-configured")
+    public ResponseEntity<Map<String, Boolean>> checkGuardConfigured() {
+        Map<String, Boolean> response = new HashMap<>();
+        // Logic to check if a guard is configured
+        boolean isGuardConfigured = relayService.getGuardCount() > 0;
+        response.put("guardConfigured", isGuardConfigured);
+        return ResponseEntity.ok(response);
+    }
 }

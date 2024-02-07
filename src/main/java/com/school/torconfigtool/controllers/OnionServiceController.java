@@ -339,4 +339,13 @@ public class OnionServiceController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/onion-configured")
+    public ResponseEntity<Map<String, Boolean>> checkOnionConfigured() {
+        Map<String, Boolean> response = new HashMap<>();
+        // Logic to check if an onion service is configured
+        boolean isOnionConfigured = onionServicePorts.size() > 0;
+        response.put("onionConfigured", isOnionConfigured);
+        return ResponseEntity.ok(response);
+    }
 }
