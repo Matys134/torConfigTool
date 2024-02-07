@@ -431,6 +431,11 @@
                             $('#onionForm :input').prop('disabled', false);
                         }
 
+                        if (guardData[0].guardConfigured) {
+                            $('#onionForm :input').prop('disabled', true);
+                            $('#bridgeForm :input').prop('disabled', true);
+                        }
+
                         // Check if a guard is configured and the guard limit has been reached
                         if (guardData[0].guardConfigured && data.guardCount >= 8) {
                             // Disable the form fields in the guard tab
