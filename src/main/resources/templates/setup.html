@@ -336,6 +336,31 @@
     });
 </script>
 <script>
+    $(document).ready(function() {
+        // Check the local storage and the limit state from the server when the page is loaded
+        $.get("/bridge/limit-state-and-guard-count", function(data) {
+            if (data.limitOn && localStorage.getItem('bridgeCreated') === 'true') {
+                // Disable the form fields and buttons
+                var guardForm = document.getElementById('guardForm');
+                guardForm.disabled = true;
+                var formElements = guardForm.elements;
+                for (var i = 0; i < formElements.length; i++) {
+                    formElements[i].disabled = true;
+                }
+
+                // Create a new div element for the message
+                var messageDiv = document.createElement("div");
+                messageDiv.className = "alert alert-warning";
+                messageDiv.role = "alert";
+                messageDiv.innerHTML = "A bridge is already configured and the limit is turned on. You can edit the existing bridge or turn off the limit to create a new one.";
+
+                // Append the message div to the container
+                document.querySelector('.container').appendChild(messageDiv);
+            }
+        });
+    });
+</script>
+<script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
         var bridgeCountElement = $('#bridgeCount');
         bridgeCountElement.text(data.bridgeCount + "/2");
