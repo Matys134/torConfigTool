@@ -278,6 +278,7 @@
         if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
             // Extract the first bridge type from the response
             var runningBridgeType = Object.values(runningBridgeTypes)[0];
+            console.log(runningBridgeType);
 
             // Disable the bridge type selection
             document.getElementById('bridgeType').disabled = true;
