@@ -403,6 +403,7 @@
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
                     $.get("/bridge/running-type", function(runningBridgeTypes) {
+                        console.log("tady" + runningBridgeTypes)
                         if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
                             var runningBridgeType = Object.values(runningBridgeTypes)[0];
                             console.log(runningBridgeType);
