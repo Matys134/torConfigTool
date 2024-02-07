@@ -2,8 +2,10 @@ package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.models.TorConfiguration;
 import com.school.torconfigtool.service.FileService;
 import com.school.torconfigtool.service.RelayService;
+import com.school.torconfigtool.service.TorConfigurationService;
 import com.school.torconfigtool.service.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -413,9 +415,16 @@ public class BridgeController {
         return "setup";
     }
 
+    TorConfigurationService torConfigurationService;
+
     @GetMapping("/running-type")
     public ResponseEntity<Map<String, String>> getRunningBridgeType() {
-        Map<String, String> response = relayService.getRunningBridgeType();
+        Map<String, String> response = new HashMap<>();
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+        for (TorConfiguration config : bridgeConfigs) {
+            String bridgeType = config.getBridgeRelayConfig().getBridgeType();
+            response.put(config.getBridgeRelayConfig().getNickname(), bridgeType);
+        }
         return ResponseEntity.ok(response);
     }
 
