@@ -27,6 +27,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
         writer.write("BridgeRelay 1");
         writer.newLine();
+        logger.info("Writing specific config for bridge type: " + getBridgeType());
         switch (getBridgeType()) {
             case "obfs4":
                 writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
@@ -50,6 +51,9 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 break;
             case "snowflake":
                 runSnowflakeProxy();
+                break;
+                default:
+                    logger.error("Unknown bridge type: " + getBridgeType());
         }
     }
 
