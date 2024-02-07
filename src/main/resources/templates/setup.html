@@ -441,15 +441,20 @@
                             $('#bridge-tab').addClass('disabled');
                             $('#onion-tab').addClass('disabled');
 
+                            // Disable the form fields in the bridge and onion tabs
+                            $('#bridgeForm :input').prop('disabled', true);
+                            $('#onionForm :input').prop('disabled', true);
+
                             // Set a value in the local storage
                             localStorage.setItem('guardCreated', 'true');
-
-                            // Switch to the Guard Relay tab
-                            $('#myTab a[href="#relayTab"]').tab('show');
                         } else {
                             // Enable the bridge and onion tabs
                             $('#bridge-tab').removeClass('disabled');
                             $('#onion-tab').removeClass('disabled');
+
+                            // Enable the form fields in the bridge and onion tabs
+                            $('#bridgeForm :input').prop('disabled', false);
+                            $('#onionForm :input').prop('disabled', false);
 
                             // Clear the value in the local storage
                             localStorage.removeItem('guardCreated');
