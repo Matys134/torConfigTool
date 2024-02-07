@@ -292,21 +292,19 @@
             // Append the message div to the container
             document.querySelector('.container').appendChild(messageDiv);
 
-            // If the running bridge type is either "webtunnel" or "snowflake", disable the other form fields
-            if (runningBridgeType === "webtunnel" || runningBridgeType === "snowflake") {
-                // Disable the form fields and buttons
+            // If the running bridge type is 'snowflake', disable the fields for other configurations
+            if (runningBridgeType === 'snowflake') {
                 var guardForm = document.getElementById('guardForm');
-                guardForm.disabled = true;
-                var formElements = guardForm.elements;
-                for (var i = 0; i < formElements.length; i++) {
-                    formElements[i].disabled = true;
-                }
-
                 var onionForm = document.getElementById('onionForm');
+                guardForm.disabled = true;
                 onionForm.disabled = true;
-                formElements = onionForm.elements;
-                for (var i = 0; i < formElements.length; i++) {
-                    formElements[i].disabled = true;
+                var guardFormElements = guardForm.elements;
+                var onionFormElements = onionForm.elements;
+                for (var i = 0; i < guardFormElements.length; i++) {
+                    guardFormElements[i].disabled = true;
+                }
+                for (var i = 0; i < onionFormElements.length; i++) {
+                    onionFormElements[i].disabled = true;
                 }
             }
         }
