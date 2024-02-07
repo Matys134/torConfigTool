@@ -480,11 +480,18 @@
 
         // Listen for the form submission event
         $('#guardForm').on('submit', function(e) {
-            // Wait for the form submission to complete
+            // Prevent the form from being submitted normally
             e.preventDefault();
-            $.post($(this).attr('action'), $(this).serialize(), function() {
-                // Update the tabs after the form submission is complete
-                updateTabs();
+
+            // Send a POST request to the form's action URL with the form data
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function() {
+                    // Update the tabs after the form submission is complete
+                    updateTabs();
+                }
             });
         });
     });
