@@ -313,7 +313,26 @@
     });
 </script>
 <script>
+    $.get("/guard/bridge-configured", function(data) {
+        if (data.bridgeConfigured) {
+            // Disable the form fields and buttons
+            var guardForm = document.getElementById('guardForm');
+            guardForm.disabled = true;
+            var formElements = guardForm.elements;
+            for (var i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
 
+            // Create a new div element for the message
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = "Bridges are already configured. Creation of guard relays is blocked.";
+
+            // Append the message div to the container
+            document.querySelector('.container').appendChild(messageDiv);
+        }
+    });
 </script>
 <script>
     $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
@@ -400,13 +419,26 @@
         // Check the local storage and the limit state from the server when the page is loaded
         $.get("/guard/limit-state-and-guard-count", function(data) {
             if (data.limitOn && localStorage.getItem('guardCreated') === 'true') {
-                // Disable the bridge and onion tabs
-                $('#bridge-tab').addClass('disabled');
-                $('#onion-tab').addClass('disabled');
+                // Check if a bridge is configured
+                $.get("/guard/bridge-configured", function(bridgeData) {
+                    if (bridgeData.bridgeConfigured) {
+                        // Disable the bridge and onion tabs
+                        $('#bridge-tab').addClass('disabled');
+                        $('#onion-tab').addClass('disabled');
 
-                // Disable the form fields in the bridge and onion tabs
-                $('#bridgeForm :input').prop('disabled', true);
-                $('#onionForm :input').prop('disabled', true);
+                        // Disable the form fields in the bridge and onion tabs
+                        $('#bridgeForm :input').prop('disabled', true);
+                        $('#onionForm :input').prop('disabled', true);
+                    } else {
+                        // Enable the bridge and onion tabs
+                        $('#bridge-tab').removeClass('disabled');
+                        $('#onion-tab').removeClass('disabled');
+
+                        // Enable the form fields in the bridge and onion tabs
+                        $('#bridgeForm :input').prop('disabled', false);
+                        $('#onionForm :input').prop('disabled', false);
+                    }
+                });
             } else {
                 // Enable the bridge and onion tabs
                 $('#bridge-tab').removeClass('disabled');
