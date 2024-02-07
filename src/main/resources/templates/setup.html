@@ -430,6 +430,12 @@
                             $('#guardForm :input').prop('disabled', false);
                             $('#onionForm :input').prop('disabled', false);
                         }
+
+                        // Check if the guard limit has been reached
+                        if (data.guardCount >= 8) {
+                            // Disable the form fields in the guard tab
+                            $('#guardForm :input').prop('disabled', true);
+                        }
                     });
                 } else {
                     // Enable the form fields in the bridge, guard and onion tabs
