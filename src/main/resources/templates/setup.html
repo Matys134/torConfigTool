@@ -414,7 +414,7 @@
                             if (runningTypeData[0] && !jQuery.isEmptyObject(runningTypeData[0])) {
                                 var runningBridgeType = Object.values(runningTypeData[0])[0];
                                 console.log(runningBridgeType);
-                                if (runningBridgeType === 'obfs4' || runningBridgeType === 'snowflake') {
+                                if (runningBridgeType === 'obfs4') {
                                     // Disable the bridge type field
                                     $('#bridgeType').prop('disabled', true);
                                 } else {
