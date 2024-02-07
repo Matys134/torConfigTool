@@ -278,35 +278,33 @@
         if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
             // Extract the first bridge type from the response
             var runningBridgeType = Object.values(runningBridgeTypes)[0];
-            console.log(runningBridgeType);
 
-            // Disable the bridge type selection
-            document.getElementById('bridgeType').disabled = true;
-
-            // Create a new div element for the message
-            var messageDiv = document.createElement("div");
-            messageDiv.className = "alert alert-warning";
-            messageDiv.role = "alert";
-            messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
-
-            // Append the message div to the container
-            document.querySelector('.container').appendChild(messageDiv);
-
-            // If the running bridge type is 'snowflake', disable the other form fields
-            if (runningBridgeType === 'snowflake') {
-                // Disable the form fields and buttons for onion and guard
+            // If the running bridge type is "snowflake", disable the other forms
+            if (runningBridgeType === "snowflake") {
+                // Disable the onion form fields and buttons
                 var onionForm = document.getElementById('onionForm');
-                var guardForm = document.getElementById('guardForm');
                 onionForm.disabled = true;
-                guardForm.disabled = true;
                 var onionFormElements = onionForm.elements;
-                var guardFormElements = guardForm.elements;
                 for (var i = 0; i < onionFormElements.length; i++) {
                     onionFormElements[i].disabled = true;
                 }
+
+                // Disable the guard form fields and buttons
+                var guardForm = document.getElementById('guardForm');
+                guardForm.disabled = true;
+                var guardFormElements = guardForm.elements;
                 for (var i = 0; i < guardFormElements.length; i++) {
                     guardFormElements[i].disabled = true;
                 }
+
+                // Create a new div element for the message
+                var messageDiv = document.createElement("div");
+                messageDiv.className = "alert alert-warning";
+                messageDiv.role = "alert";
+                messageDiv.innerHTML = "A bridge of type " + runningBridgeType + " is already running. You can stop the running bridge to create a new one.";
+
+                // Append the message div to the container
+                document.querySelector('.container').appendChild(messageDiv);
             }
         }
     });
