@@ -441,7 +441,6 @@
                             $('#bridgeForm :input').prop('disabled', true);
                         }
 
-                        // Check if a guard is configured and the guard limit has been reached
                         if (guardData[0].guardConfigured && data.guardCount >= 8) {
                             // Disable the form fields in the guard tab
                             $('#guardForm :input').prop('disabled', true);
@@ -477,6 +476,9 @@
                         warningTexts.hide();
                     }
 
+                    // Call the function to update the state of the tabs
+                    checkStateAndUpdate();
+                }).done(function() {
                     // Call the function to update the state of the tabs
                     checkStateAndUpdate();
                 });
