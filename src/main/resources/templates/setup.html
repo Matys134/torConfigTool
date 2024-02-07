@@ -465,7 +465,6 @@
                 $.get("/bridge/limit-state", function(data) {
                     var toggleLimitButton = $("#toggleLimitButton");
                     var warningTexts = $(".alert-warning"); // select all warning texts
-
                     if (data) {
                         // Update the button text
                         toggleLimitButton.text("Turn Limit Off");
