@@ -454,34 +454,39 @@
 </script>
 <script>
     $(document).ready(function() {
-        $.get("/guard/limit-state-and-guard-count", function(data) {
-            if (data.limitOn && data.guardCount > 0) {
-                // Disable the bridge and onion tabs
-                $('#bridge-tab').addClass('disabled');
-                $('#onion-tab').addClass('disabled');
+        // Function to update the state of the tabs
+        function updateTabs() {
+            $.get("/guard/limit-state-and-guard-count", function(data) {
+                if (data.limitOn && data.guardCount > 0) {
+                    // Disable the bridge and onion tabs
+                    $('#bridge-tab').addClass('disabled');
+                    $('#onion-tab').addClass('disabled');
 
-                // Set a value in the local storage
-                localStorage.setItem('guardCreated', 'true');
-            } else {
-                // Enable the bridge and onion tabs
-                $('#bridge-tab').removeClass('disabled');
-                $('#onion-tab').removeClass('disabled');
+                    // Set a value in the local storage
+                    localStorage.setItem('guardCreated', 'true');
+                } else {
+                    // Enable the bridge and onion tabs
+                    $('#bridge-tab').removeClass('disabled');
+                    $('#onion-tab').removeClass('disabled');
 
-                // Clear the value in the local storage
-                localStorage.removeItem('guardCreated');
-            }
-        });
-
-        // Check the local storage every time the page is loaded
-        if (localStorage.getItem('guardCreated') === 'true') {
-            // Disable the bridge and onion tabs
-            $('#bridge-tab').addClass('disabled');
-            $('#onion-tab').addClass('disabled');
-        } else {
-            // Enable the bridge and onion tabs
-            $('#bridge-tab').removeClass('disabled');
-            $('#onion-tab').removeClass('disabled');
+                    // Clear the value in the local storage
+                    localStorage.removeItem('guardCreated');
+                }
+            });
         }
+
+        // Call the function to update the tabs when the page is loaded
+        updateTabs();
+
+        // Listen for the form submission event
+        $('#guardForm').on('submit', function(e) {
+            // Wait for the form submission to complete
+            e.preventDefault();
+            $.post($(this).attr('action'), $(this).serialize(), function() {
+                // Update the tabs after the form submission is complete
+                updateTabs();
+            });
+        });
     });
 </script>
 </body>
