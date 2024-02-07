@@ -24,3 +24,15 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
+
+$(document).ready(function() {
+    // Fetch the limit state and the count of guard relays
+    $.get("/guard/limit-reached", function(data) {
+        // Access the guardLimitReached property of the returned data
+        if (data.guardLimitReached) {
+            // Disable the bridge and onion tabs
+            document.getElementById('bridge-tab').disabled = true;
+            document.getElementById('onion-tab').disabled = true;
+        }
+    });
+});
