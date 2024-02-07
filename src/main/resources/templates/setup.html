@@ -408,6 +408,9 @@
 
                         // Disable all fields and buttons in the bridge form except the Bridge type field
                         $('#bridgeForm :input').not('#bridgeType').prop('disabled', true);
+
+                        // Trigger the change event manually
+                        $('#bridgeType').trigger('change');
                     } else {
                         // Enable the form fields for creating other types of bridges
                         $('#bridgeType option[value="snowflake"]').prop('disabled', false);
@@ -415,6 +418,9 @@
 
                         // Enable all fields and buttons in the bridge form
                         $('#bridgeForm :input').prop('disabled', false);
+
+                        // Trigger the change event manually
+                        $('#bridgeType').trigger('change');
                     }
                 });
 
