@@ -128,12 +128,7 @@
                     <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.hiddenServicePort}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button class="btn btn-secondary edit-button"
-                                th:attr="data-config-type='onion'"
-                                th:data-config-dir="${config.hiddenServiceDir}"
-                                th:data-config-port="${config.hiddenServicePort}">
-                            Edit
-                        </button>
+
                         <button class="btn btn-secondary remove-button"
                                 th:data-config-nickname="${config.hiddenServicePort}"
                                 th:data-config-type="onion">
