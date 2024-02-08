@@ -34,6 +34,10 @@ $(document).ready(function () {
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
 
+        if (relayType === 'bridge') {
+            data.webtunnel = $(this).data('config-webtunnel');
+        }
+
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
 
@@ -80,6 +84,10 @@ $(document).ready(function () {
 
             // Combine the protocol and address with the new port to form the updated serverTransport
             data.serverTransport = serverTransportPort;
+        }
+
+        if (isBridgeEdit) {
+            data.webtunnel = configSelectors.webtunnel.val();
         }
 
         $.ajax({
