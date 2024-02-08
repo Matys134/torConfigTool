@@ -82,12 +82,14 @@ $(document).ready(function () {
     }
 
     function sendUpdateRequest(url, data) {
-        // Extract the port from the serverTransport field
-        var serverTransportParts = data.serverTransport.split(':');
-        var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
+        // Check if serverTransport is defined before splitting it
+        if (data.serverTransport) {
+            var serverTransportParts = data.serverTransport.split(':');
+            var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
-        // Combine the protocol and address with the new port to form the updated serverTransport
-        data.serverTransport = serverTransportPort;
+            // Combine the protocol and address with the new port to form the updated serverTransport
+            data.serverTransport = serverTransportPort;
+        }
 
         $.ajax({
             type: "POST",
@@ -147,8 +149,6 @@ $(document).ready(function () {
 
         const data = {
             nickname: configSelectors.nickname.text(),
-            orPort: parseInt(configSelectors.orPort.val()),
-            serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
@@ -162,6 +162,12 @@ $(document).ready(function () {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();
+
+            // If the bridge type is not webtunnel, set the orPort and serverTransport values
+            if (data.bridgeType !== 'webtunnel') {
+                data.orPort = parseInt(configSelectors.orPort.val());
+                data.serverTransport = configSelectors.serverTransport.val();
+            }
 
             // If only the contact field is being edited, skip the port availability check
             if (isBridgeEdit && data.bridgeType === 'webtunnel') {
