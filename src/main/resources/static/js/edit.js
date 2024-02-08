@@ -111,6 +111,7 @@ $(document).ready(function () {
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            webtunnelLink: configSelectors.webtunnelLink.val()
         };
 
         // Send a GET request to the /bridge/running-type endpoint
