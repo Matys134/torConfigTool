@@ -91,6 +91,14 @@ $(document).ready(function () {
             data.serverTransport = serverTransportPort;
         }
 
+        // Check if the webtunnelUrl and path fields are visible
+        if (!configSelectors.webtunnelUrl.is(':visible')) {
+            data.webtunnelUrl = configSelectors.webtunnelUrl.val();
+        }
+        if (!configSelectors.path.is(':visible')) {
+            data.path = configSelectors.path.val();
+        }
+
         $.ajax({
             type: "POST",
             url: url,
