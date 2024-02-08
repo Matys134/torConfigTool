@@ -78,13 +78,15 @@
 
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button class="edit-bridge-button"
-                                data-config-nickname="matys"
-                                data-config-orport="127.0.0.1:auto"
-                                data-config-contact="koubama@gmail.com"
-                                data-config-controlport="9051"
-                                data-config-webtunnelurl="tenmatys.eu"
-                                data-config-path="55f90ac7b27045f69ef8d034">
+                        <button class="btn btn-secondary edit-bridge-button"
+                                th:attr="data-config-type='bridge'"
+                                th:data-config-contact="${config.bridgeRelayConfig.contact}"
+                                th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
+                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
+                                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
+                                th:data-config-servertransport="${config.bridgeRelayConfig.getServerTransport}"
+                                th:data-config-webtunnelurl="${config.bridgeRelayConfig.webtunnelUrl}"
+                                th:data-config-path="${config.bridgeRelayConfig.path}">
                             Edit
                         </button>
                         <button class="btn btn-secondary remove-button"
