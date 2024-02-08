@@ -102,6 +102,9 @@ $(document).ready(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
 
+        configSelectors.webtunnelUrl = $("#edit-webtunnelurl");
+        configSelectors.path = $("#edit-path");
+
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
