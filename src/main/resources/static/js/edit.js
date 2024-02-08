@@ -10,8 +10,8 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
-        webtunnelUrl: $("#edit-webtunnelurl"), // Add this line
-        path: $("#edit-path") // Add this line
+        webtunnelUrl: $("#edit-webtunnelurl"),
+        path: $("#edit-path")
     };
 
     const buttons = {
@@ -101,9 +101,6 @@ $(document).ready(function () {
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
-
-        configSelectors.webtunnelUrl = $("#edit-webtunnelurl");
-        configSelectors.path = $("#edit-path");
 
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
