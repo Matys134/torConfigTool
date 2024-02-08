@@ -35,8 +35,6 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
-        configSelectors.webtunnelUrl.val(data.webtunnelUrl); // Add this line
-        configSelectors.path.val(data.path); // Add this line
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
@@ -74,8 +72,6 @@ $(document).ready(function () {
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-        configElement.find(".config-webtunnelurl").text(`WebTunnelURL: ${data.webtunnelUrl}`);
-        configElement.find(".config-path").text(`Path: ${data.path}`);
     }
 
     function sendUpdateRequest(url, data) {
@@ -142,7 +138,6 @@ $(document).ready(function () {
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
             path: configSelectors.path.val(),
         };
-
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
