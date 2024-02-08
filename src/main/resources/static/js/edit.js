@@ -82,6 +82,8 @@ $(document).ready(function () {
             data.serverTransport = serverTransportPort;
         }
 
+        data.webtunnel = data.webtunnel
+
         $.ajax({
             type: "POST",
             url: url,
