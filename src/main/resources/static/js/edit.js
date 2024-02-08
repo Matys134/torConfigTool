@@ -132,6 +132,12 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
+        // Get the current configuration for the bridge
+        const currentConfig = { nickname: data.nickname };
+
+        data.webtunnelUrl = currentConfig.webtunnelUrl;
+        data.path = currentConfig.path;
+
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
