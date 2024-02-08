@@ -132,6 +132,9 @@ $(document).ready(function () {
     });
 
     buttons.save.click(function () {
+        console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
+        console.log('path input field:', configSelectors.path);
+
         const data = {
             nickname: configSelectors.nickname.text(),
             orPort: parseInt(configSelectors.orPort.val()),
