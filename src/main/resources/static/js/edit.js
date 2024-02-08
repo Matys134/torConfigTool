@@ -46,15 +46,8 @@ $(document).ready(function () {
         $('#edit-form [data-config-type]').each(function() {
             var configTypes = $(this).attr('data-config-type').split(' ');
             var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
-            if (configTypes.includes(relayType) && (relayType !== 'bridge' || bridgeTypes.includes(bridgeType))) {
-                // If the relay type is 'bridge' and the bridge type is 'webtunnel', hide the fields for editing path and domain
-                if (relayType === 'bridge' && bridgeType === 'webtunnel' && ($(this).next('input').attr('id') === 'edit-path' || $(this).next('input').attr('id') === 'edit-webtunnelurl')) {
-                    $(this).hide();
-                    $(this).next('input').hide();
-                } else {
-                    $(this).show();
-                    $(this).next('input').show();
-                }
+            var isEditable = $(this).attr('data-editable') !== 'false'; // Check if the field is editable
+            if (isEditable && configTypes.includes(relayType) && (relayType !== 'bridge' || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
                 // Populate the input fields with the current values
