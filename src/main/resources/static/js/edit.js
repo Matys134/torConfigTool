@@ -143,12 +143,6 @@ $(document).ready(function () {
                 data.serverTransport = configSelectors.serverTransport.val();
             }
 
-            // If the bridge type is webtunnel, set the orPort and serverTransportOptions values
-            if (data.bridgeType === 'webtunnel') {
-                data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransportOptions = configSelectors.serverTransport.val();
-            }
-
             // If only the contact field is being edited, skip the port availability check
             if (isBridgeEdit && data.bridgeType === 'webtunnel') {
                 let url = '/update-bridge-config';
