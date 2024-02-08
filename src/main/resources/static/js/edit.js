@@ -110,7 +110,8 @@ $(document).ready(function () {
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
+            webtunnelLink: $(this).data('config-webtunnel-link')
         };
 
         // Send a GET request to the /bridge/running-type endpoint
