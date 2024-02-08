@@ -115,6 +115,9 @@ $(document).ready(function () {
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
         };
 
+        console.log('webtunnelUrl:', data.webtunnelUrl);
+        console.log('path:', data.path);
+
         // Send a GET request to the /bridge/running-type endpoint
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
