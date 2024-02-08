@@ -23,7 +23,7 @@ $(document).ready(function () {
         console.log('Data:', data); // Log the data object
 
         // Split the serverTransport into protocol and port
-        var serverTransportParts = data.serverTransport.split(':');
+        var serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
         serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
         var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
@@ -74,7 +74,7 @@ $(document).ready(function () {
 
     function sendUpdateRequest(url, data) {
         // Extract the port from the serverTransport field
-        var serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
+        var serverTransportParts = data.serverTransport.split(':');
         var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Combine the protocol and address with the new port to form the updated serverTransport
