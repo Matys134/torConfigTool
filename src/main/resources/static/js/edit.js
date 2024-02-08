@@ -10,6 +10,7 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
+        webtunnel: $("#edit-webtunnel") // Add this line
     };
 
     const buttons = {
@@ -33,6 +34,7 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
+        configSelectors.webtunnel.val(data.webtunnel); // Add this line
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
@@ -132,7 +134,7 @@ $(document).ready(function () {
             nickname: configSelectors.nickname.text(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
-            webtunnel: configSelectors.
+            webtunnel: configSelectors.webtunnel.val(),
         };
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
