@@ -73,8 +73,8 @@ $(document).ready(function () {
     }
 
     function sendUpdateRequest(url, data) {
-        // If the bridge type is not webtunnel, split the serverTransport
-        if (data.bridgeType !== 'webtunnel' && data.serverTransport) {
+        // Check if serverTransport is defined before splitting it
+        if (data.serverTransport) {
             var serverTransportParts = data.serverTransport.split(':');
             var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
