@@ -69,10 +69,7 @@
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.getServerTransport}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
                     <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
-                    console.log("Webtunnel URL for " + config.bridgeRelayConfig.nickname + ": " + webtunnelLinks[config.bridgeRelayConfig.nickname]);
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
-                    <p th:text="'URL: ' + ${config.bridgeRelayConfig.webtunnelUrl}"></p>
-                    <p th:text="'Path: ' + ${config.bridgeRelayConfig.path}"></p>
 
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
@@ -128,12 +125,7 @@
                     <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
                     <span style="color: blue;" th:id="${'status-message-' + config.hiddenServicePort}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
-                        <button class="btn btn-secondary edit-button"
-                                th:attr="data-config-type='onion'"
-                                th:data-config-dir="${config.hiddenServiceDir}"
-                                th:data-config-port="${config.hiddenServicePort}">
-                            Edit
-                        </button>
+
                         <button class="btn btn-secondary remove-button"
                                 th:data-config-nickname="${config.hiddenServicePort}"
                                 th:data-config-type="onion">
@@ -196,11 +188,11 @@
                     <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
                     <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
 
-                    <label for="edit-webtunnelurl" data-config-type="bridge" data-bridge-type="webtunnel">Webtunnel URL:</label>
-                    <input id="edit-webtunnelurl" name="edit-webtunnelurl" type="text" data-config-type="bridge" data-bridge-type="webtunnel">
+                    <label for="edit-path" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">Path:</label>
+                    <input type="text" id="edit-path" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">
 
-                    <label for="edit-path" data-config-type="bridge" data-bridge-type="webtunnel">Path:</label>
-                    <input id="edit-path" name="edit-path" type="text" data-config-type="bridge" data-bridge-type="webtunnel">
+                    <label for="edit-webtunnelurl" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">Webtunnel URL:</label>
+                    <input type="text" id="edit-webtunnelurl" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">
                 </form>
             </div>
             <div class="modal-footer">
