@@ -95,16 +95,12 @@ public class TorConfigurationService {
             config.setBandwidthRate(line.split(" ")[1].trim());
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
             ((BridgeRelayConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
-        } else if (line.startsWith("ServerTransportOptions webtunnel") && relayType.equals("bridge")) {
-            String[] parts = line.split(" ");
-            String urlAndPath = parts[parts.length - 1];
-            String[] urlAndPathParts = urlAndPath.split("/");
-            ((BridgeRelayConfig) relayConfig).setWebtunnelUrl(urlAndPathParts[0]);
-            ((BridgeRelayConfig) relayConfig).setPath(urlAndPathParts[1]);
-        } else if (line.startsWith("BridgeRelay") && relayType.equals("bridge")) {
-            ((BridgeRelayConfig) relayConfig).setRelayType(line.split(" ")[1].trim());
-        } else if (line.startsWith("Bridge") && relayType.equals("bridge")) {
-            ((BridgeRelayConfig) relayConfig).setBridgeType(line.split(" ")[1].trim());
+        } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
+            String webtunnelUrl = line.split("=")[1].trim();
+            ((BridgeRelayConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
+        } else if (line.startsWith("ServerTransportOptions webtunnel path") && relayType.equals("bridge")) {
+            String path = line.split("=")[1].trim();
+            ((BridgeRelayConfig) relayConfig).setPath(path);
         }
     }
 
