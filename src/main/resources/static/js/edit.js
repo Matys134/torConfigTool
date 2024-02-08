@@ -130,13 +130,9 @@ $(document).ready(function () {
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
+            webtunnelUrl: configSelectors.webtunnelUrl.val(),
+            path: configSelectors.path.val(),
         };
-
-        // Get the current configuration for the bridge
-        const currentConfig = { nickname: data.nickname };
-
-        data.webtunnelUrl = currentConfig.webtunnelUrl;
-        data.path = currentConfig.path;
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
