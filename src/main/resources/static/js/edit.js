@@ -35,6 +35,9 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
+        configSelectors.webtunnelUrl.val(data.webtunnelUrl);
+        configSelectors.path.val(data.path);
+
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
