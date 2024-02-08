@@ -70,6 +70,7 @@ $(document).ready(function () {
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+        configElement.find(".config-webtunnel").text(`WebTunnel: ${data.webtunnel}`); // Add this line
     }
 
     function sendUpdateRequest(url, data) {
@@ -81,8 +82,6 @@ $(document).ready(function () {
             // Combine the protocol and address with the new port to form the updated serverTransport
             data.serverTransport = serverTransportPort;
         }
-
-        data.webtunnel = data.webtunnel
 
         $.ajax({
             type: "POST",
@@ -133,6 +132,7 @@ $(document).ready(function () {
             nickname: configSelectors.nickname.text(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
+            webtunnel: configSelectors.
         };
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
@@ -163,6 +163,7 @@ $(document).ready(function () {
                         nickname: data.nickname,
                         orPort: data.orPort,
                         controlPort: data.controlPort,
+                        webtunnel: data.webtunnel
                     },
                     function (response) {
                         if (response['available']) {
