@@ -10,6 +10,8 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
+        webtunnelUrl: $("#edit-webtunnelurl"), // Add this line
+        path: $("#edit-path") // Add this line
     };
 
     const buttons = {
