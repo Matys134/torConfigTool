@@ -70,6 +70,7 @@ public class RelayOperationsController {
         for (TorConfiguration config : bridgeConfigs) {
             String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
             webtunnelLinks.put(config.getBridgeRelayConfig().getNickname(), webtunnelLink);
+            logger.info("Added webtunnel link for " + config.getBridgeRelayConfig().getNickname() + ": " + webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
 

@@ -69,6 +69,7 @@
                     <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.getServerTransport}"></p>
                     <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
                     <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
+                    console.log("Webtunnel URL for " + config.bridgeRelayConfig.nickname + ": " + webtunnelLinks[config.bridgeRelayConfig.nickname]);
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
 
                     <!-- Display type of bridge -->

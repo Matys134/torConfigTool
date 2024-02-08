@@ -10,7 +10,6 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
-        webtunnel: $("#edit-webtunnel") // Add this line
     };
 
     const buttons = {
@@ -34,7 +33,6 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
-        configSelectors.webtunnel.val(data.webtunnel); // Add this line
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
@@ -72,7 +70,6 @@ $(document).ready(function () {
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-        configElement.find(".config-webtunnel").text(`WebTunnel: ${data.webtunnel}`); // Add this line
     }
 
     function sendUpdateRequest(url, data) {
@@ -113,8 +110,7 @@ $(document).ready(function () {
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
-            webtunnel: relayType === 'bridge' ? $(this).data('config-webtunnel') : "" // Add this line
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
         };
 
         // Send a GET request to the /bridge/running-type endpoint
@@ -134,7 +130,6 @@ $(document).ready(function () {
             nickname: configSelectors.nickname.text(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
-            webtunnel: configSelectors.webtunnel.val(),
         };
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
@@ -165,7 +160,6 @@ $(document).ready(function () {
                         nickname: data.nickname,
                         orPort: data.orPort,
                         controlPort: data.controlPort,
-                        webtunnel: data.webtunnel
                     },
                     function (response) {
                         if (response['available']) {
