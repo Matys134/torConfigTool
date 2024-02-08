@@ -137,13 +137,12 @@ $(document).ready(function () {
 
             hideModal();
 
-            // If the bridge type is not webtunnel, set the orPort and serverTransport values
+            // Set the serverTransport value regardless of the bridge type
+            data.serverTransport = configSelectors.serverTransport.val();
+
+            // If the bridge type is not webtunnel, set the orPort value
             if (data.bridgeType !== 'webtunnel') {
                 data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransport = configSelectors.serverTransport.val();
-            } else {
-                // If the bridge type is webtunnel, set the serverTransport value from the serverTransportProtocolAndAddress variable
-                data.serverTransport = serverTransportProtocolAndAddress + ':' + configSelectors.serverTransport.val();
             }
 
             // If only the contact field is being edited, skip the port availability check
