@@ -126,8 +126,6 @@ $(document).ready(function () {
     buttons.save.click(function () {
         const data = {
             nickname: configSelectors.nickname.text(),
-            orPort: parseInt(configSelectors.orPort.val()),
-            serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
@@ -136,6 +134,12 @@ $(document).ready(function () {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();
+
+            // If the bridge type is not webtunnel, set the orPort and serverTransport values
+            if (data.bridgeType !== 'webtunnel') {
+                data.orPort = parseInt(configSelectors.orPort.val());
+                data.serverTransport = configSelectors.serverTransport.val();
+            }
 
             // If only the contact field is being edited, skip the port availability check
             if (isBridgeEdit && data.bridgeType === 'webtunnel') {
