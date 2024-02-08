@@ -424,7 +424,7 @@
                                 }
                             }
 
-                            if (bridgeData[0].bridgeConfigured || onionData[0].onionConfigured || snowflakeCountData.bridgeCount > 0) {
+                            if (bridgeData[0].bridgeConfigured || snowflakeCountData.bridgeCount > 0) {
                                 // Disable the form fields in the guard and onion tabs
                                 $('#guardForm :input').prop('disabled', true);
                                 $('#onionForm :input').prop('disabled', true);
@@ -436,6 +436,11 @@
 
                             if (guardData[0].guardConfigured) {
                                 $('#onionForm :input').prop('disabled', true);
+                                $('#bridgeForm :input').prop('disabled', true);
+                            }
+
+                            if (onionData[0].onionConfigured) {
+                                $('#guardForm :input').prop('disabled', true);
                                 $('#bridgeForm :input').prop('disabled', true);
                             }
 
