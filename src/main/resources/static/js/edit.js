@@ -132,30 +132,39 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
-        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
-            data.bridgeType = runningBridgeTypes[data.nickname];
+        buttons.save.click(function () {
+            const data = {
+                nickname: configSelectors.nickname.text(),
+                contact: configSelectors.contact.val(),
+                controlPort: parseInt(configSelectors.controlPort.val()),
+            };
 
-            hideModal();
+            $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+                data.bridgeType = runningBridgeTypes[data.nickname];
 
-            // If the bridge type is not webtunnel, set the orPort and serverTransport values
-            if (data.bridgeType !== 'webtunnel') {
-                data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransport = configSelectors.serverTransport.val();
-            }
+                hideModal();
 
-            // If only the contact field is being edited, skip the port availability check
-            if (isBridgeEdit && data.bridgeType === 'webtunnel') {
-                let url = '/update-bridge-config';
-                sendUpdateRequest(url, data);
-            } else {
-                // Check for the uniqueness of ports
-                if (!arePortsUnique(data.orPort, data.controlPort)) {
-                    alert("The ports specified must be unique. Please check your entries.");
-                    return;
+                // If the bridge type is not webtunnel, set the orPort and serverTransport values
+                if (data.bridgeType !== 'webtunnel') {
+                    data.orPort = parseInt(configSelectors.orPort.val());
+                    if (configSelectors.serverTransport.val() !== "") {
+                        data.serverTransport = configSelectors.serverTransport.val();
+                    }
                 }
 
-                // Now send a GET request to your new API for checking the port availability
-                $.get("/update-guard-config/check-port-availability",
+                // If only the contact field is being edited, skip the port availability check
+                if (isBridgeEdit && data.bridgeType === 'webtunnel') {
+                    let url = '/update-bridge-config';
+                    sendUpdateRequest(url, data);
+                } else {
+                    // Check for the uniqueness of ports
+                    if (!arePortsUnique(data.orPort, data.controlPort)) {
+                        alert("The ports specified must be unique. Please check your entries.");
+                        return;
+                    }
+
+                    // Now send a GET request to your new API for checking the port availability
+                    $.get("/update-guard-config/check-port-availability",
                     {
                         nickname: data.nickname,
                         orPort: data.orPort,
