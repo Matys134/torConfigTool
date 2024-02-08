@@ -95,7 +95,18 @@ public class TorConfigurationService {
             config.setBandwidthRate(line.split(" ")[1].trim());
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
             ((BridgeRelayConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
-        }
+        } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
+                String fullUrl = line.split("=")[1].trim();
+                try {
+                    java.net.URL url = new java.net.URL(fullUrl);
+                    String webtunnelUrl = url.getHost();
+                    String path = url.getPath().substring(1); // Remove the leading "/"
+                    ((BridgeRelayConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
+                    ((BridgeRelayConfig) relayConfig).setPath(path);
+                } catch (java.net.MalformedURLException e) {
+                    logger.error("Invalid webtunnel URL: " + fullUrl, e);
+                }
+            }
     }
 
     private RelayConfig getRelayConfig(TorConfiguration config, String relayType) {
