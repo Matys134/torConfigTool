@@ -10,6 +10,8 @@ $(document).ready(function () {
         serverTransport: $("#edit-server-transport"),
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
+        webtunnelUrl: $("#edit-webtunnelurl"),
+        path: $("#edit-path")
     };
 
     const buttons = {
@@ -33,6 +35,9 @@ $(document).ready(function () {
         configSelectors.serverTransport.val(serverTransportPort);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
+        configSelectors.webtunnelUrl.val(data.webtunnelUrl);
+        configSelectors.path.val(data.path);
+
 
         // Hide all fields initially
         $('#edit-form label, #edit-form input').hide();
@@ -53,6 +58,10 @@ $(document).ready(function () {
                 }
             }
         });
+
+        // Log the current values of the webtunnelUrl and path fields
+        console.log('webtunnelUrl field:', configSelectors.webtunnelUrl);
+        console.log('path field:', configSelectors.path);
 
         // Show the modal
         $('#edit-modal').modal('show');
@@ -105,13 +114,21 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
+        console.log('data-config-webtunnelurl attribute:', $(this).data('config-webtunnelurl'));
+        console.log('data-config-path attribute:', $(this).data('config-path'));
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
             contact: $(this).data('config-contact'),
             controlPort: $(this).data('config-controlport'),
-            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : ""
+            serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
+            webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
+            path: relayType === 'bridge' ? $(this).data('config-path') : "",
         };
+
+        console.log('webtunnelUrl:', data.webtunnelUrl);
+        console.log('path:', data.path);
 
         // Send a GET request to the /bridge/running-type endpoint
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
@@ -120,17 +137,26 @@ $(document).ready(function () {
 
             console.log('Relay type:', relayType);
             console.log('Bridge type:', bridgeType);
+            console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
         });
     });
 
     buttons.save.click(function () {
+        console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
+        console.log('path input field:', configSelectors.path);
+
         const data = {
             nickname: configSelectors.nickname.text(),
             contact: configSelectors.contact.val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
+            webtunnelUrl: configSelectors.webtunnelUrl.val(),
+            path: configSelectors.path.val(),
         };
+
+        console.log('webtunnelUrl:', data.webtunnelUrl);
+        console.log('path:', data.path);
 
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];

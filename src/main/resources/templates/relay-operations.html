@@ -71,6 +71,8 @@
                     <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     console.log("Webtunnel URL for " + config.bridgeRelayConfig.nickname + ": " + webtunnelLinks[config.bridgeRelayConfig.nickname]);
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+                    <p th:text="'URL: ' + ${config.bridgeRelayConfig.webtunnelUrl}"></p>
+                    <p th:text="'Path: ' + ${config.bridgeRelayConfig.path}"></p>
 
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
@@ -86,7 +88,8 @@
                                 th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
                                 th:data-config-orport="${config.bridgeRelayConfig.orPort}"
                                 th:data-config-servertransport="${config.bridgeRelayConfig.getServerTransport}"
-                                th:data-config-webtunnel="${webtunnelLinks[config.bridgeRelayConfig.nickname]}">
+                                th:data-config-webtunnelurl="${config.bridgeRelayConfig.webtunnelUrl}"
+                                th:data-config-path="${config.bridgeRelayConfig.path}">
                             Edit
                         </button>
                         <button class="btn btn-secondary remove-button"
@@ -192,6 +195,12 @@
 
                     <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
                     <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="text" data-config-type="onion">
+
+                    <label for="edit-webtunnelurl" data-config-type="bridge" data-bridge-type="webtunnel">Webtunnel URL:</label>
+                    <input id="edit-webtunnelurl" name="edit-webtunnelurl" type="text" data-config-type="bridge" data-bridge-type="webtunnel">
+
+                    <label for="edit-path" data-config-type="bridge" data-bridge-type="webtunnel">Path:</label>
+                    <input id="edit-path" name="edit-path" type="text" data-config-type="bridge" data-bridge-type="webtunnel">
                 </form>
             </div>
             <div class="modal-footer">
