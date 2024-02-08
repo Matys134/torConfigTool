@@ -139,6 +139,9 @@ $(document).ready(function () {
             path: configSelectors.path.val(),
         };
 
+        console.log('webtunnelUrl:', data.webtunnelUrl);
+        console.log('path:', data.path);
+
         $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
