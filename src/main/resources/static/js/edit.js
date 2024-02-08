@@ -56,6 +56,10 @@ $(document).ready(function () {
             }
         });
 
+        // Log the current values of the webtunnelUrl and path fields
+        console.log('webtunnelUrl field:', configSelectors.webtunnelUrl);
+        console.log('path field:', configSelectors.path);
+
         // Show the modal
         $('#edit-modal').modal('show');
     }
