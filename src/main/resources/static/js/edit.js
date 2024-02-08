@@ -109,6 +109,9 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
+        console.log('data-config-webtunnelurl attribute:', $(this).data('config-webtunnelurl'));
+        console.log('data-config-path attribute:', $(this).data('config-path'));
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
