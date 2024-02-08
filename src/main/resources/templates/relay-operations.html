@@ -71,6 +71,7 @@
                     <p>Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
                     <p th:text="'URL: ' + ${config.bridgeRelayConfig.webtunnelUrl}"></p>
+                    <p th:text="'Path: ' + ${config.bridgeRelayConfig.path}"></p>
 
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
