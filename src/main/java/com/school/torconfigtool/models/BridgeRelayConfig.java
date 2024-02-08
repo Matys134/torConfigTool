@@ -97,4 +97,14 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         this.bridgeType = bridgeType;
         logger.info("Bridge type set in BridgeRelayConfig: " + this.bridgeType);
     }
+
+    public void setWebtunnelDomain(String webtunnelDomain) {
+        this.webtunnelDomain = webtunnelDomain;
+        logger.info("Webtunnel domain set in BridgeRelayConfig: " + this.webtunnelDomain);
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+        logger.info("Path set in BridgeRelayConfig: " + this.path);
+    }
 }
