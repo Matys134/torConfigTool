@@ -141,6 +141,9 @@ $(document).ready(function () {
             if (data.bridgeType !== 'webtunnel') {
                 data.orPort = parseInt(configSelectors.orPort.val());
                 data.serverTransport = configSelectors.serverTransport.val();
+            } else {
+                // If the bridge type is webtunnel, set the serverTransport value from the serverTransportProtocolAndAddress variable
+                data.serverTransport = serverTransportProtocolAndAddress + ':' + configSelectors.serverTransport.val();
             }
 
             // If only the contact field is being edited, skip the port availability check
