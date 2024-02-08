@@ -122,6 +122,7 @@ $(document).ready(function () {
 
             console.log('Relay type:', relayType);
             console.log('Bridge type:', bridgeType);
+            console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
         });
