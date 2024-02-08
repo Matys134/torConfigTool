@@ -129,7 +129,6 @@ $(document).ready(function () {
             orPort: parseInt(configSelectors.orPort.val()),
             serverTransport: configSelectors.serverTransport.val(),
             contact: configSelectors.contact.val(),
-            webtunnelUrl: $('#edit-webtunnel-url').val(),
             controlPort: parseInt(configSelectors.controlPort.val()),
         };
 
