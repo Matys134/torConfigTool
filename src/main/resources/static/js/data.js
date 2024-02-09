@@ -161,39 +161,8 @@ $(document).ready(function () {
                         relayChart.data.datasets[1].data.shift();
                     }
 
-                    // Fetch the uptime
-                    var uptime = data.map(function (relayData) {
-                        return relayData.uptime;
-                    });
-
-                    var torVersion = data.map(function (relayData) {
-                        return relayData.version;
-                    });
-
-                    // Update the relay-rates div with the latest upload and download rates and uptime
-                    var ratesContainer = $('#relayRates' + port);
-                    ratesContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Statistics</h5>
-            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
-            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
-        </div>
-    </div>
-`);
-
-// Update the flagsData div with the fetched flags data
-                    var flagsContainer = $('#relayFlags' + port);
-                    flagsContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Flags</h5>
-            <p class="card-text">${flagsData[flagsData.length - 1]}</p>
-        </div>
-    </div>
-`);
+                    // Update the chart
+                    relayChart.update();
                 }
             });
         }
