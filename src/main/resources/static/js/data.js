@@ -212,17 +212,18 @@ $(document).ready(function () {
                     // Update the last fetched events
                     lastEvents[port] = data;
 
-                    // Update the eventData div with the event data
+                    // Get the latest event
+                    var latestEvent = data[data.length - 1];
+
+                    // Update the eventData div with the latest event
                     eventContainer.html('');
-                    data.forEach(function (event, index) {
-                        if (event !== null) { // Check if the event is not null
-                            var currentTime = new Date();
-                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                            var eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event;
-                            eventContainer.append(eventElement);
-                        }
-                    });
+                    if (latestEvent !== null) { // Check if the event is not null
+                        var currentTime = new Date();
+                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                        var eventElement = document.createElement('p');
+                        eventElement.innerText = '(' + timeLabel + '): ' + latestEvent;
+                        eventContainer.append(eventElement);
+                    }
                 }
             });
         }
