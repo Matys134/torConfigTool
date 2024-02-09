@@ -107,6 +107,15 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
+                    // Fetch the flags data
+                    var flagsData = data.map(function (relayData) {
+                        return relayData.flags;
+                    });
+
+                    // Update the flagsData div with the fetched flags data
+                    var flagsContainer = $('#relayFlags' + port);
+                    flagsContainer.html('Flags: ' + flagsData[flagsData.length - 1]);
+
                     // Determine the maximum value among the upload and download data
                     var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
