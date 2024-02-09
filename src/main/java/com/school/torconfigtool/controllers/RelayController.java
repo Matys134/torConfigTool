@@ -26,14 +26,17 @@ public class RelayController {
     public List<RelayInfo> getRelayInfo() {
         List<RelayInfo> relayInfoList = new ArrayList<>();
 
-        // Fetch the list of all bridges and guards
-        List<BridgeRelayConfig> relays = new ArrayList<>();
-        relays.addAll(relayService.getAllBridges());
-        relays.addAll(relayService.getAllGuards());
+        // Fetch the list of all bridges
+        List<BridgeRelayConfig> bridges = relayService.getAllBridges();
+        for (BridgeRelayConfig bridge : bridges) {
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(bridge.getControlPort()), bridge.getNickname(), "bridge");
+            relayInfoList.add(relayInfo);
+        }
 
-        // For each relay, create a new RelayInfo object with the control port and the nickname of the relay
-        for (BridgeRelayConfig relay : relays) {
-            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(relay.getControlPort()), relay.getNickname());
+        // Fetch the list of all guards
+        List<BridgeRelayConfig> guards = relayService.getAllGuards();
+        for (BridgeRelayConfig guard : guards) {
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
             relayInfoList.add(relayInfo);
         }
 

@@ -236,11 +236,12 @@ $(document).ready(function () {
             relayInfoArray.forEach(function (relayInfo) {
                 var port = relayInfo.controlPort;
                 var nickname = relayInfo.nickname;
+                var type = relayInfo.type; // Add this line
 
                 createRelayChart(port, nickname);
 
                 // Add an item to the dropdown menu for this relay
-                var menuItem = $('<a class="dropdown-item" href="#">' + nickname + '</a>');
+                var menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>'); // Modify this line
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
