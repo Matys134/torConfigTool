@@ -162,24 +162,6 @@ $(document).ready(function () {
             });
         }
 
-        function updateRelayFlagsData(port) {
-            var apiUrl = baseApiUrl + '/' + port + '/flags';
-            $.get(apiUrl, function (flags) {
-                // Update the relay-flags div with the latest flags
-                var flagsContainer = $('#relayFlags' + port);
-                flagsContainer.html('Flags: ' + flags.join(', '));
-            });
-        }
-
-        function updateRelayUptimeData(port) {
-            var apiUrl = baseApiUrl + '/' + port + '/uptime';
-            $.get(apiUrl, function (uptime) {
-                // Update the relay-uptime div with the latest uptime
-                var uptimeContainer = $('#relayUptime' + port);
-                uptimeContainer.html('Uptime: ' + uptime + ' seconds');
-            });
-        }
-
         // Function to update the event data for the relay
         function updateRelayEventData() {
             var apiUrl = baseApiUrl + '/' + port + '/events';
@@ -200,19 +182,11 @@ $(document).ready(function () {
         // Update the data and chart for the relay initially
         updateRelayTrafficDataAndChart();
         updateRelayEventData(port, eventContainer);
-        updateRelayFlagsData(port);  // Add this line
-        updateRelayUptimeData(port);  // Add this line
 
-// Set an interval to update the data and chart periodically (e.g., every 1 seconds)
+        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
-        }, 1000); // 1 seconds
-        setInterval(function () {
-            updateRelayFlagsData(port);  // Add this line
-        }, 1000); // 1 seconds
-        setInterval(function () {
-            updateRelayUptimeData(port);  // Add this line
         }, 1000); // 1 seconds
     }
 

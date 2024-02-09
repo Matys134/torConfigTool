@@ -76,14 +76,4 @@ public class RelayDataControllerApi {
         }
         relayEventQueue.offer(event); // Add the new event
     }
-
-    @GetMapping("/relay-data/{relayId}/uptime")
-    public double getRelayUptime(@PathVariable int relayId) {
-        // Get the uptime from the relay data
-        Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
-        if (relayDataQueue != null && !relayDataQueue.isEmpty()) {
-            return relayDataQueue.getLast().getUptime();
-        }
-        return 0;
-    }
 }
