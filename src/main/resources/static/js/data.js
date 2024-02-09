@@ -207,12 +207,12 @@ $(document).ready(function () {
             $.get(apiUrl, function (data) {
                 // Update the eventData div with the event data
                 eventContainer.html('');
-                data.forEach(function (event, index) {
-                    if (event !== null) { // Check if the event is not null
-                        var currentTime = new Date();
-                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                data.forEach(function (eventData, index) {
+                    if (eventData !== null) { // Check if the event is not null
+                        var eventTime = new Date(eventData.event_time * 1000); // Convert the Unix timestamp to a JavaScript Date object
+                        var timeLabel = eventTime.getHours() + ':' + eventTime.getMinutes() + ':' + eventTime.getSeconds();
                         var eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + event;
+                        eventElement.innerText = '(' + timeLabel + '): ' + eventData.event;
                         eventContainer.append(eventElement);
                     }
                 });

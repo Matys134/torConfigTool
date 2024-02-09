@@ -184,9 +184,13 @@ def _handle_bandwidth_event(controller, control_port, event):
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def _handle_event(controller, control_port, event):
-    # Create a dictionary with the event data and an identifier
+    # Get the current time when the event happened
+    event_time = time.time()
+
+    # Create a dictionary with the event data, event time and an identifier
     data = {
         "event": str(event),
+        "event_time": event_time,
     }
 
     # Construct the complete API endpoint URL with the relayId
@@ -196,7 +200,7 @@ def _handle_event(controller, control_port, event):
     response = requests.post(api_endpoint, json=data)
 
     if response.status_code == 200:
-        print(f"Event sent for ControlPort {control_port}: {event}")
+        print(f"Event sent for ControlPort {control_port}: {event} at {event_time}")
     else:
         print(f"Failed to send event for ControlPort {control_port}: {response.status_code} - {response.text}")
 
