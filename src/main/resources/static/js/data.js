@@ -18,7 +18,7 @@ $(document).ready(function () {
         // Create a container for the flags
         var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
 
-        var eventContainer = $('<div id="eventData' + port + '"></div>');
+        var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
 
@@ -202,7 +202,7 @@ $(document).ready(function () {
         }
 
         // Function to update the event data for the relay
-        function updateRelayEventData(port, eventContainer) {
+        function updateRelayEventData() {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Update the eventData div with the event data
@@ -210,9 +210,7 @@ $(document).ready(function () {
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
                         var eventElement = document.createElement('p');
-                        var currentTime = new Date();
-                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                        eventElement.innerText = 'Event ' + (index + 1) + ' at ' + timeLabel + ': ' + event;
+                        eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
                         eventContainer.append(eventElement);
                     }
                 });

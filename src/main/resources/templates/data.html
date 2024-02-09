@@ -12,19 +12,14 @@
             max-width: 960px;
         }
         .graph-container {
-            flex: 1;
-        }
-
-        .relay-event {
-            flex: 0;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         .dropdown-menu {
             max-height: 200px;
             overflow-y: auto;
-        }
-
-        .content {
-            display: flex;
         }
     </style>
 </head>
@@ -41,10 +36,13 @@
             <!-- Dropdown menu items will be added here dynamically -->
         </div>
     </div>
-    <div class="content">
-        <div id="relayCharts" class="graph-container"></div>
-        <div id="eventData" class="relay-event collapse"></div>
-    </div>
+    <div id="relayCharts" class="graph-container"></div>
+    <h2 class="text-center mt-4">
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#eventData">
+            Events
+        </button>
+    </h2>
+    <div id="eventData" class="collapse"></div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
