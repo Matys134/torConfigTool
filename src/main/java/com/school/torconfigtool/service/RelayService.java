@@ -2,6 +2,7 @@ package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.models.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -159,27 +160,17 @@ public class RelayService {
     }
 
     // method to get all guard relays
-    public List<BridgeRelayConfig> getAllGuards() {
-        List<BridgeRelayConfig> guards = new ArrayList<>();
+    public List<GuardRelayConfig> getAllGuards() {
+        List<GuardRelayConfig> guards = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_guard"));
 
         if (files != null) {
             for (File file : files) {
                 try (Scanner scanner = new Scanner(file)) {
-                    BridgeRelayConfig guard = new BridgeRelayConfig();
-                    while (scanner.hasNextLine()) {
-                        String line = scanner.nextLine();
-                        if (line.startsWith("Nickname")) {
-                            guard.setNickname(line.split(" ")[1]);
-                        } else if (line.startsWith("ORPort")) {
-                            guard.setOrPort(line.split(" ")[1]);
-                        } else if (line.startsWith("Contact")) {
-                            guard.setContact(line.split(" ")[1]);
-                        } else if (line.startsWith("ControlPort")) {
-                            guard.setControlPort(line.split(" ")[1]);
-                        }
-                    }
+                    // Create a new GuardRelayConfig object and populate it with data from the file
+                    GuardRelayConfig guard = new GuardRelayConfig();
+                    // Add the necessary code here...
                     guards.add(guard);
                 } catch (FileNotFoundException e) {
                     logger.error("Error reading torrc file", e);
