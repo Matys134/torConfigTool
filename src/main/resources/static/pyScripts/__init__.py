@@ -193,14 +193,11 @@ def _handle_event(controller, control_port, event):
         "time": event_time,
     }
 
-    # Convert the dictionary to a JSON string
-    data_json = json.dumps(data)
-
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}/event"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data_json)
+    response = requests.post(api_endpoint, json=data)
 
     if response.status_code == 200:
         print(f"Event sent for ControlPort {control_port}: {event}")
