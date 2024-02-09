@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controllers;
 
+import com.school.torconfigtool.models.GuardRelayConfig;
 import com.school.torconfigtool.models.RelayInfo;
 import com.school.torconfigtool.models.BridgeRelayConfig;
 import com.school.torconfigtool.service.RelayService;
@@ -34,8 +35,8 @@ public class RelayController {
         }
 
         // Fetch the list of all guards
-        List<BridgeRelayConfig> guards = relayService.getAllGuards();
-        for (BridgeRelayConfig guard : guards) {
+        List<GuardRelayConfig> guards = relayService.getAllGuards();
+        for (GuardRelayConfig guard : guards) {
             RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
             relayInfoList.add(relayInfo);
         }

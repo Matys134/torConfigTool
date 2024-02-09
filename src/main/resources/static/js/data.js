@@ -201,19 +201,34 @@ $(document).ready(function () {
             });
         }
 
-        // Function to update the event data for the relay
-        function updateRelayEventData() {
+        // Store the last fetched events and the last event index
+        var lastEvents = {};
+        var lastEventIndex = {};
+
+        function updateRelayEventData(port, eventContainer) {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                // Update the eventData div with the event data
-                eventContainer.html('');
-                data.forEach(function (event, index) {
-                    if (event !== null) { // Check if the event is not null
-                        var eventElement = document.createElement('p');
-                        eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
-                        eventContainer.append(eventElement);
+                // Check if the events have changed
+                if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
+                    // Determine the start index for new events
+                    var startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
+
+                    // Update the last fetched events and the last event index
+                    lastEvents[port] = data;
+                    lastEventIndex[port] = data.length;
+
+                    // Add new events from the start index onwards
+                    for (var i = startIndex; i < data.length; i++) {
+                        var event = data[i];
+                        if (event !== null) { // Check if the event is not null
+                            var currentTime = new Date();
+                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                            var eventElement = document.createElement('p');
+                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            eventContainer.append(eventElement);
+                        }
                     }
-                });
+                }
             });
         }
 
