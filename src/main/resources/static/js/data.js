@@ -216,9 +216,13 @@ $(document).ready(function () {
                     eventContainer.html('');
                     data.forEach(function (eventData, index) {
                         if (eventData !== null) { // Check if the event is not null
-                            var eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + eventData.time + '): ' + eventData.event;
-                            eventContainer.append(eventElement);
+                            if (typeof eventData === 'object' && 'time' in eventData && 'event' in eventData) {
+                                var eventElement = document.createElement('p');
+                                eventElement.innerText = '(' + eventData.time + '): ' + eventData.event;
+                                eventContainer.append(eventElement);
+                            } else {
+                                console.error('Unexpected event data format:', eventData);
+                            }
                         }
                     });
                 }
