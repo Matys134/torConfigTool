@@ -30,29 +30,19 @@ $(document).ready(function () {
 
         // Create an initial empty chart
         var relayChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar', // Change this line
             data: {
                 labels: [],
                 datasets: [
                     {
                         label: 'Upload',
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointBackgroundColor: 'rgb(54, 162, 235)',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        lineTension: 0.1, // This will make the line smoother
+                        backgroundColor: '#00ff00', // Use backgroundColor for bar charts
                         data: [],
-                        fill: false,
                     },
                     {
                         label: 'Download',
-                        borderColor: 'rgb(255, 99, 132)',
-                        pointBackgroundColor: 'rgb(255, 99, 132)',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        lineTension: 0.1, // This will make the line smoother
+                        backgroundColor: '#ff0000', // Use backgroundColor for bar charts
                         data: [],
-                        fill: false,
                     },
                 ],
             },
@@ -61,28 +51,40 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     text: relayName,
+                    fontColor: '#00ff00', // Green color
                 },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
+                legend: {
+                    labels: {
+                        fontColor: '#00ff00', // Green color
+                    }
                 },
                 scales: {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Time'
+                            labelString: 'Time',
+                            fontColor: '#00ff00', // Green color
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Bytes/s'
+                            labelString: 'Bytes/s',
+                            fontColor: '#00ff00', // Green color
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
                         }
                     }]
                 }
@@ -172,7 +174,29 @@ $(document).ready(function () {
 
                     // Update the relay-rates div with the latest upload and download rates and uptime
                     var ratesContainer = $('#relayRates' + port);
-                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit + ', Uptime: ' + uptime[uptime.length - 1] + ' seconds' + ', Tor Version: ' + torVersion[torVersion.length - 1]);
+                    ratesContainer.html(`
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Relay Statistics</h5>
+            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
+            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
+            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
+            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
+        </div>
+    </div>
+`);
+
+// Update the flagsData div with the fetched flags data
+                    var flagsContainer = $('#relayFlags' + port);
+                    flagsContainer.html(`
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Relay Flags</h5>
+            <p class="card-text">${flagsData[flagsData.length - 1]}</p>
+        </div>
+    </div>
+`);
+                    relayChart.update();
                 }
             });
         }
@@ -206,18 +230,18 @@ $(document).ready(function () {
     }
 
     $(document).ready(function () {
-        // Fetch the list of control ports dynamically
-        // Hide all relay charts initially
-        $('.relay-chart').hide();
+        // Fetch the list of relay info dynamically
+        $.get('http://' + location.hostname + ':8081/api/relay-info', function (relayInfoArray) {
+            // Create charts for each relay based on the retrieved relay info
+            relayInfoArray.forEach(function (relayInfo) {
+                var port = relayInfo.controlPort;
+                var nickname = relayInfo.nickname;
+                var type = relayInfo.type; // Add this line
 
-        // Fetch the list of control ports dynamically
-        $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-            // Create charts for each relay based on the retrieved control ports
-            controlPorts.forEach(function (port) {
-                createRelayChart(port);
+                createRelayChart(port, nickname);
 
                 // Add an item to the dropdown menu for this relay
-                var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+                var menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>'); // Modify this line
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
@@ -229,8 +253,8 @@ $(document).ready(function () {
                     $('#relayChart' + port).show();
                 });
             });
-        });fail(function (jqXHR, textStatus, errorThrown) {
-            console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
+        }).catch(function (jqXHR, textStatus, errorThrown) {  // Use catch instead of fail
+            console.error('Error fetching relay info:', textStatus, errorThrown);  // Log any errors
         });
     });
 });
