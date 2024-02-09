@@ -71,20 +71,20 @@ $(document).ready(function () {
                     intersect: true
                 },
                 scales: {
-                    x: {
+                    xAxes: [{
                         display: true,
-                        title: {
+                        scaleLabel: {
                             display: true,
-                            text: 'Time'
+                            labelString: 'Time'
                         }
-                    },
-                    y: {
+                    }],
+                    yAxes: [{
                         display: true,
-                        title: {
+                        scaleLabel: {
                             display: true,
-                            text: 'Bytes/s'
+                            labelString: 'Bytes/s'
                         }
-                    }
+                    }]
                 }
             }
         });
@@ -193,7 +193,7 @@ $(document).ready(function () {
             <p class="card-text">${flagsData[flagsData.length - 1]}</p>
         </div>
     </div>
-`);
+                `);
                 }
             });
         }
