@@ -209,6 +209,7 @@ $(document).ready(function () {
                 eventContainer.html('');
                 data.forEach(function (eventData, index) {
                     if (eventData.event !== null) { // Check if the event is not null
+                        console.log(eventData.timestamp); // Log the timestamp
                         var eventTime = new Date(eventData.timestamp * 1000); // Convert the timestamp to a Date object
                         var timeLabel = eventTime.getHours() + ':' + eventTime.getMinutes() + ':' + eventTime.getSeconds();
                         var eventElement = document.createElement('p');
