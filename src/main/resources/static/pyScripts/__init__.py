@@ -11,10 +11,6 @@ import time
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
-upload = 0
-download = 0
-flags = []
-
 def main():
     # Define the directory containing Tor control files
     torrc_dir = "/home/matys/git/torConfigTool/torrc"
@@ -115,7 +111,6 @@ def _send_bandwidth_data(controller, control_port):
     initial_download = int(controller.get_info("traffic/read"))
     initial_upload = int(controller.get_info("traffic/written"))
 
-
     # Wait for 1 second
     time.sleep(1)
 
@@ -128,10 +123,6 @@ def _send_bandwidth_data(controller, control_port):
     # Calculate the per-second rates
     download_rate = final_download - initial_download
     upload_rate = final_upload - initial_upload
-
-    global upload, download
-    upload = upload_rate
-    download = download_rate
 
     # Get the relay flags
     flags = relay_flags(controller)
@@ -222,7 +213,6 @@ def _handle_event(controller, control_port, event):
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
 
 def _handle_newconsensus_event(controller, control_port, event):
-    global flags
     flags = relay_flags(controller)
 
     # Create a dictionary with the flags data and an identifier
