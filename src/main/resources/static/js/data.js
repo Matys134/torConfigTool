@@ -202,15 +202,17 @@ $(document).ready(function () {
         }
 
         // Function to update the event data for the relay
-        function updateRelayEventData(port, eventContainer) {
+        function updateRelayEventData() {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Update the eventData div with the event data
                 eventContainer.html('');
-                data.forEach(function (eventData, index) {
-                    if (eventData !== null) { // Check if the event data is not null
+                data.forEach(function (event, index) {
+                    if (event !== null) { // Check if the event is not null
+                        var currentTime = new Date();
+                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                         var eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + eventData.timestamp + '): ' + eventData.event;
+                        eventElement.innerText = '(' + timeLabel + '): ' + event;
                         eventContainer.append(eventElement);
                     }
                 });
