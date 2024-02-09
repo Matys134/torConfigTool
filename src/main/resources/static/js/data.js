@@ -214,12 +214,10 @@ $(document).ready(function () {
 
                     // Update the eventData div with the event data
                     eventContainer.html('');
-                    data.forEach(function (event, index) {
-                        if (event !== null) { // Check if the event is not null
-                            var currentTime = new Date();
-                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                    data.forEach(function (eventData, index) {
+                        if (eventData !== null) { // Check if the event is not null
                             var eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            eventElement.innerText = '(' + eventData.time + '): ' + eventData.event;
                             eventContainer.append(eventElement);
                         }
                     });
