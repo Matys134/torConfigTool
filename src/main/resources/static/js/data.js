@@ -36,21 +36,21 @@ $(document).ready(function () {
                 datasets: [
                     {
                         label: 'Upload',
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointBackgroundColor: 'rgb(54, 162, 235)',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        lineTension: 0.1, // This will make the line smoother
+                        borderColor: '#00ff00', // Green color similar to old terminal screens
+                        pointBackgroundColor: '#00ff00',
+                        pointRadius: 2,
+                        pointHoverRadius: 4,
+                        lineTension: 0.1,
                         data: [],
                         fill: false,
                     },
                     {
                         label: 'Download',
-                        borderColor: 'rgb(255, 99, 132)',
-                        pointBackgroundColor: 'rgb(255, 99, 132)',
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        lineTension: 0.1, // This will make the line smoother
+                        borderColor: '#ff0000', // Red color
+                        pointBackgroundColor: '#ff0000',
+                        pointRadius: 2,
+                        pointHoverRadius: 4,
+                        lineTension: 0.1,
                         data: [],
                         fill: false,
                     },
@@ -61,28 +61,40 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     text: relayName,
+                    fontColor: '#00ff00', // Green color
                 },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
+                legend: {
+                    labels: {
+                        fontColor: '#00ff00', // Green color
+                    }
                 },
                 scales: {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Time'
+                            labelString: 'Time',
+                            fontColor: '#00ff00', // Green color
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
                         }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Bytes/s'
+                            labelString: 'Bytes/s',
+                            fontColor: '#00ff00', // Green color
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
                         }
                     }]
                 }
