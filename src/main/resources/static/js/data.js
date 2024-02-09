@@ -250,7 +250,7 @@ $(document).ready(function () {
                     $('#relayChart' + port).show();
                 });
             });
-        });fail(function (jqXHR, textStatus, errorThrown) {
+        }).catch(function (jqXHR, textStatus, errorThrown) {  // Use catch instead of fail
             console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
         });
     });
