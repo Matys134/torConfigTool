@@ -172,28 +172,7 @@ $(document).ready(function () {
 
                     // Update the relay-rates div with the latest upload and download rates and uptime
                     var ratesContainer = $('#relayRates' + port);
-                    ratesContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Statistics</h5>
-            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
-            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
-        </div>
-    </div>
-`);
-
-// Update the flagsData div with the fetched flags data
-                    var flagsContainer = $('#relayFlags' + port);
-                    flagsContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Flags</h5>
-            <p class="card-text">${flagsData[flagsData.length - 1]}</p>
-        </div>
-    </div>
-                `);
+                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit + ', Uptime: ' + uptime[uptime.length - 1] + ' seconds' + ', Tor Version: ' + torVersion[torVersion.length - 1]);
                 }
             });
         }
