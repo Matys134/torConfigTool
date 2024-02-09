@@ -12,4 +12,5 @@ public class RelayData {
     private double uptime;
     private List<String> flags;
     private String event;
+    private String version;
 }
