@@ -187,7 +187,6 @@ def _handle_event(controller, control_port, event):
     # Create a dictionary with the event data and an identifier
     data = {
         "event": str(event),
-        "timestamp": time.time(),  # Add the timestamp here
     }
 
     # Construct the complete API endpoint URL with the relayId
