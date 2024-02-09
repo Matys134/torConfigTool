@@ -71,20 +71,20 @@ $(document).ready(function () {
                     intersect: true
                 },
                 scales: {
-                    xAxes: [{
+                    x: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: 'Time'
+                            text: 'Time'
                         }
-                    }],
-                    yAxes: [{
+                    },
+                    y: {
                         display: true,
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: 'Bytes/s'
+                            text: 'Bytes/s'
                         }
-                    }]
+                    }
                 }
             }
         });
