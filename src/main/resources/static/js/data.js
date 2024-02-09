@@ -169,6 +169,15 @@ $(document).ready(function () {
                     // Update the relay-rates div with the latest upload and download rates and uptime
                     var ratesContainer = $('#relayRates' + port);
                     ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit + ', Uptime: ' + uptime[uptime.length - 1] + ' seconds');
+
+                    // Fetch the Tor version
+                    var torVersion = data.map(function (relayData) {
+                        return relayData.version;
+                    });
+
+                    // Update the relay-charts div with the Tor version
+                    var chartContainer = $('#relayChart' + port);
+                    chartContainer.prepend('<p>Tor Version: ' + torVersion[torVersion.length - 1] + '</p>');
                 }
             });
         }
