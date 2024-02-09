@@ -202,7 +202,7 @@ $(document).ready(function () {
         }
 
         // Function to update the event data for the relay
-        function updateRelayEventData() {
+        function updateRelayEventData(port, eventContainer) {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Update the eventData div with the event data
