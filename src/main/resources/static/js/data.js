@@ -30,29 +30,19 @@ $(document).ready(function () {
 
         // Create an initial empty chart
         var relayChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar', // Change this line
             data: {
                 labels: [],
                 datasets: [
                     {
                         label: 'Upload',
-                        borderColor: '#00ff00', // Green color similar to old terminal screens
-                        pointBackgroundColor: '#00ff00',
-                        pointRadius: 2,
-                        pointHoverRadius: 4,
-                        lineTension: 0.1,
+                        backgroundColor: '#00ff00', // Use backgroundColor for bar charts
                         data: [],
-                        fill: false,
                     },
                     {
                         label: 'Download',
-                        borderColor: '#ff0000', // Red color
-                        pointBackgroundColor: '#ff0000',
-                        pointRadius: 2,
-                        pointHoverRadius: 4,
-                        lineTension: 0.1,
+                        backgroundColor: '#ff0000', // Use backgroundColor for bar charts
                         data: [],
-                        fill: false,
                     },
                 ],
             },
