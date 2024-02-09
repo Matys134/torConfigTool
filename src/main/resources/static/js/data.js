@@ -209,10 +209,10 @@ $(document).ready(function () {
                 eventContainer.html('');
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
-                        var currentTime = new Date();
-                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                        var eventTime = new Date(event.timestamp); // Use the timestamp from the server
+                        var timeLabel = eventTime.getHours() + ':' + eventTime.getMinutes() + ':' + eventTime.getSeconds();
                         var eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + event;
+                        eventElement.innerText = '(' + timeLabel + '): ' + event.message; // Use the message from the server
                         eventContainer.append(eventElement);
                     }
                 });
