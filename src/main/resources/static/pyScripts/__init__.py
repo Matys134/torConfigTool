@@ -118,6 +118,8 @@ def _send_bandwidth_data(controller, control_port):
     final_download = int(controller.get_info("traffic/read"))
     final_upload = int(controller.get_info("traffic/written"))
 
+
+
     # Calculate the per-second rates
     download_rate = final_download - initial_download
     upload_rate = final_upload - initial_upload
@@ -128,11 +130,15 @@ def _send_bandwidth_data(controller, control_port):
     # Print the data before sending it to the API
     print(f"Data to be sent for ControlPort {control_port}: Downloaded: {download_rate} bytes/s, Uploaded: {upload_rate} bytes/s, Flags: {flags}")
 
+    # Get the uptime
+    uptime = int(controller.get_info("uptime"))
+
     # Create a dictionary with the bandwidth data and an identifier
     data = {
         "download": download_rate,
         "upload": upload_rate,
         "flags": flags,  # Add the flags to the data
+        "uptime": uptime,  # Add the uptime to the data
     }
 
     # Construct the complete API endpoint URL with the relayId
