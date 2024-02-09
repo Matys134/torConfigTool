@@ -201,21 +201,29 @@ $(document).ready(function () {
             });
         }
 
-        // Function to update the event data for the relay
-        function updateRelayEventData() {
+        // Store the last fetched events
+        var lastEvents = {};
+
+        function updateRelayEventData(port, eventContainer) {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                // Update the eventData div with the event data
-                eventContainer.html('');
-                data.forEach(function (event, index) {
-                    if (event !== null) { // Check if the event is not null
-                        var currentTime = new Date();
-                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                        var eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + event;
-                        eventContainer.append(eventElement);
-                    }
-                });
+                // Check if the events have changed
+                if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
+                    // Update the last fetched events
+                    lastEvents[port] = data;
+
+                    // Update the eventData div with the event data
+                    eventContainer.html('');
+                    data.forEach(function (event, index) {
+                        if (event !== null) { // Check if the event is not null
+                            var currentTime = new Date();
+                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                            var eventElement = document.createElement('p');
+                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            eventContainer.append(eventElement);
+                        }
+                    });
+                }
             });
         }
 
