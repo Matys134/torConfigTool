@@ -210,7 +210,9 @@ $(document).ready(function () {
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
                         var eventElement = document.createElement('p');
-                        eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                        var currentTime = new Date();
+                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                        eventElement.innerText = 'Event ' + (index + 1) + ' at ' + timeLabel + ': ' + event;
                         eventContainer.append(eventElement);
                     }
                 });
