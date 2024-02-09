@@ -209,8 +209,10 @@ $(document).ready(function () {
                 eventContainer.html('');
                 data.forEach(function (event, index) {
                     if (event !== null) { // Check if the event is not null
+                        var currentTime = new Date();
+                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                         var eventElement = document.createElement('p');
-                        eventElement.innerText = 'Event ' + (index + 1) + ': ' + event;
+                        eventElement.innerText = '(' + timeLabel + '): ' + event;
                         eventContainer.append(eventElement);
                     }
                 });
