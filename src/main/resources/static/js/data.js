@@ -230,18 +230,17 @@ $(document).ready(function () {
     }
 
     $(document).ready(function () {
-        // Fetch the list of control ports dynamically
-        // Hide all relay charts initially
-        $('.relay-chart').hide();
+        // Fetch the list of relay info dynamically
+        $.get('http://' + location.hostname + ':8081/api/relay-info', function (relayInfoArray) {
+            // Create charts for each relay based on the retrieved relay info
+            relayInfoArray.forEach(function (relayInfo) {
+                var port = relayInfo.controlPort;
+                var nickname = relayInfo.nickname;
 
-        // Fetch the list of control ports dynamically
-        $.get('http://' + location.hostname + ':8081/api/control-ports', function (controlPorts) {
-            // Create charts for each relay based on the retrieved control ports
-            controlPorts.forEach(function (port) {
-                createRelayChart(port);
+                createRelayChart(port, nickname);
 
                 // Add an item to the dropdown menu for this relay
-                var menuItem = $('<a class="dropdown-item" href="#">Relay on Port ' + port + '</a>');
+                var menuItem = $('<a class="dropdown-item" href="#">' + nickname + '</a>');
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
@@ -254,7 +253,7 @@ $(document).ready(function () {
                 });
             });
         }).catch(function (jqXHR, textStatus, errorThrown) {  // Use catch instead of fail
-            console.error('Error fetching control ports:', textStatus, errorThrown);  // Log any errors
+            console.error('Error fetching relay info:', textStatus, errorThrown);  // Log any errors
         });
     });
 });

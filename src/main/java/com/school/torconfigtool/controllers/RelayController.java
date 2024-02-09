@@ -1,0 +1,42 @@
+package com.school.torconfigtool.controllers;
+
+import com.school.torconfigtool.models.RelayInfo;
+import com.school.torconfigtool.models.BridgeRelayConfig;
+import com.school.torconfigtool.service.RelayService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class RelayController {
+
+    private final RelayService relayService;
+
+    @Autowired
+    public RelayController(RelayService relayService) {
+        this.relayService = relayService;
+    }
+
+    @GetMapping("/relay-info")
+    public List<RelayInfo> getRelayInfo() {
+        List<RelayInfo> relayInfoList = new ArrayList<>();
+
+        // Fetch the list of all bridges and guards
+        List<BridgeRelayConfig> relays = new ArrayList<>();
+        relays.addAll(relayService.getAllBridges());
+        relays.addAll(relayService.getAllGuards());
+
+        // For each relay, create a new RelayInfo object with the control port and the nickname of the relay
+        for (BridgeRelayConfig relay : relays) {
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(relay.getControlPort()), relay.getNickname());
+            relayInfoList.add(relayInfo);
+        }
+
+        return relayInfoList;
+    }
+}
