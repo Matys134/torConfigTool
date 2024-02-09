@@ -18,7 +18,7 @@ $(document).ready(function () {
         // Create a container for the flags
         var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
 
-        var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
+        var eventContainer = $('<div id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
 
