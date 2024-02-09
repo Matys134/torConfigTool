@@ -12,19 +12,15 @@
             max-width: 960px;
         }
         .graph-container {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .relay-event {
+            flex: 0;
         }
         .dropdown-menu {
             max-height: 200px;
             overflow-y: auto;
-        }
-    </style>
-    <style>
-        .relay-event {
-            float: right;
         }
 
         .content {
@@ -47,11 +43,6 @@
     </div>
     <div class="content">
         <div id="relayCharts" class="graph-container"></div>
-        <h2 class="text-center mt-4">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#eventData">
-                Events
-            </button>
-        </h2>
         <div id="eventData" class="relay-event collapse"></div>
     </div>
 </div>
