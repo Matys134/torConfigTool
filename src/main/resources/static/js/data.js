@@ -201,28 +201,32 @@ $(document).ready(function () {
             });
         }
 
-        // Store the last fetched events
+        // Store the last fetched events and the last event index
         var lastEvents = {};
+        var lastEventIndex = {};
 
         function updateRelayEventData(port, eventContainer) {
             var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Check if the events have changed
                 if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
-                    // Update the last fetched events
+                    // Determine the start index for new events
+                    var startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
+
+                    // Update the last fetched events and the last event index
                     lastEvents[port] = data;
+                    lastEventIndex[port] = data.length;
 
-                    // Get the latest event
-                    var latestEvent = data[data.length - 1];
-
-                    // Update the eventData div with the latest event
-                    eventContainer.html('');
-                    if (latestEvent !== null) { // Check if the event is not null
-                        var currentTime = new Date();
-                        var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                        var eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + latestEvent;
-                        eventContainer.append(eventElement);
+                    // Add new events from the start index onwards
+                    for (var i = startIndex; i < data.length; i++) {
+                        var event = data[i];
+                        if (event !== null) { // Check if the event is not null
+                            var currentTime = new Date();
+                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                            var eventElement = document.createElement('p');
+                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            eventContainer.append(eventElement);
+                        }
                     }
                 }
             });
