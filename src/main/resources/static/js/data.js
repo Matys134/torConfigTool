@@ -107,6 +107,15 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
+                    // Fetch the flags data
+                    var flagsData = data.map(function (relayData) {
+                        return relayData.flags;
+                    });
+
+                    // Update the flagsData div with the fetched flags data
+                    var flagsContainer = $('#relayFlags' + port);
+                    flagsContainer.html('Flags: ' + flagsData[flagsData.length - 1]);
+
                     // Determine the maximum value among the upload and download data
                     var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
@@ -152,12 +161,18 @@ $(document).ready(function () {
                         relayChart.data.datasets[1].data.shift();
                     }
 
-                    // Update the chart
-                    relayChart.update();
+                    // Fetch the uptime
+                    var uptime = data.map(function (relayData) {
+                        return relayData.uptime;
+                    });
 
-                    // Update the relay-rates div with the latest upload and download rates
+                    var torVersion = data.map(function (relayData) {
+                        return relayData.version;
+                    });
+
+                    // Update the relay-rates div with the latest upload and download rates and uptime
                     var ratesContainer = $('#relayRates' + port);
-                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit);
+                    ratesContainer.html('Upload: ' + uploadData[uploadData.length - 1] + ' ' + unit + ', Download: ' + downloadData[downloadData.length - 1] + ' ' + unit + ', Uptime: ' + uptime[uptime.length - 1] + ' seconds' + ', Tor Version: ' + torVersion[torVersion.length - 1]);
                 }
             });
         }
