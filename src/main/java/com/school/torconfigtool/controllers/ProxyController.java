@@ -40,12 +40,16 @@ public class ProxyController {
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
+            logger.info("Configuring Tor Proxy...");
             if (!proxyConfigurator.configureProxy()) {
+                logger.error("Failed to configure Tor Proxy.");
                 model.addAttribute("errorMessage", "Failed to configure Tor Proxy.");
                 return "proxy-config";
             }
 
+            logger.info("Starting Tor Proxy...");
             if (!proxyConfigurator.startProxy()) {
+                logger.error("Failed to start Tor Proxy.");
                 model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
                 return "proxy-config";
             }
