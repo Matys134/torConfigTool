@@ -1,6 +1,9 @@
 package com.school.torconfigtool.controllers;
 
 import com.school.torconfigtool.config.ProxyConfigurator;
+import com.school.torconfigtool.config.ProxyFileCreator;
+import com.school.torconfigtool.config.ProxyStarter;
+import com.school.torconfigtool.config.IpAddressRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,12 @@ public class ProxyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyController.class);
 
+    private final ProxyConfigurator proxyConfigurator;
+
+    public ProxyController() {
+        this.proxyConfigurator = new ProxyConfigurator(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
+    }
+
     @GetMapping
     public String proxyConfigurationForm() {
         return "proxy-config";
@@ -23,12 +32,12 @@ public class ProxyController {
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
-            if (!ProxyConfigurator.configureProxy()) {
+            if (!proxyConfigurator.configureProxy()) {
                 model.addAttribute("errorMessage", "Failed to configure Tor Proxy.");
                 return "proxy-config";
             }
 
-            if (!ProxyConfigurator.startProxy()) {
+            if (!proxyConfigurator.startProxy()) {
                 model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
                 return "proxy-config";
             }
