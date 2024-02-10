@@ -48,6 +48,12 @@ public class ProxyStarter {
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    LOGGER.info(line); // Log output of kill command
+                }
+            }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
