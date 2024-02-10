@@ -43,7 +43,13 @@ public class ProxyStarter {
         return -1;
     }
 
-    public boolean stop(long pid) throws IOException, InterruptedException {
+    public boolean stop(String filePath) throws IOException, InterruptedException {
+        long pid = getRunningTorProcessId(filePath);
+        if (pid == -1) {
+            LOGGER.info("No running Tor process found with file path: " + filePath);
+            return false;
+        }
+
         LOGGER.info("Attempting to stop Tor process with PID: " + pid);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo kill " + pid);
         LOGGER.info("Command: " + processBuilder.command());
