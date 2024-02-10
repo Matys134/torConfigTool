@@ -33,7 +33,9 @@ public class ProxyStarter {
             int exitCode = process.waitFor();
             LOGGER.info("Tor process completed with exit code " + exitCode);
             if (exitCode == 0) {
-                return process.pid();
+                pid = process.pid();
+                LOGGER.info("Tor process started with PID: " + pid); // Log the PID immediately after the process starts
+                return pid;
             }
         } finally {
             process.destroy();
