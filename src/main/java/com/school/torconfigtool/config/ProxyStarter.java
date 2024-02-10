@@ -14,9 +14,11 @@ public class ProxyStarter {
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId();
         if (pid != -1) {
+            LOGGER.info("Tor process already running with PID: " + pid);
             return pid;
         }
 
+        LOGGER.info("Attempting to start Tor process with command: sudo tor -f " + filePath);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
         processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
         Process process = processBuilder.start();
