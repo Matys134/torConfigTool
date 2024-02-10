@@ -21,6 +21,8 @@ public class ProxyConfigurator {
     private final ProxyStarter proxyStarter;
     private final IpAddressRetriever ipAddressRetriever;
 
+    private long proxyPid = -1;
+
     public ProxyConfigurator(ProxyFileCreator proxyFileCreator, ProxyStarter proxyStarter, IpAddressRetriever ipAddressRetriever) {
         this.proxyFileCreator = proxyFileCreator;
         this.proxyStarter = proxyStarter;
@@ -35,6 +37,14 @@ public class ProxyConfigurator {
     }
 
     public boolean startProxy() throws IOException, InterruptedException {
-        return proxyStarter.start(TORRC_PROXY_FILE);
+        proxyPid = proxyStarter.start(TORRC_PROXY_FILE);
+        return proxyPid != -1;
+    }
+
+    public boolean stopProxy() throws IOException, InterruptedException {
+        if (proxyPid != -1) {
+            return proxyStarter.stop(proxyPid);
+        }
+        return false;
     }
 }

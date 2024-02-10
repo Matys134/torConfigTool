@@ -23,6 +23,16 @@
     <button type="submit">Start Tor Proxy</button>
 </form>
 
+<!-- Display proxy status -->
+<div class="proxy-status" th:if="${proxyStatus}">
+    <p th:text="${proxyStatus}"></p>
+</div>
+
+<!-- Button to turn off the Tor Proxy -->
+<form action="/proxy/stop" method="post">
+    <button type="submit">Stop Tor Proxy</button>
+</form>
+
 <br><br>
 <a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
 </body>

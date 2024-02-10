@@ -51,4 +51,22 @@ public class ProxyController {
 
         return "proxy-config";
     }
+
+    @PostMapping("/stop")
+    public String stopProxy(Model model) {
+        try {
+            if (!proxyConfigurator.stopProxy()) {
+                model.addAttribute("errorMessage", "Failed to stop Tor Proxy.");
+                return "proxy-config";
+            }
+
+            model.addAttribute("successMessage", "Tor Proxy stopped successfully!");
+
+        } catch (Exception e) {
+            logger.error("Error during Tor Proxy stop", e);
+            model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
+        }
+
+        return "proxy-config";
+    }
 }
