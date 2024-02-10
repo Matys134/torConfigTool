@@ -52,13 +52,22 @@ public class ProxyStarter {
         }
     }
 
-    public long getRunningTorProcessId() throws IOException { // Change this line
+    public long getRunningTorProcessId() throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "pgrep tor");
         Process process = processBuilder.start();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line = reader.readLine();
             if (line != null) {
-                return Long.parseLong(line);
+                long pid = Long.parseLong(line);
+                // Check if the process with the PID is still running
+                ProcessBuilder checkProcessBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -p " + pid);
+                Process checkProcess = checkProcessBuilder.start();
+                try (BufferedReader checkReader = new BufferedReader(new InputStreamReader(checkProcess.getInputStream()))) {
+                    String checkLine = checkReader.readLine();
+                    if (checkLine != null && checkLine.contains(String.valueOf(pid))) {
+                        return pid;
+                    }
+                }
             }
         }
         return -1;
