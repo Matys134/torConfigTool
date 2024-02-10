@@ -49,6 +49,6 @@ public class ProxyConfigurator {
     }
 
     public boolean isProxyRunning() throws IOException {
-        return proxyStarter.getRunningTorProcessId() != -1;
+        return proxyStarter.getRunningTorProcessId(TORRC_PROXY_FILE) != -1;
     }
 }
