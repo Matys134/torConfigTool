@@ -21,7 +21,7 @@ public class ProxyFileCreator {
             bw.newLine();
             bw.write("SocksPolicy accept 192.168.1.0/24");
             bw.newLine();
-            bw.write("RunAsDaemon 1");
+            bw.write("RunAsDaemon 0");
             bw.newLine();
             bw.write("DNSPort " + localIpAddress + ":53");
         }
