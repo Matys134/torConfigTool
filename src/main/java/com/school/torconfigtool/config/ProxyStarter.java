@@ -18,9 +18,16 @@ public class ProxyStarter {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
+        processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
         Process process = processBuilder.start();
         try {
             LOGGER.info("Waiting for Tor process to complete...");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    LOGGER.info(line); // Log output of Tor process
+                }
+            }
             int exitCode = process.waitFor();
             LOGGER.info("Tor process completed with exit code " + exitCode);
             if (exitCode == 0) {
