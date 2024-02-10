@@ -64,12 +64,13 @@ public class ProxyStarter {
     public long getRunningTorProcessId(String filePath) throws IOException {
         String command = "tor -f " + filePath;
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "pgrep -f '" + command + "'");
-        System.out.println("Command: " + command);
+        LOGGER.info("Command: " + command);
         Process process = processBuilder.start();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line = reader.readLine();
             if (line != null) {
                 long pid = Long.parseLong(line);
+                LOGGER.info("Found PID: " + pid);
                 // Check if the process with the PID is still running
                 ProcessBuilder checkProcessBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -p " + pid);
                 Process checkProcess = checkProcessBuilder.start();
