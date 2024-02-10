@@ -19,7 +19,7 @@ public class ProxyStarter {
         }
 
         LOGGER.info("Attempting to start Tor process with command: sudo tor -f " + filePath);
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath + " & echo $!");
         processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
         Process process = processBuilder.start();
         try {
@@ -28,13 +28,16 @@ public class ProxyStarter {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     LOGGER.info(line); // Log output of Tor process
+                    if (line.matches("\\d+")) {
+                        pid = Long.parseLong(line);
+                        LOGGER.info("Tor process started with PID: " + pid); // Log the PID immediately after the process starts
+                        return pid;
+                    }
                 }
             }
             int exitCode = process.waitFor();
             LOGGER.info("Tor process completed with exit code " + exitCode);
             if (exitCode == 0) {
-                pid = process.pid();
-                LOGGER.info("Tor process started with PID: " + pid); // Log the PID immediately after the process starts
                 return pid;
             }
         } finally {
