@@ -31,7 +31,7 @@ public class ProxyConfigurator {
 
     public boolean configureProxy() throws IOException {
         File torrcFile = proxyFileCreator.createFile(TORRC_PROXY_FILE);
-        String localIpAddress = ipAddressRetriever.getLocalIpAddress();
+        String localIpAddress = ipAddressRetriever.getLocalIpAddress().orElse("127.0.0.1");
         proxyFileCreator.writeConfiguration(torrcFile, localIpAddress);
         return true;
     }

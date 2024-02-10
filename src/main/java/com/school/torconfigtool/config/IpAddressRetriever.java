@@ -7,27 +7,41 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Optional;
 
 public class IpAddressRetriever {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IpAddressRetriever.class);
 
-    public String getLocalIpAddress() {
+    public Optional<String> getLocalIpAddress() {
         try {
-            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (networkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = networkInterfaces.nextElement();
-                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                while (inetAddresses.hasMoreElements()) {
-                    InetAddress inetAddress = inetAddresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
-                        return inetAddress.getHostAddress();
-                    }
-                }
-            }
+            return getFirstNonLoopbackAddress();
         } catch (SocketException e) {
             LOGGER.error("Failed to get local IP address", e);
+            return Optional.empty();
         }
-        return "127.0.0.1";
+    }
+
+    private Optional<String> getFirstNonLoopbackAddress() throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            Optional<String> address = getFirstNonLoopbackAddressFromInterface(networkInterface);
+            if (address.isPresent()) {
+                return address;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Optional<String> getFirstNonLoopbackAddressFromInterface(NetworkInterface networkInterface) {
+        Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+        while (inetAddresses.hasMoreElements()) {
+            InetAddress inetAddress = inetAddresses.nextElement();
+            if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
+                return Optional.of(inetAddress.getHostAddress());
+            }
+        }
+        return Optional.empty();
     }
 }
