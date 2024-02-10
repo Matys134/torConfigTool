@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.Optional;
 
 public class IpAddressRetriever {
@@ -23,25 +23,15 @@ public class IpAddressRetriever {
     }
 
     private Optional<String> getFirstNonLoopbackAddress() throws SocketException {
-        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-        while (networkInterfaces.hasMoreElements()) {
-            NetworkInterface networkInterface = networkInterfaces.nextElement();
-            Optional<String> address = getFirstNonLoopbackAddressFromInterface(networkInterface);
-            if (address.isPresent()) {
-                return address;
-            }
-        }
-        return Optional.empty();
+        return Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
+                .flatMap(networkInterface -> getFirstNonLoopbackAddressFromInterface(networkInterface).stream())
+                .findFirst();
     }
 
     private Optional<String> getFirstNonLoopbackAddressFromInterface(NetworkInterface networkInterface) {
-        Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-        while (inetAddresses.hasMoreElements()) {
-            InetAddress inetAddress = inetAddresses.nextElement();
-            if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
-                return Optional.of(inetAddress.getHostAddress());
-            }
-        }
-        return Optional.empty();
+        return Collections.list(networkInterface.getInetAddresses()).stream()
+                .filter(inetAddress -> !inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress())
+                .map(InetAddress::getHostAddress)
+                .findFirst();
     }
 }
