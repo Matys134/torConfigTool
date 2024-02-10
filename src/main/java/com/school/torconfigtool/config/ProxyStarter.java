@@ -44,8 +44,15 @@ public class ProxyStarter {
     public boolean stop(long pid) throws IOException, InterruptedException {
         LOGGER.info("Attempting to stop Tor process with PID: " + pid);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo kill -9 " + pid);
+        processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
         Process process = processBuilder.start();
         try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    LOGGER.error(line); // Log error output of kill command
+                }
+            }
             int exitCode = process.waitFor();
             LOGGER.info("Tor process stop command completed with exit code " + exitCode);
             return exitCode == 0;
