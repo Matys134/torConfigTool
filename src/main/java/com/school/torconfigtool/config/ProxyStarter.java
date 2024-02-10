@@ -1,10 +1,15 @@
 package com.school.torconfigtool.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ProxyStarter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxyStarter.class);
 
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId();
@@ -15,7 +20,9 @@ public class ProxyStarter {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
         Process process = processBuilder.start();
         try {
+            LOGGER.info("Waiting for Tor process to complete...");
             int exitCode = process.waitFor();
+            LOGGER.info("Tor process completed with exit code " + exitCode);
             if (exitCode == 0) {
                 return process.pid();
             }
