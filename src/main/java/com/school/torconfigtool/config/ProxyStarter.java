@@ -62,9 +62,9 @@ public class ProxyStarter {
     }
 
     public long getRunningTorProcessId(String filePath) throws IOException {
-        // Replace 'tor -f ' with the exact command used to start the Tor process
         String command = "tor -f " + filePath;
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "pgrep -f '" + command + "'");
+        System.out.println("Command: " + command);
         Process process = processBuilder.start();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line = reader.readLine();
