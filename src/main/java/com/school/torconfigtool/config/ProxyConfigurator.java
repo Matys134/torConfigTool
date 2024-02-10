@@ -42,10 +42,7 @@ public class ProxyConfigurator {
     }
 
     public boolean stopProxy() throws IOException, InterruptedException {
-        if (proxyPid != -1) {
-            return proxyStarter.stop(proxyPid);
-        }
-        return false;
+        return proxyStarter.stop(TORRC_PROXY_FILE);
     }
 
     public boolean isProxyRunning() throws IOException {
