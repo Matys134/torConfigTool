@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+
 @Controller
 @RequestMapping("/proxy")
 public class ProxyController {
@@ -25,7 +27,13 @@ public class ProxyController {
     }
 
     @GetMapping
-    public String proxyConfigurationForm() {
+    public String proxyConfigurationForm(Model model) {
+        try {
+            model.addAttribute("proxyStatus", proxyConfigurator.isProxyRunning() ? "Running" : "Stopped");
+        } catch (IOException e) {
+            logger.error("Error during checking Tor Proxy status", e);
+            model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
+        }
         return "proxy-config";
     }
 

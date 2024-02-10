@@ -24,8 +24,8 @@
 </form>
 
 <!-- Display proxy status -->
-<div class="proxy-status" th:if="${proxyStatus}">
-    <p th:text="${proxyStatus}"></p>
+<div class="proxy-status">
+    <p>Proxy Status: <span th:text="${proxyStatus}"></span></p>
 </div>
 
 <!-- Button to turn off the Tor Proxy -->
