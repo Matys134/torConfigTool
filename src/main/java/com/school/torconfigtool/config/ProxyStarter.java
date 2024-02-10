@@ -12,7 +12,7 @@ public class ProxyStarter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyStarter.class);
 
     public long start(String filePath) throws IOException, InterruptedException {
-        long pid = getRunningTorProcessId();
+        long pid = getRunningTorProcessId(filePath);
         if (pid != -1) {
             LOGGER.info("Tor process already running with PID: " + pid);
             return pid;
