@@ -44,7 +44,8 @@ public class ProxyStarter {
     public boolean stop(long pid) throws IOException, InterruptedException {
         LOGGER.info("Attempting to stop Tor process with PID: " + pid);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo kill " + pid);
-        processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
+        LOGGER.info("Command: " + processBuilder.command());
+        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         try {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -64,13 +65,11 @@ public class ProxyStarter {
     public long getRunningTorProcessId(String filePath) throws IOException {
         String command = "tor -f " + filePath;
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "pgrep -f '" + command + "'");
-        LOGGER.info("Command: " + command);
         Process process = processBuilder.start();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line = reader.readLine();
             if (line != null) {
                 long pid = Long.parseLong(line);
-                LOGGER.info("Found PID: " + pid);
                 // Check if the process with the PID is still running
                 ProcessBuilder checkProcessBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -p " + pid);
                 Process checkProcess = checkProcessBuilder.start();
