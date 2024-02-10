@@ -71,24 +71,22 @@ public class ProxyStarter {
     }
 
     public long getRunningTorProcessId(String filePath) throws IOException {
-        String command = "tor -f " + filePath;
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "pgrep -f '" + command + "'");
+        LOGGER.info("Checking if Tor process is already running...");
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");
+        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line = reader.readLine();
-            if (line != null) {
-                long pid = Long.parseLong(line);
-                // Check if the process with the PID is still running
-                ProcessBuilder checkProcessBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -p " + pid);
-                Process checkProcess = checkProcessBuilder.start();
-                try (BufferedReader checkReader = new BufferedReader(new InputStreamReader(checkProcess.getInputStream()))) {
-                    String checkLine = checkReader.readLine();
-                    if (checkLine != null && checkLine.contains(String.valueOf(pid))) {
-                        return pid;
-                    }
+        try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line = reader.readLine();
+                if (line != null) {
+                    long pid = Long.parseLong(line);
+                    LOGGER.info("Tor process is already running with PID: " + pid);
+                    return pid;
                 }
             }
+            return -1;
+        } finally {
+            process.destroy();
         }
-        return -1;
     }
 }
