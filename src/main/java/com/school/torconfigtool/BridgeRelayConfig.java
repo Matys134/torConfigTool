@@ -44,26 +44,25 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         }
     }
 
-    private void writeObfs4Config(BufferedWriter writer) throws IOException {
-        writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
+    private void writeConfig(BufferedWriter writer, String bridgeType, String execCommand, String listenAddress, String additionalOptions) throws IOException {
+        writer.write("ServerTransportPlugin " + bridgeType + " exec " + execCommand);
         writer.newLine();
-        writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getServerTransport());
+        writer.write("ServerTransportListenAddr " + bridgeType + " " + listenAddress);
         writer.newLine();
         writer.write("ExtORPort auto");
         writer.newLine();
-        writer.write("ContactInfo " + getContact());
-        writer.newLine();
+        if (additionalOptions != null) {
+            writer.write(additionalOptions);
+            writer.newLine();
+        }
+    }
+
+    private void writeObfs4Config(BufferedWriter writer) throws IOException {
+        writeConfig(writer, "obfs4", "/usr/bin/obfs4proxy", "0.0.0.0:" + getServerTransport(), "ContactInfo " + getContact());
     }
 
     private void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
-        writer.write("ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel");
-        writer.newLine();
-        writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:15000");
-        writer.newLine();
-        writer.write("ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
-        writer.newLine();
-        writer.write("ExtORPort auto");
-        writer.newLine();
+        writeConfig(writer, "webtunnel", "/usr/local/bin/webtunnel", "127.0.0.1:15000", "ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
     }
 
     private void writeSnowflakeConfig() {
