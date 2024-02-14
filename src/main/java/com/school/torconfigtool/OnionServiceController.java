@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.service.FileOperationsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class OnionServiceController {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
+    private final FileOperationsService fileOperationsService;
+
     TorConfiguration torConfiguration = new TorConfiguration();
 
     // Add a field for RelayOperationsController
@@ -33,10 +36,11 @@ public class OnionServiceController {
     @Autowired
     private FileService fileService;
     @Autowired
-    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
+    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController, FileOperationsService fileOperationsService) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationController = relayOperationController; // Initialize the field
         this.onionServicePorts = getAllOnionServicePorts();
+        this.fileOperationsService = fileOperationsService;
 
         // Set the hiddenServicePort here if it's not being set elsewhere
         if (!onionServicePorts.isEmpty()) {
@@ -291,19 +295,8 @@ public class OnionServiceController {
 
     @PostMapping("/remove-files/{port}")
     public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            for (String fileName : fileNames) {
-                fileService.deleteFile(fileName, fileDir);
-            }
-            List<String> remainingFileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", remainingFileNames);
-            model.addAttribute("message", "Files deleted successfully.");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Error: " + e.getMessage());
-            return "file_upload_form";
-        }
+        String fileDir = "onion/www/service-" + port + "/";
+        return fileOperationsService.removeFiles(fileNames, fileDir, model);
     }
 
     @PostMapping("/upload/{port}")
