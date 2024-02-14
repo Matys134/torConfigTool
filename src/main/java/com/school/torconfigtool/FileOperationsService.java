@@ -1,27 +1,23 @@
 package com.school.torconfigtool;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Controller
-@RequestMapping("/file")
-public class FileController {
+@Service
+public class FileOperationsService {
 
     private final FileService fileService;
 
-    public FileController(FileService fileService) {
+    public FileOperationsService(FileService fileService) {
         this.fileService = fileService;
     }
 
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
+    public String uploadFiles(MultipartFile[] files, String fileDir, Model model) {
         try {
-            String fileDir = "onion/www/service-" + port + "/";
             fileService.uploadFiles(files, fileDir);
             List<String> fileNames = fileService.getUploadedFiles(fileDir);
             model.addAttribute("uploadedFiles", fileNames);
@@ -33,10 +29,8 @@ public class FileController {
         }
     }
 
-    @PostMapping("/remove-files/{port}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
+    public String removeFiles(String[] fileNames, String fileDir, Model model) {
         try {
-            String fileDir = "onion/www/service-" + port + "/";
             for (String fileName : fileNames) {
                 fileService.deleteFile(fileName, fileDir);
             }
@@ -50,15 +44,7 @@ public class FileController {
         }
     }
 
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
-        model.addAttribute("uploadedFiles", fileNames);
-        return "file_upload_form";
-    }
-
-    private List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
+    public List<String> getUploadedFiles(String fileDir) {
+        return fileService.getUploadedFiles(fileDir);
     }
 }
