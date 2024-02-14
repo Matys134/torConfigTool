@@ -1,6 +1,5 @@
-package com.school.torconfigtool.controller;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.*;
 import com.school.torconfigtool.service.BridgeSetupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,5 +192,12 @@ public class BridgeController {
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());
+    }
+
+    @GetMapping("/bridge-configured")
+    public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
+        return ResponseEntity.ok(response);
     }
 }
