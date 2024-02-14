@@ -1,6 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.config.BridgeRelayConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -32,35 +31,13 @@ public class BridgeSetupService {
             return;
         }
 
-        BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+        BridgeRelayConfig config = BridgeRelayConfig.create(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
 
         createTorrcFile(torrcFilePath, config);
 
         model.addAttribute("successMessage", "Tor Relay configured successfully!");
 
         webtunnelSetupService.setupWebtunnel(webtunnelUrl, config);
-    }
-
-    private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
-        BridgeRelayConfig config = new BridgeRelayConfig();
-        config.setBridgeType(bridgeType);
-        config.setNickname(bridgeNickname);
-        if (bridgePort != null)
-            config.setOrPort(String.valueOf(bridgePort));
-        config.setContact(bridgeContact);
-        config.setControlPort(String.valueOf(bridgeControlPort));
-        if (bridgeBandwidth != null)
-            config.setBandwidthRate(String.valueOf(bridgeBandwidth));
-        if (webtunnelDomain != null)
-            config.setWebtunnelDomain(webtunnelDomain);
-        if (webtunnelUrl != null)
-            config.setWebtunnelUrl(webtunnelUrl);
-        if (webtunnelPort != null)
-            config.setWebtunnelPort(webtunnelPort);
-        if (bridgeTransportListenAddr != null)
-            config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
-
-        return config;
     }
 
     private void createTorrcFile(Path torrcFilePath, BridgeRelayConfig config) {

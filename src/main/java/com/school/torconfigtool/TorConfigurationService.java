@@ -1,6 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.config.BridgeRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
