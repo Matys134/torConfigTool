@@ -1,5 +1,9 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.BridgeRelayConfig;
+import com.school.torconfigtool.BridgeSetupService;
+import com.school.torconfigtool.NginxService;
+import com.school.torconfigtool.RelayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is a controller for managing bridge configurations.
+ * It provides endpoints for configuring, running, and checking the status of bridges.
+ */
 @Controller
 @RequestMapping("/bridge")
 public class BridgeController {
@@ -25,6 +33,12 @@ public class BridgeController {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
 
+    /**
+     * Constructor for BridgeController.
+     * @param relayService service for managing relay configurations
+     * @param nginxService service for managing Nginx configurations
+     * @param bridgeSetupService service for setting up bridges
+     */
     @Autowired
     public BridgeController(RelayService relayService, NginxService nginxService, BridgeSetupService bridgeSetupService) {
         this.relayService = relayService;
@@ -32,11 +46,30 @@ public class BridgeController {
         this.bridgeSetupService = bridgeSetupService;
     }
 
+    /**
+     * Endpoint for getting the bridge configuration form.
+     * @return the name of the setup view
+     */
     @GetMapping
     public String bridgeConfigurationForm() {
         return "setup";
     }
 
+    /**
+     * Endpoint for configuring a bridge.
+     * @param bridgeType the type of the bridge
+     * @param bridgePort the port of the bridge
+     * @param bridgeTransportListenAddr the transport listen address of the bridge
+     * @param bridgeContact the contact of the bridge
+     * @param bridgeNickname the nickname of the bridge
+     * @param webtunnelDomain the domain of the web tunnel
+     * @param bridgeControlPort the control port of the bridge
+     * @param webtunnelUrl the URL of the web tunnel
+     * @param webtunnelPort the port of the web tunnel
+     * @param bridgeBandwidth the bandwidth of the bridge
+     * @param model the model to add attributes to
+     * @return the name of the setup view
+     */
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
                                   @RequestParam(required = false) Integer bridgePort,
@@ -49,12 +82,8 @@ public class BridgeController {
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        if (relayService.getBridgeCount() >= 2) {
-            model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
-            return "setup";
-        }
         try {
-            bridgeSetupService.configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+            bridgeSetupService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
@@ -62,6 +91,10 @@ public class BridgeController {
         return "setup";
     }
 
+    /**
+     * Endpoint for running a snowflake proxy.
+     * @return a response entity with a message and a status
+     */
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
@@ -73,6 +106,11 @@ public class BridgeController {
         }
     }
 
+    /**
+     * Endpoint for checking if the bridge limit has been reached.
+     * @param bridgeType the type of the bridge
+     * @return a response entity with a map containing the bridge limit status and the bridge count
+     */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
         Map<String, Object> response = new HashMap<>();
@@ -105,18 +143,31 @@ public class BridgeController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Endpoint for getting the setup view.
+     * @param model the model to add attributes to
+     * @return the name of the setup view
+     */
     @GetMapping("/setup")
     public String setup(Model model) {
         model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
         return "setup";
     }
 
+    /**
+     * Endpoint for getting the running bridge type.
+     * @return a response entity with a map containing the running bridge type
+     */
     @GetMapping("/running-type")
     public ResponseEntity<Map<String, String>> getRunningBridgeType() {
         Map<String, String> response = relayService.getRunningBridgeType();
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Endpoint for reverting the Nginx configuration.
+     * @return a response entity with a message and a status
+     */
     @PostMapping("/revert-nginx-config")
     public ResponseEntity<String> revertNginxConfig() {
         try {
@@ -127,12 +178,20 @@ public class BridgeController {
         }
     }
 
+    /**
+     * Endpoint for toggling the limit.
+     * @return a response entity with a status
+     */
     @PostMapping("/toggle-limit")
     public ResponseEntity<Void> toggleLimit() {
         RelayService.toggleLimit();
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Endpoint for getting the limit state.
+     * @return a response entity with the limit state
+     */
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());

@@ -128,4 +128,12 @@ public class BridgeSetupService {
         }
         Files.write(torrcFilePath, lines);
     }
+
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
+        if (relayService.getBridgeCount() >= 2) {
+            model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
+            throw new Exception("Bridge limit reached");
+        }
+        configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+    }
 }
