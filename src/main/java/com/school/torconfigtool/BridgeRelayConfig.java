@@ -31,31 +31,43 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         logger.info("Writing specific config for bridge type: " + getBridgeType());
         switch (getBridgeType()) {
             case "obfs4":
-                writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
-                writer.newLine();
-                writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getServerTransport());
-                writer.newLine();
-                writer.write("ExtORPort auto");
-                writer.newLine();
-                writer.write("ContactInfo " + getContact());
-                writer.newLine();
+                writeObfs4Config(writer);
                 break;
             case "webtunnel":
-                writer.write("ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel");
-                writer.newLine();
-                writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:15000");
-                writer.newLine();
-                writer.write("ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
-                writer.newLine();
-                writer.write("ExtORPort auto");
-                writer.newLine();
+                writeWebtunnelConfig(writer);
                 break;
             case "snowflake":
-                runSnowflakeProxy();
+                writeSnowflakeConfig();
                 break;
-                default:
-                    logger.error("Unknown bridge type: " + getBridgeType());
+            default:
+                logger.error("Unknown bridge type: " + getBridgeType());
         }
+    }
+
+    private void writeObfs4Config(BufferedWriter writer) throws IOException {
+        writer.write("ServerTransportPlugin obfs4 exec /usr/bin/obfs4proxy");
+        writer.newLine();
+        writer.write("ServerTransportListenAddr obfs4 0.0.0.0:" + getServerTransport());
+        writer.newLine();
+        writer.write("ExtORPort auto");
+        writer.newLine();
+        writer.write("ContactInfo " + getContact());
+        writer.newLine();
+    }
+
+    private void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
+        writer.write("ServerTransportPlugin webtunnel exec /usr/local/bin/webtunnel");
+        writer.newLine();
+        writer.write("ServerTransportListenAddr webtunnel 127.0.0.1:15000");
+        writer.newLine();
+        writer.write("ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
+        writer.newLine();
+        writer.write("ExtORPort auto");
+        writer.newLine();
+    }
+
+    private void writeSnowflakeConfig() {
+        runSnowflakeProxy();
     }
 
     public void runSnowflakeProxy() {
