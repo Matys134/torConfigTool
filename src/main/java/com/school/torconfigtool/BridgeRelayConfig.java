@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -25,23 +27,25 @@ public class BridgeRelayConfig extends BaseRelayConfig {
 
     private SnowflakeProxyRunner snowflakeProxyRunner = new SnowflakeProxyRunner();
 
+    private Map<String, BridgeConfigWriter> configWriters;
+
+    public BridgeRelayConfig() {
+        configWriters = new HashMap<>();
+        configWriters.put("obfs4", new Obfs4ConfigWriter(this));
+        configWriters.put("webtunnel", new WebtunnelConfigWriter(this));
+        configWriters.put("snowflake", new SnowflakeConfigWriter(this));
+    }
+
     @Override
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
         writer.write("BridgeRelay 1");
         writer.newLine();
         logger.info("Writing specific config for bridge type: " + getBridgeType());
-        switch (getBridgeType()) {
-            case "obfs4":
-                writeObfs4Config(writer);
-                break;
-            case "webtunnel":
-                writeWebtunnelConfig(writer);
-                break;
-            case "snowflake":
-                writeSnowflakeConfig();
-                break;
-            default:
-                logger.error("Unknown bridge type: " + getBridgeType());
+        BridgeConfigWriter configWriter = configWriters.get(getBridgeType());
+        if (configWriter != null) {
+            configWriter.writeConfig(writer);
+        } else {
+            logger.error("Unknown bridge type: " + getBridgeType());
         }
     }
 
@@ -58,15 +62,15 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         }
     }
 
-    private void writeObfs4Config(BufferedWriter writer) throws IOException {
+    public void writeObfs4Config(BufferedWriter writer) throws IOException {
         writeConfig(writer, "obfs4", "/usr/bin/obfs4proxy", "0.0.0.0:" + getServerTransport(), "ContactInfo " + getContact());
     }
 
-    private void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
+    public void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
         writeConfig(writer, "webtunnel", "/usr/local/bin/webtunnel", "127.0.0.1:15000", "ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
     }
 
-    private void writeSnowflakeConfig() {
+    public void writeSnowflakeConfig() {
         snowflakeProxyRunner.runSnowflakeProxy();
     }
 
