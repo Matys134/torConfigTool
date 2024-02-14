@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class FileController {
     @GetMapping("/upload/{port}")
     public String showUploadForm(@PathVariable("port") int port, Model model) {
         String uploadDir = "onion/www/service-" + port + "/";
-        List<String> fileNames = fileOperationsService.getUploadedFiles(uploadDir);
+        List<File> fileNames = fileOperationsService.getUploadedFiles(uploadDir);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }
