@@ -1,6 +1,9 @@
 package com.school.torconfigtool.config;
 
-import com.school.torconfigtool.*;
+import com.school.torconfigtool.Obfs4ConfigWriter;
+import com.school.torconfigtool.SnowflakeConfigWriter;
+import com.school.torconfigtool.SnowflakeProxyRunner;
+import com.school.torconfigtool.WebtunnelConfigWriter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;
@@ -100,5 +103,41 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     public void setWebtunnelUrl(String webtunnelUrl) {
         this.webtunnelUrl = webtunnelUrl;
         logger.info("Webtunnel URL set in BridgeRelayConfig: " + this.webtunnelUrl);
+    }
+
+    /**
+     * Creates a new BridgeRelayConfig instance with the provided parameters.
+     * @param bridgeTransportListenAddr The address for the bridge transport to listen on.
+     * @param bridgeType The type of bridge.
+     * @param bridgeNickname The nickname for the bridge.
+     * @param bridgePort The port for the bridge.
+     * @param bridgeContact The contact for the bridge.
+     * @param bridgeControlPort The control port for the bridge.
+     * @param bridgeBandwidth The bandwidth for the bridge.
+     * @param webtunnelDomain The domain for the webtunnel.
+     * @param webtunnelUrl The URL for the webtunnel.
+     * @param webtunnelPort The port for the webtunnel.
+     * @return A new BridgeRelayConfig instance.
+     */
+    public static BridgeRelayConfig create(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
+        BridgeRelayConfig config = new BridgeRelayConfig();
+        config.setBridgeType(bridgeType);
+        config.setNickname(bridgeNickname);
+        if (bridgePort != null)
+            config.setOrPort(String.valueOf(bridgePort));
+        config.setContact(bridgeContact);
+        config.setControlPort(String.valueOf(bridgeControlPort));
+        if (bridgeBandwidth != null)
+            config.setBandwidthRate(String.valueOf(bridgeBandwidth));
+        if (webtunnelDomain != null)
+            config.setWebtunnelDomain(webtunnelDomain);
+        if (webtunnelUrl != null)
+            config.setWebtunnelUrl(webtunnelUrl);
+        if (webtunnelPort != null)
+            config.setWebtunnelPort(webtunnelPort);
+        if (bridgeTransportListenAddr != null)
+            config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
+
+        return config;
     }
 }
