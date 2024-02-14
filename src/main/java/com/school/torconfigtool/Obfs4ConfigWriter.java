@@ -12,6 +12,10 @@ public class Obfs4ConfigWriter implements BridgeConfigWriter {
 
     @Override
     public void writeConfig(BufferedWriter writer) throws IOException {
-        config.writeObfs4Config(writer);
+        writeObfs4Config(writer);
+    }
+
+    private void writeObfs4Config(BufferedWriter writer) throws IOException {
+        config.writeConfig(writer, "obfs4", "/usr/bin/obfs4proxy", "0.0.0.0:" + config.getServerTransport(), "ContactInfo " + config.getContact());
     }
 }

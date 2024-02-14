@@ -49,7 +49,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         }
     }
 
-    private void writeConfig(BufferedWriter writer, String bridgeType, String execCommand, String listenAddress, String additionalOptions) throws IOException {
+    public void writeConfig(BufferedWriter writer, String bridgeType, String execCommand, String listenAddress, String additionalOptions) throws IOException {
         writer.write("ServerTransportPlugin " + bridgeType + " exec " + execCommand);
         writer.newLine();
         writer.write("ServerTransportListenAddr " + bridgeType + " " + listenAddress);
@@ -60,18 +60,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
             writer.write(additionalOptions);
             writer.newLine();
         }
-    }
-
-    public void writeObfs4Config(BufferedWriter writer) throws IOException {
-        writeConfig(writer, "obfs4", "/usr/bin/obfs4proxy", "0.0.0.0:" + getServerTransport(), "ContactInfo " + getContact());
-    }
-
-    public void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
-        writeConfig(writer, "webtunnel", "/usr/local/bin/webtunnel", "127.0.0.1:15000", "ServerTransportOptions webtunnel url=https://" + getWebtunnelUrl() + "/" + getPath());
-    }
-
-    public void writeSnowflakeConfig() {
-        snowflakeProxyRunner.runSnowflakeProxy();
     }
 
     public void setBridgeType(String bridgeType) {

@@ -12,6 +12,10 @@ public class WebtunnelConfigWriter implements BridgeConfigWriter {
 
     @Override
     public void writeConfig(BufferedWriter writer) throws IOException {
-        config.writeWebtunnelConfig(writer);
+        writeWebtunnelConfig(writer);
+    }
+
+    private void writeWebtunnelConfig(BufferedWriter writer) throws IOException {
+        config.writeConfig(writer, "webtunnel", "/usr/local/bin/webtunnel", "127.0.0.1:15000", "ServerTransportOptions webtunnel url=https://" + config.getWebtunnelUrl() + "/" + config.getPath());
     }
 }
