@@ -110,20 +110,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
         }
     }
 
-    private Process getProcess() throws IOException, InterruptedException {
-        ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
-        goBuildProcessBuilder.directory(new File("snowflake/proxy"));
-        goBuildProcessBuilder.redirectErrorStream(true);
-        Process goBuildProcess = goBuildProcessBuilder.start();
-        goBuildProcess.waitFor();
-
-        // Command to run the snowflake proxy
-        ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
-        runProxyProcessBuilder.directory(new File("snowflake/proxy"));
-        runProxyProcessBuilder.redirectErrorStream(true);
-        return runProxyProcessBuilder.start();
-    }
-
     public void setBridgeType(String bridgeType) {
         this.bridgeType = bridgeType;
         logger.info("Bridge type set in BridgeRelayConfig: " + this.bridgeType);
