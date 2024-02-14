@@ -72,23 +72,41 @@ public class BridgeRelayConfig extends BaseRelayConfig {
 
     public void runSnowflakeProxy() {
         try {
-            // Command to clone the snowflake repository
-            ProcessBuilder gitCloneProcessBuilder = new ProcessBuilder("git", "clone", "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake.git");
-            gitCloneProcessBuilder.redirectErrorStream(true);
-            Process gitCloneProcess = gitCloneProcessBuilder.start();
-            gitCloneProcess.waitFor();
-
-            // Command to build the snowflake proxy
-            Process runProxyProcess = getProcess();
-            runProxyProcess.waitFor();
-
-            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
-            if (!snowflakeProxyRunningFile.createNewFile()) {
-                logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
-            }
-
+            cloneRepository();
+            buildProxy();
+            runProxy();
+            createRunningFile();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void cloneRepository() throws IOException, InterruptedException {
+        ProcessBuilder gitCloneProcessBuilder = new ProcessBuilder("git", "clone", "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake.git");
+        gitCloneProcessBuilder.redirectErrorStream(true);
+        Process gitCloneProcess = gitCloneProcessBuilder.start();
+        gitCloneProcess.waitFor();
+    }
+
+    private void buildProxy() throws IOException, InterruptedException {
+        ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
+        goBuildProcessBuilder.directory(new File("snowflake/proxy"));
+        goBuildProcessBuilder.redirectErrorStream(true);
+        Process goBuildProcess = goBuildProcessBuilder.start();
+        goBuildProcess.waitFor();
+    }
+
+    private void runProxy() throws IOException {
+        ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
+        runProxyProcessBuilder.directory(new File("snowflake/proxy"));
+        runProxyProcessBuilder.redirectErrorStream(true);
+        runProxyProcessBuilder.start();
+    }
+
+    private void createRunningFile() throws IOException {
+        File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
+        if (!snowflakeProxyRunningFile.createNewFile()) {
+            logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
         }
     }
 
