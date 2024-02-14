@@ -5,21 +5,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BridgeSetupService {
 
     private final RelayService relayService;
+    private final NginxService nginxService;
     private final WebtunnelSetupService webtunnelSetupService;
 
     private static final String TORRC_DIRECTORY_PATH = "torrc";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     @Autowired
-    public BridgeSetupService(RelayService relayService, WebtunnelSetupService webtunnelSetupService) {
+    public BridgeSetupService(RelayService relayService, NginxService nginxService, WebtunnelSetupService webtunnelSetupService) {
         this.relayService = relayService;
+        this.nginxService = nginxService;
         this.webtunnelSetupService = webtunnelSetupService;
     }
 
