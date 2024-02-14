@@ -25,12 +25,10 @@ public class GuardController {
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final RelayService relayService;
-    private final RelayOperationsController relayOperationController;
 
 
-    public GuardController(RelayService relayService, RelayOperationsController relayOperationController) {
+    public GuardController(RelayService relayService) {
         this.relayService = relayService;
-        this.relayOperationController = relayOperationController;
     }
 
     @GetMapping
@@ -50,7 +48,6 @@ public class GuardController {
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
                                  @RequestParam(required = false) Integer relayBandwidth,
-                                 @RequestParam(defaultValue = "false") boolean startRelayAfterConfig,
                                  Model model) {
         try {
             if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
@@ -80,16 +77,6 @@ public class GuardController {
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
-        }
-
-        if (startRelayAfterConfig) {
-            try {
-                relayOperationController.startRelay(relayNickname, "guard", model);
-                model.addAttribute("successMessage", "Tor Relay configured and started successfully!");
-            } catch (Exception e) {
-                logger.error("Error starting Tor Relay", e);
-                model.addAttribute("errorMessage", "Failed to start Tor Relay.");
-            }
         }
 
         return "setup";
