@@ -31,20 +31,6 @@ public class BridgeRelayConfig extends BaseRelayConfig {
 
     public BridgeRelayConfig() {
         configWriters = new HashMap<>();
-    }
-
-    public void setServerTransport(String serverTransport) {
-        this.serverTransport = serverTransport;
-        updateConfigWriters();
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-        updateConfigWriters();
-    }
-
-    private void updateConfigWriters() {
-        // Create the Obfs4ConfigWriter instance here, after serverTransport and contact are set
         configWriters.put("obfs4", new Obfs4ConfigWriter(serverTransport, contact));
         configWriters.put("webtunnel", new WebtunnelConfigWriter(webtunnelUrl, path));
         configWriters.put("snowflake", new SnowflakeConfigWriter(snowflakeProxyRunner));
