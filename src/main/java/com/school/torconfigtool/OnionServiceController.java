@@ -288,7 +288,7 @@ public class OnionServiceController {
 
     @GetMapping("/upload/{port}")
     public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
+        List<File> fileNames = getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }
@@ -304,7 +304,7 @@ public class OnionServiceController {
         try {
             String fileDir = "onion/www/service-" + port + "/";
             fileService.uploadFiles(files, fileDir);
-            List<String> fileNames = fileService.getUploadedFiles(fileDir);
+            List<File> fileNames = fileService.getUploadedFiles(fileDir);
             model.addAttribute("uploadedFiles", fileNames);
             model.addAttribute("message", "Files uploaded successfully!");
             return "file_upload_form";
@@ -314,7 +314,7 @@ public class OnionServiceController {
         }
     }
 
-    private List<String> getUploadedFiles(int port) {
+    private List<File> getUploadedFiles(int port) {
         String uploadDir = "onion/www/service-" + port + "/";
         return fileService.getUploadedFiles(uploadDir);
     }
