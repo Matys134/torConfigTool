@@ -50,28 +50,14 @@ public class GuardController {
                                  @RequestParam(required = false) Integer relayBandwidth,
                                  Model model) {
         try {
-            if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "setup";
-            }
-
-            String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
-            Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
-
-            if (RelayUtils.relayExists(relayNickname)) {
-                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "setup";
-            }
-
-            if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
+            String errorMessage = validateGuardConfiguration(relayNickname, relayPort, controlPort);
+            if (errorMessage != null) {
+                model.addAttribute("errorMessage", errorMessage);
                 return "setup";
             }
 
             GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
-            if (!torrcFilePath.toFile().exists()) {
-                TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
-            }
+            createTorrcFile(relayNickname, config);
 
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
@@ -80,6 +66,31 @@ public class GuardController {
         }
 
         return "setup";
+    }
+
+    private String validateGuardConfiguration(String relayNickname, int relayPort, int controlPort) {
+        if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
+            return "One or more ports are already in use.";
+        }
+
+        if (RelayUtils.relayExists(relayNickname)) {
+            return "A relay with the same nickname already exists.";
+        }
+
+        if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
+            return "One or more ports are already in use.";
+        }
+
+        return null;
+    }
+
+    private void createTorrcFile(String relayNickname, GuardRelayConfig config) {
+        String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
+        Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
+
+        if (!torrcFilePath.toFile().exists()) {
+            TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
+        }
     }
 
     private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
