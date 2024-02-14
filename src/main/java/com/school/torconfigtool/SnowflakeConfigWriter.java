@@ -1,5 +1,7 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.config.BridgeRelayConfig;
+
 import java.io.BufferedWriter;
 
 public class SnowflakeConfigWriter implements BridgeConfigWriter {

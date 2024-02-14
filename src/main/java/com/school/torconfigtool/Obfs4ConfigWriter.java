@@ -1,5 +1,7 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.config.BridgeRelayConfig;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 

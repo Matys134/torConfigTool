@@ -1,6 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.config;
 
-import com.school.torconfigtool.config.BaseRelayConfig;
+import com.school.torconfigtool.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;
