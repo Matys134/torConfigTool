@@ -403,7 +403,7 @@
             $.get("/guard/limit-state-and-guard-count", function(data) {
                 if (data.limitOn) {
                     var runningTypeRequest = $.get("/bridge/running-type");
-                    var bridgeConfiguredRequest = $.get("/guard/bridge-configured");
+                    var bridgeConfiguredRequest = $.get("/bridge/bridge-configured");
                     var guardConfiguredRequest = $.get("/guard/guard-configured");
                     var onionConfiguredRequest = $.get("/onion-service/onion-configured");
 
