@@ -28,13 +28,14 @@ public class FileService {
         Path filePath = Paths.get(directory, fileName);
         File fileToRemove = filePath.toFile();
         if (!fileToRemove.exists()) {
-            throw new FileDeletionException("File does not exist: " + fileName);
-        }
-        if (!fileToRemove.canWrite()) {
-            throw new FileDeletionException("No write permissions for file: " + fileName);
+            System.out.println("File does not exist: " + fileName);
+            return;
         }
         if (!fileToRemove.delete()) {
             throw new FileDeletionException("Failed to delete file: " + fileName);
+        }
+        if (fileToRemove.exists()) {
+            System.out.println("File still exists after deletion attempt: " + fileName);
         }
     }
 
