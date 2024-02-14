@@ -27,6 +27,12 @@ public class FileService {
     public void deleteFile(String fileName, String directory) throws FileDeletionException {
         Path filePath = Paths.get(directory, fileName);
         File fileToRemove = filePath.toFile();
+        if (!fileToRemove.exists()) {
+            throw new FileDeletionException("File does not exist: " + fileName);
+        }
+        if (!fileToRemove.canWrite()) {
+            throw new FileDeletionException("No write permissions for file: " + fileName);
+        }
         if (!fileToRemove.delete()) {
             throw new FileDeletionException("Failed to delete file: " + fileName);
         }
