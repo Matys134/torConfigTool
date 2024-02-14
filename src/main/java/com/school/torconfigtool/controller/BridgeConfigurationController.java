@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.BridgeConfigurationService;
+import com.school.torconfigtool.service.BridgeConfigurationService;
 import com.school.torconfigtool.BridgeRelayConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
