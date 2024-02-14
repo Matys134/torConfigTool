@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.config.BaseRelayConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

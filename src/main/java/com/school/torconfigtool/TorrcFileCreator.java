@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.config.BaseRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
