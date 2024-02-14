@@ -7,15 +7,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/bridge")
@@ -24,16 +29,14 @@ public class BridgeController {
     private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private final RelayService relayService;
     private final NginxService nginxService;
-    private final FileService fileService;
 
     private static final String TORRC_DIRECTORY_PATH = "torrc";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     @Autowired
-    public BridgeController(RelayService relayService, NginxService nginxService, FileService fileService) {
+    public BridgeController(RelayService relayService, NginxService nginxService) {
         this.relayService = relayService;
         this.nginxService = nginxService;
-        this.fileService = fileService;
     }
 
     @GetMapping
@@ -258,49 +261,5 @@ public class BridgeController {
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayService.isLimitOn());
-    }
-
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            fileService.uploadFiles(files, fileDir);
-            List<String> fileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", fileNames);
-            model.addAttribute("message", "Files uploaded successfully!");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
-            return "file_upload_form";
-        }
-    }
-
-    @PostMapping("/remove-files/{port}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            for (String fileName : fileNames) {
-                fileService.deleteFile(fileName, fileDir);
-            }
-            List<String> remainingFileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", remainingFileNames);
-            model.addAttribute("message", "Files deleted successfully.");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Error: " + e.getMessage());
-            return "file_upload_form";
-        }
-    }
-
-    private List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
-    }
-
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
-        model.addAttribute("uploadedFiles", fileNames);
-        return "file_upload_form";
     }
 }
