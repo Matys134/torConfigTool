@@ -139,7 +139,7 @@ public class BridgeController {
 
         // Change the ownership of the directory
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
-        Process chownProcess = executeCommand(chownCommand);
+        Process chownProcess = CommandExecutor.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
         }
@@ -151,25 +151,9 @@ public class BridgeController {
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
         System.out.println("Generating certificate: " + command);
 
-        Process certProcess = executeCommand(command);
+        Process certProcess = CommandExecutor.executeCommand(command);
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
-        }
-    }
-
-    private Process executeCommand(String command) {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
-        try {
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                logger.error("Error during command execution. Exit code: " + exitCode);
-            }
-            return process;
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error during command execution", e);
-            return null;
         }
     }
 
