@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
