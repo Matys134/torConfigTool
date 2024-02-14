@@ -1,9 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.BridgeRelayConfig;
-import com.school.torconfigtool.BridgeSetupService;
-import com.school.torconfigtool.NginxService;
-import com.school.torconfigtool.RelayService;
+import com.school.torconfigtool.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +95,8 @@ public class BridgeController {
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
-            BridgeRelayConfig bridgeRelayConfig = new BridgeRelayConfig();
-            bridgeRelayConfig.runSnowflakeProxy();
+            SnowflakeProxyRunner snowflakeProxyRunner = new SnowflakeProxyRunner();
+            snowflakeProxyRunner.runSnowflakeProxy();
             return new ResponseEntity<>("Snowflake proxy started successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
