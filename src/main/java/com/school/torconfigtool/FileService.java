@@ -25,7 +25,12 @@ public class FileService {
     }
 
     public void deleteFile(String fileName, String directory) throws FileDeletionException {
-        Path filePath = Paths.get(directory, fileName);
+        Path filePath;
+        if (fileName.startsWith(directory)) {
+            filePath = Paths.get(fileName);
+        } else {
+            filePath = Paths.get(directory, fileName);
+        }
         File fileToRemove = filePath.toFile();
         if (!fileToRemove.exists()) {
             System.out.println("File does not exist: " + fileName);
