@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.exception;
 
 import com.school.torconfigtool.RelayOperationException;
 import org.springframework.ui.Model;
