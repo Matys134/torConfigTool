@@ -103,11 +103,6 @@ public class BridgeController {
         }
     }
 
-    /**
-     * Endpoint for checking if the bridge limit has been reached.
-     * @param bridgeType the type of the bridge
-     * @return a response entity with a map containing the bridge limit status and the bridge count
-     */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
         Map<String, Object> response = new HashMap<>();
@@ -121,16 +116,10 @@ public class BridgeController {
 
         switch (bridgeType) {
             case "obfs4":
-                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
-                response.put("bridgeCount", bridgeCountByType.get("obfs4"));
+                response = checkBridgeLimitByType(bridgeType, 2, bridgeCountByType);
                 break;
-            case "webtunnel":
-                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
-                response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
-                break;
-            case "snowflake":
-                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
-                response.put("bridgeCount", bridgeCountByType.get("snowflake"));
+            case "webtunnel", "snowflake":
+                response = checkBridgeLimitByType(bridgeType, 1, bridgeCountByType);
                 break;
             default:
                 response.put("bridgeLimitReached", false);
@@ -138,6 +127,13 @@ public class BridgeController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    private Map<String, Object> checkBridgeLimitByType(String bridgeType, int limit, Map<String, Integer> bridgeCountByType) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("bridgeLimitReached", bridgeCountByType.get(bridgeType) >= limit);
+        response.put("bridgeCount", bridgeCountByType.get(bridgeType));
+        return response;
     }
 
     /**
