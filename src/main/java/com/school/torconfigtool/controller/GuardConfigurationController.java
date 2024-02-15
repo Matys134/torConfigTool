@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardConfigurationService;
-import com.school.torconfigtool.GuardRelayConfig;
+import com.school.torconfigtool.config.GuardRelayConfig;
 import com.school.torconfigtool.RelayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -15,18 +15,23 @@ public class IpAddressRetriever {
     public String getLocalIpAddress() {
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (networkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = networkInterfaces.nextElement();
-                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                while (inetAddresses.hasMoreElements()) {
-                    InetAddress inetAddress = inetAddresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
-                        return inetAddress.getHostAddress();
-                    }
-                }
-            }
+            return processNetworkInterfaces(networkInterfaces);
         } catch (SocketException e) {
             LOGGER.error("Failed to get local IP address", e);
+        }
+        return "127.0.0.1";
+    }
+
+    private String processNetworkInterfaces(Enumeration<NetworkInterface> networkInterfaces) {
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+            while (inetAddresses.hasMoreElements()) {
+                InetAddress inetAddress = inetAddresses.nextElement();
+                if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
+                    return inetAddress.getHostAddress();
+                }
+            }
         }
         return "127.0.0.1";
     }
