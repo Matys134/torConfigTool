@@ -39,7 +39,7 @@
 <h1 class="mb-4">File Upload</h1>
 
 <!-- Upload form -->
-<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
+<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/file/upload/{port}(port=${port})}" class="mb-4">
     <input id="file-input" multiple name="files" type="file" class="form-control mb-3">
     <input type="submit" value="Upload" class="btn btn-primary">
 </form>
