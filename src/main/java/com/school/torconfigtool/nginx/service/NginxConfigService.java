@@ -1,7 +1,5 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.nginx.service;
 
-import com.school.torconfigtool.nginx.service.NginxConfigGenerator;
-import com.school.torconfigtool.nginx.service.NginxConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Service class for managing Nginx configurations.
@@ -35,7 +35,7 @@ public class NginxConfigService {
     }
 
     /**
-     * Generates a new Nginx configuration.
+     * Generates a new Nginx configuration using the NginxConfigGenerator.
      */
     public void generateNginxConfig() {
         nginxConfigGenerator.generateNginxConfig();
@@ -50,7 +50,7 @@ public class NginxConfigService {
     }
 
     /**
-     * Reverts the Nginx configuration to its default state.
+     * Reverts the Nginx configuration to its default state using the NginxConfigManager.
      */
     public void revertNginxDefaultConfig() {
         nginxConfigManager.revertNginxDefaultConfig();
@@ -66,11 +66,21 @@ public class NginxConfigService {
         nginxConfigManager.modifyNginxDefaultConfig(programLocation, randomString, webTunnelUrl);
     }
 
+    /**
+     * Generates a new Nginx configuration for a specific onion service port.
+     * @param onionServicePort the port for the onion service.
+     * @throws IOException if an I/O error occurs.
+     */
     public void generateNginxConfig(int onionServicePort) throws IOException {
         String nginxConfig = buildNginxConfig(onionServicePort);
         editNginxConfig(nginxConfig, onionServicePort);
     }
 
+    /**
+     * Builds the Nginx configuration for a specific onion service port.
+     * @param onionServicePort the port for the onion service.
+     * @return the Nginx configuration as a string.
+     */
     private String buildNginxConfig(int onionServicePort) {
 
         String currentDirectory = System.getProperty("user.dir");
@@ -86,6 +96,11 @@ public class NginxConfigService {
                 """, onionServicePort, currentDirectory, onionServicePort);
     }
 
+    /**
+     * Edits the Nginx configuration for a specific onion service port.
+     * @param nginxConfig the Nginx configuration as a string.
+     * @param onionServicePort the port for the onion service.
+     */
     private void editNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
@@ -97,15 +112,11 @@ public class NginxConfigService {
             String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
 
             // Use sudo to copy the temporary file to the actual nginx configuration file
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath);
-            Process process = processBuilder.start();
-            process.waitFor();
+            executeCommand(Arrays.asList("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath));
 
             // Create a symbolic link to the nginx configuration file
             String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServicePort;
-            processBuilder = new ProcessBuilder("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath);
-            process = processBuilder.start();
-            process.waitFor();
+            executeCommand(Arrays.asList("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath));
 
             // Clean up the temporary file
             boolean isDeleted = tempFile.delete();
@@ -116,5 +127,17 @@ public class NginxConfigService {
         } catch (IOException | InterruptedException e) {
             logger.error("Error editing Nginx configuration", e);
         }
+    }
+
+    /**
+     * Executes a command in the system's command line.
+     * @param command the command to be executed as a list of strings.
+     * @throws IOException if an I/O error occurs.
+     * @throws InterruptedException if the current thread is interrupted.
+     */
+    private void executeCommand(List<String> command) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Process process = processBuilder.start();
+        process.waitFor();
     }
 }
