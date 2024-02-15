@@ -1,4 +1,4 @@
-package com.school.torconfigtool.config;
+package com.school.torconfigtool;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

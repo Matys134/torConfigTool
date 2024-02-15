@@ -1,4 +1,4 @@
-package com.school.torconfigtool.config;
+package com.school.torconfigtool;
 
 import com.school.torconfigtool.RelayConfig;
 import lombok.Data;
