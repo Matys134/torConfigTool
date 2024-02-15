@@ -1,6 +1,7 @@
 package com.school.torconfigtool.nginx.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +80,7 @@ public class NginxService {
      * Handles the Nginx reload event.
      */
     @EventListener
-    public void handleNginxReloadEvent() {
+    public void handleNginxReloadEvent(ApplicationEvent event) {
         reloadNginx();
     }
 
