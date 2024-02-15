@@ -1,7 +1,6 @@
 // NginxConfigService.java
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.nginx.service.NginxConfigGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,12 +8,12 @@ import org.springframework.stereotype.Service;
 public class NginxConfigService {
 
     private final NginxConfigGenerator nginxConfigGenerator;
-    private final NginxConfigModifier nginxConfigModifier;
+    private final NginxConfigManager nginxConfigManager;
 
     @Autowired
-    public NginxConfigService(NginxConfigGenerator nginxConfigGenerator, NginxConfigModifier nginxConfigModifier) {
+    public NginxConfigService(NginxConfigGenerator nginxConfigGenerator, NginxConfigManager nginxConfigManager) {
         this.nginxConfigGenerator = nginxConfigGenerator;
-        this.nginxConfigModifier = nginxConfigModifier;
+        this.nginxConfigManager = nginxConfigManager;
     }
 
     public void generateNginxConfig() {
@@ -22,14 +21,14 @@ public class NginxConfigService {
     }
 
     public void changeRootDirectory(String rootDirectory) {
-        nginxConfigModifier.changeRootDirectory(rootDirectory);
+        nginxConfigManager.changeRootDirectory(rootDirectory);
     }
 
     public void revertNginxDefaultConfig() {
-        nginxConfigModifier.revertNginxDefaultConfig();
+        nginxConfigManager.revertNginxDefaultConfig();
     }
 
     public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
-        nginxConfigModifier.modifyNginxDefaultConfig(programLocation, randomString, webTunnelUrl);
+        nginxConfigManager.modifyNginxDefaultConfig(programLocation, randomString, webTunnelUrl);
     }
 }
