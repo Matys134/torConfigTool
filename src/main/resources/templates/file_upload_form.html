@@ -39,7 +39,7 @@
 <h1 class="mb-4">File Upload</h1>
 
 <!-- Upload form -->
-<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/onion-service/upload/{port}(port=${port})}" class="mb-4">
+<form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/file/upload/{port}(port=${port})}" class="mb-4">
     <input id="file-input" multiple name="files" type="file" class="form-control mb-3">
     <input type="submit" value="Upload" class="btn btn-primary">
 </form>
@@ -47,7 +47,7 @@
 <h2 class="mb-3">Uploaded files:</h2>
 
 <!-- Delete form -->
-<form id="delete-form" method="POST" th:action="@{/onion-service/remove-files/{port}(port=${port})}">
+<form id="delete-form" method="POST" th:action="@{/file/remove-files/{port}(port=${port})}">
     <table class="table">
         <thead>
         <tr>
