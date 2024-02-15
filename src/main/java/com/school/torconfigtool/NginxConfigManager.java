@@ -1,7 +1,7 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.NginxConfigWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 public class NginxConfigManager {
 
     private final NginxConfigWriter nginxConfigWriter;
-    private final NginxService nginxService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public NginxConfigManager(NginxConfigWriter nginxConfigWriter, NginxService nginxService) {
+    public NginxConfigManager(NginxConfigWriter nginxConfigWriter, ApplicationEventPublisher eventPublisher) {
         this.nginxConfigWriter = nginxConfigWriter;
-        this.nginxService = nginxService;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -34,7 +34,7 @@ public class NginxConfigManager {
     public void revertNginxDefaultConfig() {
         String rootDirectory = "/home/matys/git/torConfigTool/onion/www/service-80";
         nginxConfigWriter.writeCommonConfig(rootDirectory);
-        nginxService.reloadNginx();
+        eventPublisher.publishEvent(new NginxReloadEvent(this));
     }
 
     /**
@@ -45,6 +45,6 @@ public class NginxConfigManager {
      */
     public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
         nginxConfigWriter.writeModifiedConfig(programLocation, randomString, webTunnelUrl);
-        nginxService.reloadNginx();
+        eventPublisher.publishEvent(new NginxReloadEvent(this));
     }
 }

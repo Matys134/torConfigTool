@@ -1,6 +1,9 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
+import com.school.torconfigtool.nginx.service.NginxConfigService;
+import com.school.torconfigtool.nginx.service.NginxProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +20,6 @@ public class NginxService {
 
     public void startNginx() {
         nginxProcessService.startNginx();
-    }
-
-    public void reloadNginx() {
-        nginxProcessService.reloadNginx();
     }
 
     public void generateNginxConfig() {
@@ -41,5 +40,14 @@ public class NginxService {
 
     public boolean isNginxRunning() {
         return nginxProcessService.isNginxRunning();
+    }
+
+    @EventListener
+    public void handleNginxReloadEvent(NginxReloadEvent event) {
+        reloadNginx();
+    }
+
+    public void reloadNginx() {
+        nginxProcessService.reloadNginx();
     }
 }
