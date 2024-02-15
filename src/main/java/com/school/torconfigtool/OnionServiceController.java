@@ -1,22 +1,24 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.file.service.FileOperationsService;
-import com.school.torconfigtool.file.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/onion-service")
@@ -27,7 +29,6 @@ public class OnionServiceController {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
-    private final FileOperationsService fileOperationsService;
 
     TorConfiguration torConfiguration = new TorConfiguration();
 
@@ -35,13 +36,10 @@ public class OnionServiceController {
     private final RelayOperationsController relayOperationController;
 
     @Autowired
-    private FileService fileService;
-    @Autowired
-    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController, FileOperationsService fileOperationsService) {
+    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationController = relayOperationController; // Initialize the field
         this.onionServicePorts = getAllOnionServicePorts();
-        this.fileOperationsService = fileOperationsService;
 
         // Set the hiddenServicePort here if it's not being set elsewhere
         if (!onionServicePorts.isEmpty()) {
@@ -274,52 +272,6 @@ public class OnionServiceController {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
             return "Unable to read hostname file";
-        }
-    }
-
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<File> fileNames = getUploadedFiles(port);
-        model.addAttribute("uploadedFiles", fileNames);
-        return "file_upload_form";
-    }
-
-    @PostMapping("/remove-files/{port}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
-        String fileDir = "onion/www/service-" + port + "/";
-        return fileOperationsService.removeFiles(fileNames, fileDir, model);
-    }
-
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            fileService.uploadFiles(files, fileDir);
-            List<File> fileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", fileNames);
-            model.addAttribute("message", "Files uploaded successfully!");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
-            return "file_upload_form";
-        }
-    }
-
-    private List<File> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
-    }
-
-    @PostMapping("/refresh-nginx")
-    public ResponseEntity<Void> refreshNginx() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
-            Process process = processBuilder.start();
-            process.waitFor();
-            return ResponseEntity.ok().build();
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error refreshing Nginx", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

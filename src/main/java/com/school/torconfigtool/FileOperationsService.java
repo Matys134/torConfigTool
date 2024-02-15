@@ -1,7 +1,10 @@
-package com.school.torconfigtool.file.service;
+package com.school.torconfigtool;
 
+import com.school.torconfigtool.file.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -92,5 +95,35 @@ public class FileOperationsService {
      */
     public List<File> getUploadedFiles(String fileDir) {
         return fileService.getUploadedFiles(fileDir);
+    }
+
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
+        try {
+            String fileDir = "onion/www/service-" + port + "/";
+            fileService.uploadFiles(files, fileDir);
+            List<File> fileNames = fileService.getUploadedFiles(fileDir);
+            model.addAttribute("uploadedFiles", fileNames);
+            model.addAttribute("message", "Files uploaded successfully!");
+            return "file_upload_form";
+        } catch (Exception e) {
+            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
+            return "file_upload_form";
+        }
+    }
+
+    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
+        String fileDir = "onion/www/service-" + port + "/";
+        return removeFiles(fileNames, fileDir, model);
+    }
+
+    public String showUploadForm(@PathVariable("port") int port, Model model) {
+        List<File> fileNames = getUploadedFiles(port);
+        model.addAttribute("uploadedFiles", fileNames);
+        return "file_upload_form";
+    }
+
+    private List<File> getUploadedFiles(int port) {
+        String uploadDir = "onion/www/service-" + port + "/";
+        return fileService.getUploadedFiles(uploadDir);
     }
 }
