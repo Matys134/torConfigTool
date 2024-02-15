@@ -1,6 +1,6 @@
-package com.school.torconfigtool.controller;
+package com.school.torconfigtool.file.controller;
 
-import com.school.torconfigtool.service.FileOperationsService;
+import com.school.torconfigtool.file.service.FileOperationsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

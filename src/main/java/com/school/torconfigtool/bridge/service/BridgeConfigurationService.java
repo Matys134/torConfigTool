@@ -1,6 +1,6 @@
-package com.school.torconfigtool.service;
+package com.school.torconfigtool.bridge.service;
 
-import com.school.torconfigtool.config.BridgeRelayConfig;
+import com.school.torconfigtool.bridge.config.BridgeRelayConfig;
 import com.school.torconfigtool.RelayConfigService;
 import com.school.torconfigtool.TorrcFileCreator;
 import org.slf4j.Logger;

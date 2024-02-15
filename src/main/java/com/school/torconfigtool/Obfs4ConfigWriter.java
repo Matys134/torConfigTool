@@ -1,7 +1,7 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.config.BridgeConfigWriter;
-import com.school.torconfigtool.config.BridgeRelayConfig;
+import com.school.torconfigtool.bridge.BridgeConfigWriter;
+import com.school.torconfigtool.bridge.config.BridgeRelayConfig;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
