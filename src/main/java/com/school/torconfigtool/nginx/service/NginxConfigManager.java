@@ -1,5 +1,6 @@
 package com.school.torconfigtool.nginx.service;
 
+import com.school.torconfigtool.NginxConfigWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +12,12 @@ import org.springframework.stereotype.Service;
 public class NginxConfigManager {
 
     private final NginxConfigWriter nginxConfigWriter;
+    private final NginxService nginxService;
 
-    /**
-     * Constructs a new NginxConfigManager with the given NginxConfigWriter.
-     * @param nginxConfigWriter the NginxConfigWriter to use for writing the configuration
-     */
     @Autowired
-    public NginxConfigManager(NginxConfigWriter nginxConfigWriter) {
+    public NginxConfigManager(NginxConfigWriter nginxConfigWriter, NginxService nginxService) {
         this.nginxConfigWriter = nginxConfigWriter;
+        this.nginxService = nginxService;
     }
 
     /**
@@ -35,6 +34,7 @@ public class NginxConfigManager {
     public void revertNginxDefaultConfig() {
         String rootDirectory = "/home/matys/git/torConfigTool/onion/www/service-80";
         nginxConfigWriter.writeCommonConfig(rootDirectory);
+        nginxService.reloadNginx();
     }
 
     /**
@@ -45,5 +45,6 @@ public class NginxConfigManager {
      */
     public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
         nginxConfigWriter.writeModifiedConfig(programLocation, randomString, webTunnelUrl);
+        nginxService.reloadNginx();
     }
 }
