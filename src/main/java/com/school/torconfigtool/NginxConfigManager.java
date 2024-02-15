@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 public class NginxConfigManager {
 
     private final NginxConfigWriter nginxConfigWriter;
-    private final NginxConfigGenerator nginxConfigGenerator;
 
     @Autowired
-    public NginxConfigManager(NginxConfigWriter nginxConfigWriter, NginxConfigGenerator nginxConfigGenerator) {
+    public NginxConfigManager(NginxConfigWriter nginxConfigWriter) {
         this.nginxConfigWriter = nginxConfigWriter;
-        this.nginxConfigGenerator = nginxConfigGenerator;
     }
 
     public void changeRootDirectory(String rootDirectory) {
