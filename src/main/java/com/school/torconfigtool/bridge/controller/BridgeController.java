@@ -1,7 +1,7 @@
 package com.school.torconfigtool.bridge.controller;
 
 import com.school.torconfigtool.bridge.service.BridgeSetupService;
-import com.school.torconfigtool.NginxService;
+import com.school.torconfigtool.nginx.service.NginxService;
 import com.school.torconfigtool.RelayService;
 import com.school.torconfigtool.SnowflakeProxyRunner;
 import org.slf4j.Logger;

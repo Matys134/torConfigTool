@@ -1,7 +1,5 @@
 package com.school.torconfigtool.nginx.service;
 
-import com.school.torconfigtool.NginxFileService;
-import com.school.torconfigtool.NginxServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
