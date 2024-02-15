@@ -103,34 +103,37 @@ public class BridgeController {
         }
     }
 
-    private int getBridgeLimit(String bridgeType) {
-        switch (bridgeType) {
-            case "obfs4":
-                return 2;
-            case "webtunnel":
-            case "snowflake":
-                return 1;
-            default:
-                return 0;
-        }
-    }
-
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
         Map<String, Object> response = new HashMap<>();
-        int limit = getBridgeLimit(bridgeType);
+        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
 
-        boolean bridgeLimitReached = isBridgeLimitReached(bridgeType, limit);
-        int bridgeCount = relayService.getBridgeCountByType().getOrDefault(bridgeType, 0);
+        if (!RelayService.isLimitOn()) {
+            response.put("bridgeLimitReached", false);
+            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
+            return ResponseEntity.ok(response);
+        }
 
-        response.put("bridgeLimitReached", bridgeLimitReached);
-        response.put("bridgeCount", bridgeCount);
+        switch (bridgeType) {
+            case "obfs4":
+                response = checkBridgeLimitByType(bridgeType, 2, bridgeCountByType);
+                break;
+            case "webtunnel", "snowflake":
+                response = checkBridgeLimitByType(bridgeType, 1, bridgeCountByType);
+                break;
+            default:
+                response.put("bridgeLimitReached", false);
+                response.put("bridgeCount", 0);
+        }
+
         return ResponseEntity.ok(response);
     }
 
-    private boolean isBridgeLimitReached(String bridgeType, int limit) {
-        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
-        return bridgeCountByType.getOrDefault(bridgeType, 0) >= limit;
+    private Map<String, Object> checkBridgeLimitByType(String bridgeType, int limit, Map<String, Integer> bridgeCountByType) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("bridgeLimitReached", bridgeCountByType.get(bridgeType) >= limit);
+        response.put("bridgeCount", bridgeCountByType.get(bridgeType));
+        return response;
     }
 
     /**
