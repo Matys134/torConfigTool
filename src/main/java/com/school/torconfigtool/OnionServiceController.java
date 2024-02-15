@@ -45,7 +45,7 @@ public class OnionServiceController {
 
         // Set the hiddenServicePort here if it's not being set elsewhere
         if (!onionServicePorts.isEmpty()) {
-            torConfiguration.setHiddenServicePort(onionServicePorts.get(0));
+            torConfiguration.setHiddenServicePort(onionServicePorts.getFirst());
         }
 
         // Check if hiddenServiceDirs directory exists, if not, create it
@@ -109,7 +109,7 @@ public class OnionServiceController {
                 hostnames.put(hiddenServicePortString, hostname);
             } else {
                 logger.warn("Hidden service port is null");
-                hostnames.put(hiddenServicePortString, "Hidden service port is null");
+                hostnames.put(null, "Hidden service port is null");
             }
         }
         return hostnames;
@@ -196,16 +196,6 @@ public class OnionServiceController {
         }
     }
 
-
-    private void restartNginx() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "restart", "nginx");
-            Process process = processBuilder.start();
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error restarting Nginx", e);
-        }
-    }
 
     @PostMapping("/start")
     public String startOnionService(Model model) {
@@ -337,7 +327,7 @@ public class OnionServiceController {
     public ResponseEntity<Map<String, Boolean>> checkOnionConfigured() {
         Map<String, Boolean> response = new HashMap<>();
         // Logic to check if an onion service is configured
-        boolean isOnionConfigured = onionServicePorts.size() > 0;
+        boolean isOnionConfigured = !onionServicePorts.isEmpty();
         response.put("onionConfigured", isOnionConfigured);
         return ResponseEntity.ok(response);
     }
