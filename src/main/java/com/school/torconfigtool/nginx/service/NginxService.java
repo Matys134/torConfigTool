@@ -1,5 +1,6 @@
 package com.school.torconfigtool.nginx.service;
 
+import com.school.torconfigtool.NginxConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.EventListener;
