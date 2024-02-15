@@ -1,7 +1,6 @@
 package com.school.torconfigtool.nginx.service;
 
-import com.school.torconfigtool.nginx.service.NginxConfigGenerator;
-import com.school.torconfigtool.nginx.service.NginxConfigManager;
+import com.school.torconfigtool.NginxConfigManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
