@@ -106,26 +106,27 @@ public class BridgeController {
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
         Map<String, Object> response = new HashMap<>();
-        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
-
-        if (!RelayService.isLimitOn()) {
-            response.put("bridgeLimitReached", false);
-            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
-            return ResponseEntity.ok(response);
-        }
+        int limit = 0;
 
         switch (bridgeType) {
             case "obfs4":
-                response = checkBridgeLimitByType(bridgeType, 2, bridgeCountByType);
+                limit = 2;
                 break;
-            case "webtunnel", "snowflake":
-                response = checkBridgeLimitByType(bridgeType, 1, bridgeCountByType);
+            case "webtunnel":
+            case "snowflake":
+                limit = 1;
                 break;
             default:
                 response.put("bridgeLimitReached", false);
                 response.put("bridgeCount", 0);
+                return ResponseEntity.ok(response);
         }
 
+        boolean bridgeLimitReached = isBridgeLimitReached(bridgeType, limit);
+        int bridgeCount = relayService.getBridgeCountByType().getOrDefault(bridgeType, 0);
+
+        response.put("bridgeLimitReached", bridgeLimitReached);
+        response.put("bridgeCount", bridgeCount);
         return ResponseEntity.ok(response);
     }
 
@@ -134,6 +135,11 @@ public class BridgeController {
         response.put("bridgeLimitReached", bridgeCountByType.get(bridgeType) >= limit);
         response.put("bridgeCount", bridgeCountByType.get(bridgeType));
         return response;
+    }
+
+    private boolean isBridgeLimitReached(String bridgeType, int limit) {
+        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
+        return bridgeCountByType.getOrDefault(bridgeType, 0) >= limit;
     }
 
     /**
