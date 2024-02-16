@@ -1,5 +1,7 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.exception.RelayOperationException;
+import com.school.torconfigtool.util.ProcessManagementService;
 import com.simtechdata.waifupnp.UPnP;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -144,7 +146,7 @@ public class RelayOperationsController {
         if ("guard".equals(relayType)) {
             view = changeRelayState(relayNickname, relayType, model, true);
         } else {
-            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model, true);
+            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
         }
         System.out.println("Relay state changed");
 
@@ -161,11 +163,11 @@ public class RelayOperationsController {
         return view;
     }
 
-    private String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model, boolean start) {
+    private String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
         Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
-        String operation = start ? "start" : "stop";
+        String operation = "start";
         try {
-            processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname, start);
+            processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RelayOperationException | IOException | InterruptedException e) {
             logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
@@ -174,30 +176,17 @@ public class RelayOperationsController {
         return relayOperations(model);
     }
 
-    private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
+    private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
         }
-        if (start) {
+        {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             System.out.println("Executing command: " + command);
             int exitCode = processManagementService.executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
-            }
-        } else {
-            int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
-            if (pid > 0) {
-                String command = "kill -SIGINT " + pid;
-                int exitCode = processManagementService.executeCommand(command);
-                if (exitCode != 0) {
-                    throw new RelayOperationException("Failed to stop Tor Relay service.");
-                }
-            } else if (pid == -1) {
-                throw new RelayOperationException("Tor Relay is not running.");
-            } else {
-                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
             }
         }
     }
@@ -408,9 +397,8 @@ public class RelayOperationsController {
         }
 
         // Replace the "https://yourdomain/path" in the webtunnel link with the extracted webtunnel domain and path
-        String webtunnelLink = "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;
 
-        return webtunnelLink;
+        return "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;
     }
 
     // Method for opening orport of a relay using UPnP
