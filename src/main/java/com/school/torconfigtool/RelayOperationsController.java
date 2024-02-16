@@ -169,38 +169,43 @@ public class RelayOperationsController {
     }
 
     private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
+        checkTorrcFileExists(torrcFilePath, relayNickname);
+        if (start) {
+            startRelay(torrcFilePath);
+        } else {
+            stopRelay(torrcFilePath);
+        }
+    }
+
+    private void checkTorrcFileExists(Path torrcFilePath, String relayNickname) throws RelayOperationException {
         if (!torrcFilePath.toFile().exists()) {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
         }
-        if (start) {
-            // Step 1: Retrieve Fingerprints
-            List<String> allFingerprints = fileManager.getAllRelayFingerprints();
+    }
 
-            // Step 2: Update the torrc File with fingerprints
-            fileManager.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+    private void startRelay(Path torrcFilePath) throws IOException, InterruptedException {
+        List<String> allFingerprints = fileManager.getAllRelayFingerprints();
+        fileManager.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+        String command = "tor -f " + torrcFilePath.toAbsolutePath();
+        System.out.println("Executing command: " + command);
+        int exitCode = processManagementService.executeCommand(command);
+        if (exitCode != 0) {
+            throw new RelayOperationException("Failed to start Tor Relay service.");
+        }
+    }
 
-            // Step 3: Start the Relay
-            String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            System.out.println("Executing command: " + command);
+    private void stopRelay(Path torrcFilePath) throws IOException, InterruptedException {
+        int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
+        if (pid > 0) {
+            String command = "kill -SIGINT " + pid;
             int exitCode = processManagementService.executeCommand(command);
             if (exitCode != 0) {
-                throw new RelayOperationException("Failed to start Tor Relay service.");
+                throw new RelayOperationException("Failed to stop Tor Relay service.");
             }
-
-
+        } else if (pid == -1) {
+            throw new RelayOperationException("Tor Relay is not running.");
         } else {
-            int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
-            if (pid > 0) {
-                String command = "kill -SIGINT " + pid;
-                int exitCode = processManagementService.executeCommand(command);
-                if (exitCode != 0) {
-                    throw new RelayOperationException("Failed to stop Tor Relay service.");
-                }
-            } else if (pid == -1) {
-                throw new RelayOperationException("Tor Relay is not running.");
-            } else {
-                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
-            }
+            throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
         }
     }
 
@@ -411,27 +416,36 @@ public class RelayOperationsController {
     }
 
     private String changeRelayStateAndManagePort(String relayNickname, String relayType, Model model, boolean start) {
-        String view;
-        if ("guard".equals(relayType)) {
-            view = changeRelayState(relayNickname, relayType, model, start);
-        } else {
-            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
-        }
+        String view = changeRelayStateBasedOnType(relayNickname, relayType, model, start);
+        managePortInNewThread(relayNickname, relayType, start);
+        return view;
+    }
 
+    private String changeRelayStateBasedOnType(String relayNickname, String relayType, Model model, boolean start) {
+        if ("guard".equals(relayType)) {
+            return changeRelayState(relayNickname, relayType, model, start);
+        } else {
+            return changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
+        }
+    }
+
+    private void managePortInNewThread(String relayNickname, String relayType, boolean start) {
         new Thread(() -> {
             try {
                 String expectedStatus = start ? "online" : "offline";
                 waitForStatusChange(relayNickname, relayType, expectedStatus);
-                if (start) {
-                    openOrPort(relayNickname, relayType);
-                } else {
-                    closeOrPort(relayNickname, relayType);
-                }
+                managePort(relayNickname, relayType, start);
             } catch (InterruptedException e) {
                 logger.error("Error while waiting for relay to " + (start ? "start" : "stop"), e);
             }
         }).start();
+    }
 
-        return view;
+    private void managePort(String relayNickname, String relayType, boolean start) {
+        if (start) {
+            openOrPort(relayNickname, relayType);
+        } else {
+            closeOrPort(relayNickname, relayType);
+        }
     }
 }
