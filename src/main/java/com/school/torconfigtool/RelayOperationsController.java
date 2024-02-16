@@ -26,6 +26,7 @@ public class RelayOperationsController {
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsController.class);
     private final TorConfigurationService torConfigurationService;
     private final ProcessManagementService processManagementService;
+    private final FileManager fileManager = new FileManager();
 
     public RelayOperationsController(TorConfigurationService torConfigurationService,
                                      ProcessManagementService processManagementService) {
@@ -44,51 +45,59 @@ public class RelayOperationsController {
 
     @GetMapping
     public String relayOperations(Model model) {
-        System.out.println("Inside relayOperations method");
-        String folderPath = torConfigurationService.buildFolderPath();
-        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
+        model.addAttribute("guardConfigs", getGuardConfigs());
+        model.addAttribute("bridgeConfigs", getBridgeConfigs());
+        model.addAttribute("onionConfigs", getOnionConfigs());
+        model.addAttribute("hostnames", getHostnames());
+        model.addAttribute("webtunnelLinks", getWebtunnelLinks());
+        model.addAttribute("upnpPorts", getUPnPPorts());
 
-        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
+        return "relay-operations";
+    }
 
-        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
+    private List<TorConfiguration> getGuardConfigs() {
+        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+    }
 
-        logger.info("OnionConfigs: {}", onionConfigs);
+    private List<TorConfiguration> getBridgeConfigs() {
+        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+    }
 
-        // Create a map to store hostnames for onion services
+    private List<TorConfiguration> getOnionConfigs() {
+        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
+    }
+
+    private Map<String, String> getHostnames() {
+        List<TorConfiguration> onionConfigs = getOnionConfigs();
+        return createHostnamesMap(onionConfigs);
+    }
+
+    private Map<String, String> createHostnamesMap(List<TorConfiguration> onionConfigs) {
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfiguration config : onionConfigs) {
             String hostname = readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
-            logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
+        return hostnames;
+    }
 
-        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
+    private Map<String, String> getWebtunnelLinks() {
         Map<String, String> webtunnelLinks = new HashMap<>();
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
         for (TorConfiguration config : bridgeConfigs) {
             String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
             webtunnelLinks.put(config.getBridgeRelayConfig().getNickname(), webtunnelLink);
-            logger.info("Added webtunnel link for " + config.getBridgeRelayConfig().getNickname() + ": " + webtunnelLink);
         }
-        model.addAttribute("webtunnelLinks", webtunnelLinks);
-
-        logger.info("Hostnames: {}", hostnames);
-        model.addAttribute("hostnames", hostnames);
-
-        List<Integer> upnpPorts = getUPnPPorts();
-        model.addAttribute("upnpPorts", upnpPorts);
-
-        return "relay-operations";
+        return webtunnelLinks;
     }
 
     private List<Integer> getUPnPPorts() {
         List<Integer> upnpPorts = new ArrayList<>();
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
-            int orPort = getOrPort(buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard"));
-            if (UPnP.isMappedTCP(orPort)) {
-                upnpPorts.add(orPort);
-            }
+            Path torrcFilePath = buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard");
+            int orPort = getOrPort(torrcFilePath);
+            upnpPorts.add(orPort);
         }
         return upnpPorts;
     }
@@ -221,7 +230,7 @@ public class RelayOperationsController {
             List<String> allFingerprints = getAllRelayFingerprints();
 
             // Step 2: Update the torrc File with fingerprints
-            updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+            fileManager.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
 
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
@@ -263,7 +272,7 @@ public class RelayOperationsController {
         if (dataDirectoryFiles != null) {
             for (File dataDir : dataDirectoryFiles) {
                 String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
-                String fingerprint = readFingerprint(fingerprintFilePath);
+                String fingerprint = fileManager.readFingerprint(fingerprintFilePath);
                 if (fingerprint != null) {
                     fingerprints.add(fingerprint);
                 }
@@ -272,58 +281,11 @@ public class RelayOperationsController {
         return fingerprints;
     }
 
-    private String readFingerprint(String fingerprintFilePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fingerprintFilePath))) {
-            return reader.readLine().split(" ")[1].trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     // This new method would retrieve fingerprints from all existing relays
     private List<String> getAllRelayFingerprints() {
         // This path should lead to the base directory where all relay data directories are stored
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         return getFingerprints(dataDirectoryPath);
-    }
-
-    // This new method would update or append the fingerprints to the torrc configuration file
-    // This new method would update the MyFamily line with current fingerprints
-    private void updateTorrcWithFingerprints(Path torrcFilePath, List<String> currentFingerprints) throws IOException {
-        // Read the existing torrc file content
-        List<String> fileContent = new ArrayList<>();
-        boolean myFamilyUpdated = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // If the MyFamily line is encountered, update it with the current fingerprints
-                if (line.startsWith("MyFamily")) {
-                    if (!currentFingerprints.isEmpty()) {
-                        line = "MyFamily " + String.join(", ", currentFingerprints);
-                        myFamilyUpdated = true;
-                    } else {
-                        // If there are no current fingerprints, remove the MyFamily line
-                        continue;
-                    }
-                }
-                fileContent.add(line);
-            }
-        }
-
-        // If MyFamily line was not in the file and we have fingerprints, add it
-        if (!myFamilyUpdated && !currentFingerprints.isEmpty()) {
-            fileContent.add("MyFamily " + String.join(", ", currentFingerprints));
-        }
-
-        // Write the updated content back to the torrc file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(torrcFilePath.toFile()))) {
-            for (String line : fileContent) {
-                writer.write(line);
-                writer.newLine();
-            }
-        }
     }
 
     @PostMapping("/remove")
@@ -376,7 +338,7 @@ public class RelayOperationsController {
     private String getWebtunnelLink(String relayNickname) {
         String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
         String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";
-        String fingerprint = readFingerprint(fingerprintFilePath);
+        String fingerprint = fileManager.readFingerprint(fingerprintFilePath);
 
         // Construct the path to the torrc file
         String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "torrc-" + relayNickname + "_bridge";
