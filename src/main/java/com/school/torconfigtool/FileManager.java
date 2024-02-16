@@ -119,4 +119,8 @@ public class FileManager {
     public String buildDataDirectoryPath(String relayNickname) {
         return System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname;
     }
+
+    public Path buildTorrcFilePath(String relayNickname, String relayType) {
+        return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
+    }
 }

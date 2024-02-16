@@ -87,7 +87,7 @@ public class RelayOperationsController {
         List<Integer> upnpPorts = new ArrayList<>();
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
-            Path torrcFilePath = buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard");
+            Path torrcFilePath = fileManager.buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard");
             int orPort = fileManager.getOrPort(torrcFilePath);
             upnpPorts.add(orPort);
         }
@@ -120,7 +120,7 @@ public class RelayOperationsController {
     }
 
     private String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType);
         String operation = "start";
         try {
             processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
@@ -150,13 +150,13 @@ public class RelayOperationsController {
     @GetMapping("/status")
     @ResponseBody
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
-        String torrcFilePath = buildTorrcFilePath(relayNickname, relayType).toString();
+        String torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType).toString();
         int pid = processManagementService.getTorRelayPID(torrcFilePath);
         return pid > 0 ? "online" : (pid == -1 ? "offline" : "error");
     }
 
     private String changeRelayState(String relayNickname, String relayType, Model model, boolean start) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
         try {
             processRelayOperation(torrcFilePath, relayNickname, start);
@@ -205,18 +205,13 @@ public class RelayOperationsController {
     }
 
 
-    private Path buildTorrcFilePath(String relayNickname, String relayType) {
-        return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
-    }
-
-
     @PostMapping("/remove")
     @ResponseBody
     public Map<String, Object> removeRelay(@RequestParam String relayNickname, @RequestParam String relayType) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Build paths for Torrc file and DataDirectory
-            Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            Path torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType);
             String dataDirectoryPath = fileManager.buildDataDirectoryPath(relayNickname);
 
             // Delete Torrc file
@@ -287,7 +282,7 @@ public class RelayOperationsController {
     public Map<String, Object> openOrPort(@RequestParam String relayNickname, @RequestParam String relayType) {
         Map<String, Object> response = new HashMap<>();
         // Build the path to the torrc file
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType);
 
         // Get the orport from the torrc file
         int orPort = fileManager.getOrPort(torrcFilePath);
@@ -406,7 +401,7 @@ public class RelayOperationsController {
     }
 
     private void closeOrPort(String relayNickname, String relayType) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = fileManager.buildTorrcFilePath(relayNickname, relayType);
         int orPort = fileManager.getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
     }
