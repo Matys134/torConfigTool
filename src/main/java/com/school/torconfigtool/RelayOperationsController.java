@@ -45,22 +45,14 @@ public class RelayOperationsController {
 
     @GetMapping
     public String relayOperations(Model model) {
-        model.addAttribute("guardConfigs", getGuardConfigs());
-        model.addAttribute("bridgeConfigs", getBridgeConfigs());
-        model.addAttribute("onionConfigs", getOnionConfigs());
+        model.addAttribute("guardConfigs", getConfigs("guard"));
+        model.addAttribute("bridgeConfigs", getConfigs("bridge"));
+        model.addAttribute("onionConfigs", getConfigs("onion"));
         model.addAttribute("hostnames", getHostnames());
         model.addAttribute("webtunnelLinks", getWebtunnelLinks());
         model.addAttribute("upnpPorts", getUPnPPorts());
 
         return "relay-operations";
-    }
-
-    private List<TorConfiguration> getGuardConfigs() {
-        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
-    }
-
-    private List<TorConfiguration> getBridgeConfigs() {
-        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
     }
 
     private List<TorConfiguration> getOnionConfigs() {
@@ -105,19 +97,7 @@ public class RelayOperationsController {
 
     @PostMapping("/stop")
     public String stopRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        String view = changeRelayState(relayNickname, relayType, model, false);
-
-        new Thread(() -> {
-            try {
-                waitForStatusChange(relayNickname, relayType, "offline");
-                // Close the ORPort after the relay has stopped
-                closeOrPort(relayNickname, relayType);
-            } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to stop", e);
-            }
-        }).start();
-
-        return view;
+        return changeRelayStateAndManagePort(relayNickname, relayType, model, false);
     }
 
     private void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
@@ -136,25 +116,7 @@ public class RelayOperationsController {
 
     @PostMapping("/start")
     public String startRelay(@RequestParam String relayNickname, @RequestParam String relayType, Model model) {
-        String view;
-        if ("guard".equals(relayType)) {
-            view = changeRelayState(relayNickname, relayType, model, true);
-        } else {
-            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
-        }
-        System.out.println("Relay state changed");
-
-        new Thread(() -> {
-            try {
-                waitForStatusChange(relayNickname, relayType, "online");
-                openOrPort(relayNickname, relayType);
-            } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to start", e);
-            }
-        }).start();
-        System.out.println("Returning view");
-
-        return view;
+        return changeRelayStateAndManagePort(relayNickname, relayType, model, true);
     }
 
     private String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
@@ -447,5 +409,34 @@ public class RelayOperationsController {
         Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
         int orPort = fileManager.getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
+    }
+
+    private List<TorConfiguration> getConfigs(String configType) {
+        return torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), configType);
+    }
+
+    private String changeRelayStateAndManagePort(String relayNickname, String relayType, Model model, boolean start) {
+        String view;
+        if ("guard".equals(relayType)) {
+            view = changeRelayState(relayNickname, relayType, model, start);
+        } else {
+            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
+        }
+
+        new Thread(() -> {
+            try {
+                String expectedStatus = start ? "online" : "offline";
+                waitForStatusChange(relayNickname, relayType, expectedStatus);
+                if (start) {
+                    openOrPort(relayNickname, relayType);
+                } else {
+                    closeOrPort(relayNickname, relayType);
+                }
+            } catch (InterruptedException e) {
+                logger.error("Error while waiting for relay to " + (start ? "start" : "stop"), e);
+            }
+        }).start();
+
+        return view;
     }
 }
