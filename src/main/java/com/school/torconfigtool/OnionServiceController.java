@@ -8,8 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,20 +29,17 @@ public class OnionServiceController {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
-    private final TorService torService;
-    private final NginxConfigService nginxConfigService;
 
     TorConfiguration torConfiguration = new TorConfiguration();
 
+    // Add a field for RelayOperationsController
     private final RelayOperationsController relayOperationController;
 
     @Autowired
-    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController, TorService torService, NginxConfigService nginxConfigService) {
+    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationController = relayOperationController; // Initialize the field
         this.onionServicePorts = getAllOnionServicePorts();
-        this.torService = torService;
-        this.nginxConfigService = nginxConfigService;
 
         // Set the hiddenServicePort here if it's not being set elsewhere
         if (!onionServicePorts.isEmpty()) {
@@ -123,8 +125,8 @@ public class OnionServiceController {
         try {
             String pathToFile = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
             if (!new File(pathToFile).exists()) {
-                torService.createTorrcFile(pathToFile, onionServicePort);
-                nginxConfigService.generateNginxConfig(onionServicePort);
+                createTorrcFile(pathToFile, onionServicePort);
+                generateNginxConfig(onionServicePort);
 
                 // Restart nginx
                 relayOperationController.reloadNginx();
@@ -139,8 +141,57 @@ public class OnionServiceController {
         return "setup";
     }
 
-    private String readHostnameFile(int port) {
-        return torService.readHostnameFile(port);
+    private void generateNginxConfig(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxConfig(onionServicePort);
+        editNginxConfig(nginxConfig, onionServicePort);
+    }
+
+    private String buildNginxConfig(int onionServicePort) {
+
+        String currentDirectory = System.getProperty("user.dir");
+        // Build the server block
+        return String.format("""
+                server {
+                    listen 127.0.0.1:%d;
+                    server_name test;
+                    access_log /var/log/nginx/my-website.log;
+                    index index.html;
+                    root %s/onion/www/service-%d;
+                }
+                """, onionServicePort, currentDirectory, onionServicePort);
+    }
+
+
+    private void editNginxConfig(String nginxConfig, int onionServicePort) {
+        try {
+            // Write the nginxConfig to a temporary file
+            File tempFile = File.createTempFile("nginx_config", null);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+                writer.write(nginxConfig);
+            }
+
+            String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
+
+            // Use sudo to copy the temporary file to the actual nginx configuration file
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath);
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            // Create a symbolic link to the nginx configuration file
+            String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServicePort;
+            processBuilder = new ProcessBuilder("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath);
+            process = processBuilder.start();
+            process.waitFor();
+
+            // Clean up the temporary file
+            boolean isDeleted = tempFile.delete();
+
+            if (!isDeleted) {
+                logger.error("Failed to delete temporary file: " + tempFile);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error editing Nginx configuration", e);
+        }
     }
 
 
@@ -169,6 +220,58 @@ public class OnionServiceController {
             logger.error("Error starting Tor Onion Service", e);
             // Log and handle any exceptions that occur during the start
             return false;
+        }
+    }
+
+    private void createTorrcFile(String filePath, int onionServicePort) throws IOException {
+        File torrcFile = new File(filePath);
+
+        // Check if the parent directories exist; if not, attempt to create them
+        if (!torrcFile.getParentFile().exists() && !torrcFile.getParentFile().mkdirs()) {
+            throw new IOException("Failed to create parent directories for: " + filePath);
+        }
+
+        try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
+            String currentDirectory = System.getProperty("user.dir");
+            String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
+
+            File wwwDir = new File(currentDirectory + "/onion/www");
+            if (!wwwDir.exists() && !wwwDir.mkdirs()) {
+                throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
+            }
+
+            File serviceDir = new File(wwwDir, "service-" + onionServicePort);
+            if (!serviceDir.exists() && !serviceDir.mkdirs()) {
+                throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
+            }
+
+            torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
+            torrcWriter.newLine();
+            torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
+            torrcWriter.newLine();
+            torrcWriter.write("RunAsDaemon 1");
+            torrcWriter.newLine();
+            torrcWriter.write("SocksPort 0");
+
+            File indexHtml = new File(serviceDir, "index.html");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
+                writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
+            }
+        }
+    }
+
+
+    private String readHostnameFile(int port) {
+        // Get the current working directory
+        String currentDirectory = System.getProperty("user.dir");
+
+        // Build the correct path to the hostname file
+        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
+        System.out.println(path);
+        try {
+            return new String(Files.readAllBytes(path));
+        } catch (IOException e) {
+            return "Unable to read hostname file";
         }
     }
 
