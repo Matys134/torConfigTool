@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.bridge.BridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -90,15 +91,15 @@ public class TorConfigurationService {
         } else if (line.startsWith("BandwidthRate")) {
             config.setBandwidthRate(line.split(" ")[1].trim());
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
-            ((BridgeRelayConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
+            ((BridgeConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
                 String fullUrl = line.split("=")[1].trim();
                 try {
                     java.net.URL url = new java.net.URL(fullUrl);
                     String webtunnelUrl = url.getHost();
                     String path = url.getPath().substring(1); // Remove the leading "/"
-                    ((BridgeRelayConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
-                    ((BridgeRelayConfig) relayConfig).setPath(path);
+                    ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
+                    ((BridgeConfig) relayConfig).setPath(path);
                 } catch (java.net.MalformedURLException e) {
                     logger.error("Invalid webtunnel URL: " + fullUrl, e);
                 }
@@ -114,10 +115,10 @@ public class TorConfigurationService {
             }
             relayConfig = config.getGuardRelayConfig();
         } else if ("bridge".equals(relayType)) {
-            if (config.getBridgeRelayConfig() == null) {
-                config.setBridgeRelayConfig(new BridgeRelayConfig());
+            if (config.getBridgeConfig() == null) {
+                config.setBridgeConfig(new BridgeConfig());
             }
-            relayConfig = config.getBridgeRelayConfig();
+            relayConfig = config.getBridgeConfig();
         }
 
         return relayConfig;

@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.bridge.BridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -105,10 +106,10 @@ public class RelayService {
         bridgeCountByType.put("snowflake", 0);
 
         // Get the list of all bridges
-        List<BridgeRelayConfig> bridges = getAllBridges();
+        List<BridgeConfig> bridges = getAllBridges();
 
         // Count the number of each type of bridge
-        for (BridgeRelayConfig bridge : bridges) {
+        for (BridgeConfig bridge : bridges) {
             String bridgeType = bridge.getBridgeType();
             bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
         }
@@ -121,15 +122,15 @@ public class RelayService {
         return bridgeCountByType;
     }
 
-    public List<BridgeRelayConfig> getAllBridges() {
-        List<BridgeRelayConfig> bridges = new ArrayList<>();
+    public List<BridgeConfig> getAllBridges() {
+        List<BridgeConfig> bridges = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
 
         if (files != null) {
             for (File file : files) {
                 try (Scanner scanner = new Scanner(file)) {
-                    BridgeRelayConfig bridge = new BridgeRelayConfig();
+                    BridgeConfig bridge = new BridgeConfig();
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         if (line.startsWith("Nickname")) {

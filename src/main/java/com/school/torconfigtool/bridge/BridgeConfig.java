@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.bridge;
 
+import com.school.torconfigtool.SnowflakeProxyService;
 import com.school.torconfigtool.config.BaseRelayConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,7 @@ import java.io.IOException;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BridgeRelayConfig extends BaseRelayConfig {
+public class BridgeConfig extends BaseRelayConfig {
     private String serverTransport;
     private String relayType;
     private String webtunnelDomain;
@@ -20,7 +21,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     private String email;
     private String path;
     private String bridgeType;
-    private static final Logger logger = LoggerFactory.getLogger(BridgeRelayConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(BridgeConfig.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();
 

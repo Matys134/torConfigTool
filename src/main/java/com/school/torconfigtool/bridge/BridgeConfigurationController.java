@@ -1,6 +1,5 @@
 package com.school.torconfigtool.bridge;
 
-import com.school.torconfigtool.BridgeRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class BridgeConfigurationController {
      * @return a ResponseEntity with the status and a message indicating the result of the operation
      */
     @PostMapping
-    public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeRelayConfig config) {
+    public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
         Map<String, String> response = new HashMap<>();
         try {
             boolean success = bridgeConfigurationService.updateConfiguration(config);

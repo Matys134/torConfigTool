@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.bridge.BridgeConfig;
 import com.school.torconfigtool.config.BaseRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class TorrcFileCreator {
                 writer.newLine();
             }
 
-            if (config instanceof BridgeRelayConfig) {
+            if (config instanceof BridgeConfig) {
                 config.writeSpecificConfig(writer);
             } else if (config instanceof GuardRelayConfig) {
                 config.writeSpecificConfig(writer);

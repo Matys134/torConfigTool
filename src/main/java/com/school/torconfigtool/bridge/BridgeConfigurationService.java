@@ -1,6 +1,5 @@
 package com.school.torconfigtool.bridge;
 
-import com.school.torconfigtool.BridgeRelayConfig;
 import com.school.torconfigtool.RelayConfigService;
 import com.school.torconfigtool.TorrcFileCreator;
 import org.slf4j.Logger;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
  * Implements the RelayConfigService interface for BridgeRelayConfig objects.
  */
 @Service
-public class BridgeConfigurationService implements RelayConfigService<BridgeRelayConfig> {
+public class BridgeConfigurationService implements RelayConfigService<BridgeConfig> {
 
     // Logger for logging information and errors
     private static final Logger logger = LoggerFactory.getLogger(BridgeConfigurationService.class);
@@ -29,7 +28,7 @@ public class BridgeConfigurationService implements RelayConfigService<BridgeRela
      * @return true if the configuration was successfully updated, false otherwise.
      */
     @Override
-    public boolean updateConfiguration(BridgeRelayConfig config) {
+    public boolean updateConfiguration(BridgeConfig config) {
         try {
             // Build the file path for the torrc file
             String torrcFilePath = buildTorrcFilePath(config.getNickname());

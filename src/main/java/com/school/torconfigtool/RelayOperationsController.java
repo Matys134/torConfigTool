@@ -64,9 +64,9 @@ public class RelayOperationsController {
         List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfiguration config : bridgeConfigs) {
-            String webtunnelLink = getWebtunnelLink(config.getBridgeRelayConfig().getNickname());
-            webtunnelLinks.put(config.getBridgeRelayConfig().getNickname(), webtunnelLink);
-            logger.info("Added webtunnel link for " + config.getBridgeRelayConfig().getNickname() + ": " + webtunnelLink);
+            String webtunnelLink = getWebtunnelLink(config.getBridgeConfig().getNickname());
+            webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
+            logger.info("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
 
@@ -493,7 +493,7 @@ public class RelayOperationsController {
         // Get the list of all webTunnels
         List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
         for (TorConfiguration config : bridgeConfigs) {
-            allServices.add(config.getBridgeRelayConfig().getNickname());
+            allServices.add(config.getBridgeConfig().getNickname());
         }
         return allServices;
     }

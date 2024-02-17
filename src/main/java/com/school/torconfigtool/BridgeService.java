@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.bridge.BridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,10 @@ public class BridgeService {
 
     private final RelayOperationsController relayOperationController;
     private final NginxService nginxService;
-    private final FileService fileService;
 
-    public BridgeService(RelayOperationsController relayOperationController, NginxService nginxService, FileService fileService) {
+    public BridgeService(RelayOperationsController relayOperationController, NginxService nginxService) {
         this.relayOperationController = relayOperationController;
         this.nginxService = nginxService;
-        this.fileService = fileService;
     }
 
     public void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) throws Exception {
@@ -41,7 +40,7 @@ public class BridgeService {
         // Log the bridgeType before creating the BridgeRelayConfig object
         logger.info("Bridge type before creating BridgeRelayConfig: " + bridgeType);
 
-        BridgeRelayConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
+        BridgeConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
 
         // Log the bridgeType after creating the BridgeRelayConfig object
         logger.info("Bridge type after creating BridgeRelayConfig: " + config.getBridgeType());
@@ -75,8 +74,8 @@ public class BridgeService {
         }
     }
 
-    private BridgeRelayConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
-        BridgeRelayConfig config = new BridgeRelayConfig();
+    private BridgeConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
+        BridgeConfig config = new BridgeConfig();
         config.setBridgeType(bridgeType);
 
         // Log the bridgeType after setting it in the BridgeRelayConfig object
@@ -145,7 +144,7 @@ public class BridgeService {
         }
     }
 
-    public void updateTorrcFile(BridgeRelayConfig config) throws IOException {
+    public void updateTorrcFile(BridgeConfig config) throws IOException {
         String torrcFileName = TORRC_FILE_PREFIX + config.getNickname() + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
@@ -157,10 +156,5 @@ public class BridgeService {
             }
         }
         Files.write(torrcFilePath, lines);
-    }
-
-    public List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
     }
 }
