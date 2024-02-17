@@ -1,6 +1,5 @@
 package com.school.torconfigtool.guard;
 
-import com.school.torconfigtool.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ public class GuardConfigurationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> updateGuardConfiguration(@RequestBody GuardRelayConfig config) {
+    public ResponseEntity<?> updateGuardConfiguration(@RequestBody GuardConfig config) {
         try {
             boolean success = guardConfigurationService.updateConfiguration(config);
             if (success) {

@@ -1,6 +1,7 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.bridge.BridgeConfig;
+import com.school.torconfigtool.guard.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -110,10 +111,10 @@ public class TorConfigurationService {
         RelayConfig relayConfig = null;
 
         if ("guard".equals(relayType)) {
-            if (config.getGuardRelayConfig() == null) {
-                config.setGuardRelayConfig(new GuardRelayConfig());
+            if (config.getGuardConfig() == null) {
+                config.setGuardConfig(new GuardConfig());
             }
-            relayConfig = config.getGuardRelayConfig();
+            relayConfig = config.getGuardConfig();
         } else if ("bridge".equals(relayType)) {
             if (config.getBridgeConfig() == null) {
                 config.setBridgeConfig(new BridgeConfig());

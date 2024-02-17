@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.guard;
 
+import com.school.torconfigtool.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This controller class is responsible for handling requests related to Guard Relays.
+ */
 @Controller
 @RequestMapping("/guard")
 public class GuardController {
@@ -26,13 +30,27 @@ public class GuardController {
 
     private final RelayService relayService;
     private final RelayOperationsController relayOperationController;
+    private final GuardConfigurationService guardConfigurationService;
 
-
-    public GuardController(RelayService relayService, RelayOperationsController relayOperationController) {
+    /**
+     * Default constructor for GuardController.
+     *
+     * @param relayService              The RelayService instance to be injected.
+     * @param relayOperationController  The RelayOperationsController instance to be injected.
+     * @param guardConfigurationService The GuardConfigurationService instance to be injected.
+     */
+    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardConfigurationService guardConfigurationService) {
         this.relayService = relayService;
         this.relayOperationController = relayOperationController;
+        this.guardConfigurationService = guardConfigurationService;
     }
 
+    /**
+     * Handles the request for the Guard Relay configuration form.
+     *
+     * @param model The model to be used for rendering the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping
     public String guardConfigurationForm(Model model) {
         logger.info("Relay configuration form requested");
@@ -44,6 +62,18 @@ public class GuardController {
         return "setup";
     }
 
+    /**
+     * Handles the request for configuring a Guard Relay.
+     *
+     * @param relayNickname       The nickname of the Guard Relay.
+     * @param relayPort           The port of the Guard Relay.
+     * @param relayContact        The contact information of the Guard Relay.
+     * @param controlPort         The control port of the Guard Relay.
+     * @param relayBandwidth      The bandwidth of the Guard Relay.
+     * @param startRelayAfterConfig Whether to start the relay after configuration.
+     * @param model               The model to be used for rendering the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/configure")
     public String configureGuard(@RequestParam String relayNickname,
                                  @RequestParam int relayPort,
@@ -71,7 +101,7 @@ public class GuardController {
                 return "setup";
             }
 
-            GuardRelayConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+            GuardConfig config = guardConfigurationService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }
@@ -95,19 +125,12 @@ public class GuardController {
         return "setup";
     }
 
-    private GuardRelayConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
-        GuardRelayConfig config = new GuardRelayConfig();
-        config.setNickname(relayNickname);
-        config.setOrPort(String.valueOf(relayPort));
-        config.setContact(relayContact);
-        config.setControlPort(String.valueOf(controlPort));
-        if (relayBandwidth != null) {
-            config.setBandwidthRate(String.valueOf(relayBandwidth));
-        }
-
-        return config;
-    }
-
+    /**
+     * Handles GET requests to the /limit-reached endpoint.
+     * Checks if the guard limit has been reached.
+     *
+     * @return a response entity with the result
+     */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkGuardLimit() {
         Map<String, Object> response = new HashMap<>();
@@ -124,6 +147,12 @@ public class GuardController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Handles GET requests to the /bridge-configured endpoint.
+     * Checks if a bridge has been configured.
+     *
+     * @return a response entity with the result
+     */
     @GetMapping("/bridge-configured")
     public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
         Map<String, Boolean> response = new HashMap<>();
@@ -131,6 +160,12 @@ public class GuardController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Handles GET requests to the /limit-state-and-guard-count endpoint.
+     * Gets the limit state and guard count.
+     *
+     * @return a response entity with the result
+     */
     @GetMapping("/limit-state-and-guard-count")
     public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
         Map<String, Object> response = new HashMap<>();
@@ -139,6 +174,12 @@ public class GuardController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Handles GET requests to the /guard-configured endpoint.
+     * Checks if a guard is configured.
+     *
+     * @return a response entity with the result
+     */
     @GetMapping("/guard-configured")
     public ResponseEntity<Map<String, Boolean>> checkGuardConfigured() {
         Map<String, Boolean> response = new HashMap<>();

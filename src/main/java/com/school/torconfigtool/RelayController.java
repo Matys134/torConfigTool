@@ -1,6 +1,7 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.bridge.BridgeConfig;
+import com.school.torconfigtool.guard.GuardConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +33,8 @@ public class RelayController {
         }
 
         // Fetch the list of all guards
-        List<GuardRelayConfig> guards = relayService.getAllGuards();
-        for (GuardRelayConfig guard : guards) {
+        List<GuardConfig> guards = relayService.getAllGuards();
+        for (GuardConfig guard : guards) {
             RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
             relayInfoList.add(relayInfo);
         }

@@ -83,7 +83,7 @@ public class RelayOperationsController {
         List<Integer> upnpPorts = new ArrayList<>();
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
-            int orPort = getOrPort(buildTorrcFilePath(config.getGuardRelayConfig().getNickname(), "guard"));
+            int orPort = getOrPort(buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
             if (UPnP.isMappedTCP(orPort)) {
                 upnpPorts.add(orPort);
             }
@@ -533,14 +533,14 @@ public class RelayOperationsController {
             List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
             for (TorConfiguration config : guardConfigs) {
                 if (enable) {
-                    String status = getRelayStatus(config.getGuardRelayConfig().getNickname(), "guard");
+                    String status = getRelayStatus(config.getGuardConfig().getNickname(), "guard");
                     if ("online".equals(status)) {
                         // Open the ORPort
-                        openOrPort(config.getGuardRelayConfig().getNickname(), "guard");
+                        openOrPort(config.getGuardConfig().getNickname(), "guard");
                     }
                 } else {
                     // Close the ORPort
-                    closeOrPort(config.getGuardRelayConfig().getNickname(), "guard");
+                    closeOrPort(config.getGuardConfig().getNickname(), "guard");
                 }
             }
             response.put("success", true);
