@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 
 @Data
@@ -23,6 +22,7 @@ public class BridgeRelayConfig extends BaseRelayConfig {
     private String bridgeType;
     private static final Logger logger = LoggerFactory.getLogger(BridgeRelayConfig.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
+    private SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();
 
     @Override
     public void writeSpecificConfig(BufferedWriter writer) throws IOException {
@@ -51,47 +51,11 @@ public class BridgeRelayConfig extends BaseRelayConfig {
                 writer.newLine();
                 break;
             case "snowflake":
-                runSnowflakeProxy();
+                snowflakeProxyService.runSnowflakeProxy();
                 break;
                 default:
                     logger.error("Unknown bridge type: " + getBridgeType());
         }
-    }
-
-    public void runSnowflakeProxy() {
-        try {
-            // Command to clone the snowflake repository
-            ProcessBuilder gitCloneProcessBuilder = new ProcessBuilder("git", "clone", "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake.git");
-            gitCloneProcessBuilder.redirectErrorStream(true);
-            Process gitCloneProcess = gitCloneProcessBuilder.start();
-            gitCloneProcess.waitFor();
-
-            // Command to build the snowflake proxy
-            Process runProxyProcess = getProcess();
-            runProxyProcess.waitFor();
-
-            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
-            if (!snowflakeProxyRunningFile.createNewFile()) {
-                logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
-            }
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Process getProcess() throws IOException, InterruptedException {
-        ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
-        goBuildProcessBuilder.directory(new File("snowflake/proxy"));
-        goBuildProcessBuilder.redirectErrorStream(true);
-        Process goBuildProcess = goBuildProcessBuilder.start();
-        goBuildProcess.waitFor();
-
-        // Command to run the snowflake proxy
-        ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
-        runProxyProcessBuilder.directory(new File("snowflake/proxy"));
-        runProxyProcessBuilder.redirectErrorStream(true);
-        return runProxyProcessBuilder.start();
     }
 
     public void setBridgeType(String bridgeType) {

@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.bridge;
 
+import com.school.torconfigtool.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,18 +28,21 @@ public class BridgeController {
     private final RelayService relayService;
     private final NginxService nginxService;
     private final BridgeService bridgeService;
+    private final SnowflakeProxyService snowflakeProxyService;
 
     /**
-     * Constructor for BridgeController.
-     * @param relayService The service for managing Tor relays.
-     * @param nginxService The service for managing Nginx.
-     * @param bridgeService The service for managing Tor bridges.
+     * Constructor for the BridgeController.
+     * @param relayService The relay service.
+     * @param nginxService The Nginx service.
+     * @param bridgeService The bridge service.
+     * @param snowflakeProxyService The snowflake proxy service.
      */
     @Autowired
-    public BridgeController(RelayService relayService, NginxService nginxService, BridgeService bridgeService) {
+    public BridgeController(RelayService relayService, NginxService nginxService, BridgeService bridgeService, SnowflakeProxyService snowflakeProxyService) {
         this.relayService = relayService;
         this.nginxService = nginxService;
         this.bridgeService = bridgeService;
+        this.snowflakeProxyService = snowflakeProxyService;
     }
 
     /**
@@ -101,8 +107,7 @@ public class BridgeController {
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
-            BridgeRelayConfig bridgeRelayConfig = new BridgeRelayConfig();
-            bridgeRelayConfig.runSnowflakeProxy();
+            snowflakeProxyService.runSnowflakeProxy();
             return new ResponseEntity<>("Snowflake proxy started successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
