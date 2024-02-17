@@ -1,5 +1,7 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
+import com.school.torconfigtool.nginx.service.NginxConfigGenerator;
+import com.school.torconfigtool.nginx.service.NginxFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,6 @@ public class NginxConfigWriter {
     private final NginxConfigGenerator nginxConfigGenerator;
     private final NginxFileService nginxFileService;
 
-    /**
-     * Constructor for the NginxConfigWriter class.
-     *
-     * @param nginxConfigGenerator a service for generating Nginx configuration lines
-     * @param nginxFileService a service for handling Nginx file operations
-     */
     @Autowired
     public NginxConfigWriter(NginxConfigGenerator nginxConfigGenerator, NginxFileService nginxFileService) {
         this.nginxConfigGenerator = nginxConfigGenerator;

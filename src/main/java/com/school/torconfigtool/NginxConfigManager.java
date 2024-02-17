@@ -1,6 +1,5 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.nginx.event.NginxReloadEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -12,17 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class NginxConfigManager {
 
-    // An instance of NginxConfigWriter to perform the actual configuration changes
     private final NginxConfigWriter nginxConfigWriter;
-
-    // An instance of ApplicationEventPublisher to publish events
     private final ApplicationEventPublisher eventPublisher;
 
-    /**
-     * Constructor for the NginxConfigManager class.
-     * @param nginxConfigWriter an instance of NginxConfigWriter
-     * @param eventPublisher an instance of ApplicationEventPublisher
-     */
     @Autowired
     public NginxConfigManager(NginxConfigWriter nginxConfigWriter, ApplicationEventPublisher eventPublisher) {
         this.nginxConfigWriter = nginxConfigWriter;
@@ -39,7 +30,6 @@ public class NginxConfigManager {
 
     /**
      * Reverts the Nginx configuration to its default state.
-     * It also publishes an event to reload the Nginx configuration.
      */
     public void revertNginxDefaultConfig() {
         String rootDirectory = "/home/matys/git/torConfigTool/onion/www/service-80";
@@ -49,7 +39,6 @@ public class NginxConfigManager {
 
     /**
      * Modifies the default Nginx configuration with the given parameters.
-     * It also publishes an event to reload the Nginx configuration.
      * @param programLocation the location of the program
      * @param randomString a random string
      * @param webTunnelUrl the URL of the web tunnel
