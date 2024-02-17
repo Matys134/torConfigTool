@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,18 +79,17 @@ public class FileOperationsService {
      * @param message The message to be added to the model.
      */
     private void updateModelWithFiles(String fileDir, Model model, String message) {
-        List<File> fileNames = fileService.getUploadedFiles(fileDir);
+        List<String> fileNames = fileService.getUploadedFiles(fileDir);
         model.addAttribute("uploadedFiles", fileNames);
         model.addAttribute("message", message);
     }
 
     /**
      * Retrieves the list of uploaded files from a specified directory.
-     *
      * @param fileDir The directory where the files are located.
      * @return The list of uploaded files.
      */
-    public List<File> getUploadedFiles(String fileDir) {
+    public List<String> getUploadedFiles(String fileDir) {
         return fileService.getUploadedFiles(fileDir);
     }
 }
