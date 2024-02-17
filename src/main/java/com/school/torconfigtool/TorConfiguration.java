@@ -1,6 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.config.BridgeRelayConfig;
 import lombok.Data;
 
 @Data
