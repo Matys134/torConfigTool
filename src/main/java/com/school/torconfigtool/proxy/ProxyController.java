@@ -1,6 +1,5 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.proxy;
 
-import com.school.torconfigtool.proxy.IpAddressRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,18 +10,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
+/**
+ * This class is a Spring Boot controller for managing the proxy.
+ */
 @Controller
 @RequestMapping("/proxy")
 public class ProxyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyController.class);
-
     private final ProxyConfigurator proxyConfigurator;
 
+    /**
+     * Constructor for the ProxyController class.
+     */
     public ProxyController() {
         this.proxyConfigurator = new ProxyConfigurator(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
     }
 
+    /**
+     * Handles GET requests to the /proxy endpoint.
+     * Adds the current proxy status to the model.
+     *
+     * @param model the model to add attributes to.
+     * @return the name of the view to render.
+     */
     @GetMapping
     public String proxyConfigurationForm(Model model) {
         try {
@@ -34,6 +45,13 @@ public class ProxyController {
         return "proxy-config";
     }
 
+    /**
+     * Handles POST requests to the /proxy/start endpoint.
+     * Configures and starts the proxy, adding relevant messages to the model.
+     *
+     * @param model the model to add attributes to.
+     * @return the name of the view to render.
+     */
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
@@ -61,6 +79,13 @@ public class ProxyController {
         return "proxy-config";
     }
 
+    /**
+     * Handles POST requests to the /proxy/stop endpoint.
+     * Stops the proxy, adding relevant messages to the model.
+     *
+     * @param model the model to add attributes to.
+     * @return the name of the view to render.
+     */
     @PostMapping("/stop")
     public String stopProxy(Model model) {
         try {

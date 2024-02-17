@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.onion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for handling Onion Service related operations.
+ */
 @Service
 public class OnionService {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
 
+    /**
+     * Retrieves all onion service ports.
+     * @return List of all onion service ports.
+     */
     public List<String> getAllOnionServicePorts() {
         List<String> ports = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
@@ -36,6 +43,10 @@ public class OnionService {
         return ports;
     }
 
+    /**
+     * Starts the Tor Onion Service.
+     * @return true if the service started successfully, false otherwise.
+     */
     public boolean startTorOnion() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "tor");
@@ -53,6 +64,12 @@ public class OnionService {
         }
     }
 
+    /**
+     * Creates a Torrc file for the given onion service port.
+     * @param filePath The path to the file.
+     * @param onionServicePort The onion service port.
+     * @throws IOException If an I/O error occurs.
+     */
     public void createTorrcFile(String filePath, int onionServicePort) throws IOException {
         File torrcFile = new File(filePath);
 
@@ -90,6 +107,11 @@ public class OnionService {
         }
     }
 
+    /**
+     * Reads the hostname file for the given port.
+     * @param port The port.
+     * @return The hostname.
+     */
     public String readHostnameFile(int port) {
         // Get the current working directory
         String currentDirectory = System.getProperty("user.dir");

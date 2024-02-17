@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.proxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +9,22 @@ import java.io.InputStreamReader;
 
 public class ProxyStarter {
 
+    /**
+     * This class is responsible for starting and stopping a Tor process.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyStarter.class);
 
+    /**
+     * This method starts a Tor process with the specified configuration file.
+     * If a Tor process is already running with the same configuration file, it returns the PID of the running process.
+     * Otherwise, it attempts to start a new Tor process and returns its PID.
+     * If the process fails to start, it returns -1.
+     *
+     * @param filePath The path of the configuration file to be used by the Tor process.
+     * @return The PID of the started Tor process, or -1 if the process fails to start.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the process to complete.
+     */
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid != -1) {
@@ -43,6 +57,16 @@ public class ProxyStarter {
         return -1;
     }
 
+    /**
+     * This method stops a running Tor process that was started with the specified configuration file.
+     * If no such process is running, it returns false.
+     * Otherwise, it attempts to stop the process and returns true if successful, or false if the process fails to stop.
+     *
+     * @param filePath The path of the configuration file used by the Tor process to be stopped.
+     * @return True if the process is successfully stopped, or false otherwise.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the process to complete.
+     */
     public boolean stop(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid == -1) {
@@ -76,6 +100,15 @@ public class ProxyStarter {
         }
     }
 
+    /**
+     * This method checks if a Tor process is already running with the specified configuration file.
+     * If such a process is running, it returns the PID of the process.
+     * Otherwise, it returns -1.
+     *
+     * @param filePath The path of the configuration file to be checked.
+     * @return The PID of the running Tor process, or -1 if no such process is running.
+     * @throws IOException If an I/O error occurs.
+     */
     public long getRunningTorProcessId(String filePath) throws IOException {
         LOGGER.info("Checking if Tor process is already running...");
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");

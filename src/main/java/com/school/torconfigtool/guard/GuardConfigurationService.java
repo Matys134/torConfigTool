@@ -1,6 +1,6 @@
 package com.school.torconfigtool.guard;
 
-import com.school.torconfigtool.RelayConfigService;
+import com.school.torconfigtool.relay.RelayConfigService;
 import com.school.torconfigtool.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
