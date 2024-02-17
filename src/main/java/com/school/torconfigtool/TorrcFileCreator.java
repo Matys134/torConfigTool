@@ -2,7 +2,6 @@ package com.school.torconfigtool;
 
 import com.school.torconfigtool.config.BaseRelayConfig;
 import com.school.torconfigtool.config.BridgeRelayConfig;
-import com.school.torconfigtool.config.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

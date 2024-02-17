@@ -1,8 +1,5 @@
-package com.school.torconfigtool.controller;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.NginxService;
-import com.school.torconfigtool.RelayService;
-import com.school.torconfigtool.SnowflakeProxyRunner;
 import com.school.torconfigtool.service.BridgeSetupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,9 +104,9 @@ public class BridgeController {
     }
 
     /**
-     * Endpoint for checking if the limit for a specific bridge type has been reached.
+     * Endpoint for checking if the bridge limit has been reached.
      * @param bridgeType the type of the bridge
-     * @return a response entity with a map containing the bridge limit status and count
+     * @return a response entity with a map containing the bridge limit status and the bridge count
      */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
@@ -124,10 +121,16 @@ public class BridgeController {
 
         switch (bridgeType) {
             case "obfs4":
-                response = checkBridgeLimitByType(bridgeType, 2, bridgeCountByType);
+                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
+                response.put("bridgeCount", bridgeCountByType.get("obfs4"));
                 break;
-            case "webtunnel", "snowflake":
-                response = checkBridgeLimitByType(bridgeType, 1, bridgeCountByType);
+            case "webtunnel":
+                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
+                break;
+            case "snowflake":
+                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("snowflake"));
                 break;
             default:
                 response.put("bridgeLimitReached", false);
@@ -135,20 +138,6 @@ public class BridgeController {
         }
 
         return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Helper method for checking if the limit for a specific bridge type has been reached.
-     * @param bridgeType the type of the bridge
-     * @param limit the limit for the bridge type
-     * @param bridgeCountByType a map containing the count of each bridge type
-     * @return a map containing the bridge limit status and count
-     */
-    private Map<String, Object> checkBridgeLimitByType(String bridgeType, int limit, Map<String, Integer> bridgeCountByType) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("bridgeLimitReached", bridgeCountByType.get(bridgeType) >= limit);
-        response.put("bridgeCount", bridgeCountByType.get(bridgeType));
-        return response;
     }
 
     /**
@@ -205,10 +194,6 @@ public class BridgeController {
         return ResponseEntity.ok(RelayService.isLimitOn());
     }
 
-    /**
-     * Endpoint for checking if a bridge is configured.
-     * @return a response entity with a map containing the bridge configuration status
-     */
     @GetMapping("/bridge-configured")
     public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
         Map<String, Boolean> response = new HashMap<>();
