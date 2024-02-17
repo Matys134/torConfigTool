@@ -1,5 +1,6 @@
 package com.school.torconfigtool.bridge.config;
 
+import com.school.torconfigtool.Obfs4ConfigWriter;
 import com.school.torconfigtool.SnowflakeConfigWriter;
 import com.school.torconfigtool.SnowflakeProxyRunner;
 import com.school.torconfigtool.WebtunnelConfigWriter;
