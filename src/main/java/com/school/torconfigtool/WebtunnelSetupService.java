@@ -1,6 +1,7 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.bridge.config.BridgeRelayConfig;
+import com.school.torconfigtool.util.CommandExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,10 @@ import java.util.UUID;
 public class WebtunnelSetupService {
 
     private final NginxService nginxService;
-    private final CommandExecutor commandExecutor;
 
     @Autowired
-    public WebtunnelSetupService(NginxService nginxService, CommandExecutor commandExecutor) {
+    public WebtunnelSetupService(NginxService nginxService) {
         this.nginxService = nginxService;
-        this.commandExecutor = commandExecutor;
     }
 
     public void setupWebtunnel(String webtunnelUrl, BridgeRelayConfig config) throws Exception {
@@ -48,7 +47,7 @@ public class WebtunnelSetupService {
 
         // Change the ownership of the directory
         String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
-        Process chownProcess = commandExecutor.executeCommand(chownCommand);
+        Process chownProcess = CommandExecutor.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
         }
@@ -60,7 +59,7 @@ public class WebtunnelSetupService {
         String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
         System.out.println("Generating certificate: " + command);
 
-        Process certProcess = commandExecutor.executeCommand(command);
+        Process certProcess = CommandExecutor.executeCommand(command);
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
         }

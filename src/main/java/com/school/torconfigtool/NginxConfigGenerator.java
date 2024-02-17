@@ -1,6 +1,6 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.NginxFileService;
+import com.school.torconfigtool.nginx.service.HtmlContentGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -69,14 +69,6 @@ public class NginxConfigGenerator {
         }
     }
 
-    /**
-     * Generates common configuration lines for Nginx.
-     * @param rootDirectory The root directory for the server.
-     * @param listenPort The port the server should listen on.
-     * @param sslCertificate The SSL certificate file path.
-     * @param sslCertificateKey The SSL certificate key file path.
-     * @return A list of configuration lines.
-     */
     public List<String> generateCommonConfig(String rootDirectory, String listenPort, String sslCertificate, String sslCertificateKey) {
         List<String> lines = new ArrayList<>();
         lines.add("server {");
@@ -96,12 +88,6 @@ public class NginxConfigGenerator {
         return lines;
     }
 
-    /**
-     * Generates final configuration lines for Nginx.
-     * @param programLocation The location of the program.
-     * @param randomString A random string used in the location directive.
-     * @return A list of configuration lines.
-     */
     public List<String> generateFinalConfigLines(String programLocation, String randomString) {
         List<String> lines = generateCommonConfig(programLocation + "/onion/www/service-80", "443", null, null);
         lines.addAll(generateSSLConfigLines(programLocation));
@@ -110,11 +96,6 @@ public class NginxConfigGenerator {
         return lines;
     }
 
-    /**
-     * Generates SSL configuration lines for Nginx.
-     * @param programLocation The location of the program.
-     * @return A list of configuration lines.
-     */
     public List<String> generateSSLConfigLines(String programLocation) {
         List<String> lines = new ArrayList<>();
         lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
@@ -122,11 +103,6 @@ public class NginxConfigGenerator {
         return lines;
     }
 
-    /**
-     * Generates location lines for Nginx.
-     * @param randomString A random string used in the location directive.
-     * @return A list of configuration lines.
-     */
     public List<String> generateLocationLines(String randomString) {
         List<String> lines = new ArrayList<>();
         lines.add("    location = /" + randomString + " {");
@@ -143,10 +119,6 @@ public class NginxConfigGenerator {
         return lines;
     }
 
-    /**
-     * Generates proxy headers for Nginx.
-     * @return A list of configuration lines.
-     */
     public List<String> generateProxyHeaders() {
         List<String> lines = new ArrayList<>();
         lines.add("        proxy_set_header Accept-Encoding \"\";");

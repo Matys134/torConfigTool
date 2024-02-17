@@ -11,11 +11,6 @@ import java.io.IOException;
 public class NginxFileService {
 
     private static final Logger logger = LoggerFactory.getLogger(NginxFileService.class);
-    private final CommandExecutor commandExecutor;
-
-    public NginxFileService(CommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
-    }
 
     public File getFile(String currentDirectory) throws IOException {
         File wwwDir = new File(currentDirectory + "/onion/www");
@@ -31,28 +26,26 @@ public class NginxFileService {
         return new File(serviceDir, "index.html");
     }
 
-    public void installCert(String webTunnelUrl) throws IOException, InterruptedException {
-        String command = createCommand(webTunnelUrl);
-        executeCommand(command);
-    }
-
-    private String createCommand(String webTunnelUrl) {
+    public void installCert(String webTunnelUrl) {
         String programLocation = System.getProperty("user.dir");
-        return "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
+        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd";
-    }
 
-    private void executeCommand(String command) throws IOException, InterruptedException {
-        Process process = commandExecutor.executeCommand(command);
-        handleProcessResult(process);
-    }
+        System.out.println(command);
 
-    private void handleProcessResult(Process process) throws IOException, InterruptedException {
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new IOException("Error during certificate installation. Exit code: " + exitCode);
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command("bash", "-c", command);
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                logger.error("Error during certificate installation. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error during certificate installation", e);
         }
     }
 }
