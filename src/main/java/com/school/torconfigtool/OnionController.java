@@ -8,20 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/onion-service")
-public class OnionServiceController {
+public class OnionController {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(OnionServiceController.class);
+    private static final Logger logger = LoggerFactory.getLogger(OnionController.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private final TorConfigurationService torConfigurationService;
     private final List<String> onionServicePorts;
@@ -33,7 +38,7 @@ public class OnionServiceController {
     @Autowired
     private FileService fileService;
     @Autowired
-    public OnionServiceController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
+    public OnionController(TorConfigurationService torConfigurationService, RelayOperationsController relayOperationController) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationController = relayOperationController; // Initialize the field
         this.onionServicePorts = getAllOnionServicePorts();
@@ -277,38 +282,6 @@ public class OnionServiceController {
         List<String> fileNames = getUploadedFiles(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
-    }
-
-    @PostMapping("/remove-files/{port}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            for (String fileName : fileNames) {
-                fileService.deleteFile(fileName, fileDir);
-            }
-            List<String> remainingFileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", remainingFileNames);
-            model.addAttribute("message", "Files deleted successfully.");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Error: " + e.getMessage());
-            return "file_upload_form";
-        }
-    }
-
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
-        try {
-            String fileDir = "onion/www/service-" + port + "/";
-            fileService.uploadFiles(files, fileDir);
-            List<String> fileNames = fileService.getUploadedFiles(fileDir);
-            model.addAttribute("uploadedFiles", fileNames);
-            model.addAttribute("message", "Files uploaded successfully!");
-            return "file_upload_form";
-        } catch (Exception e) {
-            model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
-            return "file_upload_form";
-        }
     }
 
     private List<String> getUploadedFiles(int port) {
