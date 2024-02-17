@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/file")
 public class FileController {
 
+    private final FileService fileService;
+
     @Autowired
-    private FileService fileService;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @PostMapping("/upload/{port}")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
