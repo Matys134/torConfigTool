@@ -1,6 +1,6 @@
-package com.school.torconfigtool.guard.controller;
+package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.guard.config.GuardRelayConfig;
+import com.school.torconfigtool.config.GuardRelayConfig;
 import com.school.torconfigtool.RelayService;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.TorrcFileCreator;

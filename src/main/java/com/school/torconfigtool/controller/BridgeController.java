@@ -1,9 +1,9 @@
-package com.school.torconfigtool.bridge.controller;
+package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.bridge.service.BridgeSetupService;
 import com.school.torconfigtool.NginxService;
 import com.school.torconfigtool.RelayService;
 import com.school.torconfigtool.SnowflakeProxyRunner;
+import com.school.torconfigtool.service.BridgeSetupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

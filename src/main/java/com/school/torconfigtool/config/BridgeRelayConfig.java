@@ -1,11 +1,9 @@
-package com.school.torconfigtool.bridge.config;
+package com.school.torconfigtool.config;
 
 import com.school.torconfigtool.Obfs4ConfigWriter;
 import com.school.torconfigtool.SnowflakeConfigWriter;
 import com.school.torconfigtool.SnowflakeProxyRunner;
 import com.school.torconfigtool.WebtunnelConfigWriter;
-import com.school.torconfigtool.bridge.BridgeConfigWriter;
-import com.school.torconfigtool.config.BaseRelayConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.school.torconfigtool.guard.config;
+package com.school.torconfigtool.config;
 
 import com.school.torconfigtool.config.BaseRelayConfig;
 import lombok.Data;
@@ -10,6 +10,8 @@ import java.io.BufferedWriter;
  * This class extends the BaseRelayConfig class and represents a specific type of relay configuration - GuardRelayConfig.
  * It currently does not add any additional properties or behaviors to the base class.
  * However, it can be expanded in the future if specific properties or behaviors for GuardRelayConfig are needed.
+ *
+ * @author Matys134
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

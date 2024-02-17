@@ -1,10 +1,10 @@
-package com.school.torconfigtool.bridge.service;
+package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.RelayService;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.TorrcFileCreator;
 import com.school.torconfigtool.WebtunnelSetupService;
-import com.school.torconfigtool.bridge.config.BridgeRelayConfig;
+import com.school.torconfigtool.config.BridgeRelayConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
