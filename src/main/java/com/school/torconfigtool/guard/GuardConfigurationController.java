@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.guard;
 
+import com.school.torconfigtool.GuardRelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,12 +34,5 @@ public class GuardConfigurationController {
             logger.error("Exception occurred while updating guard configuration", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An unexpected error occurred"));
         }
-    }
-
-    @GetMapping("/check-port-availability")
-    public ResponseEntity<?> checkPortAvailability(@RequestParam String nickname, @RequestParam int orPort, @RequestParam int controlPort) {
-        boolean arePortsAvailable = RelayUtils.portsAreAvailable(nickname, orPort, controlPort);
-
-        return ResponseEntity.ok(Map.of("available", arePortsAvailable));
     }
 }
