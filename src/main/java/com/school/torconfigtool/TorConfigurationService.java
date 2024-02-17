@@ -2,7 +2,6 @@ package com.school.torconfigtool;
 
 import com.school.torconfigtool.bridge.config.BridgeRelayConfig;
 import com.school.torconfigtool.guard.config.GuardRelayConfig;
-import com.school.torconfigtool.relay.config.RelayConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

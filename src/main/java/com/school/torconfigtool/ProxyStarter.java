@@ -1,4 +1,4 @@
-package com.school.torconfigtool.proxy.util;
+package com.school.torconfigtool;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,21 +7,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/**
- * This class is responsible for starting and stopping a Tor process.
- */
 public class ProxyStarter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyStarter.class);
 
-    /**
-     * Starts the Tor process with the specified configuration file.
-     *
-     * @param filePath The file path of the Tor configuration file.
-     * @return The process ID of the Tor process if it is successfully started, or -1 if the process fails to start.
-     * @throws IOException if an I/O error occurs.
-     * @throws InterruptedException if the current thread is interrupted while waiting for the Tor process to start.
-     */
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid != -1) {
@@ -54,14 +43,6 @@ public class ProxyStarter {
         return -1;
     }
 
-    /**
-     * Stops the Tor process with the specified configuration file.
-     *
-     * @param filePath The file path of the Tor configuration file.
-     * @return true if the Tor process is successfully stopped, or false if the process fails to stop.
-     * @throws IOException if an I/O error occurs.
-     * @throws InterruptedException if the current thread is interrupted while waiting for the Tor process to stop.
-     */
     public boolean stop(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid == -1) {
@@ -95,13 +76,6 @@ public class ProxyStarter {
         }
     }
 
-    /**
-     * Gets the process ID of the running Tor process with the specified configuration file.
-     *
-     * @param filePath The file path of the Tor configuration file.
-     * @return The process ID of the running Tor process if found, or -1 if no running Tor process is found.
-     * @throws IOException if an I/O error occurs.
-     */
     public long getRunningTorProcessId(String filePath) throws IOException {
         LOGGER.info("Checking if Tor process is already running...");
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");

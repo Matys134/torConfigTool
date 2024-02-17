@@ -1,8 +1,5 @@
-package com.school.torconfigtool.proxy.controller;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.proxy.config.ProxyFileCreator;
-import com.school.torconfigtool.proxy.util.ProxyStarter;
-import com.school.torconfigtool.proxy.config.ProxyConfigurator;
 import com.school.torconfigtool.util.IpAddressRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
-/**
- * This class is a controller for managing the Tor Proxy.
- * It provides endpoints for starting, stopping, and checking the status of the proxy.
- */
 @Controller
 @RequestMapping("/proxy")
 public class ProxyController {
@@ -26,20 +19,10 @@ public class ProxyController {
 
     private final ProxyConfigurator proxyConfigurator;
 
-    /**
-     * Constructor for ProxyController.
-     * Initializes the ProxyConfigurator with a new ProxyFileCreator, ProxyStarter, and IpAddressRetriever.
-     */
     public ProxyController() {
         this.proxyConfigurator = new ProxyConfigurator(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
     }
 
-    /**
-     * Endpoint for getting the proxy configuration form.
-     * It checks if the proxy is running and adds the status to the model.
-     * @param model the model to add attributes to
-     * @return the name of the view to render
-     */
     @GetMapping
     public String proxyConfigurationForm(Model model) {
         try {
@@ -51,12 +34,6 @@ public class ProxyController {
         return "proxy-config";
     }
 
-    /**
-     * Endpoint for starting the proxy.
-     * It configures and starts the proxy, adding success or error messages to the model.
-     * @param model the model to add attributes to
-     * @return the name of the view to render
-     */
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
@@ -84,12 +61,6 @@ public class ProxyController {
         return "proxy-config";
     }
 
-    /**
-     * Endpoint for stopping the proxy.
-     * It stops the proxy and adds success or error messages to the model.
-     * @param model the model to add attributes to
-     * @return the name of the view to render
-     */
     @PostMapping("/stop")
     public String stopProxy(Model model) {
         try {
