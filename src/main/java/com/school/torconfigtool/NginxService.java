@@ -1,18 +1,25 @@
-package com.school.torconfigtool.nginx.service;
+package com.school.torconfigtool;
 
+import com.school.torconfigtool.nginx.service.NginxConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NginxService {
 
+    private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
+
     private final NginxProcessService nginxProcessService;
     private final NginxConfigService nginxConfigService;
+    private final NginxFileService nginxFileService;
 
     @Autowired
-    public NginxService(NginxProcessService nginxProcessService, NginxConfigService nginxConfigService) {
+    public NginxService(NginxProcessService nginxProcessService, NginxConfigService nginxConfigService, NginxFileService nginxFileService) {
         this.nginxProcessService = nginxProcessService;
         this.nginxConfigService = nginxConfigService;
+        this.nginxFileService = nginxFileService;
     }
 
     public void startNginx() {
