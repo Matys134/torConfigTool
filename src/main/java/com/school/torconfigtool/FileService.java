@@ -29,8 +29,13 @@ public class FileService {
         }
     }
 
-    public List<String> getUploadedFiles(String directory) {
+    public List<String> getUploadedFilesFromDirectory(String directory) {
         File folder = new File(directory);
         return Arrays.asList(Objects.requireNonNull(folder.list()));
+    }
+
+    public List<String> getUploadedFilesFromPort(int port) {
+        String uploadDir = "onion/www/service-" + port + "/";
+        return getUploadedFilesFromDirectory(uploadDir);
     }
 }

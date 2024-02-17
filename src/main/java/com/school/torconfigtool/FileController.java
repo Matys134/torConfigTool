@@ -25,7 +25,7 @@ public class FileController {
         try {
             String fileDir = "onion/www/service-" + port + "/";
             fileService.uploadFiles(files, fileDir);
-            List<String> fileNames = fileService.getUploadedFiles(fileDir);
+            List<String> fileNames = fileService.getUploadedFilesFromDirectory(fileDir);
             model.addAttribute("uploadedFiles", fileNames);
             model.addAttribute("message", "Files uploaded successfully!");
             return "file_upload_form";
@@ -42,7 +42,7 @@ public class FileController {
             for (String fileName : fileNames) {
                 fileService.deleteFile(fileName, fileDir);
             }
-            List<String> remainingFileNames = fileService.getUploadedFiles(fileDir);
+            List<String> remainingFileNames = fileService.getUploadedFilesFromDirectory(fileDir);
             model.addAttribute("uploadedFiles", remainingFileNames);
             model.addAttribute("message", "Files deleted successfully.");
             return "file_upload_form";
@@ -54,13 +54,8 @@ public class FileController {
 
     @GetMapping("/upload/{port}")
     public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
+        List<String> fileNames = fileService.getUploadedFilesFromPort(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
-    }
-
-    private List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
     }
 }
