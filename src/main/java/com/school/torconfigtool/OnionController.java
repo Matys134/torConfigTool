@@ -277,18 +277,6 @@ public class OnionController {
         }
     }
 
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = getUploadedFiles(port);
-        model.addAttribute("uploadedFiles", fileNames);
-        return "file_upload_form";
-    }
-
-    private List<String> getUploadedFiles(int port) {
-        String uploadDir = "onion/www/service-" + port + "/";
-        return fileService.getUploadedFiles(uploadDir);
-    }
-
     @PostMapping("/refresh-nginx")
     public ResponseEntity<Void> refreshNginx() {
         try {
