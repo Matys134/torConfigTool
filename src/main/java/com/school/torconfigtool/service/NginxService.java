@@ -1,7 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
-import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,16 +25,16 @@ public class NginxService {
     private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
 
     // TorConfigurationService instance for managing Tor configurations
-    private final TorConfigurationService torConfigurationService;
+    private final TorConfigService torConfigService;
 
     /**
      * Constructor for the NginxService class.
      * It initializes the TorConfigurationService instance.
      *
-     * @param torConfigurationService The TorConfigurationService instance.
+     * @param torConfigService The TorConfigurationService instance.
      */
-    public NginxService(TorConfigurationService torConfigurationService) {
-        this.torConfigurationService = torConfigurationService;
+    public NginxService(TorConfigService torConfigService) {
+        this.torConfigService = torConfigService;
     }
 
     /**
@@ -438,13 +437,13 @@ public class NginxService {
     public List<String> getAllServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
-        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "onion");
         for (TorConfig config : onionConfigs) {
             allServices.add(config.getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
-        List<TorConfig> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
         for (TorConfig config : bridgeConfigs) {
             allServices.add(config.getBridgeConfig().getNickname());
         }

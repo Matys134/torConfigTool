@@ -1,7 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
-import com.school.torconfigtool.service.RelayStatusService;
 import com.simtechdata.waifupnp.UPnP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,21 +15,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service class for handling UPnP related operations.
+ */
 @Service
 public class UPnPService {
 
     private final TorFileService torFileService;
-    private final TorConfigurationService torConfigurationService;
+    private final TorConfigService torConfigService;
     private final RelayStatusService relayStatusService;
 
     private static final Logger logger = LoggerFactory.getLogger(UPnPService.class);
 
-    public UPnPService(TorFileService torFileService, TorConfigurationService torConfigurationService, RelayStatusService relayStatusService) {
+    /**
+     * Constructor for UPnPService.
+     *
+     * @param torFileService      Service for handling Tor file operations.
+     * @param torConfigService    Service for handling Tor configuration operations.
+     * @param relayStatusService  Service for handling relay status operations.
+     */
+    public UPnPService(TorFileService torFileService, TorConfigService torConfigService, RelayStatusService relayStatusService) {
         this.torFileService = torFileService;
-        this.torConfigurationService = torConfigurationService;
+        this.torConfigService = torConfigService;
         this.relayStatusService = relayStatusService;
     }
 
+    /**
+     * Opens or closes a port based on the relay nickname and type.
+     *
+     * @param relayNickname  The nickname of the relay.
+     * @param relayType      The type of the relay.
+     * @return               A map containing the success status and a message.
+     */
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         // Build the path to the torrc file
@@ -50,11 +66,17 @@ public class UPnPService {
         return response;
     }
 
+    /**
+     * Toggles UPnP on or off.
+     *
+     * @param enable  A boolean indicating whether to enable or disable UPnP.
+     * @return        A map containing the success status and a message.
+     */
     public Map<String, Object> toggleUPnP(boolean enable) {
         Map<String, Object> response = new HashMap<>();
         try {
             // Get the list of all guard relays
-            List<TorConfig> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+            List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
             for (TorConfig config : guardConfigs) {
                 if (enable) {
                     String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
@@ -77,12 +99,24 @@ public class UPnPService {
         return response;
     }
 
+    /**
+     * Closes a port based on the relay nickname and type.
+     *
+     * @param relayNickname  The nickname of the relay.
+     * @param relayType      The type of the relay.
+     */
     public void closeOrPort(String relayNickname, String relayType) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
     }
 
+    /**
+     * Retrieves the ORPort from a torrc file.
+     *
+     * @param torrcFilePath  The path to the torrc file.
+     * @return               The ORPort as an integer.
+     */
     public int getOrPort(Path torrcFilePath) {
         int orPort = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
@@ -99,9 +133,14 @@ public class UPnPService {
         return orPort;
     }
 
+    /**
+     * Retrieves a list of UPnP ports.
+     *
+     * @return  A list of UPnP ports as integers.
+     */
     public List<Integer> getUPnPPorts() {
         List<Integer> upnpPorts = new ArrayList<>();
-        List<TorConfig> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+        List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
         for (TorConfig config : guardConfigs) {
             int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
             if (UPnP.isMappedTCP(orPort)) {

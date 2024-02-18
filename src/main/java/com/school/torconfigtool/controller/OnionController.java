@@ -2,7 +2,7 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.OnionService;
 import com.school.torconfigtool.model.TorConfig;
-import com.school.torconfigtool.TorConfigurationService;
+import com.school.torconfigtool.service.TorConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class OnionController {
 
     private static final Logger logger = LoggerFactory.getLogger(OnionController.class);
-    private final TorConfigurationService torConfigurationService;
+    private final TorConfigService torConfigService;
     private final OnionService onionService;
     TorConfig torConfig = new TorConfig();
 
@@ -35,13 +35,13 @@ public class OnionController {
      * Initializes the required services and checks if the hiddenServiceDirs directory exists.
      * If it doesn't exist, it attempts to create it.
      *
-     * @param torConfigurationService the service for handling Tor configurations
+     * @param torConfigService the service for handling Tor configurations
      * @param onionService the service for handling Onion operations
      * @param onionService1 the service for handling Onion operations
      */
     @Autowired
-    public OnionController(TorConfigurationService torConfigurationService, OnionService onionService, OnionService onionService1) {
-        this.torConfigurationService = torConfigurationService;
+    public OnionController(TorConfigService torConfigService, OnionService onionService, OnionService onionService1) {
+        this.torConfigService = torConfigService;
         this.onionService = onionService1;
         List<String> onionServicePorts = onionService.getAllOnionServicePorts();
 
@@ -71,7 +71,7 @@ public class OnionController {
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         Map<String, String> hostnames = onionService.getCurrentHostnames();
-        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurations();
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations();
         String hostname = onionService.readHostnameFile(Integer.parseInt(torConfig.getHiddenServicePort())); // Assuming port 80 for this example
 
         model.addAttribute("hostname", hostname);

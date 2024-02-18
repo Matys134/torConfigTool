@@ -1,7 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.util.RelayUtils;
-import com.school.torconfigtool.TorrcFileCreator;
+import com.school.torconfigtool.model.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;
 import org.springframework.stereotype.Service;
 

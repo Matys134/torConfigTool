@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
@@ -16,11 +16,19 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class for handling Tor configurations.
+ */
 @Service
-public class TorConfigurationService {
+public class TorConfigService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TorConfigurationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TorConfigService.class);
 
+    /**
+     * Reads Tor configurations from the specified folder.
+     *
+     * @return a list of Tor configurations.
+     */
     public List<TorConfig> readTorConfigurations() {
         List<TorConfig> configs = new ArrayList<>();
         String folderPath = buildFolderPath();
@@ -31,10 +39,22 @@ public class TorConfigurationService {
         return configs;
     }
 
+    /**
+     * Builds the folder path for the Tor configurations.
+     *
+     * @return the folder path as a string.
+     */
     public String buildFolderPath() {
         return "torrc";
     }
 
+    /**
+     * Reads Tor configurations from a specified folder and relay type.
+     *
+     * @param folderPath the path to the folder.
+     * @param expectedRelayType the expected relay type.
+     * @return a list of Tor configurations.
+     */
     public List<TorConfig> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
         List<TorConfig> configs = new ArrayList<>();
         File folder = new File(folderPath);
@@ -57,12 +77,26 @@ public class TorConfigurationService {
         return configs;
     }
 
+    /**
+     * Parses the relay type from the file name.
+     *
+     * @param file the file to parse.
+     * @return the relay type as a string.
+     */
     private String parseRelayTypeFromFile(File file) {
         String fileName = file.getName();
         // e.g. assuming file name is "torrc-relayNickname_relayType"
         return fileName.substring(fileName.indexOf("_") + 1);
     }
 
+    /**
+     * Parses a Tor configuration from a file.
+     *
+     * @param file the file to parse.
+     * @param relayType the relay type.
+     * @return a Tor configuration.
+     * @throws IOException if an I/O error occurs.
+     */
     private TorConfig parseTorConfiguration(File file, String relayType) throws IOException {
         TorConfig config = new TorConfig();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -74,6 +108,13 @@ public class TorConfigurationService {
         return config;
     }
 
+    /**
+     * Parses a line from a Tor configuration file and updates the configuration accordingly.
+     *
+     * @param line the line to parse.
+     * @param config the configuration to update.
+     * @param relayType the relay type.
+     */
     private void parseTorConfigLine(String line, TorConfig config, String relayType) {
         RelayConfig relayConfig = getRelayConfig(config, relayType);
 
@@ -97,19 +138,26 @@ public class TorConfigurationService {
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
             ((BridgeConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
-                String fullUrl = line.split("=")[1].trim();
-                try {
-                    java.net.URI uri = new java.net.URI(fullUrl);
-                    String webtunnelUrl = uri.getHost();
-                    String path = uri.getPath().substring(1); // Remove the leading "/"
-                    ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
-                    ((BridgeConfig) relayConfig).setPath(path);
-                } catch (URISyntaxException e) {
-                    throw new RuntimeException(e);
-                }
+            String fullUrl = line.split("=")[1].trim();
+            try {
+                java.net.URI uri = new java.net.URI(fullUrl);
+                String webtunnelUrl = uri.getHost();
+                String path = uri.getPath().substring(1); // Remove the leading "/"
+                ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
+                ((BridgeConfig) relayConfig).setPath(path);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
+    /**
+     * Gets the relay configuration from a Tor configuration based on the relay type.
+     *
+     * @param config the Tor configuration.
+     * @param relayType the relay type.
+     * @return the relay configuration.
+     */
     private RelayConfig getRelayConfig(TorConfig config, String relayType) {
         RelayConfig relayConfig = null;
 

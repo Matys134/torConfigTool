@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.*;
 import com.school.torconfigtool.exception.RelayOperationException;
 import com.school.torconfigtool.model.TorConfig;
 import org.apache.commons.io.FileUtils;
@@ -26,7 +25,7 @@ import java.util.Map;
 public class RelayOperationsService {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
-    private final TorConfigurationService torConfigurationService;
+    private final TorConfigService torConfigService;
     private final RelayOperationsService relayOperationsService;
     private final NginxService nginxService;
     private final OnionRelayOperationsService onionRelayOperationsService;
@@ -38,7 +37,7 @@ public class RelayOperationsService {
     /**
      * Constructor for RelayOperationsService.
      *
-     * @param torConfigurationService The TorConfigurationService to use.
+     * @param torConfigService The TorConfigurationService to use.
      * @param relayOperationsService The RelayOperationsService to use.
      * @param nginxService The NginxService to use.
      * @param onionRelayOperationsService The OnionRelayOperationsService to use.
@@ -47,8 +46,8 @@ public class RelayOperationsService {
      * @param upnpService The UPnPService to use.
      * @param bridgeRelayOperationsService The BridgeRelayOperationsService to use.
      */
-    public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
-        this.torConfigurationService = torConfigurationService;
+    public RelayOperationsService(TorConfigService torConfigService, RelayOperationsService relayOperationsService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
+        this.torConfigService = torConfigService;
         this.relayOperationsService = relayOperationsService;
         this.nginxService = nginxService;
         this.onionRelayOperationsService = onionRelayOperationsService;
@@ -233,13 +232,13 @@ public class RelayOperationsService {
 
     public String relayOperations(Model model) {
         System.out.println("Inside relayOperations method");
-        String folderPath = torConfigurationService.buildFolderPath();
-        model.addAttribute("guardConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "guard"));
+        String folderPath = torConfigService.buildFolderPath();
+        model.addAttribute("guardConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "guard"));
 
-        model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
+        model.addAttribute("bridgeConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge"));
 
-        model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
-        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
+        model.addAttribute("onionConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "onion"));
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "onion");
 
         logger.info("OnionConfigs: {}", onionConfigs);
 
@@ -251,7 +250,7 @@ public class RelayOperationsService {
             logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
 
-        List<TorConfig> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
             String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
