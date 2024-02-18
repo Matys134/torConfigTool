@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.service.NginxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service for handling Onion Service related operations.
@@ -22,6 +25,15 @@ public class OnionService {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
+    private final NginxService nginxService;
+    private final RelayOperationsController relayOperationController;
+    private final TorConfiguration torConfiguration;
+
+    public OnionService(NginxService nginxService, RelayOperationsController relayOperationController, TorConfiguration torConfiguration) {
+        this.nginxService = nginxService;
+        this.relayOperationController = relayOperationController;
+        this.torConfiguration = torConfiguration;
+    }
 
     /**
      * Retrieves all onion service ports.
@@ -124,5 +136,44 @@ public class OnionService {
         } catch (IOException e) {
             return "Unable to read hostname file";
         }
+    }
+
+    public void configureOnionService(int onionServicePort) throws IOException {
+        // Check port availability before configuring the onion service
+        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
+            throw new IOException("Port is not available.");
+        }
+
+        String pathToFile = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
+        if (!new File(pathToFile).exists()) {
+            createTorrcFile(pathToFile, onionServicePort);
+            nginxService.generateNginxConfig(onionServicePort);
+
+            // Restart nginx
+            relayOperationController.reloadNginx();
+        }
+        torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
+        logger.info("Hidden Service Port set to: {}", onionServicePort);
+    }
+
+    public void refreshNginx() throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
+        Process process = processBuilder.start();
+        process.waitFor();
+    }
+
+    public boolean checkOnionConfigured() {
+        return !getAllOnionServicePorts().isEmpty();
+    }
+
+    public Map<String, String> getCurrentHostnames() {
+        Map<String, String> hostnames = new HashMap<>();
+        for (String hiddenServicePortString : getAllOnionServicePorts()) {
+            if (hiddenServicePortString != null) {
+                String hostname = readHostnameFile(Integer.parseInt(hiddenServicePortString));
+                hostnames.put(hiddenServicePortString, hostname);
+            }
+        }
+        return hostnames;
     }
 }
