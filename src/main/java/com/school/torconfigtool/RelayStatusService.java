@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.service.NginxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,12 @@ import java.util.List;
 public class RelayStatusService {
 
     private final TorrcService torrcService;
+    private final NginxService nginxService;
     private static final Logger logger = LoggerFactory.getLogger(RelayStatusService.class);
 
-    public RelayStatusService(TorrcService torrcService) {
+    public RelayStatusService(TorrcService torrcService, NginxService nginxService) {
         this.torrcService = torrcService;
+        this.nginxService = nginxService;
     }
 
     public String getRelayStatus(String relayNickname, String relayType) {
@@ -68,6 +71,38 @@ public class RelayStatusService {
             }
         }
         return outputLines;
+    }
+
+    public void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
+        System.out.println("Waiting for status change");
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < 30000) { // 30 seconds timeout
+            String status = getRelayStatus(relayNickname, relayType);
+            System.out.println("Status: " + status);
+            if (expectedStatus.equals(status)) {
+                checkAndManageNginxStatus();
+                break;
+            }
+            Thread.sleep(500); // wait for 500 milliseconds before the next check
+        }
+    }
+
+    public void checkAndManageNginxStatus() {
+        // Get the list of all webTunnels and Onion services
+        List<String> allServices = nginxService.getAllServices();
+
+        // Iterate over the list and check the status of each service
+        for (String service : allServices) {
+            String status = getRelayStatus(service, "onion");
+            // If at least one service is online, start the Nginx service and return
+            if ("online".equals(status)) {
+                nginxService.startNginx();
+                return;
+            }
+        }
+
+        // If no service is online, stop the Nginx service
+        nginxService.stopNginx();
     }
 
 }
