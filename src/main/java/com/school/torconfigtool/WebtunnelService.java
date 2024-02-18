@@ -1,6 +1,7 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.controller.NginxService;
+import com.school.torconfigtool.model.BridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
