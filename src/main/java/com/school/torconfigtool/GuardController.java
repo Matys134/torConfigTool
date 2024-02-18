@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,6 @@ import java.util.Map;
 public class GuardController {
 
     private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final RelayService relayService;
@@ -53,6 +50,7 @@ public class GuardController {
         return "setup";
     }
 
+
     @PostMapping("/configure")
     public String configureGuard(@RequestParam String relayNickname,
                                  @RequestParam int relayPort,
@@ -60,18 +58,8 @@ public class GuardController {
                                  @RequestParam int controlPort,
                                  @RequestParam(required = false) Integer relayBandwidth,
                                  Model model) {
-        try {
-            String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
-            Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
-
-            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth, torrcFilePath, model);
-
-            model.addAttribute("successMessage", "Tor Relay configured successfully!");
-        } catch (Exception e) {
-            logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
-        }
-
+        String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
+        guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth, torrcFileName, model);
         return "setup";
     }
 
