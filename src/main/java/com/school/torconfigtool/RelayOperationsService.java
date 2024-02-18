@@ -1,7 +1,9 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.exception.RelayOperationException;
+import com.school.torconfigtool.service.NginxService;
 import com.simtechdata.waifupnp.UPnP;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,10 +27,12 @@ public class RelayOperationsService {
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
     private final TorConfigurationService torConfigurationService;
     private final RelayOperationsService relayOperationsService;
+    private final NginxService nginxService;
 
-    public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService) {
+    public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService, NginxService nginxService) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationsService = relayOperationsService;
+        this.nginxService = nginxService;
     }
 
     /**
@@ -148,7 +152,7 @@ public class RelayOperationsService {
             String status = getRelayStatus(relayNickname, relayType);
             System.out.println("Status: " + status);
             if (expectedStatus.equals(status)) {
-                checkAndManageNginxStatus();
+                nginxService.checkAndManageNginxStatus();
                 break;
             }
             Thread.sleep(500); // wait for 500 milliseconds before the next check
@@ -359,79 +363,6 @@ public class RelayOperationsService {
         return orPort;
     }
 
-    public void reloadNginx() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new IOException("Failed to restart Nginx");
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error("Failed to restart Nginx", e);
-        }
-    }
-
-    public void checkAndManageNginxStatus() {
-        // Get the list of all webTunnels and Onion services
-        List<String> allServices = getAllServices();
-
-        // Iterate over the list and check the status of each service
-        for (String service : allServices) {
-            String status = getRelayStatus(service, "onion");
-            // If at least one service is online, start the Nginx service and return
-            if ("online".equals(status)) {
-                startNginx();
-                return;
-            }
-        }
-
-        // If no service is online, stop the Nginx service
-        stopNginx();
-    }
-
-    private List<String> getAllServices() {
-        List<String> allServices = new ArrayList<>();
-        // Get the list of all onion services
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
-        for (TorConfiguration config : onionConfigs) {
-            allServices.add(config.getHiddenServicePort());
-        }
-
-        // Get the list of all webTunnels
-        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
-        for (TorConfiguration config : bridgeConfigs) {
-            allServices.add(config.getBridgeConfig().getNickname());
-        }
-        return allServices;
-    }
-
-    public void startNginx() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "nginx");
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new IOException("Failed to start Nginx");
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error("Failed to start Nginx", e);
-        }
-    }
-
-    public void stopNginx() {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "nginx");
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new IOException("Failed to stop Nginx");
-            }
-        } catch (IOException | InterruptedException e) {
-            logger.error("Failed to stop Nginx", e);
-        }
-    }
-
     public void closeOrPort(String relayNickname, String relayType) {
         Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
@@ -480,5 +411,140 @@ public class RelayOperationsService {
         model.addAttribute("upnpPorts", upnpPorts);
 
         return "relay-operations";
+    }
+
+    public String stopRelay(String relayNickname, String relayType, Model model) {
+        String view = changeRelayState(relayNickname, relayType, model, false);
+
+        new Thread(() -> {
+            try {
+                waitForStatusChange(relayNickname, relayType, "offline");
+                // Close the ORPort after the relay has stopped
+                closeOrPort(relayNickname, relayType);
+            } catch (InterruptedException e) {
+                logger.error("Error while waiting for relay to stop", e);
+            }
+        }).start();
+
+        return view;
+    }
+
+    public String startRelay(String relayNickname, String relayType, Model model) {
+        String view;
+        if ("guard".equals(relayType)) {
+            view = changeRelayState(relayNickname, relayType, model, true);
+        } else {
+            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
+        }
+        System.out.println("Relay state changed");
+
+        new Thread(() -> {
+            try {
+                waitForStatusChange(relayNickname, relayType, "online");
+                openOrPort(relayNickname, relayType);
+            } catch (InterruptedException e) {
+                logger.error("Error while waiting for relay to start", e);
+            }
+        }).start();
+        System.out.println("Returning view");
+
+        return view;
+    }
+
+    public Map<String, Object> removeRelay(String relayNickname, String relayType) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Build paths for Torrc file and DataDirectory
+            Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
+
+            // Delete Torrc file
+            Files.deleteIfExists(torrcFilePath);
+
+            // Delete DataDirectory
+            FileUtils.deleteDirectory(new File(dataDirectoryPath));
+
+            // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
+            Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
+            Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_onion");
+
+            // Delete Onion files in /onion folder and its corresponding file in torrc directory
+            FileUtils.deleteDirectory(new File(onionFilePath.toString()));
+            Files.deleteIfExists(torrcOnionFilePath);
+
+            // Call the shell script to delete Nginx configuration file and symbolic link
+            ProcessBuilder processBuilder = new ProcessBuilder("shellScripts/remove_onion_files.sh", relayNickname);
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                throw new IOException("Failed to delete Nginx configuration file and symbolic link");
+            }
+
+            nginxService.reloadNginx();
+
+            response.put("success", true);
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
+            response.put("success", false);
+        }
+        return response;
+    }
+
+    public Map<String, Object> openOrPort(String relayNickname, String relayType) {
+        Map<String, Object> response = new HashMap<>();
+        // Build the path to the torrc file
+        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+
+        // Get the orport from the torrc file
+        int orPort = getOrPort(torrcFilePath);
+
+        // Open the orport using UPnP
+        boolean success = UPnP.openPortTCP(orPort);
+        if (success) {
+            response.put("success", true);
+        } else {
+            response.put("success", false);
+            response.put("message", "Failed to open ORPort using UPnP");
+        }
+        return response;
+    }
+
+    public Map<String, Object> toggleUPnP(boolean enable) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Get the list of all guard relays
+            List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+            for (TorConfiguration config : guardConfigs) {
+                if (enable) {
+                    String status = getRelayStatus(config.getGuardConfig().getNickname(), "guard");
+                    if ("online".equals(status)) {
+                        // Open the ORPort
+                        openOrPort(config.getGuardConfig().getNickname(), "guard");
+                    }
+                } else {
+                    // Close the ORPort
+                    closeOrPort(config.getGuardConfig().getNickname(), "guard");
+                }
+            }
+            response.put("success", true);
+            response.put("message", "UPnP for Guard Relays " + (enable ? "enabled" : "disabled") + " successfully!");
+        } catch (Exception e) {
+            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays", e);
+            response.put("success", false);
+            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays.");
+        }
+        return response;
+    }
+
+    public void createDataDirectory() {
+        try {
+            Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
+            if (!Files.exists(dataDirectoryPath)) {
+                Files.createDirectory(dataDirectoryPath);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to create dataDirectory folder", e);
+        }
     }
 }

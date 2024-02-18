@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayOperationsController;
 import com.school.torconfigtool.RelayOperationsService;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.TorConfiguration;

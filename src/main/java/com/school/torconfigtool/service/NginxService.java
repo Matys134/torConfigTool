@@ -1,5 +1,8 @@
 package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.RelayOperationsService;
+import com.school.torconfigtool.TorConfiguration;
+import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,21 @@ public class NginxService {
 
     // Logger instance for logging events
     private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
+
+    // TorConfigurationService instance for managing Tor configurations
+    private final TorConfigurationService torConfigurationService;
+    private final RelayOperationsService relayOperationsService;
+
+    /**
+     * Constructor for the NginxService class.
+     * It initializes the TorConfigurationService instance.
+     *
+     * @param torConfigurationService The TorConfigurationService instance.
+     */
+    public NginxService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService) {
+        this.torConfigurationService = torConfigurationService;
+        this.relayOperationsService = relayOperationsService;
+    }
 
     /**
      * This method is used to start the Nginx server.
@@ -313,7 +331,7 @@ public class NginxService {
         }
     }
 
-    public void generateNginxConfig(int onionServicePort) throws IOException {
+    public void generateNginxConfig(int onionServicePort) {
         String nginxConfig = buildNginxConfig(onionServicePort);
         editNginxConfig(nginxConfig, onionServicePort);
     }
@@ -405,5 +423,52 @@ public class NginxService {
             // Log any exceptions that occur during the process
             logger.error("Error during certificate installation", e);
         }
+    }
+
+    public void checkAndManageNginxStatus() {
+        // Get the list of all webTunnels and Onion services
+        List<String> allServices = getAllServices();
+
+        // Iterate over the list and check the status of each service
+        for (String service : allServices) {
+            String status = relayOperationsService.getRelayStatus(service, "onion");
+            // If at least one service is online, start the Nginx service and return
+            if ("online".equals(status)) {
+                startNginx();
+                return;
+            }
+        }
+
+        // If no service is online, stop the Nginx service
+        stopNginx();
+    }
+
+    public void stopNginx() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "nginx");
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Failed to stop Nginx");
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Failed to stop Nginx", e);
+        }
+    }
+
+    private List<String> getAllServices() {
+        List<String> allServices = new ArrayList<>();
+        // Get the list of all onion services
+        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
+        for (TorConfiguration config : onionConfigs) {
+            allServices.add(config.getHiddenServicePort());
+        }
+
+        // Get the list of all webTunnels
+        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+        for (TorConfiguration config : bridgeConfigs) {
+            allServices.add(config.getBridgeConfig().getNickname());
+        }
+        return allServices;
     }
 }
