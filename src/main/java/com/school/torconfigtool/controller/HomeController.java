@@ -18,7 +18,7 @@ public class HomeController {
     @GetMapping("/")
     public String home() {
         // Add any necessary data to the model
-        return "home.html"; // "home.html" corresponds to your Thymeleaf template file
+        return "home"; // "home.html" corresponds to your Thymeleaf template file
     }
 
     /**

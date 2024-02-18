@@ -3,7 +3,7 @@ package com.school.torconfigtool.exception;
 /**
  * This is a class named RelayOperationException.
  * It extends RuntimeException, which is a form of Throwable that indicates conditions that a reasonable application might want to catch.
- *
+ * <p>
  * The RelayOperationException class has a constructor that accepts a message of type String.
  * This message is then passed to the superclass constructor of RuntimeException.
  */

@@ -34,7 +34,7 @@ public class OnionRelayOperationsService {
         try {
             // Read all the lines in the hostname file and return the first line which should be the hostname
             List<String> lines = Files.readAllLines(hostnameFilePath);
-            return lines.isEmpty() ? "No hostname found" : lines.get(0);
+            return lines.isEmpty() ? "No hostname found" : lines.getFirst();
         } catch (IOException e) {
             logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
             return "Unable to read hostname file";
