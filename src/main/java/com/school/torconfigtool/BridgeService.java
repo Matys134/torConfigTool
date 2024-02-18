@@ -23,6 +23,7 @@ public class BridgeService {
     private final RelayOperationsController relayOperationController;
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
+    private final RelayService relayService;
 
     /**
      * Constructor for BridgeService.
@@ -31,10 +32,11 @@ public class BridgeService {
      * @param nginxService Service for managing Nginx.
      * @param webtunnelService Service for managing webtunnel.
      */
-    public BridgeService(RelayOperationsController relayOperationController, NginxService nginxService, WebtunnelService webtunnelService) {
+    public BridgeService(RelayOperationsController relayOperationController, NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
         this.relayOperationController = relayOperationController;
         this.nginxService = nginxService;
         this.webtunnelService = webtunnelService;
+        this.relayService = relayService;
     }
 
     /**
@@ -139,5 +141,19 @@ public class BridgeService {
             config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
 
         return config;
+    }
+
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) {
+        try {
+            if (relayService.getBridgeCount() >= 2) {
+                model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
+                return;
+            }
+            configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
+            model.addAttribute("successMessage", "Tor Relay configured successfully!");
+        } catch (Exception e) {
+            logger.error("Error during Tor Relay configuration", e);
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
+        }
     }
 }

@@ -1,8 +1,6 @@
 package com.school.torconfigtool;
 
 import com.school.torconfigtool.service.NginxService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/bridge")
 public class BridgeController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BridgeController.class);
     private final RelayService relayService;
     private final NginxService nginxService;
     private final BridgeService bridgeService;
@@ -54,22 +51,7 @@ public class BridgeController {
         return "setup";
     }
 
-    /**
-     * Endpoint for configuring a Tor bridge.
-     * @param bridgeType The type of bridge to configure.
-     * @param bridgePort The port for the bridge.
-     * @param bridgeTransportListenAddr The transport listen address for the bridge.
-     * @param bridgeContact The contact information for the bridge.
-     * @param bridgeNickname The nickname for the bridge.
-     * @param webtunnelDomain The domain for the webtunnel bridge.
-     * @param bridgeControlPort The control port for the bridge.
-     * @param webtunnelUrl The URL for the webtunnel bridge.
-     * @param webtunnelPort The port for the webtunnel bridge.
-     * @param startBridgeAfterConfig Whether to start the bridge after configuring it.
-     * @param bridgeBandwidth The bandwidth for the bridge.
-     * @param model The model for the view.
-     * @return The name of the setup view.
-     */
+
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
                                   @RequestParam(required = false) Integer bridgePort,
@@ -83,16 +65,7 @@ public class BridgeController {
                                   @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        if (relayService.getBridgeCount() >= 2) {
-            model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
-            return "setup";
-        }
-        try {
-            bridgeService.configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
-        } catch (Exception e) {
-            logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
-        }
+        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
         return "setup";
     }
 
