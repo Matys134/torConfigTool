@@ -10,18 +10,18 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/update-guard-config")
-public class GuardConfigurationController {
-    private static final Logger logger = LoggerFactory.getLogger(GuardConfigurationController.class);
-    private final GuardConfigurationService guardConfigurationService;
+public class GuardConfigController {
+    private static final Logger logger = LoggerFactory.getLogger(GuardConfigController.class);
+    private final GuardConfigService guardConfigService;
 
-    public GuardConfigurationController(GuardConfigurationService guardConfigurationService) {
-        this.guardConfigurationService = guardConfigurationService;
+    public GuardConfigController(GuardConfigService guardConfigService) {
+        this.guardConfigService = guardConfigService;
     }
 
     @PostMapping
     public ResponseEntity<?> updateGuardConfiguration(@RequestBody GuardConfig config) {
         try {
-            boolean success = guardConfigurationService.updateConfiguration(config);
+            boolean success = guardConfigService.updateConfiguration(config);
             if (success) {
                 logger.info("Guard configuration updated successfully for relay: {}", config.getNickname());
                 return ResponseEntity.ok(Map.of("success", "Guard configuration updated successfully"));

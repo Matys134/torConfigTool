@@ -29,19 +29,19 @@ public class GuardController {
 
     private final RelayService relayService;
     private final RelayOperationsController relayOperationController;
-    private final GuardConfigurationService guardConfigurationService;
+    private final GuardConfigService guardConfigService;
 
     /**
      * Default constructor for GuardController.
      *
      * @param relayService              The RelayService instance to be injected.
      * @param relayOperationController  The RelayOperationsController instance to be injected.
-     * @param guardConfigurationService The GuardConfigurationService instance to be injected.
+     * @param guardConfigService The GuardConfigurationService instance to be injected.
      */
-    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardConfigurationService guardConfigurationService) {
+    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardConfigService guardConfigService) {
         this.relayService = relayService;
         this.relayOperationController = relayOperationController;
-        this.guardConfigurationService = guardConfigurationService;
+        this.guardConfigService = guardConfigService;
     }
 
     /**
@@ -100,7 +100,7 @@ public class GuardController {
                 return "setup";
             }
 
-            GuardConfig config = guardConfigurationService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+            GuardConfig config = guardConfigService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }

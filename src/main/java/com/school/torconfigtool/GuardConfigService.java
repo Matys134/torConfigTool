@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
  * It implements the RelayConfigService interface for GuardRelayConfig objects.
  */
 @Service
-public class GuardConfigurationService implements RelayConfigService<GuardConfig> {
+public class GuardConfigService implements RelayConfigService<GuardConfig> {
 
     // Logger instance for logging events of this class
-    private static final Logger logger = LoggerFactory.getLogger(GuardConfigurationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuardConfigService.class);
 
     /**
      * Default constructor for GuardConfigurationService.
      */
-    public GuardConfigurationService() {
+    public GuardConfigService() {
     }
 
     /**
