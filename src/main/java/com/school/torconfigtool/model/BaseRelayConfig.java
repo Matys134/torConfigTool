@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.model;
 
+import com.school.torconfigtool.RelayConfig;
 import lombok.Data;
 
 import java.io.BufferedWriter;

@@ -1,6 +1,6 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.BaseRelayConfig;
+import com.school.torconfigtool.model.BaseRelayConfig;
 
 /**
  * This interface defines the methods for managing the configuration of a Tor relay.
