@@ -1,5 +1,8 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.BridgeService;
+import com.school.torconfigtool.RelayService;
+import com.school.torconfigtool.SnowflakeProxyService;
 import com.school.torconfigtool.service.NginxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +53,22 @@ public class BridgeController {
         return "setup";
     }
 
-
+    /**
+     * Endpoint for configuring the bridge.
+     * @param bridgeType The type of bridge.
+     * @param bridgePort The port of the bridge.
+     * @param bridgeTransportListenAddr The transport listen address of the bridge.
+     * @param bridgeContact The contact of the bridge.
+     * @param bridgeNickname The nickname of the bridge.
+     * @param webtunnelDomain The domain of the web tunnel.
+     * @param bridgeControlPort The control port of the bridge.
+     * @param webtunnelUrl The URL of the web tunnel.
+     * @param webtunnelPort The port of the web tunnel.
+     * @param startBridgeAfterConfig Whether to start the bridge after configuration.
+     * @param bridgeBandwidth The bandwidth of the bridge.
+     * @param model The model for the view.
+     * @return The name of the setup view.
+     */
     @PostMapping("/configure")
     public String configureBridge(@RequestParam String bridgeType,
                                   @RequestParam(required = false) Integer bridgePort,
@@ -69,11 +87,7 @@ public class BridgeController {
     }
 
     /**
-     * This method is responsible for running the Snowflake proxy.
-     * It creates a new instance of BridgeRelayConfig and calls the runSnowflakeProxy method on it.
-     * If the proxy starts successfully, it returns a response entity with a success message and HTTP status OK.
-     * If an exception occurs during the process, it returns a response entity with an error message and HTTP status INTERNAL_SERVER_ERROR.
-     *
+     * Endpoint for running the Snowflake proxy.
      * @return ResponseEntity<String> - The response entity containing the result of the operation and the corresponding HTTP status.
      */
     @PostMapping("/run-snowflake-proxy")
@@ -87,9 +101,7 @@ public class BridgeController {
     }
 
     /**
-     * This method is responsible for checking if the bridge limit has been reached.
-     * It returns a response entity with a map containing the bridge limit reached status and the bridge count for the given bridge type.
-     *
+     * Endpoint for checking if the bridge limit has been reached.
      * @param bridgeType - The type of bridge to check the limit for.
      * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge count.
      */
@@ -99,12 +111,8 @@ public class BridgeController {
         return ResponseEntity.ok(response);
     }
 
-
     /**
-     * This method is responsible for setting up the bridge configuration.
-     * It checks if the bridge limit has been reached and adds this information to the model.
-     * The method then returns the name of the setup view.
-     *
+     * Endpoint for setting up the bridge configuration.
      * @param model The model for the view.
      * @return The name of the setup view.
      */
@@ -115,9 +123,7 @@ public class BridgeController {
     }
 
     /**
-     * This method is responsible for getting the running bridge type.
-     * It calls the getRunningBridgeType method on the relay service and returns a response entity with the result.
-     *
+     * Endpoint for getting the running bridge type.
      * @return ResponseEntity<Map<String, String>> - The response entity containing the map with the running bridge type.
      */
     @GetMapping("/running-type")
@@ -126,13 +132,8 @@ public class BridgeController {
         return ResponseEntity.ok(response);
     }
 
-
     /**
-     * This method is responsible for reverting the Nginx configuration to its default state.
-     * It calls the revertNginxDefaultConfig method on the nginxService.
-     * If the operation is successful, it returns a response entity with a success message and HTTP status OK.
-     * If an exception occurs during the process, it returns a response entity with an error message and HTTP status INTERNAL_SERVER_ERROR.
-     *
+     * Endpoint for reverting the Nginx configuration to its default state.
      * @return ResponseEntity<String> - The response entity containing the result of the operation and the corresponding HTTP status.
      */
     @PostMapping("/revert-nginx-config")
@@ -145,12 +146,8 @@ public class BridgeController {
         }
     }
 
-
     /**
-     * This method is responsible for toggling the limit on the number of bridges that can be configured.
-     * It calls the static method toggleLimit() on the RelayService class.
-     * If the operation is successful, it returns a response entity with HTTP status OK.
-     *
+     * Endpoint for toggling the limit on the number of bridges that can be configured.
      * @return ResponseEntity<Void> - The response entity indicating the result of the operation.
      */
     @PostMapping("/toggle-limit")
@@ -160,9 +157,7 @@ public class BridgeController {
     }
 
     /**
-     * This method is responsible for getting the state of the bridge limit.
-     * It calls the static method isLimitOn() on the RelayService class and returns a response entity with the result.
-     *
+     * Endpoint for getting the state of the bridge limit.
      * @return ResponseEntity<Boolean> - The response entity containing the state of the bridge limit.
      */
     @GetMapping("/limit-state")

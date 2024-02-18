@@ -1,6 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.service.NginxService;
+import com.school.torconfigtool.*;
 import com.school.torconfigtool.model.BridgeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +145,22 @@ public class BridgeService {
         return config;
     }
 
+    /**
+     * Configures a Tor bridge.
+     *
+     * @param bridgeType Type of the bridge.
+     * @param bridgePort Port of the bridge.
+     * @param bridgeTransportListenAddr Transport listen address of the bridge.
+     * @param bridgeContact Contact of the bridge.
+     * @param bridgeNickname Nickname of the bridge.
+     * @param webtunnelDomain Domain of the webtunnel.
+     * @param bridgeControlPort Control port of the bridge.
+     * @param webtunnelUrl URL of the webtunnel.
+     * @param webtunnelPort Port of the webtunnel.
+     * @param startBridgeAfterConfig Whether to start the bridge after configuring it.
+     * @param bridgeBandwidth Bandwidth of the bridge.
+     * @param model Model for the view.
+     */
     public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) {
         try {
             if (relayService.getBridgeCount() >= 2) {
@@ -159,6 +175,12 @@ public class BridgeService {
         }
     }
 
+    /**
+     * Checks if the bridge limit has been reached.
+     *
+     * @param bridgeType Type of the bridge.
+     * @return Map containing the bridge limit reached status and the bridge count.
+     */
     public Map<String, Object> checkBridgeLimit(String bridgeType) {
         Map<String, Object> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
