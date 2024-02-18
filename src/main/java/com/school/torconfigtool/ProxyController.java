@@ -19,13 +19,13 @@ import java.io.IOException;
 public class ProxyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProxyController.class);
-    private final ProxyConfigurator proxyConfigurator;
+    private final ProxyService proxyService;
 
     /**
      * Constructor for the ProxyController class.
      */
     public ProxyController() {
-        this.proxyConfigurator = new ProxyConfigurator(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
+        this.proxyService = new ProxyService(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
     }
 
     /**
@@ -38,7 +38,7 @@ public class ProxyController {
     @GetMapping
     public String proxyConfigurationForm(Model model) {
         try {
-            model.addAttribute("proxyStatus", proxyConfigurator.isProxyRunning() ? "Running" : "Stopped");
+            model.addAttribute("proxyStatus", proxyService.isProxyRunning() ? "Running" : "Stopped");
         } catch (IOException e) {
             logger.error("Error during checking Tor Proxy status", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
@@ -57,14 +57,14 @@ public class ProxyController {
     public String startProxy(Model model) {
         try {
             logger.info("Configuring Tor Proxy...");
-            if (!proxyConfigurator.configureProxy()) {
+            if (!proxyService.configureProxy()) {
                 logger.error("Failed to configure Tor Proxy.");
                 model.addAttribute("errorMessage", "Failed to configure Tor Proxy.");
                 return "proxy-config";
             }
 
             logger.info("Starting Tor Proxy...");
-            if (!proxyConfigurator.startProxy()) {
+            if (!proxyService.startProxy()) {
                 logger.error("Failed to start Tor Proxy.");
                 model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
                 return "proxy-config";
@@ -90,7 +90,7 @@ public class ProxyController {
     @PostMapping("/stop")
     public String stopProxy(Model model) {
         try {
-            if (!proxyConfigurator.stopProxy()) {
+            if (!proxyService.stopProxy()) {
                 model.addAttribute("errorMessage", "Failed to stop Tor Proxy.");
                 return "proxy-config";
             }

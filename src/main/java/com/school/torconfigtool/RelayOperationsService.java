@@ -15,9 +15,9 @@ import java.util.List;
  * This is a Service class for managing processes.
  */
 @Service
-public class ProcessManagementService {
+public class RelayOperationsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProcessManagementService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
 
     /**
      * This method executes a bash command and returns its output as a list of strings.

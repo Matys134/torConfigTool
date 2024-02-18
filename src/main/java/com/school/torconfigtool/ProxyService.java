@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * This class is responsible for configuring, starting, stopping, and checking the status of a proxy.
  */
-public class ProxyConfigurator {
+public class ProxyService {
 
     private static final String TORRC_PROXY_FILE = "torrc/torrc-proxy";
 
@@ -23,7 +23,7 @@ public class ProxyConfigurator {
      * @param proxyStarter       The object responsible for starting the proxy.
      * @param ipAddressRetriever The object responsible for retrieving the IP address.
      */
-    public ProxyConfigurator(ProxyFileCreator proxyFileCreator, ProxyStarter proxyStarter, IpAddressRetriever ipAddressRetriever) {
+    public ProxyService(ProxyFileCreator proxyFileCreator, ProxyStarter proxyStarter, IpAddressRetriever ipAddressRetriever) {
         this.proxyFileCreator = proxyFileCreator;
         this.proxyStarter = proxyStarter;
         this.ipAddressRetriever = ipAddressRetriever;

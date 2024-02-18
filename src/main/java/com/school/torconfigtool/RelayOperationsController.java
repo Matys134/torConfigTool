@@ -23,12 +23,12 @@ public class RelayOperationsController {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsController.class);
     private final TorConfigurationService torConfigurationService;
-    private final ProcessManagementService processManagementService;
+    private final RelayOperationsService relayOperationsService;
 
     public RelayOperationsController(TorConfigurationService torConfigurationService,
-                                     ProcessManagementService processManagementService) {
+                                     RelayOperationsService relayOperationsService) {
         this.torConfigurationService = torConfigurationService;
-        this.processManagementService = processManagementService;
+        this.relayOperationsService = relayOperationsService;
 
         try {
             Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
@@ -182,7 +182,7 @@ public class RelayOperationsController {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             System.out.println("Executing command: " + command);
-            int exitCode = processManagementService.executeCommand(command);
+            int exitCode = relayOperationsService.executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
             }
@@ -193,7 +193,7 @@ public class RelayOperationsController {
     @ResponseBody
     public String getRelayStatus(@RequestParam String relayNickname, @RequestParam String relayType) {
         String torrcFilePath = buildTorrcFilePath(relayNickname, relayType).toString();
-        int pid = processManagementService.getTorRelayPID(torrcFilePath);
+        int pid = relayOperationsService.getTorRelayPID(torrcFilePath);
         return pid > 0 ? "online" : (pid == -1 ? "offline" : "error");
     }
 
@@ -224,17 +224,17 @@ public class RelayOperationsController {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             System.out.println("Executing command: " + command);
-            int exitCode = processManagementService.executeCommand(command);
+            int exitCode = relayOperationsService.executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
             }
 
 
         } else {
-            int pid = processManagementService.getTorRelayPID(torrcFilePath.toString());
+            int pid = relayOperationsService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
                 String command = "kill -SIGINT " + pid;
-                int exitCode = processManagementService.executeCommand(command);
+                int exitCode = relayOperationsService.executeCommand(command);
                 if (exitCode != 0) {
                     throw new RelayOperationException("Failed to stop Tor Relay service.");
                 }
