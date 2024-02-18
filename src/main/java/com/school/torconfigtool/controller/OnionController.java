@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.OnionService;
-import com.school.torconfigtool.TorConfiguration;
+import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class OnionController {
     private static final Logger logger = LoggerFactory.getLogger(OnionController.class);
     private final TorConfigurationService torConfigurationService;
     private final OnionService onionService;
-    TorConfiguration torConfiguration = new TorConfiguration();
+    TorConfig torConfig = new TorConfig();
 
     /**
      * Constructor for OnionController.
@@ -47,7 +47,7 @@ public class OnionController {
 
         // Set the hiddenServicePort here if it's not being set elsewhere
         if (!onionServicePorts.isEmpty()) {
-            torConfiguration.setHiddenServicePort(onionServicePorts.getFirst());
+            torConfig.setHiddenServicePort(onionServicePorts.getFirst());
         }
 
         // Check if hiddenServiceDirs directory exists, if not, create it
@@ -71,8 +71,8 @@ public class OnionController {
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         Map<String, String> hostnames = onionService.getCurrentHostnames();
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurations();
-        String hostname = onionService.readHostnameFile(Integer.parseInt(torConfiguration.getHiddenServicePort())); // Assuming port 80 for this example
+        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurations();
+        String hostname = onionService.readHostnameFile(Integer.parseInt(torConfig.getHiddenServicePort())); // Assuming port 80 for this example
 
         model.addAttribute("hostname", hostname);
         model.addAttribute("onionConfigs", onionConfigs);

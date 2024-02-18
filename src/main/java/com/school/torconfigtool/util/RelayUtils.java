@@ -1,38 +1,31 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.school.torconfigtool.TorConfigToolApplication.isProgramInstalled;
-
+/**
+ * Utility class for handling relay operations.
+ */
 public class RelayUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayUtils.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
-    public static List<String> determineAvailableRelayTypes() {
-        List<String> availableRelayTypes = new ArrayList<>();
-
-        if (isProgramInstalled("nginx")) {
-            availableRelayTypes.add("onion");
-        }
-        if (isProgramInstalled("obfs4proxy")) {
-            availableRelayTypes.add("bridge");
-        }
-        return availableRelayTypes;
-    }
-
+    /**
+     * Checks for running relays and logs their process IDs.
+     */
     public static void checkRunningRelays() {
         try {
+            // Start a new process to get the list of running processes
             ProcessBuilder processBuilder = new ProcessBuilder("ps", "aux");
             Process process = processBuilder.start();
 
             try (InputStreamReader reader = new InputStreamReader(process.getInputStream())) {
+                // Filter the list of processes to get the PIDs of running relays
                 List<Integer> runningRelayPIDs = new BufferedReader(reader)
                         .lines()
                         .filter(line -> line.contains("tor -f torrc-"))
@@ -41,26 +34,35 @@ public class RelayUtils {
                         .map(parts -> Integer.parseInt(parts[1]))
                         .toList();
 
+                // Log the PIDs of running relays
                 runningRelayPIDs.forEach(pid -> logger.info("PID: {}", pid));
             }
 
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                // Handle process execution failure
+                // Log an error if the process execution failed
                 logger.error("ps command exited with non-zero status: {}", exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            // Handle exceptions
+            // Log any exceptions that occur
             logger.error("Error checking running relays", e);
         }
     }
 
+    /**
+     * Checks if a relay with the given nickname exists.
+     *
+     * @param relayNickname The nickname of the relay to check.
+     * @return True if the relay exists, false otherwise.
+     */
     public static boolean relayExists(String relayNickname) {
         String torrcDirectory = System.getProperty("user.dir") + File.separator + TORRC_DIRECTORY_PATH;
 
+        // Check all files in the torrc directory
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
+                // If a file starts with the torrc file prefix and its name matches the relay nickname, the relay exists
                 if (file.isFile() && file.getName().startsWith(TORRC_FILE_PREFIX)) {
                     String existingNickname = file.getName().substring(TORRC_FILE_PREFIX.length());
                     if (existingNickname.equals(relayNickname)) {
@@ -73,8 +75,16 @@ public class RelayUtils {
         return false;
     }
 
-    // Check if the ports are available by checking torrc files and running processes
+    /**
+     * Checks if the given ports are available for a relay with the given nickname.
+     *
+     * @param relayNickname The nickname of the relay.
+     * @param relayPort The port for the relay.
+     * @param controlPort The control port for the relay.
+     * @return True if the ports are available, false otherwise.
+     */
     public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort) {
+        // Check if the ports are unique and not privileged
         if (!arePortsUnique(relayPort, controlPort)) {
             return false;
         }
@@ -85,20 +95,23 @@ public class RelayUtils {
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
 
-        // Check torrc files
+        // Check all files in the torrc directory
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
+                // If a file starts with the torrc file prefix and its name contains an underscore, check its contents
                 if (file.isFile() && (file.getName().startsWith("torrc-") && file.getName().contains("_"))) {
                     String[] fileParts = file.getName().substring("torrc-".length()).split("_");
                     String currentFileRelayNickname = fileParts[0];
 
+                    // Skip the file if its name matches the relay nickname
                     if (currentFileRelayNickname.equals(relayNickname)) {
                         continue;
                     }
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
+                            // If a line contains a port and it matches one of the given ports, the ports are not available
                             if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
                                     (line.contains(String.valueOf(relayPort)) ||
                                             line.contains(String.valueOf(controlPort))
@@ -116,24 +129,34 @@ public class RelayUtils {
         return true;
     }
 
+    /**
+     * Checks if the given port is available for a relay with the given nickname.
+     *
+     * @param relayNickname The nickname of the relay.
+     * @param port The port to check.
+     * @return True if the port is available, false otherwise.
+     */
     public static boolean isPortAvailable(String relayNickname, int port) {
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
 
-        // Check torrc files
+        // Check all files in the torrc directory
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
+                // If a file starts with the torrc file prefix and its name contains an underscore, check its contents
                 if (file.isFile() && (file.getName().startsWith("torrc-") && file.getName().contains("_"))) {
                     String[] fileParts = file.getName().substring("torrc-".length()).split("_");
                     String currentFileRelayNickname = fileParts[0];
 
+                    // Skip the file if its name matches the relay nickname
                     if (currentFileRelayNickname.equals(relayNickname)) {
                         continue;
                     }
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
+                            // If a line contains a port and it matches the given port, the port is not available
                             if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
                                     (line.contains(String.valueOf(port))
                                     )) {
@@ -150,11 +173,24 @@ public class RelayUtils {
         return true;
     }
 
-
+    /**
+     * Checks if the given ports are unique.
+     *
+     * @param relayPort The port for the relay.
+     * @param controlPort The control port for the relay.
+     * @return True if the ports are unique, false otherwise.
+     */
     public static boolean arePortsUnique(int relayPort, int controlPort) {
         return relayPort != controlPort;
     }
 
+    /**
+     * Checks if the given ports are privileged (i.e., less than 1024).
+     *
+     * @param relayPort The port for the relay.
+     * @param controlPort The control port for the relay.
+     * @return True if the ports are privileged, false otherwise.
+     */
     public static boolean arePortsPrivileged(int relayPort, int controlPort) {
         return relayPort < 1024 || controlPort < 1024;
     }

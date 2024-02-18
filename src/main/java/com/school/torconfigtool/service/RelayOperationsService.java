@@ -1,16 +1,15 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.*;
 import com.school.torconfigtool.exception.RelayOperationException;
-import com.school.torconfigtool.service.NginxService;
+import com.school.torconfigtool.model.TorConfig;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is a Service class for managing processes.
+ * This class contains methods to perform operations on Tor Relays.
  */
 @Service
 public class RelayOperationsService {
@@ -36,6 +35,18 @@ public class RelayOperationsService {
     private final UPnPService upnpService;
     private final BridgeRelayOperationsService bridgeRelayOperationsService;
 
+    /**
+     * Constructor for RelayOperationsService.
+     *
+     * @param torConfigurationService The TorConfigurationService to use.
+     * @param relayOperationsService The RelayOperationsService to use.
+     * @param nginxService The NginxService to use.
+     * @param onionRelayOperationsService The OnionRelayOperationsService to use.
+     * @param torFileService The TorFileService to use.
+     * @param relayStatusService The RelayStatusService to use.
+     * @param upnpService The UPnPService to use.
+     * @param bridgeRelayOperationsService The BridgeRelayOperationsService to use.
+     */
     public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationsService = relayOperationsService;
@@ -74,10 +85,14 @@ public class RelayOperationsService {
         }
     }
 
-
-
-
-
+    /**
+     * This method starts a Tor Relay without updating the torrc file with fingerprints.
+     *
+     * @param relayNickname The nickname of the Tor Relay to start.
+     * @param relayType The type of the Tor Relay to start.
+     * @param model The Model to add attributes to.
+     * @return String The name of the view to render.
+     */
     public String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         String operation = "start";
@@ -91,6 +106,14 @@ public class RelayOperationsService {
         return relayOperations(model);
     }
 
+    /**
+     * This method starts a Tor Relay without updating the torrc file with fingerprints.
+     *
+     * @param torrcFilePath The path to the torrc file of the Tor Relay to start.
+     * @param relayNickname The nickname of the Tor Relay to start.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
+     */
     private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
@@ -106,6 +129,15 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * This method starts or stops a Tor Relay.
+     *
+     * @param relayNickname The nickname of the Tor Relay to start or stop.
+     * @param relayType The type of the Tor Relay to start or stop.
+     * @param model The Model to add attributes to.
+     * @param start Whether to start or stop the Tor Relay.
+     * @return String The name of the view to render.
+     */
     public String changeRelayState(String relayNickname, String relayType, Model model, boolean start) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
@@ -119,6 +151,15 @@ public class RelayOperationsService {
         return relayOperations(model);
     }
 
+    /**
+     * This method starts or stops a Tor Relay.
+     *
+     * @param torrcFilePath The path to the torrc file of the Tor Relay to start or stop.
+     * @param relayNickname The nickname of the Tor Relay to start or stop.
+     * @param start Whether to start or stop the Tor Relay.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
+     */
     private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
             throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
@@ -155,7 +196,12 @@ public class RelayOperationsService {
         }
     }
 
-
+    /**
+     * This method retrieves fingerprints from all existing relays.
+     *
+     * @param dataDirectoryPath The path to the data directory of the Tor Relay.
+     * @return List The list of fingerprints.
+     */
     private List<String> getFingerprints(String dataDirectoryPath) {
         List<String> fingerprints = new ArrayList<>();
         File dataDirectory = new File(dataDirectoryPath);
@@ -173,7 +219,11 @@ public class RelayOperationsService {
         return fingerprints;
     }
 
-    // This new method would retrieve fingerprints from all existing relays
+    /**
+     * This method retrieves fingerprints from all existing relays.
+     *
+     * @return List The list of fingerprints.
+     */
     private List<String> getAllRelayFingerprints() {
         // This path should lead to the base directory where all relay data directories are stored
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
@@ -189,21 +239,21 @@ public class RelayOperationsService {
         model.addAttribute("bridgeConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge"));
 
         model.addAttribute("onionConfigs", torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion"));
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
+        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "onion");
 
         logger.info("OnionConfigs: {}", onionConfigs);
 
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
-        for (TorConfiguration config : onionConfigs) {
+        for (TorConfig config : onionConfigs) {
             String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
             logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
 
-        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
+        List<TorConfig> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
-        for (TorConfiguration config : bridgeConfigs) {
+        for (TorConfig config : bridgeConfigs) {
             String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
             logger.info("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
@@ -219,6 +269,13 @@ public class RelayOperationsService {
         return "relay-operations";
     }
 
+    /**
+     * This method stops a Tor Relay.
+     * @param relayNickname The nickname of the Tor Relay to stop.
+     * @param relayType The type of the Tor Relay to stop.
+     * @param model The Model to add attributes to.
+     * @return String The name of the view to render.
+     */
     public String stopRelay(String relayNickname, String relayType, Model model) {
         String view = changeRelayState(relayNickname, relayType, model, false);
 
@@ -235,6 +292,13 @@ public class RelayOperationsService {
         return view;
     }
 
+    /**
+     * This method starts a Tor Relay.
+     * @param relayNickname The nickname of the Tor Relay to start.
+     * @param relayType The type of the Tor Relay to start.
+     * @param model The Model to add attributes to.
+     * @return String The name of the view to render.
+     */
     public String startRelay(String relayNickname, String relayType, Model model) {
         String view;
         if ("guard".equals(relayType)) {
@@ -257,6 +321,12 @@ public class RelayOperationsService {
         return view;
     }
 
+    /**
+     * This method removes a Tor Relay.
+     * @param relayNickname The nickname of the Tor Relay to remove.
+     * @param relayType The type of the Tor Relay to remove.
+     * @return String The name of the view to render.
+     */
     public Map<String, Object> removeRelay(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -297,6 +367,9 @@ public class RelayOperationsService {
         return response;
     }
 
+    /**
+     * This method creates a DataDirectory folder for the Tor Relay.
+     */
     public void createDataDirectory() {
         try {
             Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
@@ -308,10 +381,10 @@ public class RelayOperationsService {
         }
     }
 
+
     public String getRelayStatus(String relayNickname, String relayType) {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
-
     // openOrPort and closeOrPort methods that take from the UPnPService class
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         return upnpService.openOrPort(relayNickname, relayType);

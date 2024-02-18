@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,11 +7,17 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Service class for running the Snowflake proxy.
+ */
 @Service
 public class SnowflakeProxyService {
     private static final Logger logger = LoggerFactory.getLogger(SnowflakeProxyService.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
+    /**
+     * Runs the Snowflake proxy.
+     */
     public void runSnowflakeProxy() {
         try {
             // Command to clone the snowflake repository
@@ -30,10 +36,17 @@ public class SnowflakeProxyService {
             }
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Error running snowflake proxy", e);
         }
     }
 
+    /**
+     * Builds and runs the Snowflake proxy.
+     *
+     * @return The process of the running Snowflake proxy.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted.
+     */
     private Process getProcess() throws IOException, InterruptedException {
         ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
         goBuildProcessBuilder.directory(new File("snowflake/proxy"));

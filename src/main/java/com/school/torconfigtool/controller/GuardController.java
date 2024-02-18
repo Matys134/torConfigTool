@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardService;
-import com.school.torconfigtool.RelayUtils;
+import com.school.torconfigtool.util.RelayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,16 +39,12 @@ public class GuardController {
     /**
      * Handles the request for the Guard Relay configuration form.
      *
-     * @param model The model to be used for rendering the view.
      * @return The name of the view to be rendered.
      */
     @GetMapping
-    public String guardConfigurationForm(Model model) {
+    public String guardConfigurationForm() {
         logger.info("Relay configuration form requested");
         RelayUtils.checkRunningRelays();
-
-        List<String> availableRelayTypes = RelayUtils.determineAvailableRelayTypes();
-        model.addAttribute("availableRelayTypes", availableRelayTypes);
 
         return "setup";
     }

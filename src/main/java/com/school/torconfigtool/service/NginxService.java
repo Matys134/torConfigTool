@@ -1,6 +1,6 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.TorConfiguration;
+import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -438,14 +438,14 @@ public class NginxService {
     public List<String> getAllServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
-        List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
-        for (TorConfiguration config : onionConfigs) {
+        List<TorConfig> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
+        for (TorConfig config : onionConfigs) {
             allServices.add(config.getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
-        List<TorConfiguration> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
-        for (TorConfiguration config : bridgeConfigs) {
+        List<TorConfig> bridgeConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "bridge");
+        for (TorConfig config : bridgeConfigs) {
             allServices.add(config.getBridgeConfig().getNickname());
         }
         return allServices;

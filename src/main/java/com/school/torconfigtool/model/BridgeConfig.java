@@ -1,6 +1,6 @@
 package com.school.torconfigtool.model;
 
-import com.school.torconfigtool.SnowflakeProxyService;
+import com.school.torconfigtool.service.SnowflakeProxyService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;

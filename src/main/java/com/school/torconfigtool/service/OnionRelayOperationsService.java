@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +10,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * OnionRelayOperationsService is a service class responsible for operations related to Onion Relays.
+ */
 @Service
 public class OnionRelayOperationsService {
+    // Logger instance for logging events
     private static final Logger logger = LoggerFactory.getLogger(OnionRelayOperationsService.class);
 
+    /**
+     * This method is used to read the hostname file for a given hidden service port.
+     * It constructs the path to the hostname file and then reads it.
+     * If the file reading fails, it logs the error.
+     *
+     * @param hiddenServicePort The port of the hidden service.
+     * @return The hostname if it is found, otherwise an error message.
+     */
     public String readHostnameFile(String hiddenServicePort) {
         // The base directory where your hidden services directories are stored
         String hiddenServiceBaseDir = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs").toString();
@@ -22,7 +34,7 @@ public class OnionRelayOperationsService {
         try {
             // Read all the lines in the hostname file and return the first line which should be the hostname
             List<String> lines = Files.readAllLines(hostnameFilePath);
-            return lines.isEmpty() ? "No hostname found" : lines.getFirst();
+            return lines.isEmpty() ? "No hostname found" : lines.get(0);
         } catch (IOException e) {
             logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
             return "Unable to read hostname file";

@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.TorFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,16 +10,32 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * BridgeRelayOperationsService is a service class responsible for operations related to Bridge Relays.
+ */
 @Service
 public class BridgeRelayOperationsService {
 
     private static final Logger logger = LoggerFactory.getLogger(BridgeRelayOperationsService.class);
     private final TorFileService torFileService;
 
+    /**
+     * Constructor for the BridgeRelayOperationsService class.
+     * It initializes the TorFileService instance.
+     *
+     * @param torFileService The TorFileService instance.
+     */
     public BridgeRelayOperationsService(TorFileService torFileService) {
         this.torFileService = torFileService;
     }
 
+    /**
+     * This method is used to get the web tunnel link for a given relay.
+     * It reads the fingerprint and the web tunnel URL from the torrc file and constructs the web tunnel link.
+     *
+     * @param relayNickname The nickname of the relay.
+     * @return The web tunnel link.
+     */
     public String getWebtunnelLink(String relayNickname) {
         String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname);
         String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";

@@ -1,5 +1,7 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.service.RelayStatusService;
 import com.simtechdata.waifupnp.UPnP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +54,8 @@ public class UPnPService {
         Map<String, Object> response = new HashMap<>();
         try {
             // Get the list of all guard relays
-            List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
-            for (TorConfiguration config : guardConfigs) {
+            List<TorConfig> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+            for (TorConfig config : guardConfigs) {
                 if (enable) {
                     String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
                     if ("online".equals(status)) {
@@ -99,8 +101,8 @@ public class UPnPService {
 
     public List<Integer> getUPnPPorts() {
         List<Integer> upnpPorts = new ArrayList<>();
-        List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
-        for (TorConfiguration config : guardConfigs) {
+        List<TorConfig> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+        for (TorConfig config : guardConfigs) {
             int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
             if (UPnP.isMappedTCP(orPort)) {
                 upnpPorts.add(orPort);

@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.RelayOperationsService;
+import com.school.torconfigtool.service.RelayOperationsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

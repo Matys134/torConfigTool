@@ -1,7 +1,7 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayUtils;
-import com.school.torconfigtool.TorConfiguration;
+import com.school.torconfigtool.util.RelayUtils;
+import com.school.torconfigtool.model.TorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,11 +27,11 @@ public class OnionService {
 
     private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
     private final NginxService nginxService;
-    private final TorConfiguration torConfiguration;
+    private final TorConfig torConfig;
 
-    public OnionService(NginxService nginxService, TorConfiguration torConfiguration) {
+    public OnionService(NginxService nginxService, TorConfig torConfig) {
         this.nginxService = nginxService;
-        this.torConfiguration = torConfiguration;
+        this.torConfig = torConfig;
     }
 
     /**
@@ -156,7 +156,7 @@ public class OnionService {
             // Restart nginx
             nginxService.reloadNginx();
         }
-        torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
+        torConfig.setHiddenServicePort(String.valueOf(onionServicePort));
         logger.info("Hidden Service Port set to: {}", onionServicePort);
     }
 

@@ -3,6 +3,7 @@ package com.school.torconfigtool;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.model.RelayConfig;
+import com.school.torconfigtool.model.TorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,8 @@ public class TorConfigurationService {
 
     private static final Logger logger = LoggerFactory.getLogger(TorConfigurationService.class);
 
-    public List<TorConfiguration> readTorConfigurations() {
-        List<TorConfiguration> configs = new ArrayList<>();
+    public List<TorConfig> readTorConfigurations() {
+        List<TorConfig> configs = new ArrayList<>();
         String folderPath = buildFolderPath();
 
         configs.addAll(readTorConfigurationsFromFolder(folderPath, "guard"));
@@ -33,8 +35,8 @@ public class TorConfigurationService {
         return "torrc";
     }
 
-    public List<TorConfiguration> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
-        List<TorConfiguration> configs = new ArrayList<>();
+    public List<TorConfig> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
+        List<TorConfig> configs = new ArrayList<>();
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
 
@@ -43,7 +45,7 @@ public class TorConfigurationService {
                 String relayType = parseRelayTypeFromFile(file);
                 if (relayType.equals(expectedRelayType)) {
                     try {
-                        TorConfiguration config = parseTorConfiguration(file, relayType);
+                        TorConfig config = parseTorConfiguration(file, relayType);
                         configs.add(config);
                     } catch (IOException e) {
                         logger.error("Error reading Tor configuration file: {}", file.getName(), e);
@@ -61,8 +63,8 @@ public class TorConfigurationService {
         return fileName.substring(fileName.indexOf("_") + 1);
     }
 
-    private TorConfiguration parseTorConfiguration(File file, String relayType) throws IOException {
-        TorConfiguration config = new TorConfiguration();
+    private TorConfig parseTorConfiguration(File file, String relayType) throws IOException {
+        TorConfig config = new TorConfig();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -72,7 +74,7 @@ public class TorConfigurationService {
         return config;
     }
 
-    private void parseTorConfigLine(String line, TorConfiguration config, String relayType) {
+    private void parseTorConfigLine(String line, TorConfig config, String relayType) {
         RelayConfig relayConfig = getRelayConfig(config, relayType);
 
         if (line.startsWith("Nickname")) {
@@ -97,18 +99,18 @@ public class TorConfigurationService {
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
                 String fullUrl = line.split("=")[1].trim();
                 try {
-                    java.net.URL url = new java.net.URL(fullUrl);
-                    String webtunnelUrl = url.getHost();
-                    String path = url.getPath().substring(1); // Remove the leading "/"
+                    java.net.URI uri = new java.net.URI(fullUrl);
+                    String webtunnelUrl = uri.getHost();
+                    String path = uri.getPath().substring(1); // Remove the leading "/"
                     ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
                     ((BridgeConfig) relayConfig).setPath(path);
-                } catch (java.net.MalformedURLException e) {
-                    logger.error("Invalid webtunnel URL: " + fullUrl, e);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
                 }
-            }
+        }
     }
 
-    private RelayConfig getRelayConfig(TorConfiguration config, String relayType) {
+    private RelayConfig getRelayConfig(TorConfig config, String relayType) {
         RelayConfig relayConfig = null;
 
         if ("guard".equals(relayType)) {
