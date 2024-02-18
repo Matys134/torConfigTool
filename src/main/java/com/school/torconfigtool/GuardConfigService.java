@@ -2,7 +2,11 @@ package com.school.torconfigtool;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * This service class is responsible for managing the configuration of Guard Relays in the Tor network.
@@ -72,5 +76,21 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
         }
 
         return config;
+    }
+
+    public ResponseEntity<?> updateGuardConfiguration(GuardConfig config) {
+        try {
+            boolean success = updateConfiguration(config);
+            if (success) {
+                logger.info("Guard configuration updated successfully for relay: {}", config.getNickname());
+                return ResponseEntity.ok(Map.of("success", "Guard configuration updated successfully"));
+            } else {
+                logger.warn("Failed to update guard configuration for relay: {}", config.getNickname());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Failed to update guard configuration"));
+            }
+        } catch (Exception e) {
+            logger.error("Exception occurred while updating guard configuration", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An unexpected error occurred"));
+        }
     }
 }
