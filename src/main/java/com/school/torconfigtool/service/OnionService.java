@@ -1,6 +1,8 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.service.NginxService;
+import com.school.torconfigtool.RelayOperationsController;
+import com.school.torconfigtool.RelayUtils;
+import com.school.torconfigtool.TorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -138,6 +140,11 @@ public class OnionService {
         }
     }
 
+    /**
+     * Configures the onion service for the given port.
+     * @param onionServicePort The onion service port.
+     * @throws IOException If an I/O error occurs.
+     */
     public void configureOnionService(int onionServicePort) throws IOException {
         // Check port availability before configuring the onion service
         if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
@@ -156,16 +163,29 @@ public class OnionService {
         logger.info("Hidden Service Port set to: {}", onionServicePort);
     }
 
+    /**
+     * Refreshes Nginx.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted.
+     */
     public void refreshNginx() throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "reload", "nginx");
         Process process = processBuilder.start();
         process.waitFor();
     }
 
+    /**
+     * Checks if the Onion service is configured.
+     * @return true if the Onion service is configured, false otherwise.
+     */
     public boolean checkOnionConfigured() {
         return !getAllOnionServicePorts().isEmpty();
     }
 
+    /**
+     * Retrieves the current hostnames.
+     * @return a map of the current hostnames.
+     */
     public Map<String, String> getCurrentHostnames() {
         Map<String, String> hostnames = new HashMap<>();
         for (String hiddenServicePortString : getAllOnionServicePorts()) {

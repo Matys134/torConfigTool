@@ -1,5 +1,8 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.OnionService;
+import com.school.torconfigtool.TorConfiguration;
+import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,10 @@ public class OnionController {
      * Constructor for OnionController.
      * Initializes the required services and checks if the hiddenServiceDirs directory exists.
      * If it doesn't exist, it attempts to create it.
+     *
+     * @param torConfigurationService the service for handling Tor configurations
+     * @param onionService the service for handling Onion operations
+     * @param onionService1 the service for handling Onion operations
      */
     @Autowired
     public OnionController(TorConfigurationService torConfigurationService, OnionService onionService, OnionService onionService1) {
@@ -57,6 +64,9 @@ public class OnionController {
     /**
      * Handles GET requests to the base path.
      * Returns the setup page with the current onion configurations and hostnames.
+     *
+     * @param model the model to add attributes to for rendering in the view
+     * @return the name of the view to render
      */
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
@@ -71,14 +81,26 @@ public class OnionController {
         return "setup"; // The name of the Thymeleaf template to render
     }
 
-
+    /**
+     * Handles GET requests to /current-hostnames.
+     * Returns the current hostnames.
+     *
+     * @return a map of the current hostnames
+     */
     @GetMapping("/current-hostnames")
     @ResponseBody
     public Map<String, String> getCurrentHostnames() {
         return onionService.getCurrentHostnames();
     }
 
-
+    /**
+     * Handles POST requests to /configure.
+     * Configures the Onion service.
+     *
+     * @param onionServicePort the port for the Onion service
+     * @param model the model to add attributes to for rendering in the view
+     * @return the name of the view to render
+     */
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         try {
@@ -94,6 +116,9 @@ public class OnionController {
     /**
      * Handles POST requests to /start.
      * Starts the onion service.
+     *
+     * @param model the model to add attributes to for rendering in the view
+     * @return the name of the view to render
      */
     @PostMapping("/start")
     public String startOnionService(Model model) {
@@ -106,7 +131,12 @@ public class OnionController {
         return "setup";
     }
 
-
+    /**
+     * Handles POST requests to /refresh-nginx.
+     * Refreshes Nginx.
+     *
+     * @return a ResponseEntity indicating the status of the operation
+     */
     @PostMapping("/refresh-nginx")
     public ResponseEntity<Void> refreshNginx() {
         try {
@@ -118,7 +148,12 @@ public class OnionController {
         }
     }
 
-
+    /**
+     * Handles GET requests to /onion-configured.
+     * Checks if the Onion service is configured.
+     *
+     * @return a ResponseEntity containing a map with the status of the Onion service configuration
+     */
     @GetMapping("/onion-configured")
     public ResponseEntity<Map<String, Boolean>> checkOnionConfigured() {
         Map<String, Boolean> response = new HashMap<>();
