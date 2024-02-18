@@ -1,5 +1,7 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.DataService;
+import com.school.torconfigtool.RelayData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,40 +33,24 @@ public class DataController {
     /**
      * Endpoint to receive relay data.
      * @param relayId The ID of the relay.
-     * @param relayData The relay data to be added.
-     * @return A response indicating the success of the operation.
+     * @param relayData The data of the relay.
+     * @return A response entity with a success message.
      */
     @PostMapping("/data/{relayId}")
     public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
-
-        Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
-        dataService.addRelayData(relayDataQueue, relayData);
-
+        dataService.handleRelayData(relayId, relayData, relayDataMap);
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
     /**
-     * Endpoint to receive relay events.
+     * Endpoint to receive relay event.
      * @param relayId The ID of the relay.
-     * @param eventData The event data to be added.
-     * @return A response indicating the success of the operation.
+     * @param eventData The event data of the relay.
+     * @return A response entity with a success message.
      */
     @PostMapping("/data/{relayId}/event")
     public ResponseEntity<String> receiveRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
-        String event = eventData.get("event");
-
-        // Add the event to the relay data
-        Deque<RelayData> relayDataQueue = relayDataMap.get(relayId);
-        if (relayDataQueue != null) {
-            RelayData relayData = new RelayData();
-            relayData.setEvent(event);
-            dataService.addRelayData(relayDataQueue, relayData);
-        }
-
-        // Add the event to the relay events
-        Deque<String> relayEventQueue = relayEventMap.computeIfAbsent(relayId, k -> new LinkedList<>());
-        dataService.addRelayEvent(relayEventQueue, event);
-
+        dataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 
