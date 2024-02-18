@@ -19,34 +19,34 @@
             <div id="guard-configs" class="list-group">
                 <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
-                    <h5 th:text="'Nickname: ' + ${config.guardRelayConfig.nickname}"></h5>
-                    <p th:text="'ORPort: ' + ${config.guardRelayConfig.orPort}"></p>
-                    <p th:text="'Contact: ' + ${config.guardRelayConfig.contact}"></p>
-                    <p th:text="'Control Port: ' + ${config.guardRelayConfig.controlPort}"></p>
-                    <p>Status: <span th:id="${'status-' + config.guardRelayConfig.nickname}">Unknown</span></p>
-                    <span style="color: blue;" th:id="${'status-message-' + config.guardRelayConfig.nickname}">Idle</span>
+                    <h5 th:text="'Nickname: ' + ${config.getGuardConfig.nickname}"></h5>
+                    <p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p>
+                    <p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p>
+                    <p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p>
+                    <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
+                    <span style="color: blue;" th:id="${'status-message-' + config.getGuardConfig.nickname}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"
                                 th:attr="data-config-type='guard'"
-                                th:data-config-contact="${config.guardRelayConfig.contact}"
-                                th:data-config-controlport="${config.guardRelayConfig.controlPort}"
-                                th:data-config-nickname="${config.guardRelayConfig.nickname}"
-                                th:data-config-orport="${config.guardRelayConfig.orPort}">
+                                th:data-config-contact="${config.getGuardConfig.contact}"
+                                th:data-config-controlport="${config.getGuardConfig.controlPort}"
+                                th:data-config-nickname="${config.getGuardConfig.nickname}"
+                                th:data-config-orport="${config.getGuardConfig.orPort}">
                             Edit
                         </button>
                         <button class="btn btn-secondary remove-button"
                                 th:attr="data-config-type='guard'"
-                                th:data-config-nickname="${config.guardRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Remove
                         </button>
                         <button class="btn btn-secondary start-button"
                                 th:attr="data-config-type='guard'"
-                                th:data-config-nickname="${config.guardRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Start
                         </button>
                         <button class="btn btn-secondary stop-button"
                                 th:attr="data-config-type='guard'"
-                                th:data-config-nickname="${config.guardRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Stop
                         </button>
                     </div>
@@ -63,45 +63,45 @@
             <div id="bridge-configs" class="list-group">
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
-                    <h5 th:text="'Nickname: ' + ${config.bridgeRelayConfig.nickname}"></h5>
+                    <h5 th:text="'Nickname: ' + ${config.getBridgeConfig.nickname}"></h5>
 
-                    <p th:text="'ORPort: ' + ${config.bridgeRelayConfig.orPort}"></p>
-                    <p th:text="'ServerTransportListenAddr: ' + ${config.bridgeRelayConfig.getServerTransport}"></p>
-                    <p th:text="'Contact: ' + ${config.bridgeRelayConfig.contact}"></p>
-                    <p th:if="${webtunnelLinks[config.bridgeRelayConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.bridgeRelayConfig.nickname]}"></span></p>
-                    <p>Status: <span th:id="${'status-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+                    <p th:text="'ORPort: ' + ${config.getBridgeConfig.orPort}"></p>
+                    <p th:text="'ServerTransportListenAddr: ' + ${config.getBridgeConfig.getServerTransport}"></p>
+                    <p th:text="'Contact: ' + ${config.getBridgeConfig.contact}"></p>
+                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
+                    <p>Status: <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
                     <!-- Display type of bridge -->
-                    <p>Type: <span th:id="${'bridge-type-' + config.bridgeRelayConfig.nickname}">Unknown</span></p>
+                    <p>Type: <span th:id="${'bridge-type-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
-                    <span style="color: blue;" th:id="${'status-message-' + config.bridgeRelayConfig.nickname}">Idle</span>
+                    <span style="color: blue;" th:id="${'status-message-' + config.getBridgeConfig.nickname}">Idle</span>
 
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-bridge-button"
                                 th:attr="data-config-type='bridge'"
-                                th:data-config-contact="${config.bridgeRelayConfig.contact}"
-                                th:data-config-controlport="${config.bridgeRelayConfig.controlPort}"
-                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}"
-                                th:data-config-orport="${config.bridgeRelayConfig.orPort}"
-                                th:data-config-servertransport="${config.bridgeRelayConfig.getServerTransport}"
-                                th:data-config-webtunnelurl="${config.bridgeRelayConfig.webtunnelUrl}"
-                                th:data-config-path="${config.bridgeRelayConfig.path}">
+                                th:data-config-contact="${config.getBridgeConfig.contact}"
+                                th:data-config-controlport="${config.getBridgeConfig.controlPort}"
+                                th:data-config-nickname="${config.getBridgeConfig.nickname}"
+                                th:data-config-orport="${config.getBridgeConfig.orPort}"
+                                th:data-config-servertransport="${config.getBridgeConfig.getServerTransport}"
+                                th:data-config-webtunnelurl="${config.getBridgeConfig.webtunnelUrl}"
+                                th:data-config-path="${config.getBridgeConfig.path}">
                             Edit
                         </button>
                         <button class="btn btn-secondary remove-button"
                                 th:attr="data-config-type='bridge'"
-                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Remove
                         </button>
                         <button class="btn btn-secondary start-button"
                                 th:attr="data-config-type='bridge'"
-                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Start
                         </button>
                         <button class="btn btn-secondary stop-button"
                                 th:attr="data-config-type='bridge'"
-                                th:data-config-nickname="${config.bridgeRelayConfig.nickname}">
+                                th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Stop
                         </button>
                         <button class="btn btn-secondary">

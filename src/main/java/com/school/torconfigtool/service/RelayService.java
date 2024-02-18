@@ -1,8 +1,8 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayUtils;
-import com.school.torconfigtool.models.BridgeRelayConfig;
-import com.school.torconfigtool.models.GuardRelayConfig;
+import com.school.torconfigtool.util.RelayUtils;
+import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,6 @@ public class RelayService {
     public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
         try {
             return RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort);
-
-            // Other necessary code here...
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             return false;
@@ -91,7 +89,7 @@ public class RelayService {
                         runningBridgeTypes.put(bridgeNickname, bridgeType);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error reading torrc file", e);
                 }
             }
         }
@@ -110,10 +108,10 @@ public class RelayService {
         bridgeCountByType.put("snowflake", 0);
 
         // Get the list of all bridges
-        List<BridgeRelayConfig> bridges = getAllBridges();
+        List<BridgeConfig> bridges = getAllBridges();
 
         // Count the number of each type of bridge
-        for (BridgeRelayConfig bridge : bridges) {
+        for (BridgeConfig bridge : bridges) {
             String bridgeType = bridge.getBridgeType();
             bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
         }
@@ -126,15 +124,15 @@ public class RelayService {
         return bridgeCountByType;
     }
 
-    public List<BridgeRelayConfig> getAllBridges() {
-        List<BridgeRelayConfig> bridges = new ArrayList<>();
+    public List<BridgeConfig> getAllBridges() {
+        List<BridgeConfig> bridges = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
 
         if (files != null) {
             for (File file : files) {
                 try (Scanner scanner = new Scanner(file)) {
-                    BridgeRelayConfig bridge = new BridgeRelayConfig();
+                    BridgeConfig bridge = new BridgeConfig();
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         if (line.startsWith("Nickname")) {
@@ -160,15 +158,15 @@ public class RelayService {
     }
 
     // method to get all guard relays
-    public List<GuardRelayConfig> getAllGuards() {
-        List<GuardRelayConfig> guards = new ArrayList<>();
+    public List<GuardConfig> getAllGuards() {
+        List<GuardConfig> guards = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_guard"));
 
         if (files != null) {
             for (File file : files) {
                 try (Scanner scanner = new Scanner(file)) {
-                    GuardRelayConfig guard = new GuardRelayConfig();
+                    GuardConfig guard = new GuardConfig();
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         if (line.startsWith("Nickname")) {
