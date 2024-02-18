@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.BridgeConfigService;
 import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.service.BridgeConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +43,8 @@ public class BridgeConfigController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
-        Map<String, String> response = bridgeConfigService.updateBridgeConfig(config);
-        if (response.get("message").equals("Bridge configuration updated successfully")) {
+        Map<String, String> response = bridgeConfigService.updateConfigAndReturnResponse(config);
+        if (response.get("message").equals("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

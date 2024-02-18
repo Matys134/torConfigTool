@@ -130,6 +130,14 @@ public class ProxyService {
         return "success";
     }
 
+    /**
+     * Starts the Tor process with the given file path.
+     *
+     * @param filePath The file path of the Tor configuration file.
+     * @return The process ID of the started Tor process, or -1 if the process failed to start.
+     * @throws IOException      If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the process to start.
+     */
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid != -1) {
@@ -162,7 +170,14 @@ public class ProxyService {
         return -1;
     }
 
-
+    /**
+     * Stops the Tor process associated with the given file path.
+     *
+     * @param filePath The file path of the Tor configuration file.
+     * @return true if the process was successfully stopped, false otherwise.
+     * @throws IOException      If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the process to stop.
+     */
     public boolean stop(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid == -1) {
@@ -196,7 +211,13 @@ public class ProxyService {
         }
     }
 
-
+    /**
+     * Retrieves the process ID of the running Tor process associated with the given file path.
+     *
+     * @param filePath The file path of the Tor configuration file.
+     * @return The process ID of the running Tor process, or -1 if no process is found.
+     * @throws IOException If an I/O error occurs.
+     */
     public long getRunningTorProcessId(String filePath) throws IOException {
         logger.info("Checking if Tor process is already running...");
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");

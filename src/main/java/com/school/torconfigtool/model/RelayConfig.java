@@ -1,5 +1,5 @@
 // RelayConfig.java
-package com.school.torconfigtool;
+package com.school.torconfigtool.model;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
