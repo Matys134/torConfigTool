@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -155,5 +157,36 @@ public class BridgeService {
             logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
         }
+    }
+
+    public Map<String, Object> checkBridgeLimit(String bridgeType) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
+
+        if (!RelayService.isLimitOn()) {
+            response.put("bridgeLimitReached", false);
+            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
+            return response;
+        }
+
+        switch (bridgeType) {
+            case "obfs4":
+                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
+                response.put("bridgeCount", bridgeCountByType.get("obfs4"));
+                break;
+            case "webtunnel":
+                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
+                break;
+            case "snowflake":
+                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
+                response.put("bridgeCount", bridgeCountByType.get("snowflake"));
+                break;
+            default:
+                response.put("bridgeLimitReached", false);
+                response.put("bridgeCount", 0);
+        }
+
+        return response;
     }
 }

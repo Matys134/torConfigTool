@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -96,33 +95,7 @@ public class BridgeController {
      */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
-        Map<String, Object> response = new HashMap<>();
-        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
-
-        if (!RelayService.isLimitOn()) {
-            response.put("bridgeLimitReached", false);
-            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
-            return ResponseEntity.ok(response);
-        }
-
-        switch (bridgeType) {
-            case "obfs4":
-                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
-                response.put("bridgeCount", bridgeCountByType.get("obfs4"));
-                break;
-            case "webtunnel":
-                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
-                response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
-                break;
-            case "snowflake":
-                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
-                response.put("bridgeCount", bridgeCountByType.get("snowflake"));
-                break;
-            default:
-                response.put("bridgeLimitReached", false);
-                response.put("bridgeCount", 0);
-        }
-
+        Map<String, Object> response = bridgeService.checkBridgeLimit(bridgeType);
         return ResponseEntity.ok(response);
     }
 
