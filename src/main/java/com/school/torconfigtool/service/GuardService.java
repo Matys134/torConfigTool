@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayService;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;

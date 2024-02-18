@@ -1,6 +1,6 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayData;
+import com.school.torconfigtool.model.RelayData;
 import org.springframework.stereotype.Service;
 
 import java.util.Deque;

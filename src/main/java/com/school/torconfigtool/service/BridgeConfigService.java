@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayConfigService;
 import com.school.torconfigtool.TorrcFileCreator;
 import com.school.torconfigtool.model.BridgeConfig;
 import org.slf4j.Logger;

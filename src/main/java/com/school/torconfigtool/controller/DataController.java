@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.DataService;
-import com.school.torconfigtool.RelayData;
+import com.school.torconfigtool.model.RelayData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

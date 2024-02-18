@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.BridgeService;
-import com.school.torconfigtool.RelayService;
+import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.SnowflakeProxyService;
 import com.school.torconfigtool.service.NginxService;
 import org.springframework.beans.factory.annotation.Autowired;

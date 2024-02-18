@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.exception;
 
 /**
  * This is a class named RelayOperationException.

@@ -1,5 +1,7 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.model.RelayInfo;
+import com.school.torconfigtool.service.RelayService;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import org.springframework.beans.factory.annotation.Autowired;
