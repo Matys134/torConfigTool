@@ -1,7 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.relay.RelayOperationException;
-import com.school.torconfigtool.util.ProcessManagementService;
 import com.simtechdata.waifupnp.UPnP;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

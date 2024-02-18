@@ -1,7 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.bridge.BridgeConfig;
-import com.school.torconfigtool.guard.GuardConfig;
 import lombok.Data;
 
 @Data
