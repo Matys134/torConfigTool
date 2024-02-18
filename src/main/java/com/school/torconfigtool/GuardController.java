@@ -1,5 +1,6 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +30,13 @@ public class GuardController {
 
     private final RelayService relayService;
     private final RelayOperationsController relayOperationController;
-    private final GuardConfigService guardConfigService;
+    private final GuardService guardService;
 
-    /**
-     * Default constructor for GuardController.
-     *
-     * @param relayService              The RelayService instance to be injected.
-     * @param relayOperationController  The RelayOperationsController instance to be injected.
-     * @param guardConfigService The GuardConfigurationService instance to be injected.
-     */
-    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardConfigService guardConfigService) {
+
+    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardService guardService) {
         this.relayService = relayService;
         this.relayOperationController = relayOperationController;
-        this.guardConfigService = guardConfigService;
+        this.guardService = guardService;
     }
 
     /**
@@ -100,7 +95,7 @@ public class GuardController {
                 return "setup";
             }
 
-            GuardConfig config = guardConfigService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+            GuardConfig config = guardService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
             if (!torrcFilePath.toFile().exists()) {
                 TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
             }

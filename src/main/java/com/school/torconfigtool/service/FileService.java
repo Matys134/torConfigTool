@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,5 +66,33 @@ public class FileService {
     public List<String> getUploadedFilesFromPort(int port) {
         String uploadDir = "onion/www/service-" + port + "/";
         return getUploadedFilesFromDirectory(uploadDir);
+    }
+
+    /**
+     * Uploads an array of files to a specific port and returns the names of all files in the directory.
+     *
+     * @param files the files to be uploaded
+     * @param port the port where the files will be uploaded
+     * @return a list of file names
+     * @throws IOException if an I/O error occurs during file upload
+     */
+    public List<String> uploadFilesToPort(MultipartFile[] files, int port) throws IOException {
+        String fileDir = "onion/www/service-" + port + "/";
+        uploadFiles(files, fileDir);
+        return getUploadedFilesFromDirectory(fileDir);
+    }
+
+    /**
+     * Deletes an array of files from a specific port.
+     *
+     * @param fileNames the names of the files to be deleted
+     * @param port the port where the files will be deleted from
+     * @throws IOException if an I/O error occurs during file deletion
+     */
+    public void deleteFilesFromPort(String[] fileNames, int port) throws IOException {
+        String fileDir = "onion/www/service-" + port + "/";
+        for (String fileName : fileNames) {
+            deleteFile(fileName, fileDir);
+        }
     }
 }

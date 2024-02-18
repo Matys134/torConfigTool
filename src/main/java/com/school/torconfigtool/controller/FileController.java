@@ -1,5 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,23 +34,20 @@ public class FileController {
      * Handles POST requests to upload files to a specific port.
      *
      * @param files the files to be uploaded
-     * @param port the port where the files will be uploaded
+     * @param port the port where the files will be uploaded to
      * @param model the Model object to be used for passing attributes to the view
      * @return the name of the view to be rendered
      */
     @PostMapping("/upload/{port}")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
         try {
-            String fileDir = "onion/www/service-" + port + "/";
-            fileService.uploadFiles(files, fileDir);
-            List<String> fileNames = fileService.getUploadedFilesFromDirectory(fileDir);
+            List<String> fileNames = fileService.uploadFilesToPort(files, port);
             model.addAttribute("uploadedFiles", fileNames);
             model.addAttribute("message", "Files uploaded successfully!");
-            return "file_upload_form";
         } catch (Exception e) {
             model.addAttribute("message", "Fail! -> uploaded filename: " + Arrays.toString(files));
-            return "file_upload_form";
         }
+        return "file_upload_form";
     }
 
     /**
@@ -63,18 +61,14 @@ public class FileController {
     @PostMapping("/remove-files/{port}")
     public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
         try {
-            String fileDir = "onion/www/service-" + port + "/";
-            for (String fileName : fileNames) {
-                fileService.deleteFile(fileName, fileDir);
-            }
-            List<String> remainingFileNames = fileService.getUploadedFilesFromDirectory(fileDir);
+            fileService.deleteFilesFromPort(fileNames, port);
+            List<String> remainingFileNames = fileService.getUploadedFilesFromPort(port);
             model.addAttribute("uploadedFiles", remainingFileNames);
             model.addAttribute("message", "Files deleted successfully.");
-            return "file_upload_form";
         } catch (Exception e) {
             model.addAttribute("message", "Error: " + e.getMessage());
-            return "file_upload_form";
         }
+        return "file_upload_form";
     }
 
     /**

@@ -1,6 +1,6 @@
-package com.school.torconfigtool.controller;
+package com.school.torconfigtool;
 
-import com.school.torconfigtool.GuardConfig;
+import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.GuardConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
