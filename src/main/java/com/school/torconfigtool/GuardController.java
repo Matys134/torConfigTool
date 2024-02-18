@@ -1,6 +1,5 @@
 package com.school.torconfigtool;
 
-import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -54,17 +53,6 @@ public class GuardController {
         return "setup";
     }
 
-    /**
-     * Handles the request for configuring a Guard Relay.
-     *
-     * @param relayNickname       The nickname of the Guard Relay.
-     * @param relayPort           The port of the Guard Relay.
-     * @param relayContact        The contact information of the Guard Relay.
-     * @param controlPort         The control port of the Guard Relay.
-     * @param relayBandwidth      The bandwidth of the Guard Relay.
-     * @param model               The model to be used for rendering the view.
-     * @return The name of the view to be rendered.
-     */
     @PostMapping("/configure")
     public String configureGuard(@RequestParam String relayNickname,
                                  @RequestParam int relayPort,
@@ -73,28 +61,10 @@ public class GuardController {
                                  @RequestParam(required = false) Integer relayBandwidth,
                                  Model model) {
         try {
-            if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "setup";
-            }
-
             String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
             Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-            if (RelayUtils.relayExists(relayNickname)) {
-                model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
-                return "setup";
-            }
-
-            if (!RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort)) {
-                model.addAttribute("errorMessage", "One or more ports are already in use.");
-                return "setup";
-            }
-
-            GuardConfig config = guardService.createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
-            if (!torrcFilePath.toFile().exists()) {
-                TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
-            }
+            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth, torrcFilePath, model);
 
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
