@@ -28,33 +28,17 @@ public class RelayOperationsService {
     private final TorConfigurationService torConfigurationService;
     private final RelayOperationsService relayOperationsService;
     private final NginxService nginxService;
+    private final OnionRelayOperationsService onionRelayOperationsService;
+    private final TorrcService torrcService;
+    private final RelayStatusService relayStatusService;
 
-    public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService, NginxService nginxService) {
+    public RelayOperationsService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorrcService torrcService, RelayStatusService relayStatusService) {
         this.torConfigurationService = torConfigurationService;
         this.relayOperationsService = relayOperationsService;
         this.nginxService = nginxService;
-    }
-
-    /**
-     * This method executes a bash command and returns its output as a list of strings.
-     *
-     * @param command The bash command to execute.
-     * @return List<String> The output of the command.
-     * @throws IOException If an I/O error occurs.
-     */
-    private static List<String> getCommandOutput(String command) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        Process process = processBuilder.start();
-
-        // Read the entire output to ensure we're not missing anything.
-        List<String> outputLines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outputLines.add(line);
-            }
-        }
-        return outputLines;
+        this.onionRelayOperationsService = onionRelayOperationsService;
+        this.torrcService = torrcService;
+        this.relayStatusService = relayStatusService;
     }
 
     /**
@@ -84,45 +68,12 @@ public class RelayOperationsService {
         }
     }
 
-    /**
-     * This method returns the PID of a Tor relay process.
-     *
-     * @param torrcFilePath The path to the Tor relay's configuration file.
-     * @return int The PID of the Tor relay process, or -1 if the PID could not be found.
-     */
-    public int getTorRelayPID(String torrcFilePath) {
-        String relayNickname = new File(torrcFilePath).getName();
-        String command = String.format("ps aux | grep -P '\\b%s\\b' | grep -v grep | awk '{print $2}'", relayNickname);
-
-        // Log the command to be executed
-        logger.debug("Command to execute: {}", command);
-
-        try {
-            List<String> outputLines = getCommandOutput(command);
-
-            // Log the full output
-            logger.debug("Command output: {}", outputLines);
-
-            // Assuming the PID is on the first line, if not you need to check the outputLines list.
-            if (!outputLines.isEmpty()) {
-                String pidString = outputLines.getFirst();
-                logger.debug("PID string: {}", pidString);
-                return Integer.parseInt(pidString);
-            } else {
-                logger.debug("No PID found. Output was empty.");
-                return -1;
-            }
-        } catch (IOException e) {
-            logger.error("Error executing command to get PID: {}", command, e);
-            return -1;
-        }
-    }
 
     public List<Integer> getUPnPPorts() {
         List<Integer> upnpPorts = new ArrayList<>();
         List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
         for (TorConfiguration config : guardConfigs) {
-            int orPort = getOrPort(buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
+            int orPort = getOrPort(torrcService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
             if (UPnP.isMappedTCP(orPort)) {
                 upnpPorts.add(orPort);
             }
@@ -130,37 +81,40 @@ public class RelayOperationsService {
         return upnpPorts;
     }
 
-    public String readHostnameFile(String hiddenServicePort) {
-        // The base directory where your hidden services directories are stored
-        String hiddenServiceBaseDir = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs").toString();
-        Path hostnameFilePath = Paths.get(hiddenServiceBaseDir, "onion-service-" + hiddenServicePort, "hostname");
-
-        try {
-            // Read all the lines in the hostname file and return the first line which should be the hostname
-            List<String> lines = Files.readAllLines(hostnameFilePath);
-            return lines.isEmpty() ? "No hostname found" : lines.getFirst();
-        } catch (IOException e) {
-            logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
-            return "Unable to read hostname file";
-        }
-    }
-
     public void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
         System.out.println("Waiting for status change");
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime < 30000) { // 30 seconds timeout
-            String status = getRelayStatus(relayNickname, relayType);
+            String status = relayStatusService.getRelayStatus(relayNickname, relayType);
             System.out.println("Status: " + status);
             if (expectedStatus.equals(status)) {
-                nginxService.checkAndManageNginxStatus();
+                checkAndManageNginxStatus();
                 break;
             }
             Thread.sleep(500); // wait for 500 milliseconds before the next check
         }
     }
 
+    public void checkAndManageNginxStatus() {
+        // Get the list of all webTunnels and Onion services
+        List<String> allServices = nginxService.getAllServices();
+
+        // Iterate over the list and check the status of each service
+        for (String service : allServices) {
+            String status = relayStatusService.getRelayStatus(service, "onion");
+            // If at least one service is online, start the Nginx service and return
+            if ("online".equals(status)) {
+                nginxService.startNginx();
+                return;
+            }
+        }
+
+        // If no service is online, stop the Nginx service
+        nginxService.stopNginx();
+    }
+
     public String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
         String operation = "start";
         try {
             processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
@@ -188,7 +142,7 @@ public class RelayOperationsService {
     }
 
     public String changeRelayState(String relayNickname, String relayType, Model model, boolean start) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
         try {
             processRelayOperation(torrcFilePath, relayNickname, start);
@@ -221,7 +175,7 @@ public class RelayOperationsService {
 
 
         } else {
-            int pid = relayOperationsService.getTorRelayPID(torrcFilePath.toString());
+            int pid = relayStatusService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
                 String command = "kill -SIGINT " + pid;
                 int exitCode = relayOperationsService.executeCommand(command);
@@ -234,11 +188,6 @@ public class RelayOperationsService {
                 throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
             }
         }
-    }
-
-
-    public Path buildTorrcFilePath(String relayNickname, String relayType) {
-        return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
     }
 
     // This method could be moved from RelayController to here
@@ -364,15 +313,9 @@ public class RelayOperationsService {
     }
 
     public void closeOrPort(String relayNickname, String relayType) {
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
-    }
-
-    public String getRelayStatus(String relayNickname, String relayType) {
-        String torrcFilePath = buildTorrcFilePath(relayNickname, relayType).toString();
-        int pid = getTorRelayPID(torrcFilePath);
-        return pid > 0 ? "online" : (pid == -1 ? "offline" : "error");
     }
 
     public String relayOperations(Model model) {
@@ -390,7 +333,7 @@ public class RelayOperationsService {
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfiguration config : onionConfigs) {
-            String hostname = readHostnameFile(config.getHiddenServicePort());
+            String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
             logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
@@ -455,7 +398,7 @@ public class RelayOperationsService {
         Map<String, Object> response = new HashMap<>();
         try {
             // Build paths for Torrc file and DataDirectory
-            Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+            Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
             String dataDirectoryPath = buildDataDirectoryPath(relayNickname);
 
             // Delete Torrc file
@@ -494,7 +437,7 @@ public class RelayOperationsService {
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         // Build the path to the torrc file
-        Path torrcFilePath = buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
 
         // Get the orport from the torrc file
         int orPort = getOrPort(torrcFilePath);
@@ -517,7 +460,7 @@ public class RelayOperationsService {
             List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
             for (TorConfiguration config : guardConfigs) {
                 if (enable) {
-                    String status = getRelayStatus(config.getGuardConfig().getNickname(), "guard");
+                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
                     if ("online".equals(status)) {
                         // Open the ORPort
                         openOrPort(config.getGuardConfig().getNickname(), "guard");
@@ -546,5 +489,9 @@ public class RelayOperationsService {
         } catch (IOException e) {
             logger.error("Failed to create dataDirectory folder", e);
         }
+    }
+
+    public String getRelayStatus(String relayNickname, String relayType) {
+        return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
 }

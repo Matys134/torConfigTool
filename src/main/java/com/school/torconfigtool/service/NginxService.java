@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayOperationsService;
 import com.school.torconfigtool.TorConfiguration;
 import com.school.torconfigtool.TorConfigurationService;
 import org.slf4j.Logger;
@@ -28,7 +27,6 @@ public class NginxService {
 
     // TorConfigurationService instance for managing Tor configurations
     private final TorConfigurationService torConfigurationService;
-    private final RelayOperationsService relayOperationsService;
 
     /**
      * Constructor for the NginxService class.
@@ -36,9 +34,8 @@ public class NginxService {
      *
      * @param torConfigurationService The TorConfigurationService instance.
      */
-    public NginxService(TorConfigurationService torConfigurationService, RelayOperationsService relayOperationsService) {
+    public NginxService(TorConfigurationService torConfigurationService) {
         this.torConfigurationService = torConfigurationService;
-        this.relayOperationsService = relayOperationsService;
     }
 
     /**
@@ -425,24 +422,6 @@ public class NginxService {
         }
     }
 
-    public void checkAndManageNginxStatus() {
-        // Get the list of all webTunnels and Onion services
-        List<String> allServices = getAllServices();
-
-        // Iterate over the list and check the status of each service
-        for (String service : allServices) {
-            String status = relayOperationsService.getRelayStatus(service, "onion");
-            // If at least one service is online, start the Nginx service and return
-            if ("online".equals(status)) {
-                startNginx();
-                return;
-            }
-        }
-
-        // If no service is online, stop the Nginx service
-        stopNginx();
-    }
-
     public void stopNginx() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "nginx");
@@ -456,7 +435,7 @@ public class NginxService {
         }
     }
 
-    private List<String> getAllServices() {
+    public List<String> getAllServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
         List<TorConfiguration> onionConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "onion");
