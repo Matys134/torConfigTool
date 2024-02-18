@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.RelayOperationsService;
 import com.school.torconfigtool.RelayUtils;
 import com.school.torconfigtool.TorConfiguration;
 import org.slf4j.Logger;
@@ -29,12 +28,10 @@ public class OnionService {
     private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
     private final NginxService nginxService;
     private final TorConfiguration torConfiguration;
-    private final RelayOperationsService relayOperationsService;
 
-    public OnionService(NginxService nginxService, TorConfiguration torConfiguration, RelayOperationsService relayOperationsService) {
+    public OnionService(NginxService nginxService, TorConfiguration torConfiguration) {
         this.nginxService = nginxService;
         this.torConfiguration = torConfiguration;
-        this.relayOperationsService = relayOperationsService;
     }
 
     /**
@@ -157,7 +154,7 @@ public class OnionService {
             nginxService.generateNginxConfig(onionServicePort);
 
             // Restart nginx
-            relayOperationsService.reloadNginx();
+            nginxService.reloadNginx();
         }
         torConfiguration.setHiddenServicePort(String.valueOf(onionServicePort));
         logger.info("Hidden Service Port set to: {}", onionServicePort);
