@@ -1,7 +1,5 @@
 package com.school.torconfigtool.model;
 
-import lombok.Getter;
-
 /**
  * This is a record class named RelayInfo.
  * A record is a special kind of class in Java that is used to model plain data aggregates.
