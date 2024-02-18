@@ -13,6 +13,6 @@ import lombok.Getter;
  * <p>
  * The @Getter annotation from the Lombok library is used to automatically generate getter methods for these fields.
  */
-@Getter
+
 public record RelayInfo(int controlPort, String nickname, String type) {
 }

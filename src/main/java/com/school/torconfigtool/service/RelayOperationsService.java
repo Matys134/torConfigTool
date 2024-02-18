@@ -26,7 +26,6 @@ public class RelayOperationsService {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
     private final TorConfigService torConfigService;
-    private final RelayOperationsService relayOperationsService;
     private final NginxService nginxService;
     private final OnionRelayOperationsService onionRelayOperationsService;
     private final TorFileService torFileService;
@@ -38,7 +37,6 @@ public class RelayOperationsService {
      * Constructor for RelayOperationsService.
      *
      * @param torConfigService The TorConfigurationService to use.
-     * @param relayOperationsService The RelayOperationsService to use.
      * @param nginxService The NginxService to use.
      * @param onionRelayOperationsService The OnionRelayOperationsService to use.
      * @param torFileService The TorFileService to use.
@@ -46,9 +44,8 @@ public class RelayOperationsService {
      * @param upnpService The UPnPService to use.
      * @param bridgeRelayOperationsService The BridgeRelayOperationsService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, RelayOperationsService relayOperationsService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
         this.torConfigService = torConfigService;
-        this.relayOperationsService = relayOperationsService;
         this.nginxService = nginxService;
         this.onionRelayOperationsService = onionRelayOperationsService;
         this.torFileService = torFileService;
@@ -121,7 +118,7 @@ public class RelayOperationsService {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             System.out.println("Executing command: " + command);
-            int exitCode = relayOperationsService.executeCommand(command);
+            int exitCode = executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
             }
@@ -173,7 +170,7 @@ public class RelayOperationsService {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
             System.out.println("Executing command: " + command);
-            int exitCode = relayOperationsService.executeCommand(command);
+            int exitCode = executeCommand(command);
             if (exitCode != 0) {
                 throw new RelayOperationException("Failed to start Tor Relay service.");
             }
@@ -183,7 +180,7 @@ public class RelayOperationsService {
             int pid = relayStatusService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
                 String command = "kill -SIGINT " + pid;
-                int exitCode = relayOperationsService.executeCommand(command);
+                int exitCode = executeCommand(command);
                 if (exitCode != 0) {
                     throw new RelayOperationException("Failed to stop Tor Relay service.");
                 }
