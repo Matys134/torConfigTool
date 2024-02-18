@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +17,14 @@ import java.util.Map;
 @Service
 public class UPnPService {
 
-    private final TorrcService torrcService;
+    private final TorFileService torFileService;
     private final TorConfigurationService torConfigurationService;
     private final RelayStatusService relayStatusService;
 
     private static final Logger logger = LoggerFactory.getLogger(UPnPService.class);
 
-    public UPnPService(TorrcService torrcService, TorConfigurationService torConfigurationService, RelayStatusService relayStatusService) {
-        this.torrcService = torrcService;
+    public UPnPService(TorFileService torFileService, TorConfigurationService torConfigurationService, RelayStatusService relayStatusService) {
+        this.torFileService = torFileService;
         this.torConfigurationService = torConfigurationService;
         this.relayStatusService = relayStatusService;
     }
@@ -31,7 +32,7 @@ public class UPnPService {
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         // Build the path to the torrc file
-        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
         // Get the orport from the torrc file
         int orPort = getOrPort(torrcFilePath);
@@ -75,7 +76,7 @@ public class UPnPService {
     }
 
     public void closeOrPort(String relayNickname, String relayType) {
-        Path torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType);
+        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
     }
@@ -94,5 +95,17 @@ public class UPnPService {
             logger.error("Failed to read ORPort from torrc file: {}", torrcFilePath, e);
         }
         return orPort;
+    }
+
+    public List<Integer> getUPnPPorts() {
+        List<Integer> upnpPorts = new ArrayList<>();
+        List<TorConfiguration> guardConfigs = torConfigurationService.readTorConfigurationsFromFolder(torConfigurationService.buildFolderPath(), "guard");
+        for (TorConfiguration config : guardConfigs) {
+            int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
+            if (UPnP.isMappedTCP(orPort)) {
+                upnpPorts.add(orPort);
+            }
+        }
+        return upnpPorts;
     }
 }

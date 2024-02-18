@@ -15,17 +15,17 @@ import java.util.List;
 @Service
 public class RelayStatusService {
 
-    private final TorrcService torrcService;
+    private final TorFileService torFileService;
     private final NginxService nginxService;
     private static final Logger logger = LoggerFactory.getLogger(RelayStatusService.class);
 
-    public RelayStatusService(TorrcService torrcService, NginxService nginxService) {
-        this.torrcService = torrcService;
+    public RelayStatusService(TorFileService torFileService, NginxService nginxService) {
+        this.torFileService = torFileService;
         this.nginxService = nginxService;
     }
 
     public String getRelayStatus(String relayNickname, String relayType) {
-        String torrcFilePath = torrcService.buildTorrcFilePath(relayNickname, relayType).toString();
+        String torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType).toString();
         int pid = getTorRelayPID(torrcFilePath);
         return pid > 0 ? "online" : (pid == -1 ? "offline" : "error");
     }
