@@ -1,5 +1,7 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.GuardService;
+import com.school.torconfigtool.RelayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +22,18 @@ import java.util.Map;
 @RequestMapping("/guard")
 public class GuardController {
 
+    // Logger instance for this class
     private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
-    private final RelayService relayService;
+    // Service instance for Guard operations
     private final GuardService guardService;
 
-
-    public GuardController(RelayService relayService, GuardService guardService) {
-        this.relayService = relayService;
+    /**
+     * Constructor for GuardController
+     *
+     * @param guardService The service to be used for Guard operations.
+     */
+    public GuardController(GuardService guardService) {
         this.guardService = guardService;
     }
 
@@ -50,7 +54,17 @@ public class GuardController {
         return "setup";
     }
 
-
+    /**
+     * Handles the POST request to configure a Guard Relay.
+     *
+     * @param relayNickname The nickname of the relay.
+     * @param relayPort The port of the relay.
+     * @param relayContact The contact of the relay.
+     * @param controlPort The control port of the relay.
+     * @param relayBandwidth The bandwidth of the relay (optional).
+     * @param model The model to be used for rendering the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/configure")
     public String configureGuard(@RequestParam String relayNickname,
                                  @RequestParam int relayPort,
@@ -58,72 +72,53 @@ public class GuardController {
                                  @RequestParam int controlPort,
                                  @RequestParam(required = false) Integer relayBandwidth,
                                  Model model) {
-        String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
-        guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth, torrcFileName, model);
+        try {
+            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+            model.addAttribute("successMessage", "Tor Relay configured successfully!");
+        } catch (Exception e) {
+            logger.error("Error during Tor Relay configuration", e);
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
+        }
         return "setup";
     }
 
     /**
-     * Handles GET requests to the /limit-reached endpoint.
-     * Checks if the guard limit has been reached.
+     * Handles the GET request to check if the Guard limit has been reached.
      *
-     * @return a response entity with the result
+     * @return A ResponseEntity containing a map with the result.
      */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkGuardLimit() {
-        Map<String, Object> response = new HashMap<>();
-        int guardCount = relayService.getGuardCount();
-
-        if (!RelayService.isLimitOn()) {
-            response.put("guardLimitReached", false);
-            response.put("guardCount", guardCount);
-            return ResponseEntity.ok(response);
-        }
-
-        response.put("guardLimitReached", guardCount >= 8);
-        response.put("guardCount", guardCount);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(guardService.checkGuardLimit());
     }
 
     /**
-     * Handles GET requests to the /bridge-configured endpoint.
-     * Checks if a bridge has been configured.
+     * Handles the GET request to check if a Bridge has been configured.
      *
-     * @return a response entity with the result
+     * @return A ResponseEntity containing a map with the result.
      */
     @GetMapping("/bridge-configured")
     public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(guardService.checkBridgeConfigured());
     }
 
     /**
-     * Handles GET requests to the /limit-state-and-guard-count endpoint.
-     * Gets the limit state and guard count.
+     * Handles the GET request to get the limit state and Guard count.
      *
-     * @return a response entity with the result
+     * @return A ResponseEntity containing a map with the result.
      */
     @GetMapping("/limit-state-and-guard-count")
     public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("limitOn", RelayService.isLimitOn());
-        response.put("guardCount", relayService.getGuardCount());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(guardService.getLimitStateAndGuardCount());
     }
 
     /**
-     * Handles GET requests to the /guard-configured endpoint.
-     * Checks if a guard is configured.
+     * Handles the GET request to check if a Guard has been configured.
      *
-     * @return a response entity with the result
+     * @return A ResponseEntity containing a map with the result.
      */
     @GetMapping("/guard-configured")
     public ResponseEntity<Map<String, Boolean>> checkGuardConfigured() {
-        Map<String, Boolean> response = new HashMap<>();
-        // Logic to check if a guard is configured
-        boolean isGuardConfigured = relayService.getGuardCount() > 0;
-        response.put("guardConfigured", isGuardConfigured);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(guardService.checkGuardConfigured());
     }
 }

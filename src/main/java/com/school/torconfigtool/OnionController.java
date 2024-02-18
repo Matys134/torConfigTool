@@ -30,8 +30,6 @@ public class OnionController {
     private final List<String> onionServicePorts;
     private final OnionService onionService;
     TorConfiguration torConfiguration = new TorConfiguration();
-
-    // Add a field for RelayOperationsController
     private final RelayOperationsController relayOperationController;
 
     /**
@@ -180,7 +178,6 @@ public class OnionController {
     @GetMapping("/onion-configured")
     public ResponseEntity<Map<String, Boolean>> checkOnionConfigured() {
         Map<String, Boolean> response = new HashMap<>();
-        // Logic to check if an onion service is configured
         boolean isOnionConfigured = !onionServicePorts.isEmpty();
         response.put("onionConfigured", isOnionConfigured);
         return ResponseEntity.ok(response);

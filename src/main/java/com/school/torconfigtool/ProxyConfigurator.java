@@ -1,5 +1,7 @@
 package com.school.torconfigtool;
 
+import com.school.torconfigtool.util.IpAddressRetriever;
+
 import java.io.File;
 import java.io.IOException;
 
