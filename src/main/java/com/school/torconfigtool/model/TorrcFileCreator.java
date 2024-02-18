@@ -49,7 +49,8 @@ public class TorrcFileCreator {
             writer.newLine();
 
             // Write the DataDirectory configuration to the file
-            String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname();
+            String relayType = config.getClass().getSimpleName(); // Get the class name as the relay type
+            String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + config.getNickname() + "_" + relayType;
             writer.write("DataDirectory " + dataDirectoryPath);
             writer.newLine();
 
