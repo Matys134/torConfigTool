@@ -223,7 +223,23 @@ public class RelayOperationsService {
     private List<String> getAllRelayFingerprints() {
         // This path should lead to the base directory where all relay data directories are stored
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
-        return getFingerprints(dataDirectoryPath);
+        File dataDirectory = new File(dataDirectoryPath);
+        File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
+
+        List<String> fingerprints = new ArrayList<>();
+        if (dataDirectoryFiles != null) {
+            for (File dataDir : dataDirectoryFiles) {
+                // Check if the directory name ends with "_guard" to ensure it's a guard relay
+                if (dataDir.getName().endsWith("_GuardConfig")) {
+                    String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
+                    String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
+                    if (fingerprint != null) {
+                        fingerprints.add(fingerprint);
+                    }
+                }
+            }
+        }
+        return fingerprints;
     }
 
 
