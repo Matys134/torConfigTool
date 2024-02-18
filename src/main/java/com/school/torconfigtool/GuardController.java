@@ -29,13 +29,11 @@ public class GuardController {
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final RelayService relayService;
-    private final RelayOperationsController relayOperationController;
     private final GuardService guardService;
 
 
-    public GuardController(RelayService relayService, RelayOperationsController relayOperationController, GuardService guardService) {
+    public GuardController(RelayService relayService, GuardService guardService) {
         this.relayService = relayService;
-        this.relayOperationController = relayOperationController;
         this.guardService = guardService;
     }
 
@@ -64,7 +62,6 @@ public class GuardController {
      * @param relayContact        The contact information of the Guard Relay.
      * @param controlPort         The control port of the Guard Relay.
      * @param relayBandwidth      The bandwidth of the Guard Relay.
-     * @param startRelayAfterConfig Whether to start the relay after configuration.
      * @param model               The model to be used for rendering the view.
      * @return The name of the view to be rendered.
      */
@@ -74,7 +71,6 @@ public class GuardController {
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
                                  @RequestParam(required = false) Integer relayBandwidth,
-                                 @RequestParam(defaultValue = "false") boolean startRelayAfterConfig,
                                  Model model) {
         try {
             if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
@@ -104,16 +100,6 @@ public class GuardController {
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
-        }
-
-        if (startRelayAfterConfig) {
-            try {
-                relayOperationController.startRelay(relayNickname, "guard", model);
-                model.addAttribute("successMessage", "Tor Relay configured and started successfully!");
-            } catch (Exception e) {
-                logger.error("Error starting Tor Relay", e);
-                model.addAttribute("errorMessage", "Failed to start Tor Relay.");
-            }
         }
 
         return "setup";

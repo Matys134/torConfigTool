@@ -1,5 +1,7 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.RelayConfigService;
+import com.school.torconfigtool.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,14 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
         return String.format("torrc/torrc-%s_guard", nickname);
     }
 
+    /**
+     * Updates the Guard Relay configuration and returns a ResponseEntity with the result of the operation.
+     * If the update is successful, it returns a 200 OK response with a success message.
+     * If the update fails, it returns a 500 Internal Server Error response with an error message.
+     *
+     * @param config The new configuration for the Guard Relay.
+     * @return a ResponseEntity with the result of the operation.
+     */
     public ResponseEntity<?> updateGuardConfiguration(GuardConfig config) {
         try {
             boolean success = updateConfiguration(config);

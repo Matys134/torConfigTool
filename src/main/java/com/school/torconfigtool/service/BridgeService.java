@@ -22,20 +22,18 @@ public class BridgeService {
     private static final String TORRC_DIRECTORY_PATH = "torrc";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
-    private final RelayOperationsController relayOperationController;
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
     private final RelayService relayService;
 
     /**
-     * Constructor for BridgeService.
+     * Constructor for the BridgeService.
      *
-     * @param relayOperationController Controller for relay operations.
-     * @param nginxService Service for managing Nginx.
-     * @param webtunnelService Service for managing webtunnel.
+     * @param nginxService     The Nginx service.
+     * @param webtunnelService The webtunnel service.
+     * @param relayService     The relay service.
      */
-    public BridgeService(RelayOperationsController relayOperationController, NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
-        this.relayOperationController = relayOperationController;
+    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
         this.nginxService = nginxService;
         this.webtunnelService = webtunnelService;
         this.relayService = relayService;
@@ -53,12 +51,11 @@ public class BridgeService {
      * @param bridgeControlPort Control port of the bridge.
      * @param webtunnelUrl URL of the webtunnel.
      * @param webtunnelPort Port of the webtunnel.
-     * @param startBridgeAfterConfig Whether to start the bridge after configuring it.
      * @param bridgeBandwidth Bandwidth of the bridge.
      * @param model Model for the view.
      * @throws Exception If an error occurs while configuring the bridge.
      */
-    public void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) throws Exception {
+    public void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
@@ -91,16 +88,6 @@ public class BridgeService {
             webtunnelService.updateTorrcFile(config);
 
             nginxService.reloadNginx();
-        }
-
-        if (startBridgeAfterConfig) {
-            try {
-                relayOperationController.startRelay(bridgeNickname, "bridge", model);
-                model.addAttribute("successMessage", "Tor Relay configured and started successfully!");
-            } catch (Exception e) {
-                logger.error("Error starting Tor Relay", e);
-                model.addAttribute("errorMessage", "Failed to start Tor Relay.");
-            }
         }
     }
 
@@ -157,17 +144,16 @@ public class BridgeService {
      * @param bridgeControlPort Control port of the bridge.
      * @param webtunnelUrl URL of the webtunnel.
      * @param webtunnelPort Port of the webtunnel.
-     * @param startBridgeAfterConfig Whether to start the bridge after configuring it.
      * @param bridgeBandwidth Bandwidth of the bridge.
      * @param model Model for the view.
      */
-    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, boolean startBridgeAfterConfig, Integer bridgeBandwidth, Model model) {
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) {
         try {
             if (relayService.getBridgeCount() >= 2) {
                 model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
                 return;
             }
-            configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
+            configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);

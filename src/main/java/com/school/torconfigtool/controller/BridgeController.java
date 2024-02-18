@@ -64,7 +64,6 @@ public class BridgeController {
      * @param bridgeControlPort The control port of the bridge.
      * @param webtunnelUrl The URL of the web tunnel.
      * @param webtunnelPort The port of the web tunnel.
-     * @param startBridgeAfterConfig Whether to start the bridge after configuration.
      * @param bridgeBandwidth The bandwidth of the bridge.
      * @param model The model for the view.
      * @return The name of the setup view.
@@ -79,10 +78,9 @@ public class BridgeController {
                                   @RequestParam int bridgeControlPort,
                                   @RequestParam(required = false) String webtunnelUrl,
                                   @RequestParam(required = false) Integer webtunnelPort,
-                                  @RequestParam(defaultValue = "false") boolean startBridgeAfterConfig,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, startBridgeAfterConfig, bridgeBandwidth, model);
+        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
         return "setup";
     }
 
