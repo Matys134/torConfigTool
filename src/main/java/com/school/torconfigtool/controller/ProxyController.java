@@ -1,6 +1,6 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.util.IpAddressRetriever;
+import com.school.torconfigtool.service.ProxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,9 +23,10 @@ public class ProxyController {
 
     /**
      * Constructor for the ProxyController class.
+     * @param proxyService the service that this controller will use to manage the proxy.
      */
-    public ProxyController() {
-        this.proxyService = new ProxyService(new ProxyFileCreator(), new ProxyStarter(), new IpAddressRetriever());
+    public ProxyController(ProxyService proxyService) {
+        this.proxyService = proxyService;
     }
 
     /**
@@ -48,7 +49,7 @@ public class ProxyController {
 
     /**
      * Handles POST requests to the /proxy/start endpoint.
-     * Configures and starts the proxy, adding relevant messages to the model.
+     * Starts the proxy and adds relevant messages to the model.
      *
      * @param model the model to add attributes to.
      * @return the name of the view to render.
@@ -56,22 +57,12 @@ public class ProxyController {
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
-            logger.info("Configuring Tor Proxy...");
-            if (!proxyService.configureProxy()) {
-                logger.error("Failed to configure Tor Proxy.");
-                model.addAttribute("errorMessage", "Failed to configure Tor Proxy.");
-                return "proxy-config";
+            String result = proxyService.configureAndStartProxy();
+            if (result.equals("success")) {
+                model.addAttribute("successMessage", "Tor Proxy started successfully!");
+            } else {
+                model.addAttribute("errorMessage", result);
             }
-
-            logger.info("Starting Tor Proxy...");
-            if (!proxyService.startProxy()) {
-                logger.error("Failed to start Tor Proxy.");
-                model.addAttribute("errorMessage", "Failed to start Tor Proxy.");
-                return "proxy-config";
-            }
-
-            model.addAttribute("successMessage", "Tor Proxy started successfully!");
-
         } catch (Exception e) {
             logger.error("Error during Tor Proxy configuration or start", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
