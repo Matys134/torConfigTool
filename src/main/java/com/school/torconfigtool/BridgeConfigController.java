@@ -20,8 +20,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/update-bridge-config")
-public class BridgeConfigurationController {
-    private static final Logger logger = LoggerFactory.getLogger(BridgeConfigurationController.class);
+public class BridgeConfigController {
+    private static final Logger logger = LoggerFactory.getLogger(BridgeConfigController.class);
     private final BridgeConfigurationService bridgeConfigurationService;
 
     /**
@@ -29,7 +29,7 @@ public class BridgeConfigurationController {
      * @param bridgeConfigurationService the service used to update the bridge configuration
      */
     @Autowired
-    public BridgeConfigurationController(BridgeConfigurationService bridgeConfigurationService) {
+    public BridgeConfigController(BridgeConfigurationService bridgeConfigurationService) {
         this.bridgeConfigurationService = bridgeConfigurationService;
     }
 
