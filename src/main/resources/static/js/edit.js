@@ -86,10 +86,8 @@ $(document).ready(function () {
         // Check if serverTransport is defined before splitting it
         if (data.serverTransport) {
             var serverTransportParts = data.serverTransport.split(':');
-            var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
-
             // Combine the protocol and address with the new port to form the updated serverTransport
-            data.serverTransport = serverTransportPort;
+            data.serverTransport = serverTransportParts[serverTransportParts.length - 1];
         }
 
         $.ajax({

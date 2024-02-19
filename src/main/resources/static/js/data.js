@@ -10,14 +10,11 @@ $(document).ready(function () {
         var relayName = 'Relay on Port ' + port;
 
         // Create a container for the upload and download rates
-        var ratesContainer = $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
-
-        // Create a container for the events
-        var eventsContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
-
-        // Create a container for the flags
-        var flagsContainer = $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
-
+        $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
+// Create a container for the events
+        $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
+// Create a container for the flags
+        $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
         var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
@@ -187,7 +184,6 @@ $(document).ready(function () {
 `);
 
 // Update the flagsData div with the fetched flags data
-                    var flagsContainer = $('#relayFlags' + port);
                     flagsContainer.html(`
     <div class="card">
         <div class="card-body">
