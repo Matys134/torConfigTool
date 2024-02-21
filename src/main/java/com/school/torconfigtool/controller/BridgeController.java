@@ -79,7 +79,7 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelUrl,
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
-                                  Model model) throws Exception {
+                                  Model model) {
         bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
         return "setup";
     }

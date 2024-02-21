@@ -148,10 +148,7 @@ public class BridgeService {
      * @param bridgeBandwidth Bandwidth of the bridge.
      * @param model Model for the view.
      */
-    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
-        if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
-            throw new Exception(String.valueOf(bridgePort));
-        }
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) {
         try {
             if (relayService.getBridgeCount() >= 2) {
                 model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
@@ -161,7 +158,7 @@ public class BridgeService {
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay. Port " + e.getMessage() + " is already in use.");
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay. One or more ports are already in use.");
         }
     }
 
