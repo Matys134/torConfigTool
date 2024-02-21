@@ -15,8 +15,8 @@ $(document).ready(function () {
                 data: data,
                 success: function (response) {
                     if (response.success) {
-                        // Remove the corresponding HTML element
-                        button.closest('.list-group-item').remove();
+                        // Optionally update the view or perform other actions on success
+                        alert("Torrc file and DataDirectory removed successfully!");
 
                         // Make an AJAX call to revert the Nginx configuration
                         $.ajax({
@@ -33,6 +33,7 @@ $(document).ready(function () {
                     } else {
                         alert("Failed to remove Torrc file and DataDirectory.");
                     }
+                    button.closest('.list-group-item').remove();
                 }
             });
         }

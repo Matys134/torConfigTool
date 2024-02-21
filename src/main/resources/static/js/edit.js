@@ -103,6 +103,7 @@ $(document).ready(function () {
                 } else {
                     alert("Failed to update configuration.");
                 }
+                updateView(data);
             }
         });
     }
