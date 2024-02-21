@@ -23,6 +23,7 @@ $(document).ready(function () {
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
         console.log('Data:', data); // Log the data object
+        console.log("Tady ty kokot")
 
         // Split the serverTransport into protocol and port
         var serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
@@ -86,10 +87,8 @@ $(document).ready(function () {
         // Check if serverTransport is defined before splitting it
         if (data.serverTransport) {
             var serverTransportParts = data.serverTransport.split(':');
-            var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
-
             // Combine the protocol and address with the new port to form the updated serverTransport
-            data.serverTransport = serverTransportPort;
+            data.serverTransport = serverTransportParts[serverTransportParts.length - 1];
         }
 
         $.ajax({
@@ -115,8 +114,7 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
-        console.log('data-config-webtunnelurl attribute:', $(this).data('config-webtunnelurl'));
-        console.log('data-config-path attribute:', $(this).data('config-path'));
+        console.log("Button clicked: ", relayType, nickname, isBridgeEdit);
 
         const data = {
             nickname: nickname,
@@ -128,11 +126,8 @@ $(document).ready(function () {
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
         };
 
-        console.log('webtunnelUrl:', data.webtunnelUrl);
-        console.log('path:', data.path);
-
         // Send a GET request to the /bridge/running-type endpoint
-        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
@@ -159,7 +154,7 @@ $(document).ready(function () {
         console.log('webtunnelUrl:', data.webtunnelUrl);
         console.log('path:', data.path);
 
-        $.get("http://192.168.2.130:8081/bridge/running-type", function(runningBridgeTypes) {
+        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();

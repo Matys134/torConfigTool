@@ -193,30 +193,7 @@ public class RelayOperationsService {
     }
 
     /**
-     * This method retrieves fingerprints from all existing relays.
-     *
-     * @param dataDirectoryPath The path to the data directory of the Tor Relay.
-     * @return List The list of fingerprints.
-     */
-    private List<String> getFingerprints(String dataDirectoryPath) {
-        List<String> fingerprints = new ArrayList<>();
-        File dataDirectory = new File(dataDirectoryPath);
-        File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
-
-        if (dataDirectoryFiles != null) {
-            for (File dataDir : dataDirectoryFiles) {
-                String fingerprintFilePath = dataDir.getAbsolutePath() + File.separator + "fingerprint";
-                String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
-                if (fingerprint != null) {
-                    fingerprints.add(fingerprint);
-                }
-            }
-        }
-        return fingerprints;
-    }
-
-    /**
-     * This method retrieves fingerprints from all existing relays.
+     * This method retrieves fingerprints from guard relays.
      *
      * @return List The list of fingerprints.
      */

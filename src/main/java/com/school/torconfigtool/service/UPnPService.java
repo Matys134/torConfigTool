@@ -49,14 +49,29 @@ public class UPnPService {
      */
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
-        // Build the path to the torrc file
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
-        // Get the orport from the torrc file
         int orPort = getOrPort(torrcFilePath);
-
-        // Open the orport using UPnP
         boolean success = UPnP.openPortTCP(orPort);
+        logger.info("Attempting to open ORPort: {}", orPort);
+        if (success) {
+            logger.info("Successfully opened ORPort: {}", orPort);
+        } else {
+            logger.error("Failed to open ORPort: {}", orPort);
+        }
+
+        // Open ServerTransportListenAddr ports and webtunnel ports
+        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
+        for (int port : additionalPorts) {
+            logger.info("Attempting to open additional port: {}", port);
+            success &= UPnP.openPortTCP(port);
+            if (success) {
+                logger.info("Successfully opened additional port: {}", port);
+            } else {
+                logger.error("Failed to open additional port: {}", port);
+            }
+        }
+
         if (success) {
             response.put("success", true);
         } else {
@@ -75,26 +90,29 @@ public class UPnPService {
     public Map<String, Object> toggleUPnP(boolean enable) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Get the list of all guard relays
             List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
-            for (TorConfig config : guardConfigs) {
+            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
+            List<TorConfig> allConfigs = new ArrayList<>();
+            allConfigs.addAll(guardConfigs);
+            allConfigs.addAll(bridgeConfigs);
+
+            for (TorConfig config : allConfigs) {
+                String relayType = config.getGuardConfig() != null ? "guard" : "bridge";
                 if (enable) {
-                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
+                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), relayType);
                     if ("online".equals(status)) {
-                        // Open the ORPort
-                        openOrPort(config.getGuardConfig().getNickname(), "guard");
+                        openOrPort(config.getGuardConfig().getNickname(), relayType);
                     }
                 } else {
-                    // Close the ORPort
-                    closeOrPort(config.getGuardConfig().getNickname(), "guard");
+                    closeOrPort(config.getGuardConfig().getNickname(), relayType);
                 }
             }
             response.put("success", true);
-            response.put("message", "UPnP for Guard Relays " + (enable ? "enabled" : "disabled") + " successfully!");
+            response.put("message", "UPnP for Guard and Bridge Relays " + (enable ? "enabled" : "disabled") + " successfully!");
         } catch (Exception e) {
-            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays", e);
+            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays", e);
             response.put("success", false);
-            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays.");
+            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.");
         }
         return response;
     }
@@ -109,6 +127,12 @@ public class UPnPService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
+
+        // Close ServerTransportListenAddr ports and webtunnel ports
+        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
+        for (int port : additionalPorts) {
+            UPnP.closePortTCP(port);
+        }
     }
 
     /**
@@ -146,7 +170,40 @@ public class UPnPService {
             if (UPnP.isMappedTCP(orPort)) {
                 upnpPorts.add(orPort);
             }
+
+            // Add ServerTransportListenAddr ports and webtunnel ports
+            List<Integer> additionalPorts = getAdditionalPorts(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
+            for (int port : additionalPorts) {
+                if (UPnP.isMappedTCP(port)) {
+                    upnpPorts.add(port);
+                }
+            }
         }
         return upnpPorts;
+    }
+
+    private List<Integer> getAdditionalPorts(Path torrcFilePath) {
+        List<Integer> additionalPorts = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ServerTransportListenAddr")) {
+                    String[] parts = line.split(" ");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
+                        if (addrParts.length > 1) {
+                            additionalPorts.add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
+                }
+                if (line.contains("webtunnel")) {
+                    additionalPorts.add(80);
+                    additionalPorts.add(443);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Failed to read additional ports from torrc file: {}", torrcFilePath, e);
+        }
+        return additionalPorts;
     }
 }
