@@ -24,7 +24,6 @@
                     <p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p>
                     <p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p>
                     <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
-                    <span style="color: blue;" th:id="${'status-message-' + config.getGuardConfig.nickname}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"
                                 th:attr="data-config-type='guard'"
@@ -74,8 +73,6 @@
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
-                    <span style="color: blue;" th:id="${'status-message-' + config.getBridgeConfig.nickname}">Idle</span>
-
                     <!-- The data-config-type can be set statically if it is known, or dynamically if needed -->
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-bridge-button"
@@ -123,7 +120,6 @@
                     <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
                     <p>Hostname: <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
                     <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
-                    <span style="color: blue;" th:id="${'status-message-' + config.hiddenServicePort}">Idle</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
 
                         <button class="btn btn-secondary remove-button"
