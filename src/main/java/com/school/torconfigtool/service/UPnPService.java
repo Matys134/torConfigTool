@@ -79,22 +79,28 @@ public class UPnPService {
         Map<String, Object> response = new HashMap<>();
         try {
             List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
-            for (TorConfig config : guardConfigs) {
+            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
+            List<TorConfig> allConfigs = new ArrayList<>();
+            allConfigs.addAll(guardConfigs);
+            allConfigs.addAll(bridgeConfigs);
+
+            for (TorConfig config : allConfigs) {
+                String relayType = config.getGuardConfig() != null ? "guard" : "bridge";
                 if (enable) {
-                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
+                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), relayType);
                     if ("online".equals(status)) {
-                        openOrPort(config.getGuardConfig().getNickname(), "guard");
+                        openOrPort(config.getGuardConfig().getNickname(), relayType);
                     }
                 } else {
-                    closeOrPort(config.getGuardConfig().getNickname(), "guard");
+                    closeOrPort(config.getGuardConfig().getNickname(), relayType);
                 }
             }
             response.put("success", true);
-            response.put("message", "UPnP for Guard Relays " + (enable ? "enabled" : "disabled") + " successfully!");
+            response.put("message", "UPnP for Guard and Bridge Relays " + (enable ? "enabled" : "disabled") + " successfully!");
         } catch (Exception e) {
-            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays", e);
+            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays", e);
             response.put("success", false);
-            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard Relays.");
+            response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.");
         }
         return response;
     }
