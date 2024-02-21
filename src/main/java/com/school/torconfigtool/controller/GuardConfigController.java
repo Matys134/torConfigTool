@@ -2,12 +2,10 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardConfigService;
 import com.school.torconfigtool.model.GuardConfig;
+import com.school.torconfigtool.util.RelayUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -44,5 +42,12 @@ public class GuardConfigController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @GetMapping("/check-port-availability")
+    public ResponseEntity<?> checkPortAvailability(@RequestParam String nickname, @RequestParam int orPort, @RequestParam int controlPort) {
+        boolean arePortsAvailable = RelayUtils.portsAreAvailable(nickname, orPort, controlPort);
+
+        return ResponseEntity.ok(Map.of("available", arePortsAvailable));
     }
 }
