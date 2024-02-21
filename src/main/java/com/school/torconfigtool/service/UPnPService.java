@@ -49,14 +49,17 @@ public class UPnPService {
      */
     public Map<String, Object> openOrPort(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
-        // Build the path to the torrc file
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
-        // Get the orport from the torrc file
         int orPort = getOrPort(torrcFilePath);
-
-        // Open the orport using UPnP
         boolean success = UPnP.openPortTCP(orPort);
+
+        // Open ServerTransportListenAddr ports and webtunnel ports
+        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
+        for (int port : additionalPorts) {
+            success &= UPnP.openPortTCP(port);
+        }
+
         if (success) {
             response.put("success", true);
         } else {
@@ -75,17 +78,14 @@ public class UPnPService {
     public Map<String, Object> toggleUPnP(boolean enable) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // Get the list of all guard relays
             List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
             for (TorConfig config : guardConfigs) {
                 if (enable) {
                     String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), "guard");
                     if ("online".equals(status)) {
-                        // Open the ORPort
                         openOrPort(config.getGuardConfig().getNickname(), "guard");
                     }
                 } else {
-                    // Close the ORPort
                     closeOrPort(config.getGuardConfig().getNickname(), "guard");
                 }
             }
@@ -109,6 +109,12 @@ public class UPnPService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         int orPort = getOrPort(torrcFilePath);
         UPnP.closePortTCP(orPort);
+
+        // Close ServerTransportListenAddr ports and webtunnel ports
+        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
+        for (int port : additionalPorts) {
+            UPnP.closePortTCP(port);
+        }
     }
 
     /**
@@ -146,7 +152,40 @@ public class UPnPService {
             if (UPnP.isMappedTCP(orPort)) {
                 upnpPorts.add(orPort);
             }
+
+            // Add ServerTransportListenAddr ports and webtunnel ports
+            List<Integer> additionalPorts = getAdditionalPorts(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
+            for (int port : additionalPorts) {
+                if (UPnP.isMappedTCP(port)) {
+                    upnpPorts.add(port);
+                }
+            }
         }
         return upnpPorts;
+    }
+
+    private List<Integer> getAdditionalPorts(Path torrcFilePath) {
+        List<Integer> additionalPorts = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ServerTransportListenAddr")) {
+                    String[] parts = line.split(" ");
+                    if (parts.length > 1) {
+                        String[] addrParts = parts[1].split(":");
+                        if (addrParts.length > 1) {
+                            additionalPorts.add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
+                }
+                if (line.contains("webtunnel")) {
+                    additionalPorts.add(80);
+                    additionalPorts.add(443);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Failed to read additional ports from torrc file: {}", torrcFilePath, e);
+        }
+        return additionalPorts;
     }
 }
