@@ -40,6 +40,9 @@ public class TorrcFileCreator {
             writer.write("ControlPort " + config.getControlPort());
             writer.newLine();
 
+            writer.write("CookieAuthentication 1");
+            writer.newLine();
+
             // Write the SocksPort to the file
             writer.write("SocksPort 0");
             writer.newLine();

@@ -20,7 +20,7 @@
 
 <!-- Button to turn on the Tor Proxy -->
 <form action="/proxy/start" method="post">
-    <button type="submit">Start Tor Proxy</button>
+    <button type="submit" onclick="showWarning()">Start Tor Proxy</button>
 </form>
 
 <!-- Display proxy status -->
@@ -36,4 +36,10 @@
 <br><br>
 <a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
 </body>
+
+<script>
+    function showWarning() {
+        alert("Please stop all other services to prevent your traffic from mixing with other services.");
+    }
+</script>
 </html>

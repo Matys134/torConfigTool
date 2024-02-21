@@ -33,6 +33,7 @@ $(document).ready(function () {
                     } else {
                         alert("Failed to remove Torrc file and DataDirectory.");
                     }
+                    button.closest('.list-group-item').remove();
                 }
             });
         }

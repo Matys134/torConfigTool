@@ -52,11 +52,11 @@
             <form action="/guard/configure" id="guardForm" method="post">
                 <div class="form-group">
                     <label for="relayNickname">Nickname:</label>
-                    <input id="relayNickname" name="relayNickname" required type="text" class="form-control">
+                    <input id="relayNickname" name="relayNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="relayPort">Relay Port:</label>
-                    <input id="relayPort" name="relayPort" required type="text" class="form-control">
+                    <input id="relayPort" name="relayPort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="relayContact">Contact:</label>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="form-group">
                     <label for="controlPort">Control Port:</label>
-                    <input id="controlPort" name="controlPort" required type="text" class="form-control">
+                    <input id="controlPort" name="controlPort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -91,12 +91,12 @@
 
                     <div class="form-group">
                         <label for="bridgeNickname">Nickname:</label>
-                        <input id="bridgeNickname" name="bridgeNickname" required type="text" class="form-control">
+                        <input id="bridgeNickname" name="bridgeNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
-                        <input id="bridgeControlPort" name="bridgeControlPort" required type="text" class="form-control">
+                        <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1024" max="65535" class="form-control">
                     </div>
 
                     <div class="form-check">
@@ -114,18 +114,13 @@
                 <div class="bridge-specific" id="bridgeFields">
                     <div class="form-group">
                         <label for="bridgePort">ORPort (e.g., 9001):</label>
-                        <input id="bridgePort" name="bridgePort" type="text" class="form-control">
+                        <input id="bridgePort" name="bridgePort" required type="number" min="1024" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
-                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" type="text" class="form-control">
+                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1024" max="65535" class="form-control">
                     </div>
-                </div>
-
-                <div class="form-check">
-                    <input id="startBridgeAfterConfig" name="startBridgeAfterConfig" type="checkbox" class="form-check-input">
-                    <label class="form-check-label" for="startBridgeAfterConfig">Start Relay after configuration</label>
                 </div>
 
                 <!-- Specific Fields for WebTunnel Bridge -->
@@ -151,7 +146,7 @@
             <form action="/onion-service/configure" id="onionForm" method="post">
                 <div class="form-group">
                     <label for="onionServicePort">HiddenServicePort:</label>
-                    <input id="onionServicePort" name="onionServicePort" required type="text" class="form-control">
+                    <input id="onionServicePort" name="onionServicePort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

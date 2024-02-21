@@ -158,7 +158,7 @@ public class BridgeService {
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay. One or more ports are already in use.");
         }
     }
 
