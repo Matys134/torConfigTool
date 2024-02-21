@@ -177,8 +177,8 @@ public class UPnPService {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ServerTransportListenAddr")) {
                     String[] parts = line.split(" ");
-                    if (parts.length > 1) {
-                        String[] addrParts = parts[1].split(":");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
                         if (addrParts.length > 1) {
                             additionalPorts.add(Integer.parseInt(addrParts[1]));
                         }
