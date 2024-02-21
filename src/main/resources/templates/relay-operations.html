@@ -291,6 +291,32 @@
         });
     });
 </script>
+<script>
+    // Select all status elements
+    let statusElements = document.querySelectorAll('[id^="status-"]');
+
+    // Iterate over each status element
+    statusElements.forEach((statusElement) => {
+        // Get the status
+        let status = statusElement.textContent.trim();
+
+        // Get the service port from the element's ID
+        let servicePort = statusElement.id.split('-')[1];
+
+        // Select the corresponding buttons
+        let startButton = document.querySelector(`button.start-button[data-config-nickname="${servicePort}"]`);
+        let stopButton = document.querySelector(`button.stop-button[data-config-nickname="${servicePort}"]`);
+        let editButton = document.querySelector(`button.edit-button[data-config-nickname="${servicePort}"]`);
+
+        // Disable or enable buttons based on the status
+        if (status === 'Online') {
+            if (startButton) startButton.disabled = true;
+            if (editButton) editButton.disabled = true;
+        } else if (status === 'Offline') {
+            if (stopButton) stopButton.disabled = true;
+        }
+    });
+</script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
