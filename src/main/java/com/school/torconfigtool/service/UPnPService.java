@@ -53,11 +53,23 @@ public class UPnPService {
 
         int orPort = getOrPort(torrcFilePath);
         boolean success = UPnP.openPortTCP(orPort);
+        logger.info("Attempting to open ORPort: {}", orPort);
+        if (success) {
+            logger.info("Successfully opened ORPort: {}", orPort);
+        } else {
+            logger.error("Failed to open ORPort: {}", orPort);
+        }
 
         // Open ServerTransportListenAddr ports and webtunnel ports
         List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
         for (int port : additionalPorts) {
+            logger.info("Attempting to open additional port: {}", port);
             success &= UPnP.openPortTCP(port);
+            if (success) {
+                logger.info("Successfully opened additional port: {}", port);
+            } else {
+                logger.error("Failed to open additional port: {}", port);
+            }
         }
 
         if (success) {
