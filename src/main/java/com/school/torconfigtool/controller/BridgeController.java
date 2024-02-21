@@ -83,7 +83,7 @@ public class BridgeController {
         try {
             bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay. Port " + e.getMessage() + " is already in use.");
+            model.addAttribute("errorMessage", "Failed to cogfvnfigure Tor Relay. Port " + e.getMessage() + " is already in use.");
         }
         return "setup";
     }
