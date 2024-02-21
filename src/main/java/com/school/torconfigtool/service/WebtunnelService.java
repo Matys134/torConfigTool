@@ -39,7 +39,10 @@ public class WebtunnelService {
      */
     public void setupWebtunnel(String webTunnelUrl) throws Exception {
 
-        nginxService.startNginx();
+        // Check if Nginx is running, if not, start it
+        if (!nginxService.isNginxRunning()) {
+            nginxService.startNginx();
+        }
 
         // Get the current program location
         String programLocation = System.getProperty("user.dir");
