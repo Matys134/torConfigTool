@@ -79,12 +79,8 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelUrl,
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
-                                  Model model) {
-        try {
-            bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to cogfvnfigure Tor Relay. Port " + e.getMessage() + " is already in use.");
-        }
+                                  Model model) throws Exception {
+        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
         return "setup";
     }
 
