@@ -57,6 +57,9 @@ public class BridgeService {
      * @throws Exception If an error occurs while configuring the bridge.
      */
     public void configureBridgeInternal(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
+        if (!relayService.arePortsAvailable(bridgeNickname, bridgePort, bridgeControlPort)) {
+            throw new Exception(String.valueOf(bridgePort));
+        }
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 

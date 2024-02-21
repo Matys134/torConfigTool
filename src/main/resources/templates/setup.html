@@ -187,6 +187,9 @@
             </table>
             <button id="toggleLimitButton" type="button" class="btn btn-primary">Turn Limit Off</button>
         </div>
+        <div class="alert alert-danger" th:if="${errorMessage}" role="alert">
+            <p th:text="${errorMessage}"></p>
+        </div>
     </div>
 </div>
 

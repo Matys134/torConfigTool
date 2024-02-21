@@ -80,7 +80,11 @@ public class BridgeController {
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+        try {
+            bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay. Port " + e.getMessage() + " is already in use.");
+        }
         return "setup";
     }
 
