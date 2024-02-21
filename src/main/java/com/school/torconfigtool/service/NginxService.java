@@ -400,6 +400,8 @@ public class NginxService {
         // Print the command to the console
         System.out.println(command);
 
+        reloadNginx();
+
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
 
