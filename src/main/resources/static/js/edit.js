@@ -131,7 +131,7 @@ $(document).ready(function () {
         };
 
         // Send a GET request to the /bridge/running-type endpoint
-        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("http://192.168.2.126:8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
