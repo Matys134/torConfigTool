@@ -130,9 +130,8 @@ $(document).ready(function () {
             bandwidthRate: $(this).data('config-bandwidthrate'),
         };
 
-        // Send a GET request to the /bridge/running-type endpoint
-        $.get("http://" + getLocalIP() + ":8080/bridge/running-type", function(runningBridgeTypes) {
-            // Get the bridge type for the current nickname
+        $.get("http://127.0.0.1:8080/ip", function(ipAddress) {
+            $.get(`http://${ipAddress}:8080/bridge/running-type`, function(runningBridgeTypes) {
             const bridgeType = runningBridgeTypes[nickname];
 
             console.log('Relay type:', relayType);
@@ -140,8 +139,10 @@ $(document).ready(function () {
             console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
+            });
         });
     });
+
 
     buttons.save.click(function () {
         console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
@@ -199,20 +200,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    function getLocalIP() {
-        const os = require('os');
-        const interfaces = os.networkInterfaces();
-        for (const name of Object.keys(interfaces)) {
-            for (const interface of interfaces[name]) {
-                const {address, family, internal} = interface;
-                if (family === 'IPv4' && !internal) {
-                    return address;
-                }
-            }
-        }
-        return '127.0.0.1';
-    }
 
     // Method to check uniqueness of ports
     function arePortsUnique(relayPort, controlPort) {
