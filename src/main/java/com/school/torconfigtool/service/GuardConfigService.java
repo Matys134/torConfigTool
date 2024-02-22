@@ -21,8 +21,11 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
     public boolean updateConfiguration(GuardConfig config) {
         try {
             String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            TorrcFileCreator.createTorrcFile(torrcFilePath, config);
-            return true;
+            boolean success = TorrcFileCreator.createTorrcFile(torrcFilePath, config);
+            if (!success) {
+                logger.warn("Failed to create torrc file for relay: {}", config.getNickname());
+            }
+            return success;
         } catch (Exception e) {
             logger.error("Error updating guard relay configuration", e);
             return false;
@@ -37,8 +40,9 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
     @Override
     public Map<String, String> updateConfigAndReturnResponse(GuardConfig config) {
         Map<String, String> response = new HashMap<>();
+        boolean success = false;
         try {
-            boolean success = updateConfiguration(config);
+            success = updateConfiguration(config);
             if (success) {
                 logger.info("Guard configuration updated successfully for relay: {}", config.getNickname());
                 response.put("message", "Guard configuration updated successfully");
@@ -48,7 +52,9 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
             }
         } catch (Exception e) {
             logger.error("Exception occurred while updating guard configuration", e);
-            response.put("message", "An unexpected error occurred");
+            if (!success) {
+                response.put("message", "An unexpected error occurred");
+            }
         }
         return response;
     }

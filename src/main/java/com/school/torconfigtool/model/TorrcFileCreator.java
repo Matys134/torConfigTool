@@ -20,8 +20,9 @@ public class TorrcFileCreator {
      *
      * @param filePath The path where the Torrc file will be created.
      * @param config   The configuration to be written to the Torrc file.
+     * @return
      */
-    public static void createTorrcFile(String filePath, BaseRelayConfig config) {
+    public static boolean createTorrcFile(String filePath, BaseRelayConfig config) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             // Write the nickname to the file
             writer.write("Nickname " + config.getNickname());
@@ -75,5 +76,6 @@ public class TorrcFileCreator {
             // Log any errors that occur during file creation
             logger.error("Error creating Torrc file", e);
         }
+        return false;
     }
 }

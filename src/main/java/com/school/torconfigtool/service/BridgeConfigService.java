@@ -21,8 +21,11 @@ public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
     public boolean updateConfiguration(BridgeConfig config) {
         try {
             String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            TorrcFileCreator.createTorrcFile(torrcFilePath, config);
-            return true;
+            boolean success = TorrcFileCreator.createTorrcFile(torrcFilePath, config);
+            if (!success) {
+                logger.warn("Failed to create torrc file for relay: {}", config.getNickname());
+            }
+            return success;
         } catch (Exception e) {
             logger.error("Error updating bridge relay configuration", e);
             return false;
@@ -37,8 +40,9 @@ public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
     @Override
     public Map<String, String> updateConfigAndReturnResponse(BridgeConfig config) {
         Map<String, String> response = new HashMap<>();
+        boolean success = false;
         try {
-            boolean success = updateConfiguration(config);
+            success = updateConfiguration(config);
             if (success) {
                 logger.info("Bridge configuration updated successfully for relay: {}", config.getNickname());
                 response.put("message", "Bridge configuration updated successfully");
@@ -48,7 +52,9 @@ public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
             }
         } catch (Exception e) {
             logger.error("Exception occurred while updating bridge configuration", e);
-            response.put("message", "An unexpected error occurred");
+            if (!success) {
+                response.put("message", "An unexpected error occurred");
+            }
         }
         return response;
     }
