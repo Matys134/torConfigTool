@@ -77,18 +77,19 @@ $(document).ready(function () {
     }
 
     function updateView(data) {
-        const configElement = $(`.config[data-config-nickname="${data.nickname}"]`);
+        const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
         console.log("Data: ", data);
 
         console.log("configElement: ", configElement); // Add this line
 
-        configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
-        configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
-        configElement.find(".config-contact").text(`Contact: ${data.contact}`);
-        configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
-        configElement.find(".config-webtunnelurl").text(`Webtunnel URL: ${data.webtunnelUrl}`);
-        configElement.find(".config-path").text(`Path: ${data.path}`);
-        configElement.find(".config-bandwidthrate").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+        configElement.find("h5:contains('Nickname')").text(`Nickname: ${data.nickname}`);
+        configElement.find("p:contains('ORPort')").text(`ORPort: ${data.orPort}`);
+        configElement.find("p:contains('ServerTransportListenAddr')").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+        configElement.find("p:contains('Contact')").text(`Contact: ${data.contact}`);
+        configElement.find("p:contains('Control Port')").text(`Control Port: ${data.controlPort}`);
+        configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
+        configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
+        configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
 
         // Add these lines
         console.log("ORPort: ", configElement.find(".config-orport").text());
