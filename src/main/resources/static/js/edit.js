@@ -11,7 +11,8 @@ $(document).ready(function () {
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
         webtunnelUrl: $("#edit-webtunnelurl"),
-        path: $("#edit-path")
+        path: $("#edit-path"),
+        bandwidthRate: $("#edit-bandwidthrate"),
     };
 
     const buttons = {
@@ -38,6 +39,7 @@ $(document).ready(function () {
         configSelectors.controlPort.val(data.controlPort);
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
+        configSelectors.bandwidthRate.val(data.bandwidthRate);
 
 
         // Hide all fields initially
@@ -125,6 +127,7 @@ $(document).ready(function () {
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
+            bandwidthRate: $(this).data('config-bandwidthrate'),
         };
 
         // Send a GET request to the /bridge/running-type endpoint
@@ -150,6 +153,7 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
             path: configSelectors.path.val(),
+            bandwidthRate: configSelectors.bandwidthRate.val(),
         };
 
         console.log('webtunnelUrl:', data.webtunnelUrl);
