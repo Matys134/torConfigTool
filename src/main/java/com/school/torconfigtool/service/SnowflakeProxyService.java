@@ -47,4 +47,16 @@ public class SnowflakeProxyService {
             logger.error("Error stopping Snowflake proxy", e);
         }
     }
+
+    // method to remove the snowflake proxy file
+    public void removeSnowflakeProxy() {
+        try {
+            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
+            if (!snowflakeProxyRunningFile.delete()) {
+                logger.error("Failed to delete file: " + snowflakeProxyRunningFile.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            logger.error("Error removing snowflake proxy", e);
+        }
+    }
 }

@@ -136,4 +136,11 @@ public class RelayOperationsController {
     public boolean checkUPnPAvailability() {
         return upnpService.isUPnPAvailable();
     }
+
+    @PostMapping("/remove-snowflake-proxy")
+    @ResponseBody
+    public ResponseEntity<String> removeSnowflakeProxy() {
+        snowflakeProxyService.removeSnowflakeProxy();
+        return ResponseEntity.ok("Snowflake proxy removed successfully");
+    }
 }
