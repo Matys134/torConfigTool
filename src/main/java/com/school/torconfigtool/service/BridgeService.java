@@ -10,9 +10,7 @@ import org.springframework.ui.Model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service class for managing Tor bridges.
@@ -156,6 +154,31 @@ public class BridgeService {
                 model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
                 return;
             }
+
+            Set<Integer> uniquePorts = new HashSet<>(Arrays.asList(bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort));
+            if (uniquePorts.size() < 4) {
+                model.addAttribute("errorMessage", "The ports must be unique.");
+                return;
+            }
+
+            // Check if the ports are available
+            if (bridgePort != null && !RelayUtils.isPortAvailable(bridgeNickname, bridgePort)) {
+                model.addAttribute("errorMessage", "The bridge port is not available.");
+                return;
+            }
+            if (bridgeTransportListenAddr != null && !RelayUtils.isPortAvailable(bridgeNickname, bridgeTransportListenAddr)) {
+                model.addAttribute("errorMessage", "The bridge transport listen address port is not available.");
+                return;
+            }
+            if (!RelayUtils.isPortAvailable(bridgeNickname, bridgeControlPort)) {
+                model.addAttribute("errorMessage", "The bridge control port is not available.");
+                return;
+            }
+            if (webtunnelPort != null && !RelayUtils.isPortAvailable(bridgeNickname, webtunnelPort)) {
+                model.addAttribute("errorMessage", "The webtunnel port is not available.");
+                return;
+            }
+
             configureBridgeInternal(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
