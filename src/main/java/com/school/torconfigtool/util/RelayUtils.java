@@ -2,6 +2,7 @@ package com.school.torconfigtool.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Utility class for handling relay operations.
  */
+@Service
 public class RelayUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayUtils.class);
@@ -193,5 +195,14 @@ public class RelayUtils {
      */
     public static boolean arePortsPrivileged(int relayPort, int controlPort) {
         return relayPort < 1024 || controlPort < 1024;
+    }
+
+    public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
+        try {
+            return RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort);
+        } catch (Exception e) {
+            logger.error("Error during Tor Relay configuration", e);
+            return false;
+        }
     }
 }

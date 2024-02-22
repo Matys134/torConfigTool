@@ -91,7 +91,7 @@ public class BridgeController {
     @PostMapping("/run-snowflake-proxy")
     public ResponseEntity<String> runSnowflakeProxy() {
         try {
-            snowflakeProxyService.runSnowflakeProxy();
+            snowflakeProxyService.setupSnowflakeProxy();
             return new ResponseEntity<>("Snowflake proxy started successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

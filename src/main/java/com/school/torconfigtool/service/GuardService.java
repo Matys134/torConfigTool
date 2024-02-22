@@ -18,6 +18,7 @@ public class GuardService {
 
     // RelayService instance for relay operations
     private final RelayService relayService;
+    private final RelayUtils relayUtils;
 
     // Directory path for torrc files
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
@@ -30,8 +31,9 @@ public class GuardService {
      *
      * @param relayService The service to be used for relay operations.
      */
-    public GuardService(RelayService relayService) {
+    public GuardService(RelayService relayService, RelayUtils relayUtils) {
         this.relayService = relayService;
+        this.relayUtils = relayUtils;
     }
 
     /**
@@ -41,19 +43,18 @@ public class GuardService {
      * @param relayPort       The OR port of the Guard Relay.
      * @param relayContact    The contact information of the Guard Relay.
      * @param controlPort     The control port of the Guard Relay.
-     * @param relayBandwidth  The bandwidth of the Guard Relay.
+     * @param guardBandwidth  The bandwidth of the Guard Relay.
      * @return A new GuardRelayConfig object with the given parameters.
      */
-    public GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
+    private GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer guardBandwidth) {
         GuardConfig config = new GuardConfig();
         config.setNickname(relayNickname);
         config.setOrPort(String.valueOf(relayPort));
         config.setContact(relayContact);
         config.setControlPort(String.valueOf(controlPort));
-        if (relayBandwidth != null) {
-            config.setBandwidthRate(String.valueOf(relayBandwidth));
+        if (guardBandwidth != null) {
+            config.setBandwidthRate(String.valueOf(guardBandwidth));
         }
-
         return config;
     }
 
@@ -71,7 +72,7 @@ public class GuardService {
         String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        if (!relayService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
+        if (!relayUtils.arePortsAvailable(relayNickname, relayPort, controlPort)) {
             throw new Exception("One or more ports are already in use.");
         }
 

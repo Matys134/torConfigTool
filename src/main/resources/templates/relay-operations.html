@@ -7,7 +7,6 @@
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
-
 <div class="container">
     <h1>Tor Relay Operations</h1>
     <button id="upnp-toggle-button" class="btn btn-primary" data-upnp-enabled="true">Disable UPnP for Guard Relays</button>
@@ -106,9 +105,27 @@
                         </button>
                     </div>
                 </div>
+                <div th:if="${isSnowflakeConfigured}" id="snowflakeTab" class="tab-pane fade show active">
+                    <h3>Snowflake Proxy</h3>
+                    <p>Control the Snowflake Proxy from here.</p>
+                    <button id="start-snowflake-proxy-button" class="btn btn-success">Start Snowflake Proxy</button>
+                    <button id="stop-snowflake-proxy-button" class="btn btn-danger">Stop Snowflake Proxy</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $.get("/relay-operations/upnp-availability", function(upnpAvailable) {
+                if (upnpAvailable) {
+                    $('#upnp-toggle-button').prop('disabled', false);
+                } else {
+                    $('#upnp-toggle-button').prop('disabled', true);
+                }
+            });
+        });
+    </script>
 
     <!-- Display Onion relay configurations -->
     <h2>Onion Relay Configurations</h2>
@@ -288,6 +305,44 @@
                 button.text('Disable UPnP for Guard Relays');
             }
             button.data('upnp-enabled', !upnpEnabled);
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        if ($('#guard-configs .list-group-item').length === 0) {
+            $('h2:contains("Guard Relay Configurations")').hide();
+        }
+        if ($('#bridge-configs .list-group-item').length === 0) {
+            $('h2:contains("Bridge Relay Configurations")').hide();
+        }
+        if ($('#onion-configs .list-group-item').length === 0) {
+            $('h2:contains("Onion Relay Configurations")').hide();
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#start-snowflake-proxy-button').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/relay-operations/start-snowflake-proxy",
+                success: function(response) {
+                    alert(response);
+                }
+            });
+        });
+
+        $('#stop-snowflake-proxy-button').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/relay-operations/stop-snowflake-proxy",
+                success: function(response) {
+                    alert(response);
+                }
+            });
         });
     });
 </script>
