@@ -44,11 +44,11 @@ public class BridgeConfigController {
      * @return a ResponseEntity that contains the status code and a message indicating the result of the operation
      */
     @PostMapping
-    public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody BridgeConfig config) {
-        logger.info("Received request to update guard configuration: {}", config);
+    public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
+        logger.info("Received request to update bridge configuration: {}", config);
         Map<String, String> response = bridgeConfigService.updateConfigAndReturnResponse(config);
-        logger.info("Response from guard configuration update: {}", response);
-        if (response.get("message").startsWith("Guard configuration updated successfully")) {
+        logger.info("Response from bridge configuration update: {}", response);
+        if (response.get("message").startsWith("Bridge configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
