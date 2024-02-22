@@ -99,7 +99,7 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (response) {
-                if (response.success) {
+                if (response.status === "success") {
                     // Update the view with the new configuration, if needed
                     updateView(data);
                 } else {
