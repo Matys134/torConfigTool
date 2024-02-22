@@ -28,6 +28,7 @@
                     <p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p>
                     <p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p>
                     <p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p>
+                    <p th:text="'Bandwidth Limit: ' + ${config.getGuardConfig.bandwidthRate}"></p>
                     <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"

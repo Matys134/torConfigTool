@@ -22,6 +22,14 @@ public abstract class BaseRelayConfig implements RelayConfig {
     // The bandwidth rate of the relay
     private String bandwidthRate;
 
+    public String getBandwidthRate() {
+        return bandwidthRate;
+    }
+
+    public void setBandwidthRate(String bandwidthRate) {
+        this.bandwidthRate = bandwidthRate;
+    }
+
     /**
      * This is an abstract method that must be implemented by any class that extends BaseRelayConfig.
      * It is used to write the specific configuration of the relay.

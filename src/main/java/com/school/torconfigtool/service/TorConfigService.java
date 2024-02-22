@@ -133,8 +133,8 @@ public class TorConfigService {
             config.setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
-        } else if (line.startsWith("BandwidthRate")) {
-            config.setBandwidthRate(line.split(" ")[1].trim());
+        } if (line.startsWith("BandwidthRate")) {
+            relayConfig.setBandwidthRate(line.split(" ")[1].trim());
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
             ((BridgeConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
