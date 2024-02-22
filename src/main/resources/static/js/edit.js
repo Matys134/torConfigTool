@@ -104,7 +104,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status === "success") {
                     // Update the view with the new configuration
-                    updateView(data);
+                    updateView(response.data);
                 } else {
                     alert("Failed to update configuration.");
                 }
