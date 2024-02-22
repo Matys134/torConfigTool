@@ -42,7 +42,7 @@ public class GuardConfigController {
         logger.info("Received request to update guard configuration: {}", config);
         Map<String, String> response = guardConfigService.updateConfigAndReturnResponse(config);
         logger.info("Response from guard configuration update: {}", response);
-        if (response.get("message").equals("Guard configuration updated successfully")) {
+        if (response.get("message").startsWith("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
