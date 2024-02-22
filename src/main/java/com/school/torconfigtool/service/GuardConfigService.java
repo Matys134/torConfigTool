@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,14 +24,15 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
     @Override
     public boolean updateConfiguration(GuardConfig config) {
         try {
-            String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            boolean success = TorrcFileCreator.createTorrcFile(torrcFilePath, config);
-            if (!success) {
-                logger.warn("Failed to create torrc file for relay: {}", config.getNickname());
+            String filePath = buildTorrcFilePath(config.getNickname());
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
             }
-            return success;
+            TorrcFileCreator.createTorrcFile(filePath, config);
+            return true;
         } catch (Exception e) {
-            logger.error("Error updating guard relay configuration", e);
+            logger.error("Failed to update guard configuration for relay: " + config.getNickname(), e);
             return false;
         }
     }
