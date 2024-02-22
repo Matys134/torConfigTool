@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Utility class for handling relay operations.
  */
@@ -14,8 +17,6 @@ import java.util.List;
 public class RelayUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RelayUtils.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
     /**
      * Checks for running relays and logs their process IDs.
@@ -30,7 +31,7 @@ public class RelayUtils {
                 // Filter the list of processes to get the PIDs of running relays
                 List<Integer> runningRelayPIDs = new BufferedReader(reader)
                         .lines()
-                        .filter(line -> line.contains("tor -f torrc-"))
+                        .filter(line -> line.contains("tor -f " + TORRC_DIRECTORY_PATH))
                         .map(line -> line.split("\\s+"))
                         .filter(parts -> parts.length >= 2)
                         .map(parts -> Integer.parseInt(parts[1]))
@@ -102,8 +103,8 @@ public class RelayUtils {
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
                 // If a file starts with the torrc file prefix and its name contains an underscore, check its contents
-                if (file.isFile() && (file.getName().startsWith("torrc-") && file.getName().contains("_"))) {
-                    String[] fileParts = file.getName().substring("torrc-".length()).split("_");
+                if (file.isFile() && (file.getName().startsWith(TORRC_FILE_PREFIX) && file.getName().contains("_"))) {
+                    String[] fileParts = file.getName().substring(TORRC_FILE_PREFIX.length()).split("_");
                     String currentFileRelayNickname = fileParts[0];
 
                     // Skip the file if its name matches the relay nickname
@@ -147,8 +148,8 @@ public class RelayUtils {
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
                 // If a file starts with the torrc file prefix and its name contains an underscore, check its contents
-                if (file.isFile() && (file.getName().startsWith("torrc-") && file.getName().contains("_"))) {
-                    String[] fileParts = file.getName().substring("torrc-".length()).split("_");
+                if (file.isFile() && (file.getName().startsWith(TORRC_FILE_PREFIX) && file.getName().contains("_"))) {
+                    String[] fileParts = file.getName().substring(TORRC_FILE_PREFIX.length()).split("_");
                     String currentFileRelayNickname = fileParts[0];
 
                     // Skip the file if its name matches the relay nickname

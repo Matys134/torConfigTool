@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Service class for managing Tor bridges.
  */
@@ -19,12 +21,10 @@ import java.util.*;
 public class BridgeService {
     private static final Logger logger = LoggerFactory.getLogger(BridgeService.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc";
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
     private final RelayService relayService;
-    private final RelayUtils relayUtils;
 
     /**
      * Constructor for the BridgeService.
@@ -33,11 +33,10 @@ public class BridgeService {
      * @param webtunnelService The webtunnel service.
      * @param relayService     The relay service.
      */
-    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService, RelayUtils relayUtils) {
+    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
         this.nginxService = nginxService;
         this.webtunnelService = webtunnelService;
         this.relayService = relayService;
-        this.relayUtils = relayUtils;
     }
 
     /**
@@ -153,6 +152,10 @@ public class BridgeService {
             if (relayService.getBridgeCount() >= 2) {
                 model.addAttribute("errorMessage", "You can only configure up to 2 bridges.");
                 return;
+            }
+
+            if (RelayUtils.relayExists(bridgeNickname)) {
+                throw new Exception("A relay with the same nickname already exists.");
             }
 
             Set<Integer> uniquePorts = new HashSet<>(Arrays.asList(bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort));

@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Service class for handling Tor configuration files.
  */
@@ -26,7 +28,7 @@ public class TorFileService {
      * @return the file path as a Path object.
      */
     public Path buildTorrcFilePath(String relayNickname, String relayType) {
-        return Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_" + relayType);
+        return Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_" + relayType);
     }
 
     /**

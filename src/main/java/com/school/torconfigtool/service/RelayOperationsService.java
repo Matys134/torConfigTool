@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * This class contains methods to perform operations on Tor Relays.
  */
@@ -331,7 +333,7 @@ public class RelayOperationsService {
 
             // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
             Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
-            Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", "torrc-" + relayNickname + "_onion");
+            Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
 
             // Delete Onion files in /onion folder and its corresponding file in torrc directory
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));

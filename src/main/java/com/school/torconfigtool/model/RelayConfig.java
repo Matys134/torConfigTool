@@ -72,4 +72,8 @@ public interface RelayConfig {
      * @throws IOException If an I/O error occurs.
      */
     void writeSpecificConfig(BufferedWriter writer) throws IOException;
+
+    // get and set methods for bandwidthRate
+    String getBandwidthRate();
+    void setBandwidthRate(String bandwidthRate);
 }

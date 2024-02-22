@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * It includes configurations for guard nodes, bridge nodes, and hidden services.
  * It also includes the hostname and bandwidth rate for the Tor network.
  *
- * @author Matys134
  */
 @Data
 @Component

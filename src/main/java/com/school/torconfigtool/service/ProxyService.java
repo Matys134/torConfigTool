@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * ProxyService is a service class responsible for managing a Tor Proxy.
  * It provides methods to configure, start, stop, and check the status of the proxy.
@@ -14,7 +17,7 @@ import java.io.*;
 @Service
 public class ProxyService {
 
-    private static final String TORRC_PROXY_FILE = "torrc/torrc-proxy";
+    private static final String TORRC_PROXY_FILE = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "proxy";
     private final IpAddressRetriever ipAddressRetriever;
     private static final Logger logger = LoggerFactory.getLogger(ProxyService.class);
 
@@ -53,7 +56,8 @@ public class ProxyService {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write("SocksPort " + localIpAddress + ":9050");
             bw.newLine();
-            bw.write("SocksPolicy accept 192.168.1.0/24");
+            String localNetwork = localIpAddress.substring(0, localIpAddress.lastIndexOf('.')) + ".0/24";
+            bw.write("SocksPolicy accept " + localNetwork);
             bw.newLine();
             bw.write("RunAsDaemon 1");
             bw.newLine();

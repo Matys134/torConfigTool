@@ -1,16 +1,15 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Service class for managing web tunnels.
@@ -18,17 +17,19 @@ import java.util.List;
 @Service
 public class WebtunnelService {
     private final NginxService nginxService;
+    private final AcmeService acmeService;
+    private final CommandService commandService;
     private static final String TORRC_DIRECTORY_PATH = "torrc";
-    private static final String TORRC_FILE_PREFIX = "torrc-";
-    private static final Logger logger = LoggerFactory.getLogger(WebtunnelService.class);
 
     /**
      * Constructor for WebtunnelService.
      *
      * @param nginxService The NginxService to use.
      */
-    public WebtunnelService(NginxService nginxService) {
+    public WebtunnelService(NginxService nginxService, AcmeService acmeService, CommandService commandService) {
         this.nginxService = nginxService;
+        this.acmeService = acmeService;
+        this.commandService = commandService;
     }
 
     /**
@@ -47,51 +48,15 @@ public class WebtunnelService {
         // Get the current program location
         String programLocation = System.getProperty("user.dir");
 
-        // Change the ownership of the directory
-        String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
-        Process chownProcess = executeCommand(chownCommand);
+        String username = System.getProperty("user.name");
+        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-80";
+        Process chownProcess = commandService.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
         }
 
-        // Create the directory for the certificate files
-        String certDirectory = programLocation + "/onion/certs/service-80/";
-        File dir = new File(certDirectory);
-        boolean isDirectoryCreated = dir.mkdirs();
-        if (!isDirectoryCreated && !dir.exists()) {
-            throw new IOException("Failed to create directory " + certDirectory);
-        }
-
-        // Generate the certificate
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
-        System.out.println("Generating certificate: " + command);
-
-        Process certProcess = executeCommand(command);
-        if (certProcess == null || certProcess.exitValue() != 0) {
-            throw new Exception("Failed to generate certificate");
-        }
-    }
-
-    /**
-     * Executes a command.
-     *
-     * @param command The command to execute.
-     * @return The process of the executed command.
-     */
-    private Process executeCommand(String command) {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command("bash", "-c", command);
-        try {
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                logger.error("Error during command execution. Exit code: " + exitCode);
-            }
-            return process;
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error during command execution", e);
-            return null;
-        }
+        // Call the new method to generate the certificate
+        acmeService.generateCertificate(webTunnelUrl, programLocation);
     }
 
     /**

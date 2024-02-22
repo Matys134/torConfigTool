@@ -11,7 +11,8 @@ $(document).ready(function () {
         contact: $("#edit-contact"),
         controlPort: $("#edit-controlport"),
         webtunnelUrl: $("#edit-webtunnelurl"),
-        path: $("#edit-path")
+        path: $("#edit-path"),
+        bandwidthRate: $("#edit-bandwidthrate"),
     };
 
     const buttons = {
@@ -38,6 +39,7 @@ $(document).ready(function () {
         configSelectors.controlPort.val(data.controlPort);
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
+        configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
 
 
         // Hide all fields initially
@@ -75,12 +77,37 @@ $(document).ready(function () {
     }
 
     function updateView(data) {
-        const configElement = $(`[data-config-nickname="${data.nickname}"]`);
+        const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
+        const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
+        console.log("Data: ", data);
 
-        configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
-        configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
-        configElement.find(".config-contact").text(`Contact: ${data.contact}`);
-        configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+        console.log("configElement: ", configElement); // Add this line
+
+        configElement.find("h5:contains('Nickname')").text(`Nickname: ${data.nickname}`);
+        configElement.find("p:contains('ORPort')").text(`ORPort: ${data.orPort}`);
+        configElement.find("p:contains('ServerTransportListenAddr')").text(`ServerTransportListenAddr: ${data.serverTransport}`);
+        configElement.find("p:contains('Contact')").text(`Contact: ${data.contact}`);
+        configElement.find("p:contains('Control Port')").text(`Control Port: ${data.controlPort}`);
+        configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
+        configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
+        configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+
+        editButton.data('config-orport', data.orPort);
+        editButton.data('config-servertransport', data.serverTransport);
+        editButton.data('config-contact', data.contact);
+        editButton.data('config-controlport', data.controlPort);
+        editButton.data('config-webtunnelurl', data.webtunnelUrl);
+        editButton.data('config-path', data.path);
+        editButton.data('config-bandwidthrate', data.bandwidthRate);
+
+        // Add these lines
+        console.log("ORPort: ", configElement.find(".config-orport").text());
+        console.log("ServerTransportListenAddr: ", configElement.find(".config-server-transport").text());
+        console.log("Contact: ", configElement.find(".config-contact").text());
+        console.log("Control Port: ", configElement.find(".config-controlport").text());
+        console.log("Webtunnel URL: ", configElement.find(".config-webtunnelurl").text());
+        console.log("Path: ", configElement.find(".config-path").text());
+        console.log("Bandwidth Limit: ", configElement.find(".config-bandwidthrate").text());
     }
 
     function sendUpdateRequest(url, data) {
@@ -97,13 +124,17 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (response) {
-                if (response.success) {
-                    // Update the view with the new configuration, if needed
+                if (response.status === "success") {
+                    // Update the view with the new configuration
                     updateView(data);
                 } else {
                     alert("Failed to update configuration.");
                 }
-                updateView(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX request failed: ", textStatus, ", ", errorThrown);
+                console.error("Response text: ", jqXHR.responseText);
+                console.error("Status code: ", jqXHR.status);
             }
         });
     }
@@ -125,10 +156,11 @@ $(document).ready(function () {
             serverTransport: relayType === 'bridge' ? $(this).data('config-servertransport') : "",
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
+            bandwidthRate: $(this).data('config-bandwidthrate'),
         };
 
-        // Send a GET request to the /bridge/running-type endpoint
-        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("/server-ip", function(serverIp) {
+        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
@@ -137,6 +169,7 @@ $(document).ready(function () {
             console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
+        });
         });
     });
 
@@ -150,12 +183,14 @@ $(document).ready(function () {
             controlPort: parseInt(configSelectors.controlPort.val()),
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
             path: configSelectors.path.val(),
+            bandwidthRate: configSelectors.bandwidthRate.val(),
         };
 
         console.log('webtunnelUrl:', data.webtunnelUrl);
         console.log('path:', data.path);
 
-        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("/server-ip", function(serverIp) {
+        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();
@@ -193,6 +228,7 @@ $(document).ready(function () {
                         }
                     });
             }
+        });
         });
     });
 

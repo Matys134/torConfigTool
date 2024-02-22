@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * BridgeRelayOperationsService is a service class responsible for operations related to Bridge Relays.
  */
@@ -41,7 +43,7 @@ public class BridgeRelayOperationsService {
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
 
         // Construct the path to the torrc file
-        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "torrc-" + relayNickname + "_bridge";
+        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {

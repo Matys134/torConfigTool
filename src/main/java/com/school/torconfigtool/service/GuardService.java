@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * This service class is responsible for handling operations related to Guard Relays.
  */
@@ -21,10 +24,7 @@ public class GuardService {
     private final RelayUtils relayUtils;
 
     // Directory path for torrc files
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
-    // Prefix for torrc file names
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
     /**
      * Constructor for GuardService
