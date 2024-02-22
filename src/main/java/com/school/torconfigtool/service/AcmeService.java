@@ -28,7 +28,8 @@ public class AcmeService {
         }
 
         // Generate the certificate
-        String command = "/home/matys/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
+        String username = System.getProperty("user.name");
+        String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt_test --force";
         System.out.println("Generating certificate: " + command);
 
         Process certProcess = commandService.executeCommand(command);
@@ -49,7 +50,8 @@ public class AcmeService {
         String programLocation = System.getProperty("user.dir");
 
         // Construct the command to install the certificate
-        String command = "/home/matys/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
+        String username = System.getProperty("user.name");
+        String command = "/home/" + username + "/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd";

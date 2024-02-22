@@ -13,7 +13,8 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
-    torrc_dir = "/home/matys/git/torConfigTool/torrc"
+    username = os.getlogin()
+    torrc_dir = f"/home/{username}/git/torConfigTool/torrc"
     control_ports = []
 
     # Create a thread for each relay and start monitoring

@@ -47,8 +47,8 @@ public class WebtunnelService {
         // Get the current program location
         String programLocation = System.getProperty("user.dir");
 
-        // Change the ownership of the directory
-        String chownCommand = "sudo chown -R matys:matys " + programLocation + "/onion/www/service-80";
+        String username = System.getProperty("user.name");
+        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-80";
         Process chownProcess = commandService.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");

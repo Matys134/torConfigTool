@@ -213,11 +213,12 @@ public class NginxService {
      * @return The default Nginx configuration lines.
      */
     private static List<String> getDefaultNginxConfigLines() {
+        String currentDirectory = System.getProperty("user.dir");
         List<String> lines = new ArrayList<>();
         lines.add("server {");
         lines.add("    listen 80 default_server;");
         lines.add("    listen [::]:80 default_server;");
-        lines.add("    root /home/matys/git/torConfigTool/onion/www/service-80;");
+        lines.add("    root " + currentDirectory + "/onion/www/service-80;");
         lines.add("    index index.html index.htm index.nginx-debian.html;");
         lines.add("    server_name _;");
         lines.add("    location / {");

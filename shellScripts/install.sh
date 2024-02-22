@@ -106,7 +106,7 @@ else
 fi
 
 # Change the ownership of the nginx default site configuration file
-sudo chown matys /etc/nginx/sites-available/default
+sudo chown $SUDO_USER /etc/nginx/sites-available/default
 
 # Check if email argument is provided
 if [ -z "$1" ]
