@@ -1,8 +1,11 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.service.BridgeConfigService;
 import com.school.torconfigtool.util.RelayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/update-bridge-config")
 public class BridgeConfigController {
     private final BridgeConfigService bridgeConfigService;
+    private static final Logger logger = LoggerFactory.getLogger(BridgeConfigController.class);
 
     /**
      * Constructor for the BridgeConfigController.
@@ -40,9 +44,11 @@ public class BridgeConfigController {
      * @return a ResponseEntity that contains the status code and a message indicating the result of the operation
      */
     @PostMapping
-    public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
+    public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody BridgeConfig config) {
+        logger.info("Received request to update guard configuration: {}", config);
         Map<String, String> response = bridgeConfigService.updateConfigAndReturnResponse(config);
-        if (response.get("message").equals("Guard configuration updated successfully")) {
+        logger.info("Response from guard configuration update: {}", response);
+        if (response.get("message").startsWith("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
