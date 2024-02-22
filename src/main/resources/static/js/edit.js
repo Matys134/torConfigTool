@@ -39,7 +39,7 @@ $(document).ready(function () {
         configSelectors.controlPort.val(data.controlPort);
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
-        configSelectors.bandwidthRate.val(data.bandwidthRate);
+        configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
 
 
         // Hide all fields initially
