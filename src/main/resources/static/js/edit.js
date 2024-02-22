@@ -79,6 +79,8 @@ $(document).ready(function () {
     function updateView(data) {
         const configElement = $(`[data-config-nickname="${data.nickname}"]`);
 
+        console.log("configElement: ", configElement); // Add this line
+
         configElement.find(".config-orport").text(`ORPort: ${data.orPort}`);
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
@@ -86,6 +88,15 @@ $(document).ready(function () {
         configElement.find(".config-webtunnelurl").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find(".config-path").text(`Path: ${data.path}`);
         configElement.find(".config-bandwidthrate").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+
+        // Add these lines
+        console.log("ORPort: ", configElement.find(".config-orport").text());
+        console.log("ServerTransportListenAddr: ", configElement.find(".config-server-transport").text());
+        console.log("Contact: ", configElement.find(".config-contact").text());
+        console.log("Control Port: ", configElement.find(".config-controlport").text());
+        console.log("Webtunnel URL: ", configElement.find(".config-webtunnelurl").text());
+        console.log("Path: ", configElement.find(".config-path").text());
+        console.log("Bandwidth Limit: ", configElement.find(".config-bandwidthrate").text());
     }
 
     function sendUpdateRequest(url, data) {
@@ -104,7 +115,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status === "success") {
                     // Update the view with the new configuration
-                    updateView(response.data);
+                    updateView(data);
                 } else {
                     alert("Failed to update configuration.");
                 }
