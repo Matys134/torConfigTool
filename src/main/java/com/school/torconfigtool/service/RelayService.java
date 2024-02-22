@@ -20,15 +20,6 @@ public class RelayService {
     private static final String TORRC_DIRECTORY_PATH = "torrc/";
     private static final String TORRC_FILE_PREFIX = "torrc-";
 
-    public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
-        try {
-            return RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort);
-        } catch (Exception e) {
-            logger.error("Error during Tor Relay configuration", e);
-            return false;
-        }
-    }
-
     public int getBridgeCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {

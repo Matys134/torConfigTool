@@ -26,6 +26,7 @@ public class BridgeService {
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
     private final RelayService relayService;
+    private final RelayUtils relayUtils;
 
     /**
      * Constructor for the BridgeService.
@@ -34,10 +35,11 @@ public class BridgeService {
      * @param webtunnelService The webtunnel service.
      * @param relayService     The relay service.
      */
-    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
+    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService, RelayUtils relayUtils) {
         this.nginxService = nginxService;
         this.webtunnelService = webtunnelService;
         this.relayService = relayService;
+        this.relayUtils = relayUtils;
     }
 
     /**
