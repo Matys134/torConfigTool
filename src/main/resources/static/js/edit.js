@@ -130,8 +130,9 @@ $(document).ready(function () {
             bandwidthRate: $(this).data('config-bandwidthrate'),
         };
 
-        $.get("http://127.0.0.1:8080/ip", function(ipAddress) {
-            $.get(`http://${ipAddress}:8080/bridge/running-type`, function(runningBridgeTypes) {
+        $.get("/server-ip", function(serverIp) {
+        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
+            // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
             console.log('Relay type:', relayType);
@@ -139,10 +140,9 @@ $(document).ready(function () {
             console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
-            });
+        });
         });
     });
-
 
     buttons.save.click(function () {
         console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
