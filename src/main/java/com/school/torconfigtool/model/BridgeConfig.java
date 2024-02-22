@@ -71,7 +71,7 @@ public class BridgeConfig extends BaseRelayConfig {
                 writer.newLine();
                 break;
             case "snowflake":
-                snowflakeProxyService.runSnowflakeProxy();
+                snowflakeProxyService.setupSnowflakeProxy();
                 break;
             default:
                 logger.error("Unknown bridge type: " + getBridgeType());

@@ -18,46 +18,33 @@ public class SnowflakeProxyService {
     /**
      * Runs the Snowflake proxy.
      */
-    public void runSnowflakeProxy() {
+    public void setupSnowflakeProxy() {
         try {
-            // Command to clone the snowflake repository
-            ProcessBuilder gitCloneProcessBuilder = new ProcessBuilder("git", "clone", "https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake.git");
-            gitCloneProcessBuilder.redirectErrorStream(true);
-            Process gitCloneProcess = gitCloneProcessBuilder.start();
-            gitCloneProcess.waitFor();
-
-            // Command to build the snowflake proxy
-            Process runProxyProcess = getProcess();
-            runProxyProcess.waitFor();
-
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
             if (!snowflakeProxyRunningFile.createNewFile()) {
                 logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             logger.error("Error running snowflake proxy", e);
         }
     }
 
-    /**
-     * Builds and runs the Snowflake proxy.
-     *
-     * @return The process of the running Snowflake proxy.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted.
-     */
-    private Process getProcess() throws IOException, InterruptedException {
-        ProcessBuilder goBuildProcessBuilder = new ProcessBuilder("go", "build");
-        goBuildProcessBuilder.directory(new File("snowflake/proxy"));
-        goBuildProcessBuilder.redirectErrorStream(true);
-        Process goBuildProcess = goBuildProcessBuilder.start();
-        goBuildProcess.waitFor();
+    public void startSnowflakeProxy() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "snowflake-proxy");
+            processBuilder.start();
+        } catch (IOException e) {
+            logger.error("Error starting Snowflake proxy", e);
+        }
+    }
 
-        // Command to run the snowflake proxy
-        ProcessBuilder runProxyProcessBuilder = new ProcessBuilder("nohup", "./proxy", "&");
-        runProxyProcessBuilder.directory(new File("snowflake/proxy"));
-        runProxyProcessBuilder.redirectErrorStream(true);
-        return runProxyProcessBuilder.start();
+    public void stopSnowflakeProxy() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "snowflake-proxy");
+            processBuilder.start();
+        } catch (IOException e) {
+            logger.error("Error stopping Snowflake proxy", e);
+        }
     }
 }

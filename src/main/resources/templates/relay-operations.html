@@ -7,7 +7,6 @@
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
-
 <div class="container">
     <h1>Tor Relay Operations</h1>
     <button id="upnp-toggle-button" class="btn btn-primary" data-upnp-enabled="true">Disable UPnP for Guard Relays</button>
@@ -105,6 +104,12 @@
                             <a th:href="@{/bridge/upload/80}">Edit Files</a>
                         </button>
                     </div>
+                </div>
+                <div id="snowflakeTab" class="tab-pane fade show active">
+                    <h3>Snowflake Proxy</h3>
+                    <p>Control the Snowflake Proxy from here.</p>
+                    <button id="start-snowflake-proxy-button" class="btn btn-success">Start Snowflake Proxy</button>
+                    <button id="stop-snowflake-proxy-button" class="btn btn-danger">Stop Snowflake Proxy</button>
                 </div>
             </div>
         </div>
@@ -303,6 +308,30 @@
         if ($('#onion-configs .list-group-item').length === 0) {
             $('h2:contains("Onion Relay Configurations")').hide();
         }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#start-snowflake-proxy-button').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/relay-operations/start-snowflake-proxy",
+                success: function(response) {
+                    alert(response);
+                }
+            });
+        });
+
+        $('#stop-snowflake-proxy-button').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/relay-operations/stop-snowflake-proxy",
+                success: function(response) {
+                    alert(response);
+                }
+            });
+        });
     });
 </script>
 
