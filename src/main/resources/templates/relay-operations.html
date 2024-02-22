@@ -115,6 +115,18 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function() {
+            $.get("/relay-operations/upnp-availability", function(upnpAvailable) {
+                if (upnpAvailable) {
+                    $('#upnp-toggle-button').prop('disabled', false);
+                } else {
+                    $('#upnp-toggle-button').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+
     <!-- Display Onion relay configurations -->
     <h2>Onion Relay Configurations</h2>
     <div class="row">

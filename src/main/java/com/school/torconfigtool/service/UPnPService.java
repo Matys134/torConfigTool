@@ -206,4 +206,8 @@ public class UPnPService {
         }
         return additionalPorts;
     }
+
+    public boolean isUPnPAvailable() {
+        return UPnP.isUPnPAvailable();
+    }
 }

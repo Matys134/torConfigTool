@@ -56,7 +56,7 @@ public class GuardController {
      * @param relayPort The port of the relay.
      * @param relayContact The contact of the relay.
      * @param controlPort The control port of the relay.
-     * @param relayBandwidth The bandwidth of the relay (optional).
+     * @param guardBandwidth The bandwidth of the relay (optional).
      * @param model The model to be used for rendering the view.
      * @return The name of the view to be rendered.
      */
@@ -65,10 +65,10 @@ public class GuardController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
-                                 @RequestParam(required = false) Integer relayBandwidth,
+                                 @RequestParam(required = false) Integer guardBandwidth,
                                  Model model) {
         try {
-            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, guardBandwidth);
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);

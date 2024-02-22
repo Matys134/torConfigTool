@@ -2,6 +2,7 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.RelayOperationsService;
 import com.school.torconfigtool.service.SnowflakeProxyService;
+import com.school.torconfigtool.service.UPnPService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,14 +20,16 @@ public class RelayOperationsController {
 
     private final RelayOperationsService relayOperationsService;
     private final SnowflakeProxyService snowflakeProxyService;
+    private final UPnPService upnpService;
 
     /**
      * Constructor for RelayOperationsController.
      * @param relayOperationsService The service to handle relay operations.
      */
-    public RelayOperationsController(RelayOperationsService relayOperationsService, SnowflakeProxyService snowflakeProxyService) {
+    public RelayOperationsController(RelayOperationsService relayOperationsService, SnowflakeProxyService snowflakeProxyService, UPnPService upnpService) {
         this.relayOperationsService = relayOperationsService;
         this.snowflakeProxyService = snowflakeProxyService;
+        this.upnpService = upnpService;
         this.relayOperationsService.createDataDirectory();
     }
 
@@ -126,5 +129,11 @@ public class RelayOperationsController {
     public ResponseEntity<String> stopSnowflakeProxy() {
         snowflakeProxyService.stopSnowflakeProxy();
         return ResponseEntity.ok("Snowflake proxy stopped successfully");
+    }
+
+    @GetMapping("/upnp-availability")
+    @ResponseBody
+    public boolean checkUPnPAvailability() {
+        return upnpService.isUPnPAvailable();
     }
 }

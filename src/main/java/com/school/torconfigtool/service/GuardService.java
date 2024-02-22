@@ -43,19 +43,18 @@ public class GuardService {
      * @param relayPort       The OR port of the Guard Relay.
      * @param relayContact    The contact information of the Guard Relay.
      * @param controlPort     The control port of the Guard Relay.
-     * @param relayBandwidth  The bandwidth of the Guard Relay.
+     * @param guardBandwidth  The bandwidth of the Guard Relay.
      * @return A new GuardRelayConfig object with the given parameters.
      */
-    public GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
+    private GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer guardBandwidth) {
         GuardConfig config = new GuardConfig();
         config.setNickname(relayNickname);
         config.setOrPort(String.valueOf(relayPort));
         config.setContact(relayContact);
         config.setControlPort(String.valueOf(controlPort));
-        if (relayBandwidth != null) {
-            config.setBandwidthRate(String.valueOf(relayBandwidth));
+        if (guardBandwidth != null) {
+            config.setBandwidthRate(String.valueOf(guardBandwidth));
         }
-
         return config;
     }
 
