@@ -106,6 +106,9 @@ $(document).ready(function () {
                     alert("Failed to update configuration.");
                 }
                 updateView(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("AJAX request failed: ", textStatus, ", ", errorThrown);
             }
         });
     }
