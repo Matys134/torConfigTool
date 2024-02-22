@@ -524,5 +524,19 @@
         });
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        $('#bridgeForm').on('submit', function(e) {
+            var orPort = $('#bridgePort').val();
+            var serverTransportListenAddr = $('#bridgeTransportListenAddr').val();
+
+            if (orPort == 9001 || serverTransportListenAddr == 9001) {
+                e.preventDefault(); // prevent form from being submitted
+                alert('Port 9001 is associated with Tor and may be blocked by censorship authorities. Please choose a different port.');
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -110,6 +110,11 @@ public class OnionService {
             torrcWriter.write("RunAsDaemon 1");
             torrcWriter.newLine();
             torrcWriter.write("SocksPort 0");
+            torrcWriter.newLine();
+            // Write the DataDirectory configuration to the file
+            String dataDirectoryPath = currentDirectory + "/torrc/dataDirectory/onion_" + onionServicePort;
+            torrcWriter.write("DataDirectory " + dataDirectoryPath);
+            torrcWriter.newLine();
 
             File indexHtml = new File(serviceDir, "index.html");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
