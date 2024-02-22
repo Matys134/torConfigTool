@@ -78,6 +78,7 @@ $(document).ready(function () {
 
     function updateView(data) {
         const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
+        const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
         console.log("Data: ", data);
 
         console.log("configElement: ", configElement); // Add this line
@@ -90,6 +91,14 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+
+        editButton.data('config-orport', data.orPort);
+        editButton.data('config-servertransport', data.serverTransport);
+        editButton.data('config-contact', data.contact);
+        editButton.data('config-controlport', data.controlPort);
+        editButton.data('config-webtunnelurl', data.webtunnelUrl);
+        editButton.data('config-path', data.path);
+        editButton.data('config-bandwidthrate', data.bandwidthRate);
 
         // Add these lines
         console.log("ORPort: ", configElement.find(".config-orport").text());
