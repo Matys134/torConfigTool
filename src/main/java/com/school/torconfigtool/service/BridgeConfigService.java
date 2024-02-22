@@ -1,11 +1,12 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.model.TorrcFileCreator;
 import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.model.TorrcFileCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,14 +24,15 @@ public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
     @Override
     public boolean updateConfiguration(BridgeConfig config) {
         try {
-            String torrcFilePath = buildTorrcFilePath(config.getNickname());
-            boolean success = TorrcFileCreator.createTorrcFile(torrcFilePath, config);
-            if (!success) {
-                logger.warn("Failed to create torrc file for relay: {}", config.getNickname());
+            String filePath = buildTorrcFilePath(config.getNickname());
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
             }
-            return success;
+            TorrcFileCreator.createTorrcFile(filePath, config);
+            return true;
         } catch (Exception e) {
-            logger.error("Error updating bridge relay configuration", e);
+            logger.error("Failed to update bridge configuration for relay: " + config.getNickname(), e);
             return false;
         }
     }
@@ -43,21 +45,21 @@ public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
     @Override
     public Map<String, String> updateConfigAndReturnResponse(BridgeConfig config) {
         Map<String, String> response = new HashMap<>();
-        boolean success = false;
         try {
-            success = updateConfiguration(config);
+            boolean success = updateConfiguration(config);
             if (success) {
                 logger.info("Bridge configuration updated successfully for relay: {}", config.getNickname());
-                response.put("message", "Bridge configuration updated successfully");
+                response.put("status", "success");
+                response.put("message", "Bridge configuration updated successfully for relay: " + config.getNickname());
             } else {
                 logger.warn("Failed to update bridge configuration for relay: {}", config.getNickname());
-                response.put("message", "Failed to update bridge configuration");
+                response.put("status", "failure");
+                response.put("message", "Failed to update bridge configuration.");
             }
         } catch (Exception e) {
-            logger.error("Exception occurred while updating bridge configuration", e);
-            if (!success) {
-                response.put("message", "An unexpected error occurred");
-            }
+            logger.error("Error updating Bridge configuration for relay: " + config.getNickname(), e);
+            response.put("status", "failure");
+            response.put("message", "An unexpected error occurred while updating the configuration.");
         }
         return response;
     }
