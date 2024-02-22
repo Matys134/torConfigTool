@@ -160,7 +160,8 @@ $(document).ready(function () {
         console.log('webtunnelUrl:', data.webtunnelUrl);
         console.log('path:', data.path);
 
-        $.get("http://127.0.0.1:8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("/server-ip", function(serverIp) {
+        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();
@@ -198,6 +199,7 @@ $(document).ready(function () {
                         }
                     });
             }
+        });
         });
     });
 
