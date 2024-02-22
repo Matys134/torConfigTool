@@ -105,7 +105,7 @@
                         </button>
                     </div>
                 </div>
-                <div id="snowflakeTab" class="tab-pane fade show active">
+                <div th:if="${isSnowflakeConfigured}" id="snowflakeTab" class="tab-pane fade show active">
                     <h3>Snowflake Proxy</h3>
                     <p>Control the Snowflake Proxy from here.</p>
                     <button id="start-snowflake-proxy-button" class="btn btn-success">Start Snowflake Proxy</button>
