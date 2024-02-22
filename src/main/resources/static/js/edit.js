@@ -109,6 +109,8 @@ $(document).ready(function () {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX request failed: ", textStatus, ", ", errorThrown);
+                console.error("Response text: ", jqXHR.responseText);
+                console.error("Status code: ", jqXHR.status);
             }
         });
     }
