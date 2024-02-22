@@ -131,7 +131,7 @@ $(document).ready(function () {
         };
 
         // Send a GET request to the /bridge/running-type endpoint
-        $.get("http://192.168.2.126:8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("http://" + getLocalIP() + ":8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
@@ -199,6 +199,20 @@ $(document).ready(function () {
             }
         });
     });
+
+    function getLocalIP() {
+        const os = require('os');
+        const interfaces = os.networkInterfaces();
+        for (const name of Object.keys(interfaces)) {
+            for (const interface of interfaces[name]) {
+                const {address, family, internal} = interface;
+                if (family === 'IPv4' && !internal) {
+                    return address;
+                }
+            }
+        }
+        return '127.0.0.1';
+    }
 
     // Method to check uniqueness of ports
     function arePortsUnique(relayPort, controlPort) {
