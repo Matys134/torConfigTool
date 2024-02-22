@@ -78,6 +78,7 @@ $(document).ready(function () {
 
     function updateView(data) {
         const configElement = $(`[data-config-nickname="${data.nickname}"]`);
+        console.log("Data: ", data);
 
         console.log("configElement: ", configElement); // Add this line
 
