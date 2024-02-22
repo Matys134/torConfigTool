@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,16 +35,11 @@ public class GuardConfigController {
      * @return a ResponseEntity that contains the result of the update operation
      */
     @PostMapping
-    public ResponseEntity<Map<String, Object>> updateGuardConfiguration(@RequestBody GuardConfig config) {
-        Map<String, Object> response = new HashMap<>();
-        String message = guardConfigService.updateConfigAndReturnResponse(config).toString();
-        if (message.equals("Guard configuration updated successfully")) {
-            response.put("message", message);
-            response.put("success", true);
+    public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody GuardConfig config) {
+        Map<String, String> response = guardConfigService.updateConfigAndReturnResponse(config);
+        if (response.get("message").equals("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
-            response.put("message", message);
-            response.put("success", false);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

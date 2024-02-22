@@ -45,21 +45,21 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
     @Override
     public Map<String, String> updateConfigAndReturnResponse(GuardConfig config) {
         Map<String, String> response = new HashMap<>();
-        boolean success = false;
         try {
-            success = updateConfiguration(config);
+            boolean success = updateConfiguration(config);
             if (success) {
                 logger.info("Guard configuration updated successfully for relay: {}", config.getNickname());
-                response.put("message", "Guard configuration updated successfully");
+                response.put("status", "success");
+                response.put("message", "Guard configuration updated successfully for relay: " + config.getNickname());
             } else {
                 logger.warn("Failed to update guard configuration for relay: {}", config.getNickname());
-                response.put("message", "Failed to update guard configuration");
+                response.put("status", "failure");
+                response.put("message", "Failed to update guard configuration.");
             }
         } catch (Exception e) {
-            logger.error("Exception occurred while updating guard configuration", e);
-            if (!success) {
-                response.put("message", "An unexpected error occurred");
-            }
+            logger.error("Error updating Guard configuration for relay: " + config.getNickname(), e);
+            response.put("status", "failure");
+            response.put("message", "An unexpected error occurred while updating the configuration.");
         }
         return response;
     }
