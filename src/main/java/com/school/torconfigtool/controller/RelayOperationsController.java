@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.util.Map;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+
 /**
  * Controller for handling relay operations.
  */
@@ -41,7 +43,7 @@ public class RelayOperationsController {
     @GetMapping
     public String relayOperations(Model model) {
         relayOperationsService.relayOperations(model);
-        boolean isSnowflakeConfigured = new File("torrc/snowflake_proxy_running").exists();
+        boolean isSnowflakeConfigured = new File(TORRC_DIRECTORY_PATH + "snowflake_proxy_running").exists();
         model.addAttribute("isSnowflakeConfigured", isSnowflakeConfigured);
         return "relay-operations";
     }

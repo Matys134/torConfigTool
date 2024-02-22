@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 @Service
 public class GuardConfigService implements RelayConfigService<GuardConfig> {
 
@@ -34,7 +37,7 @@ public class GuardConfigService implements RelayConfigService<GuardConfig> {
 
     @Override
     public String buildTorrcFilePath(String nickname) {
-        return String.format("torrc/torrc-%s_guard", nickname);
+        return String.format(TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "%s_guard", nickname);
     }
 
     @Override

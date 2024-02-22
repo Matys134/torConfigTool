@@ -34,8 +34,6 @@ public class BridgeConfig extends BaseRelayConfig {
     private String bridgeType;
     // Logger for this class
     private static final Logger logger = LoggerFactory.getLogger(BridgeConfig.class);
-    // The path to the directory where the torrc files are stored
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
     // The SnowflakeProxyService instance
     private SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();
 

@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+
 /**
  * Service class for running the Snowflake proxy.
  */
 @Service
 public class SnowflakeProxyService {
     private static final Logger logger = LoggerFactory.getLogger(SnowflakeProxyService.class);
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
 
     /**
      * Runs the Snowflake proxy.

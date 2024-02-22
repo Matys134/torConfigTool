@@ -18,13 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Service for handling Onion Service related operations.
  */
 @Service
 public class OnionService {
-    private static final String TORRC_DIRECTORY_PATH = "torrc/";
-
     private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
     private final NginxService nginxService;
     private final TorConfig torConfig;
@@ -112,7 +113,7 @@ public class OnionService {
             torrcWriter.write("SocksPort 0");
             torrcWriter.newLine();
             // Write the DataDirectory configuration to the file
-            String dataDirectoryPath = currentDirectory + "/torrc/dataDirectory/onion_" + onionServicePort;
+            String dataDirectoryPath = currentDirectory + "/" + TORRC_DIRECTORY_PATH + "dataDirectory/onion_" + onionServicePort;
             torrcWriter.write("DataDirectory " + dataDirectoryPath);
             torrcWriter.newLine();
 
@@ -149,11 +150,11 @@ public class OnionService {
      */
     public void configureOnionService(int onionServicePort) throws IOException {
         // Check port availability before configuring the onion service
-        if (!RelayUtils.isPortAvailable("torrc-" + onionServicePort + "_onion", onionServicePort)) {
+        if (!RelayUtils.isPortAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion", onionServicePort)) {
             throw new IOException("Port is not available.");
         }
 
-        String pathToFile = TORRC_DIRECTORY_PATH + "torrc-" + onionServicePort + "_onion";
+        String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + onionServicePort + "_onion";
         if (!new File(pathToFile).exists()) {
             createTorrcFile(pathToFile, onionServicePort);
             nginxService.generateNginxConfig(onionServicePort);

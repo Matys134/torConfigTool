@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Service class for managing web tunnels.
  */
@@ -18,7 +20,6 @@ public class WebtunnelService {
     private final AcmeService acmeService;
     private final CommandService commandService;
     private static final String TORRC_DIRECTORY_PATH = "torrc";
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
     /**
      * Constructor for WebtunnelService.

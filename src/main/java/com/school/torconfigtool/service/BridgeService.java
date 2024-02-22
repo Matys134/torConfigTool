@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+
 /**
  * Service class for managing Tor bridges.
  */
@@ -19,7 +21,6 @@ import java.util.*;
 public class BridgeService {
     private static final Logger logger = LoggerFactory.getLogger(BridgeService.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc";
-    private static final String TORRC_FILE_PREFIX = "torrc-";
 
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
