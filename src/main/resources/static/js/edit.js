@@ -83,6 +83,9 @@ $(document).ready(function () {
         configElement.find(".config-server-transport").text(`ServerTransportListenAddr: ${data.serverTransport}`);
         configElement.find(".config-contact").text(`Contact: ${data.contact}`);
         configElement.find(".config-controlport").text(`Control Port: ${data.controlPort}`);
+        configElement.find(".config-webtunnelurl").text(`Webtunnel URL: ${data.webtunnelUrl}`);
+        configElement.find(".config-path").text(`Path: ${data.path}`);
+        configElement.find(".config-bandwidthrate").text(`Bandwidth Limit: ${data.bandwidthRate}`);
     }
 
     function sendUpdateRequest(url, data) {
@@ -100,12 +103,11 @@ $(document).ready(function () {
             data: JSON.stringify(data),
             success: function (response) {
                 if (response.status === "success") {
-                    // Update the view with the new configuration, if needed
+                    // Update the view with the new configuration
                     updateView(data);
                 } else {
                     alert("Failed to update configuration.");
                 }
-                updateView(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error("AJAX request failed: ", textStatus, ", ", errorThrown);
