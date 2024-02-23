@@ -177,6 +177,12 @@ $(document).ready(function () {
         console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
         console.log('path input field:', configSelectors.path);
 
+        var bandwidth = parseInt(configSelectors.bandwidthRate.val());
+        if (bandwidth !== 0 && bandwidth < 75) {
+            alert("Bandwidth must be 0 or 75 and larger");
+            return; // stop the function if the validation fails
+        }
+
         const data = {
             nickname: configSelectors.nickname.text(),
             contact: configSelectors.contact.val(),

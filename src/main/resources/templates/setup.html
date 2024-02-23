@@ -537,5 +537,27 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function() {
+        $('#guardForm').on('submit', function(e) {
+            var bandwidth = parseInt($('#guardBandwidth').val());
+            if (bandwidth !== 0 && bandwidth < 75) {
+                alert("Bandwidth must be 0 or 75 and larger");
+                e.preventDefault(); // prevent form from being submitted
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('#bridgeForm').on('submit', function(e) {
+            var bandwidth = parseInt($('#bridgeBandwidth').val());
+            if (bandwidth !== 0 && bandwidth < 75) {
+                alert("Bandwidth must be 0 or 75 and larger");
+                e.preventDefault(); // prevent form from being submitted
+            }
+        });
+    });
+</script>
 </body>
 </html>
