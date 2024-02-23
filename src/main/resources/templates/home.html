@@ -3,44 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <title>Tor Configuration Tool</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="/css/navbar.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
-<h1>Tor Configuration Tool</h1>
-
-<!-- Home Page -->
-<div th:if="${currentPage == 'home'}">
-    <h2>Welcome to the Tor Configuration Tool</h2>
-    <p>Use this tool to configure and manage Tor services on your Raspberry Pi.</p>
-</div>
-
-<!-- Tor Relay Configuration -->
-<div th:if="${currentPage == 'relay'}">
-    <h2>Tor Relay Configuration</h2>
-    <!-- Add relay configuration form here -->
-</div>
-
-<div th:if="${currentPage == 'bridge'}">
-    <h2>Tor Relay Status</h2>
-    <!-- Add relay status information here -->
-</div>
-
-<!-- Hidden Services Configuration -->
-<div th:if="${currentPage == 'hidden-services'}">
-    <h2>Hidden Services Configuration</h2>
-    <!-- Add hidden services configuration form here -->
-</div>
-
-<!-- Tor Proxy Configuration -->
-<div th:if="${currentPage == 'proxy'}">
-    <h2>Tor Proxy Configuration</h2>
-    <!-- Add proxy configuration form here -->
-</div>
-
 <!-- Footer -->
-<footer>
-    <p>&copy; 2023 Your Company</p>
-</footer>
+<div class="container">
+    <h2>Tips</h2>
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip1">Open Ports</button>
+    <div id="tip1" class="collapse card-body">
+        <ul>
+            <li>ORPort: This is the "ORPort" that your relay will use to communicate with other relays in the Tor network.</li>
+            <li>ListenAddrPort: This is the "ListenAddrPort" that your relay will use to accept incoming connections.</li>
+            <li>WebTunnel Ports: For WebTunnel, ports 80 and 443 need to be open.</li>
+        </ul>
+    </div>
+
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip2">Limits</button>
+    <div id="tip2" class="collapse card-body">
+        <ul>
+            <li>Why Limits: Limits are set based on what Tor allows on one IP address. It's recommended to only run one type of relay at a time.</li>
+            <li>Guard Relays: The limit for guard relays is 8.</li>
+            <li>Obfs Bridge: The limit for obfs bridge is 2.</li>
+            <li>WebTunnel: The limit for WebTunnel is 1.</li>
+            <li>Snowflake Proxy: The limit for snowflake proxy is 1.</li>
+            <li>Onion Service: Onion service is without a number limit.</li>
+        </ul>
+    </div>
+
+    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip3">Page Information</button>
+    <div id="tip3" class="collapse card-body">
+        <ul>
+            <li>Home Setup Page: User sets up new Tor services on this page.</li>
+            <li>Traffic Data: User can see traffic on his relays and events on this page.</li>
+            <li>Tor Proxy: This page is for setting up a proxy.</li>
+            <li>Relay Operations: User can see which relays are running, start and stop those relays, and edit them on this page.</li>
+        </ul>
+    </div>
+</div>
 </body>
+<script>
+    $(document).ready(function(){
+        $("#tip1").hide();
+        $("button[data-target='#tip1']").click(function(){
+            $("#tip1").slideToggle("slow");
+        });
+
+        $("#tip2").hide();
+        $("button[data-target='#tip2']").click(function(){
+            $("#tip2").slideToggle("slow");
+        });
+
+        $("#tip3").hide();
+        $("button[data-target='#tip3']").click(function(){
+            $("#tip3").slideToggle("slow");
+        });
+    });
+</script>
 </html>
