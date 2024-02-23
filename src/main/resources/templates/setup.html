@@ -52,7 +52,7 @@
             <form action="/guard/configure" id="guardForm" method="post">
                 <div class="form-group">
                     <label for="relayNickname">Nickname:</label>
-                    <input id="relayNickname" name="relayNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control">
+                    <input id="relayNickname" name="relayNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                 </div>
                 <div class="form-group">
                     <label for="relayPort">Relay Port:</label>
@@ -66,15 +66,9 @@
                     <label for="controlPort">Control Port:</label>
                     <input id="controlPort" name="controlPort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="includeGuardBandwidth">
-                    <label class="form-check-label" for="includeGuardBandwidth">
-                        Include Bandwidth
-                    </label>
-                </div>
-                <div class="form-group" id="guardBandwidthField" style="display: none;">
+                <div class="form-group" id="guardBandwidthField">
                     <label for="guardBandwidth">Bandwidth limit (KB/s)</label>
-                    <input type="number" class="form-control" id="guardBandwidth" name="guardBandwidth">
+                    <input type="number" class="form-control" id="guardBandwidth" name="guardBandwidth" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -101,7 +95,7 @@
 
                     <div class="form-group">
                         <label for="bridgeNickname">Nickname:</label>
-                        <input id="bridgeNickname" name="bridgeNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control">
+                        <input id="bridgeNickname" name="bridgeNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                     </div>
 
                     <div class="form-group">
@@ -109,14 +103,9 @@
                         <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1024" max="65535" class="form-control">
                     </div>
 
-                    <div class="form-check">
-                        <input id="includeBridgeBandwidth" name="includeBridgeBandwidth" type="checkbox" class="form-check-input">
-                        <label class="form-check-label" for="includeBridgeBandwidth">Include Bandwidth (KB/s)</label>
-                    </div>
-
-                    <div id="bridgeBandwidthField" style="display: none;" class="form-group">
-                        <label for="bridgeBandwidth">Bandwidth Limit (KB/s):</label>
-                        <input id="bridgeBandwidth" min="0" name="bridgeBandwidth" type="number" class="form-control">
+                    <div class="form-group" id="bridgeBandwidthField">
+                        <label for="bridgeBandwidth">Bandwidth limit (KB/s)</label>
+                        <input type="number" class="form-control" id="bridgeBandwidth" name="bridgeBandwidth" required> <!-- Added required attribute -->
                     </div>
                 </div>
 
@@ -544,28 +533,6 @@
             if (orPort == 9001 || serverTransportListenAddr == 9001) {
                 e.preventDefault(); // prevent form from being submitted
                 alert('Port 9001 is associated with Tor and may be blocked by censorship authorities. Please choose a different port.');
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#includeBridgeBandwidth').change(function() {
-            if(this.checked) {
-                $('#bridgeBandwidthField').show();
-            } else {
-                $('#bridgeBandwidthField').hide();
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#includeGuardBandwidth').change(function() {
-            if(this.checked) {
-                $('#guardBandwidthField').show();
-            } else {
-                $('#guardBandwidthField').hide();
             }
         });
     });

@@ -60,7 +60,7 @@ public class TorrcFileCreator {
 
             // Write the BandwidthRate to the file if provided
             if (config.getBandwidthRate() != null) {
-                writer.write("BandwidthRate " + config.getBandwidthRate() + " KBytes");
+                writer.write("RelayBandwidthRate " + config.getBandwidthRate() + " KBytes");
                 writer.newLine();
             }
 
