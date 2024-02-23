@@ -69,10 +69,13 @@ sudo systemctl disable tor.service
 sudo systemctl disable nginx.service
 
 # Define the sudoers entry for the specified user to control Tor without a password
-sudoers_tor_entry="$current_user ALL=(ALL) NOPASSWD: /bin/systemctl start tor, /bin/systemctl stop tor, /bin/systemctl restart tor""
+sudoers_tor_entry="$current_user ALL=(ALL) NOPASSWD: /bin/systemctl start tor, /bin/systemctl stop tor, /bin/systemctl restart tor"
 
-# Define the sudoers entry for the specified user to launch tor, edit the nginx config, and restart nginx without a password
-sudoers_combined_entry="$current_user ALL=(ALL) NOPASSWD: /usr/bin/tor -f /etc/tor/torrc, /bin/cp /etc/nginx/sites-available/default /etc/nginx/sites-available/*.conf, /bin/systemctl restart nginx"
+# Define the sudoers entry for the specified user to launch tor using tor -f without a password
+sudoers_tor_entry="$current_user ALL=(ALL) NOPASSWD: /usr/bin/tor -f /etc/tor/torrc"
+
+# Define the sudoers entry for the specified user to edit the nginx config and restart nginx without a password
+sudoers_edit_nginx_entry="$current_user ALL=ALL) NOPASSWD: /bin/cp /etc/nginx/sites-available/default /etc/nginx/sites-available/*.conf, /bin/systemctl restart nginx"
 
 # Define the path to the sudoers file
 sudoers_file="/etc/sudoers.d/tor_nginx_sudoers"
