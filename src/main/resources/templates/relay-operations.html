@@ -127,18 +127,6 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $.get("/relay-operations/upnp-availability", function(upnpAvailable) {
-                if (upnpAvailable) {
-                    $('#upnp-toggle-button').prop('disabled', false);
-                } else {
-                    $('#upnp-toggle-button').prop('disabled', true);
-                }
-            });
-        });
-    </script>
-
     <!-- Display Onion relay configurations -->
     <h2>Onion Relay Configurations</h2>
     <div class="row">
@@ -251,78 +239,13 @@
 <script src="/js/start.js"></script>
 <script src="/js/stop.js"></script>
 <script src="/js/remove.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        function updateHostname() {
-            fetch('/onion-service/current-hostnames')
-                .then(response => response.json())
-                .then(hostnames => {
-                    // Iterate over each hostname
-                    for (const [port, hostname] of Object.entries(hostnames)) {
-                        // Find the corresponding HTML element and update its text content
-                        const element = document.getElementById('hostname-display-' + port);
-                        if (element) {
-                            element.textContent = hostname;
-                        }
-                    }
-                })
-                .catch(error => console.error('Error fetching hostname:', error));
-        }
+<script src="/js/upnp-toggle.js"></script>
+<script src="/js/removeSnowflake.js"></script>
+<script src="/js/startStopSnowflake.js"></script>
+<script src="/js/getRunningBridgeTypes.js"></script>
+<script src="/js/updateHostname.js"></script>
+<script src="/js/upnpAvailability.js"></script>
 
-        // Update hostname every 10 seconds
-        setInterval(updateHostname, 10000);
-
-        // Initial call to set hostname on page load
-        updateHostname();
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $.get("/bridge/running-type", function(runningBridgeTypes) {
-            for (var bridgeNickname in runningBridgeTypes) {
-                if (runningBridgeTypes.hasOwnProperty(bridgeNickname)) {
-                    var bridgeType = runningBridgeTypes[bridgeNickname];
-                    // Assuming each bridge has an element with id 'bridge-type-{nickname}'
-                    var bridgeTypeElement = $("#bridge-type-" + bridgeNickname);
-                    bridgeTypeElement.text(bridgeType);
-                }
-            }
-        });
-    });
-</script>
-
-<script>
-    function toggleUPnP(enable) {
-        $.ajax({
-            url: '/relay-operations/toggle-upnp',
-            type: 'POST',
-            data: { enable: enable },
-            success: function(response) {
-                alert(response.message);
-            },
-            error: function(error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-</script>
-<script>
-    $(document).ready(function() {
-        $('#upnp-toggle-button').click(function() {
-            var button = $(this);
-            var upnpEnabled = button.data('upnp-enabled');
-            if (upnpEnabled) {
-                toggleUPnP(false);
-                button.text('Enable UPnP for Guard Relays');
-            } else {
-                toggleUPnP(true);
-                button.text('Disable UPnP for Guard Relays');
-            }
-            button.data('upnp-enabled', !upnpEnabled);
-        });
-    });
-</script>
 
 <script>
     $(document).ready(function() {
@@ -335,43 +258,6 @@
         if ($('#onion-configs .list-group-item').length === 0) {
             $('h2:contains("Onion Relay Configurations")').hide();
         }
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('#start-snowflake-proxy-button').click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/relay-operations/start-snowflake-proxy",
-                success: function(response) {
-                    alert(response);
-                }
-            });
-        });
-
-        $('#stop-snowflake-proxy-button').click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/relay-operations/stop-snowflake-proxy",
-                success: function(response) {
-                    alert(response);
-                }
-            });
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#remove-snowflake-proxy-button').click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/relay-operations/remove-snowflake-proxy",
-                success: function(response) {
-                    alert(response);
-                }
-            });
-        });
     });
 </script>
 
