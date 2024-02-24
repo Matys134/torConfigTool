@@ -323,14 +323,13 @@ public class RelayOperationsService {
         try {
             // Build paths for Torrc file and DataDirectory
             Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname);
+            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + relayType + "Config");
 
             // Delete Torrc file
             Files.deleteIfExists(torrcFilePath);
 
-
             // Delete DataDirectory
-            Files.deleteIfExists(Paths.get(dataDirectoryPath));
+            FileUtils.deleteDirectory(new File(dataDirectoryPath));
 
             // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
             Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
