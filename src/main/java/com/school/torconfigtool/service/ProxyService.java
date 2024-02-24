@@ -158,7 +158,7 @@ public class ProxyService {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    logger.info(line); // Log output of Tor process
+                    logger.info(line); // Log output of a Tor process
                 }
             }
             int exitCode = process.waitFor();
