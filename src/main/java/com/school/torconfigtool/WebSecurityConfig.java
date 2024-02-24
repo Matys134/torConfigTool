@@ -13,6 +13,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    /*
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -36,4 +37,6 @@ public class WebSecurityConfig {
 
         return new InMemoryUserDetailsManager(user);
     }
+
+     */
 }
