@@ -4,13 +4,28 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SpringBootApplication
 public class TorConfigToolApplication {
 
     public static void main(String[] args) {
-        //change port to 8081
+
+        Path path = Paths.get("torrc");
+        if (!Files.exists(path)) {
+            try {
+                // Create the directory
+                Files.createDirectories(path);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
         System.getProperties().put("server.port", 8080);
 
         SpringApplication.run(TorConfigToolApplication.class, args);
