@@ -323,7 +323,10 @@ public class RelayOperationsService {
         try {
             // Build paths for Torrc file and DataDirectory
             Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + relayType + "Config");
+
+            String capitalizedRelayType = relayType.substring(0, 1).toUpperCase() + relayType.substring(1);
+
+            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + capitalizedRelayType + "Config");
             System.out.println("DataDirectoryPath: " + dataDirectoryPath);
 
             // Delete Torrc file
