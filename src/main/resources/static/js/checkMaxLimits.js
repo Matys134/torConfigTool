@@ -1,5 +1,5 @@
 $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
-    var bridgeCountElement = $('#bridgeCount');
+    const bridgeCountElement = $('#bridgeCount');
     bridgeCountElement.text(data.bridgeCount + "/2");
     if (data.bridgeCount > 2) {
         bridgeCountElement.removeClass('limit-reached');
@@ -13,7 +13,7 @@ $.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
 });
 
 $.get("/guard/limit-reached", function(data) {
-    var guardCountElement = $('#guardCount');
+    const guardCountElement = $('#guardCount');
     guardCountElement.text(data.guardCount + "/8");
     if (data.guardCount > 8) {
         guardCountElement.removeClass('limit-reached');
@@ -27,7 +27,7 @@ $.get("/guard/limit-reached", function(data) {
 });
 
 $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
-    var webtunnelCountElement = $('#webtunnelCount');
+    const webtunnelCountElement = $('#webtunnelCount');
     webtunnelCountElement.text(data.bridgeCount + "/1");
     if (data.bridgeCount > 1) {
         webtunnelCountElement.removeClass('limit-reached');
@@ -41,7 +41,7 @@ $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
 });
 
 $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
-    var snowflakeCountElement = $('#snowflakeCount');
+    const snowflakeCountElement = $('#snowflakeCount');
     snowflakeCountElement.text(data.bridgeCount + "/1");
     if (data.bridgeCount > 1) {
         snowflakeCountElement.removeClass('limit-reached');

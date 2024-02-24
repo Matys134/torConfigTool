@@ -197,14 +197,14 @@
 
 <script>
     document.getElementById("toggleLimitButton").addEventListener("click", function () {
-        var limitStateCheckbox = document.getElementById("limitState");
+        const limitStateCheckbox = document.getElementById("limitState");
         limitStateCheckbox.checked = !limitStateCheckbox.checked;
     });
 </script>
 <script>
     $(document).ready(function() {
         $.get("/bridge/limit-state", function(data) {
-            var toggleLimitButton = document.getElementById("toggleLimitButton");
+            const toggleLimitButton = document.getElementById("toggleLimitButton");
             if (data) {
                 toggleLimitButton.textContent = "Turn Limit Off";
             } else {
@@ -216,9 +216,9 @@
 <script>
     $(document).ready(function() {
         $('#bridgeForm').on('submit', function() {
-            var bridgeTypeField = $('#bridgeType');
+            const bridgeTypeField = $('#bridgeType');
             if (bridgeTypeField.prop('disabled')) {
-                var bridgeType = bridgeTypeField.val();
+                const bridgeType = bridgeTypeField.val();
                 if (!$("input[name='bridgeType']").length) {
                     $(this).append('<input type="hidden" name="bridgeType" value="' + bridgeType + '">');
                 }
@@ -230,8 +230,8 @@
 <script>
     $(document).ready(function() {
         $('#bridgeForm').on('submit', function(e) {
-            var orPort = $('#bridgePort').val();
-            var serverTransportListenAddr = $('#bridgeTransportListenAddr').val();
+            const orPort = $('#bridgePort').val();
+            const serverTransportListenAddr = $('#bridgeTransportListenAddr').val();
 
             if (orPort == 9001 || serverTransportListenAddr == 9001) {
                 e.preventDefault(); // prevent form from being submitted
@@ -243,7 +243,7 @@
 <script>
     $(document).ready(function() {
         $('#guardForm').on('submit', function(e) {
-            var bandwidth = parseInt($('#guardBandwidth').val());
+            const bandwidth = parseInt($('#guardBandwidth').val());
             if (bandwidth !== 0 && bandwidth < 75) {
                 alert("Bandwidth must be 0 or 75 and larger");
                 e.preventDefault(); // prevent form from being submitted
@@ -254,7 +254,7 @@
 <script>
     $(document).ready(function() {
         $('#bridgeForm').on('submit', function(e) {
-            var bandwidth = parseInt($('#bridgeBandwidth').val());
+            const bandwidth = parseInt($('#bridgeBandwidth').val());
             if (bandwidth !== 0 && bandwidth < 75) {
                 alert("Bandwidth must be 0 or 75 and larger");
                 e.preventDefault(); // prevent form from being submitted

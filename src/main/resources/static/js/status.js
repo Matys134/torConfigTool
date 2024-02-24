@@ -4,13 +4,13 @@ $(document).ready(function () {
         $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
             console.log(data); // Log the server response
 
-            var statusElement = $("#status-" + nickname);
-            var statusMessageElement = $("#status-message-" + nickname);
+            const statusElement = $("#status-" + nickname);
+            const statusMessageElement = $("#status-message-" + nickname);
 
             // Select the start, stop and edit buttons
-            var startButton = $(".start-button[data-config-nickname='" + nickname + "']");
-            var stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
-            var editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
+            const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
+            const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
+            const editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
 
             if (data === "online") {
                 statusElement.text("Online");
@@ -48,8 +48,8 @@ $(document).ready(function () {
     // Function to update relay status for guard relays
     function updateGuardRelayStatus() {
         $(".start-button").each(function () {
-            var nickname = $(this).data("config-nickname");
-            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const nickname = $(this).data("config-nickname");
+            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "guard") {
                 updateRelayStatus(nickname, relayType);
             }
@@ -59,8 +59,8 @@ $(document).ready(function () {
     // Function to update relay status for bridge relays
     function updateBridgeRelayStatus() {
         $(".start-button").each(function () {
-            var nickname = $(this).data("config-nickname");
-            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const nickname = $(this).data("config-nickname");
+            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "bridge") {
                 updateRelayStatus(nickname, relayType);
             }
@@ -70,8 +70,8 @@ $(document).ready(function () {
     // Function to update relay status for Onion relays
     function updateOnionRelayStatus() {
         $(".start-button").each(function () {
-            var nickname = $(this).data("config-nickname");
-            var relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const nickname = $(this).data("config-nickname");
+            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
             if (relayType === "onion") {
                 updateRelayStatus(nickname, relayType);
             }

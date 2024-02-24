@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-    var isBridgeEdit = false; // Add this variable to track which config is being edited
-    var serverTransportProtocolAndAddress;
+    let isBridgeEdit = false; // Add this variable to track which config is being edited
+    let serverTransportProtocolAndAddress;
 
     const configSelectors = {
         modal: $("#edit-modal"),
@@ -27,9 +27,9 @@ $(document).ready(function () {
         console.log("Tady ty kokot")
 
         // Split the serverTransport into protocol and port
-        var serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
+        const serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
         serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
-        var serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
+        const serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
@@ -47,16 +47,16 @@ $(document).ready(function () {
 
         // Show or hide the fields based on the relay type and bridge type
         $('#edit-form [data-config-type]').each(function() {
-            var configTypes = $(this).attr('data-config-type').split(' ');
-            var bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
-            var isEditable = $(this).attr('data-editable') !== 'false'; // Check if the field is editable
+            const configTypes = $(this).attr('data-config-type').split(' ');
+            const bridgeTypes = $(this).attr('data-bridge-type') ? $(this).attr('data-bridge-type').split(' ') : [];
+            const isEditable = $(this).attr('data-editable') !== 'false'; // Check if the field is editable
             if (isEditable && configTypes.includes(relayType) && (relayType !== 'bridge' || bridgeTypes.includes(bridgeType))) {
                 $(this).show();
                 $(this).next('input').show();
                 // Populate the input fields with the current values
-                var inputId = $(this).next('input').attr('id');
+                const inputId = $(this).next('input').attr('id');
                 if (inputId in data) {
-                    var value = data[inputId.replace('edit-', '')];
+                    const value = data[inputId.replace('edit-', '')];
                     console.log('Setting value for input field with id ' + inputId + ': ' + value);
                     $(this).next('input').val(value);
                 }
@@ -113,7 +113,7 @@ $(document).ready(function () {
     function sendUpdateRequest(url, data) {
         // Check if serverTransport is defined before splitting it
         if (data.serverTransport) {
-            var serverTransportParts = data.serverTransport.split(':');
+            const serverTransportParts = data.serverTransport.split(':');
             // Combine the protocol and address with the new port to form the updated serverTransport
             data.serverTransport = serverTransportParts[serverTransportParts.length - 1];
         }
@@ -160,7 +160,7 @@ $(document).ready(function () {
         };
 
         $.get("/server-ip", function(serverIp) {
-        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
@@ -177,7 +177,7 @@ $(document).ready(function () {
         console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
         console.log('path input field:', configSelectors.path);
 
-        var bandwidth = parseInt(configSelectors.bandwidthRate.val());
+        const bandwidth = parseInt(configSelectors.bandwidthRate.val());
         if (bandwidth !== 0 && bandwidth < 75) {
             alert("Bandwidth must be 0 or 75 and larger");
             return; // stop the function if the validation fails
@@ -196,7 +196,7 @@ $(document).ready(function () {
         console.log('path:', data.path);
 
         $.get("/server-ip", function(serverIp) {
-        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();

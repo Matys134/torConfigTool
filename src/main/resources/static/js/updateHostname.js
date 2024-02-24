@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 for (const [port, hostname] of Object.entries(hostnames)) {
                     const element = document.getElementById('hostname-display-' + port);
                     if (element) {
-                        element.textContent = hostname;
+                        element.textContent = hostname.toString();
                     }
                 }
             })

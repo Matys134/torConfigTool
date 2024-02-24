@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $('#upload-form').on('submit', function () {
-        var files = $('#file-input').get(0).files;
+        const files = $('#file-input').get(0).files;
         if (files.length === 0) {
             alert('Please select a file to upload');
             return false;

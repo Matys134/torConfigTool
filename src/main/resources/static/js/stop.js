@@ -1,8 +1,8 @@
 $(document).ready(function () {
     // Add a click event handler for the "Stop" buttons
     $(".stop-button").click(function () {
-        var nickname = $(this).data("config-nickname");
-        var relayType = $(this).data("config-type");
+        const nickname = $(this).data("config-nickname");
+        const relayType = $(this).data("config-type");
 
         // Send an AJAX request to stop the relay
         $.ajax({

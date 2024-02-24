@@ -1,13 +1,13 @@
 function toggleBridgeFields() {
-    var bridgeType = document.getElementById("bridgeType").value;
-    var commonFields = document.getElementById("commonFields");
-    var bridgeFields = document.getElementById("bridgeFields");
-    var webtunnelFields = document.getElementById("webtunnelFields");
-    var snowflakeFields = document.getElementById("snowflakeFields");
+    const bridgeType = document.getElementById("bridgeType").value;
+    const commonFields = document.getElementById("commonFields");
+    const bridgeFields = document.getElementById("bridgeFields");
+    const webtunnelFields = document.getElementById("webtunnelFields");
+    const snowflakeFields = document.getElementById("snowflakeFields");
 
     // Retrieve the form elements
-    var bridgePort = document.getElementById("bridgePort");
-    var bridgeTransportListenAddr = document.getElementById("bridgeTransportListenAddr");
+    const bridgePort = document.getElementById("bridgePort");
+    const bridgeTransportListenAddr = document.getElementById("bridgeTransportListenAddr");
 
     // Hide all fields initially
     commonFields.style.display = "none";

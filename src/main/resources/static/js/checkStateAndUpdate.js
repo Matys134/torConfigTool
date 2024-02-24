@@ -3,17 +3,17 @@ $(document).ready(function() {
     function checkStateAndUpdate() {
         $.get("/guard/limit-state-and-guard-count", function(data) {
             if (data.limitOn) {
-                var runningTypeRequest = $.get("/bridge/running-type");
-                var bridgeConfiguredRequest = $.get("/guard/bridge-configured");
-                var guardConfiguredRequest = $.get("/guard/guard-configured");
-                var onionConfiguredRequest = $.get("/onion-service/onion-configured");
+                const runningTypeRequest = $.get("/bridge/running-type");
+                const bridgeConfiguredRequest = $.get("/guard/bridge-configured");
+                const guardConfiguredRequest = $.get("/guard/guard-configured");
+                const onionConfiguredRequest = $.get("/onion-service/onion-configured");
 
                 $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest).done(function(runningTypeData, bridgeData, guardData, onionData) {
                     // Add a new AJAX call to get the bridge count
                     $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(snowflakeCountData) {
                         // Move the code that updates the page into the callback function of the AJAX call
                         if (runningTypeData[0] && !jQuery.isEmptyObject(runningTypeData[0])) {
-                            var runningBridgeType = Object.values(runningTypeData[0])[0];
+                            const runningBridgeType = Object.values(runningTypeData[0])[0];
                             console.log(runningBridgeType);
                             if (runningBridgeType === 'obfs4' || runningBridgeType === 'snowflake') {
                                 // Disable the bridge type field
@@ -73,8 +73,8 @@ $(document).ready(function() {
     $("#toggleLimitButton").click(function() {
         $.post("/bridge/toggle-limit", function() {
             $.get("/bridge/limit-state", function(data) {
-                var toggleLimitButton = $("#toggleLimitButton");
-                var warningTexts = $(".alert-warning"); // select all warning texts
+                const toggleLimitButton = $("#toggleLimitButton");
+                const warningTexts = $(".alert-warning"); // select all warning texts
 
                 if (data) {
                     // Update the button text
