@@ -330,8 +330,7 @@ public class RelayOperationsService {
 
 
             // Delete DataDirectory
-            FileUtils.deleteDirectory(new File(dataDirectoryPath));
-            FileUtils.deleteDirectory(new File(System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname));
+            Files.deleteIfExists(Paths.get(dataDirectoryPath));
 
             // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
             Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
