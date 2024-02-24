@@ -328,8 +328,10 @@ public class RelayOperationsService {
             // Delete Torrc file
             Files.deleteIfExists(torrcFilePath);
 
+
             // Delete DataDirectory
             FileUtils.deleteDirectory(new File(dataDirectoryPath));
+            FileUtils.deleteDirectory(new File(System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory" + File.separator + relayNickname));
 
             // Build paths for Onion files in /onion folder and its corresponding file in torrc directory
             Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
@@ -339,14 +341,7 @@ public class RelayOperationsService {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
             Files.deleteIfExists(torrcOnionFilePath);
 
-            // Call the shell script to delete Nginx configuration file and symbolic link
-            ProcessBuilder processBuilder = new ProcessBuilder("shellScripts/remove_onion_files.sh", relayNickname);
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode != 0) {
-                throw new IOException("Failed to delete Nginx configuration file and symbolic link");
-            }
+            removeOnionFiles(relayNickname);
 
             nginxService.reloadNginx();
 
@@ -384,5 +379,13 @@ public class RelayOperationsService {
     // toggleUPnP method that takes from the UPnPService class
     public Map<String, Object> toggleUPnP(boolean enable) {
         return upnpService.toggleUPnP(enable);
+    }
+
+    public void removeOnionFiles(String relayNickname) throws IOException, InterruptedException {
+        String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + relayNickname;
+        String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + relayNickname;
+
+        executeCommand(removeNginxConfigCommand);
+        executeCommand(removeSymbolicLinkCommand);
     }
 }

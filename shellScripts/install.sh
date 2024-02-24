@@ -98,6 +98,9 @@ sudoers_ln_entry="$current_user ALL=(ALL) NOPASSWD: /bin/ln -s"
 # Define the path to the sudoers file
 sudoers_file="/etc/sudoers.d/tor_nginx_sudoers"
 
+# Define the sudoers entry for the specified user to run rm without a password
+sudoers_rm_entry="$current_user ALL=(ALL) NOPASSWD: /bin/rm"
+
 # Check if the sudoers file exists, and create it if it doesn't
 if [ ! -f "$sudoers_file" ]; then
     touch "$sudoers_file"
@@ -123,6 +126,7 @@ if [ -w "$sudoers_file" ]; then
         echo "$sudoers_nginx_start_entry"
         echo "$sudoers_nginx_stop_entry"
         echo "$sudoers_ln_entry"
+        echo "$sudoers_rm_entry"
     } | sudo tee "$sudoers_file" > /dev/null
 
     echo "Sudoers entries added for $current_user to control Tor, Nginx, copy Nginx config files, edit Nginx config files, and restart Nginx without a password."
