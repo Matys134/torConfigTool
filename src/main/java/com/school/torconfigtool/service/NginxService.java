@@ -342,7 +342,7 @@ public class NginxService {
         return String.format("""
                 server {
                     listen 127.0.0.1:%d;
-                    server_name test;
+                    server_name torrc-test_guard;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
                     root %s/onion/www/service-%d;
