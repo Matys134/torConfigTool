@@ -35,10 +35,15 @@
         <p th:text="${successMessage}"></p>
     </div>
 
+    <!-- Display error message if provided -->
+    <div class="alert alert-danger" th:if="${errorMessage}" role="alert">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
     <!-- Create the tabs -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="relay-tab" data-toggle="tab" href="#relayTab" role="tab" aria-controls="relayTab" aria-selected="true">Guard Relay</a>
+            <a class="nav-link active" id="relay-tab" data-toggle="tab" href="#relayTab" role="tab" aria-controls="relayTab" aria-selected="true">Middle/Guard Relay</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="bridge-tab" data-toggle="tab" href="#bridgeTab" role="tab" aria-controls="bridgeTab" aria-selected="false">Bridge</a>
@@ -57,12 +62,12 @@
                     <input id="relayNickname" name="relayNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                 </div>
                 <div class="form-group">
-                    <label for="relayPort">Relay Port:</label>
-                    <input id="relayPort" name="relayPort" required type="number" min="1024" max="65535" class="form-control">
+                    <label for="relayContact">Contact email:</label>
+                    <input id="relayContact" name="relayContact" required type="text" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="relayContact">Contact:</label>
-                    <input id="relayContact" name="relayContact" required type="text" class="form-control">
+                    <label for="relayPort">ORPort:</label>
+                    <input id="relayPort" name="relayPort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="controlPort">Control Port:</label>
@@ -95,17 +100,17 @@
                 <!-- Common Fields -->
                 <div id="commonFields">
                     <div class="form-group">
-                        <label for="bridgeContact">Contact Email:</label>
-                        <input id="bridgeContact" name="bridgeContact" required type="email" class="form-control">
-                    </div>
-
-                    <div class="form-group">
                         <label for="bridgeNickname">Nickname:</label>
                         <input id="bridgeNickname" name="bridgeNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                     </div>
 
                     <div class="form-group">
-                        <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
+                        <label for="bridgeContact">Contact Email:</label>
+                        <input id="bridgeContact" name="bridgeContact" required type="email" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bridgeControlPort">ControlPort:</label>
                         <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1024" max="65535" class="form-control">
                     </div>
 
@@ -118,12 +123,12 @@
                 <!-- Specific Fields for Bridge -->
                 <div class="bridge-specific" id="bridgeFields">
                     <div class="form-group">
-                        <label for="bridgePort">ORPort (e.g., 9001):</label>
+                        <label for="bridgePort">ORPort:</label>
                         <input id="bridgePort" name="bridgePort" required type="number" min="1024" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group">
-                        <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
+                        <label for="bridgeTransportListenAddr">ServerTransportListenAddr:</label>
                         <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1024" max="65535" class="form-control">
                     </div>
                 </div>
@@ -139,7 +144,7 @@
                 <!-- Specific Fields for Snowflake -->
                 <div class="bridge-specific" id="snowflakeFields" style="display: none;">
                     <!-- Snowflake has no specific fields to enter -->
-                    <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Run Snowflake Proxy</button>
+                    <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Configure Proxy</button>
                 </div>
 
                 <!-- CSRF Token -->
@@ -179,7 +184,7 @@
                     <td id="bridgeCount">0/2</td>
                 </tr>
                 <tr>
-                    <td>Guard</td>
+                    <td>Middle/Guard</td>
                     <td id="guardCount">0/8</td>
                 </tr>
                 <tr>

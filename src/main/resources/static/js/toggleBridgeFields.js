@@ -4,6 +4,7 @@ function toggleBridgeFields() {
     const bridgeFields = document.getElementById("bridgeFields");
     const webtunnelFields = document.getElementById("webtunnelFields");
     const snowflakeFields = document.getElementById("snowflakeFields");
+    const submitButton = document.querySelector("#bridgeForm button[type='submit']");
 
     // Retrieve the form elements
     const bridgePort = document.getElementById("bridgePort");
@@ -14,6 +15,9 @@ function toggleBridgeFields() {
     bridgeFields.style.display = "none";
     webtunnelFields.style.display = "none";
     snowflakeFields.style.display = "none";
+
+    // Show the submit button initially
+    submitButton.style.display = "block";
 
     // Remove 'required' attributes initially
     bridgePort.removeAttribute("required");
@@ -32,6 +36,7 @@ function toggleBridgeFields() {
         webtunnelFields.style.display = "block";
     } else if (bridgeType === "snowflake") {
         snowflakeFields.style.display = "block";
+        submitButton.style.display = "none";
     }
 }
 

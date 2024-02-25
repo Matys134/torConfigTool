@@ -59,7 +59,7 @@ public class BridgeService {
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        if (RelayUtils.relayExists(bridgeNickname)) {
+        if (!RelayUtils.relayExists(bridgeNickname)) {
             model.addAttribute("errorMessage", "A relay with the same nickname already exists.");
             return;
         }

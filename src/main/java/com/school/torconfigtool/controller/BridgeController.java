@@ -80,7 +80,12 @@ public class BridgeController {
                                   @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
-        bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+        try {
+            bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth, model);
+            model.addAttribute("successMessage", "Tor Bridge configured successfully!");
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to configure Tor Bridge: " + e.getMessage());
+        }
         return "setup";
     }
 

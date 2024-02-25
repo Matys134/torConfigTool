@@ -72,7 +72,7 @@ public class GuardController {
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
-            model.addAttribute("errorMessage", "Failed to configure Tor Relay.");
+            model.addAttribute("errorMessage", "Failed to configure Tor Relay: " + e.getMessage());
         }
         return "setup";
     }

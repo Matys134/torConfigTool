@@ -76,7 +76,7 @@ public class GuardService {
             throw new Exception("One or more ports are already in use.");
         }
 
-        if (RelayUtils.relayExists(relayNickname)) {
+        if (!RelayUtils.relayExists(relayNickname)) {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
