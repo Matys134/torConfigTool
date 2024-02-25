@@ -158,27 +158,9 @@ public class BridgeService {
                 throw new Exception("A relay with the same nickname already exists.");
             }
 
-            Set<Integer> uniquePorts = new HashSet<>(Arrays.asList(bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort));
-            if (uniquePorts.size() < 4) {
-                model.addAttribute("errorMessage", "The ports must be unique.");
-                return;
-            }
-
             // Check if the ports are available
-            if (bridgePort != null && !RelayUtils.isPortAvailable(bridgeNickname, bridgePort)) {
-                model.addAttribute("errorMessage", "The bridge port is not available.");
-                return;
-            }
-            if (bridgeTransportListenAddr != null && !RelayUtils.isPortAvailable(bridgeNickname, bridgeTransportListenAddr)) {
-                model.addAttribute("errorMessage", "The bridge transport listen address port is not available.");
-                return;
-            }
-            if (!RelayUtils.isPortAvailable(bridgeNickname, bridgeControlPort)) {
-                model.addAttribute("errorMessage", "The bridge control port is not available.");
-                return;
-            }
-            if (webtunnelPort != null && !RelayUtils.isPortAvailable(bridgeNickname, webtunnelPort)) {
-                model.addAttribute("errorMessage", "The webtunnel port is not available.");
+            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort)) {
+                model.addAttribute("errorMessage", "One or more ports are already in use.");
                 return;
             }
 

@@ -72,12 +72,12 @@ public class GuardService {
         String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        if (!relayUtils.arePortsAvailable(relayNickname, relayPort, controlPort)) {
-            throw new Exception("One or more ports are already in use.");
+        if (RelayUtils.relayExists(relayNickname)) {
+            throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (!RelayUtils.relayExists(relayNickname)) {
-            throw new Exception("A relay with the same nickname already exists.");
+        if (!relayUtils.arePortsAvailable(relayNickname, relayPort, controlPort)) {
+            throw new Exception("One or more ports are already in use.");
         }
 
         GuardConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);

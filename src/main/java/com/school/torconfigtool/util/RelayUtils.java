@@ -65,9 +65,10 @@ public class RelayUtils {
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
-                // If a file starts with the torrc file prefix and its name matches the relay nickname, the relay exists
+                // If a file starts with the torrc file prefix, extract the nickname and compare it
                 if (file.isFile() && file.getName().startsWith(TORRC_FILE_PREFIX)) {
-                    String existingNickname = file.getName().substring(TORRC_FILE_PREFIX.length());
+                    String[] parts = file.getName().substring(TORRC_FILE_PREFIX.length()).split("_");
+                    String existingNickname = parts[0];
                     if (existingNickname.equals(relayNickname)) {
                         return true;
                     }
@@ -82,18 +83,10 @@ public class RelayUtils {
      * Checks if the given ports are available for a relay with the given nickname.
      *
      * @param relayNickname The nickname of the relay.
-     * @param relayPort The port for the relay.
-     * @param controlPort The control port for the relay.
+     * @param ports The ports to check.
      * @return True if the ports are available, false otherwise.
      */
-    public static boolean portsAreAvailable(String relayNickname, int relayPort, int controlPort) {
-        // Check if the ports are unique and not privileged
-        if (!arePortsUnique(relayPort, controlPort)) {
-            return false;
-        }
-        if (arePortsPrivileged(relayPort, controlPort)) {
-            return false;
-        }
+    public static boolean portsAreAvailable(String relayNickname, int... ports) {
 
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
@@ -115,11 +108,11 @@ public class RelayUtils {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             // If a line contains a port and it matches one of the given ports, the ports are not available
-                            if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
-                                    (line.contains(String.valueOf(relayPort)) ||
-                                            line.contains(String.valueOf(controlPort))
-                                    )) {
-                                return false;
+                            for (int port : ports) {
+                                if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
+                                        (line.contains(String.valueOf(port)))) {
+                                    return false;
+                                }
                             }
                         }
                     } catch (IOException e) {

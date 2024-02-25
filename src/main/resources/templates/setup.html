@@ -279,6 +279,46 @@
         });
     });
 </script>
+<script>
+    // Get the input fields
+    var relayPort = document.getElementById('relayPort');
+    var controlPort = document.getElementById('controlPort');
+    var bridgeControlPort = document.getElementById('bridgeControlPort');
+    var bridgePort = document.getElementById('bridgePort');
+    var bridgeTransportListenAddr = document.getElementById('bridgeTransportListenAddr');
+    var onionServicePort = document.getElementById('onionServicePort');
+
+    // Add event listeners to the input fields
+    relayPort.addEventListener('change', checkPortUniqueness);
+    controlPort.addEventListener('change', checkPortUniqueness);
+    bridgeControlPort.addEventListener('change', checkPortUniqueness);
+    bridgePort.addEventListener('change', checkPortUniqueness);
+    bridgeTransportListenAddr.addEventListener('change', checkPortUniqueness);
+    onionServicePort.addEventListener('change', checkPortUniqueness);
+
+    // Function to check if the ports are unique
+    // Function to check if the ports are unique
+    function checkPortUniqueness() {
+        var ports = [relayPort.value, controlPort.value, bridgeControlPort.value, bridgePort.value, bridgeTransportListenAddr.value, onionServicePort.value];
+
+        // Filter out empty values
+        ports = ports.filter(function(port) {
+            return port !== '';
+        });
+
+        var uniquePorts = [...new Set(ports)];
+
+        if (ports.length !== uniquePorts.length) {
+            alert('The ports must be unique. Please enter different values.');
+            relayPort.value = '';
+            controlPort.value = '';
+            bridgeControlPort.value = '';
+            bridgePort.value = '';
+            bridgeTransportListenAddr.value = '';
+            onionServicePort.value = '';
+        }
+    }
+</script>
 <script src="/js/csrfToken.js"></script>
 </body>
 </html>

@@ -150,7 +150,7 @@ public class OnionService {
      */
     public void configureOnionService(int onionServicePort) throws IOException {
         // Check port availability before configuring the onion service
-        if (!RelayUtils.isPortAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion", onionServicePort)) {
+        if (!RelayUtils.portsAreAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion", onionServicePort)) {
             throw new IOException("Port is not available.");
         }
 
