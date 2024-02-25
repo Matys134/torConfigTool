@@ -32,7 +32,6 @@ public class RelayOperationsController {
         this.relayOperationsService = relayOperationsService;
         this.snowflakeProxyService = snowflakeProxyService;
         this.upnpService = upnpService;
-        this.relayOperationsService.createDataDirectory();
     }
 
     /**

@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="/css/navbar.css" rel="stylesheet">
+    <meta name="csrf-token" th:content="${_csrf.token}"/>
+    <script src="/js/csrfToken.js"></script>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
@@ -28,5 +30,7 @@
 
 <br><br>
 <a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
+
+<script src="/js/csrfToken.js"></script>
 </body>
 </html>

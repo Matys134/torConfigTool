@@ -4,44 +4,49 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
+    <meta name="csrf-token" th:content="${_csrf.token}"/>
+    <script src="/js/csrfToken.js"></script>
     <title>Tor Proxy Configuration</title>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
 
-<h1>Tor Proxy Configuration</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Tor Proxy Configuration</h1>
 
-<!-- Display success or error messages if needed -->
-<div class="success-message" th:if="${successMessage}">
-    <p th:text="${successMessage}"></p>
+    <!-- Display success or error messages if needed -->
+    <div class="alert alert-success" th:if="${successMessage}" role="alert">
+        <p th:text="${successMessage}"></p>
+    </div>
+    <div class="alert alert-danger" th:if="${errorMessage}" role="alert">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+    <!-- Button to turn on the Tor Proxy -->
+    <form action="/proxy/start" method="post" class="mb-3">
+        <button type="submit" class="btn btn-success btn-block" onclick="showWarning()">Start Tor Proxy</button>
+    </form>
+
+    <!-- Display proxy status -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="card-text">Proxy Status: <span th:text="${proxyStatus}"></span></p>
+        </div>
+    </div>
+
+    <!-- Button to turn off the Tor Proxy -->
+    <form action="/proxy/stop" method="post">
+        <button type="submit" class="btn btn-danger btn-block">Stop Tor Proxy</button>
+    </form>
 </div>
-<div class="error-message" th:if="${errorMessage}">
-    <p th:text="${errorMessage}"></p>
-</div>
-
-<!-- Button to turn on the Tor Proxy -->
-<form action="/proxy/start" method="post">
-    <button type="submit" onclick="showWarning()">Start Tor Proxy</button>
-</form>
-
-<!-- Display proxy status -->
-<div class="proxy-status">
-    <p>Proxy Status: <span th:text="${proxyStatus}"></span></p>
-</div>
-
-<!-- Button to turn off the Tor Proxy -->
-<form action="/proxy/stop" method="post">
-    <button type="submit">Stop Tor Proxy</button>
-</form>
-
-<br><br>
-<a href="/">Back to Home</a> <!-- Provide a link to navigate back to the home page -->
-</body>
 
 <script>
     function showWarning() {
         alert("Please stop all other services to prevent your traffic from mixing with other services.");
     }
 </script>
+<script src="/js/csrfToken.js"></script>
+</body>
 </html>

@@ -5,7 +5,20 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="csrf-token" th:content="${_csrf.token}"/>
     <title>Relay Operations</title>
+
+    <style>
+        .start-button-green {
+            background-color: green !important;
+            color: white !important;
+        }
+
+        .stop-button-red {
+            background-color: red !important;
+            color: white !important;
+        }
+    </style>
 </head>
 <style>
     #edit-form input {
@@ -47,12 +60,12 @@
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Remove
                         </button>
-                        <button class="btn btn-secondary start-button"
+                        <button class="btn start-button-green start-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Start
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Stop
@@ -103,12 +116,12 @@
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Remove
                         </button>
-                        <button class="btn btn-secondary start-button"
+                        <button class="btn start-button-green start-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Start
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Stop
@@ -146,11 +159,11 @@
                                 th:data-config-type="onion">
                             Remove
                         </button>
-                        <button type="button" class="btn btn-secondary start-button" th:attr="data-config-type='onion'"
+                        <button type="button" class="btn start-button-green start-button" th:attr="data-config-type='onion'"
                                 th:data-config-nickname="${config.hiddenServicePort}">
                             Start
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='onion'"
                                 th:data-config-dir="${config.hiddenServiceDir}"
                                 th:data-config-nickname="${config.hiddenServicePort}"
@@ -264,6 +277,6 @@
 </script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<script src="/js/csrfToken.js"></script>
 </body>
 </html>

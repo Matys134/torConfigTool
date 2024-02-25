@@ -15,11 +15,22 @@ public class TorConfigToolApplication {
 
     public static void main(String[] args) {
 
-        Path path = Paths.get("torrc");
-        if (!Files.exists(path)) {
+        Path torrcPath = Paths.get("torrc", "dataDirectory");
+        if (!Files.exists(torrcPath)) {
             try {
                 // Create the directory
-                Files.createDirectories(path);
+                Files.createDirectories(torrcPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // create the directory for onion
+        Path onionPath = Paths.get("onion", "hiddenServiceDirs");
+        if (!Files.exists(onionPath)) {
+            try {
+                // Create the directory
+                Files.createDirectories(onionPath);
             } catch (Exception e) {
                 e.printStackTrace();
             }

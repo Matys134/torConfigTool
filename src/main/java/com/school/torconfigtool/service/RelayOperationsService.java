@@ -355,21 +355,6 @@ public class RelayOperationsService {
         return response;
     }
 
-    /**
-     * This method creates a DataDirectory folder for the Tor Relay.
-     */
-    public void createDataDirectory() {
-        try {
-            Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
-            if (!Files.exists(dataDirectoryPath)) {
-                Files.createDirectory(dataDirectoryPath);
-            }
-        } catch (IOException e) {
-            logger.error("Failed to create dataDirectory folder", e);
-        }
-    }
-
-
     public String getRelayStatus(String relayNickname, String relayType) {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
