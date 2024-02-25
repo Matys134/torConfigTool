@@ -72,6 +72,10 @@
                     <label for="guardBandwidth">Bandwidth limit (KB/s)</label>
                     <input type="number" class="form-control" id="guardBandwidth" name="guardBandwidth" required>
                 </div>
+
+                <!-- CSRF Token -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
@@ -138,6 +142,9 @@
                     <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Run Snowflake Proxy</button>
                 </div>
 
+                <!-- CSRF Token -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <button type="submit" class="btn btn-primary">Configure Bridge</button>
             </form>
         </div>
@@ -149,6 +156,10 @@
                     <label for="onionServicePort">HiddenServicePort:</label>
                     <input id="onionServicePort" name="onionServicePort" required type="number" min="1024" max="65535" class="form-control">
                 </div>
+
+                <!-- CSRF Token -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
