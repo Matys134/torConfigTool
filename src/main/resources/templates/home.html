@@ -16,55 +16,140 @@
 <!-- Footer -->
 <div class="container">
     <h2>Tips</h2>
-    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip1">Open Ports</button>
-    <div id="tip1" class="collapse card-body">
-        <ul>
-            <li>ORPort: This is the "ORPort" that your relay will use to communicate with other relays in the Tor network.</li>
-            <li>ListenAddrPort: This is the "ListenAddrPort" that your relay will use to accept incoming connections.</li>
-            <li>WebTunnel Ports: For WebTunnel, ports 80 and 443 need to be open.</li>
-        </ul>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">Open Ports</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>ORPort: This is the "ORPort" that your relay will use to communicate with other relays in the Tor network.</td>
+                </tr>
+                <tr>
+                    <td>ListenAddrPort: This is the "ListenAddrPort" that your relay will use to accept incoming connections.</td>
+                </tr>
+                <tr>
+                    <td>WebTunnel Ports: For WebTunnel, ports 80 and 443 need to be open.</td>
+                </tr>
+                <tr>
+                    <td>Control Port: This is the port that Tor uses to listen for commands and events. It's used to control the Tor process.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">Limits</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Why Limits: Limits are set based on what Tor allows on one IP address. It's recommended to only run one type of relay at a time.</td>
+                    </tr>
+                    <tr>
+                        <td>Guard Relays: The limit for guard relays is 8.</td>
+                    </tr>
+                    <tr>
+                        <td>Obfs Bridge: The limit for obfs bridge is 2.</td>
+                    </tr>
+                    <tr>
+                        <td>WebTunnel: The limit for WebTunnel is 1.</td>
+                    </tr>
+                    <tr>
+                        <td>Snowflake Proxy: The limit for snowflake proxy is 1.</td>
+                    </tr>
+                    <tr>
+                        <td>Onion Service: Onion service is without a number limit.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip2">Limits</button>
-    <div id="tip2" class="collapse card-body">
-        <ul>
-            <li>Why Limits: Limits are set based on what Tor allows on one IP address. It's recommended to only run one type of relay at a time.</li>
-            <li>Guard Relays: The limit for guard relays is 8.</li>
-            <li>Obfs Bridge: The limit for obfs bridge is 2.</li>
-            <li>WebTunnel: The limit for WebTunnel is 1.</li>
-            <li>Snowflake Proxy: The limit for snowflake proxy is 1.</li>
-            <li>Onion Service: Onion service is without a number limit.</li>
-        </ul>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">Page Information</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Home Setup Page: User sets up new Tor services on this page.</td>
+                    </tr>
+                    <tr>
+                        <td>Traffic Data: User can see traffic on his relays and events on this page.</td>
+                    </tr>
+                    <tr>
+                        <td>Tor Proxy: This page is for setting up a proxy.</td>
+                    </tr>
+                    <tr>
+                        <td>Relay Operations: User can see which relays are running, start and stop those relays, and edit them on this page.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">Relay Types</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Middle Relay: This is a type of relay that passes traffic within the Tor network. It doesn't know the source or destination of the traffic.</td>
+                    </tr>
+                    <tr>
+                        <td>Guard Relay: This is the first relay in the Tor circuit. It knows the source of the traffic but not the destination.</td>
+                    </tr>
+                    <tr>
+                        <td>Bridge: This is a type of relay that isn't listed in the public Tor directory, making it harder for censors to block.</td>
+                    </tr>
+                    <tr>
+                        <td>Onion Service: This allows users to access services without revealing their location or the location of the service.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#tip3">Page Information</button>
-    <div id="tip3" class="collapse card-body">
-        <ul>
-            <li>Home Setup Page: User sets up new Tor services on this page.</li>
-            <li>Traffic Data: User can see traffic on his relays and events on this page.</li>
-            <li>Tor Proxy: This page is for setting up a proxy.</li>
-            <li>Relay Operations: User can see which relays are running, start and stop those relays, and edit them on this page.</li>
-        </ul>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">Choosing a Bridge</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Obfs4: Use this when you have an open IP.</td>
+                    </tr>
+                    <tr>
+                        <td>WebTunnel: Use this when you have an open IP and a domain.</td>
+                    </tr>
+                    <tr>
+                        <td>Snowflake: Use this when you don't have either an open IP or a domain.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-<script>
-    $(document).ready(function(){
-        $("#tip1").hide();
-        $("button[data-target='#tip1']").click(function(){
-            $("#tip1").slideToggle("slow");
-        });
-
-        $("#tip2").hide();
-        $("button[data-target='#tip2']").click(function(){
-            $("#tip2").slideToggle("slow");
-        });
-
-        $("#tip3").hide();
-        $("button[data-target='#tip3']").click(function(){
-            $("#tip3").slideToggle("slow");
-        });
-    });
-</script>
+</div>
 <script src="/js/csrfToken.js"></script>
+</body>
 </html>
