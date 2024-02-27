@@ -5,7 +5,6 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <meta name="csrf-token" th:content="${_csrf.token}"/>
     <title>Relay Operations</title>
 
     <style>
@@ -224,9 +223,6 @@
 
                     <label for="edit-bandwidthrate" data-config-type="guard bridge" data-bridge-type="obfs4 webtunnel">Bandwidth Limit (KB/S):</label>
                     <input id="edit-bandwidthrate" name="edit-bandwidthrate" type="number" data-config-type="guard">
-
-                    <!-- CSRF Token -->
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 </form>
             </div>
             <div class="modal-footer">
@@ -280,6 +276,5 @@
 </script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="/js/csrfToken.js"></script>
 </body>
 </html>

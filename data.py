@@ -1,18 +1,21 @@
+import json
 import os
+import functools
 import threading
-import time
+import getpass
 
-import requests
 import stem
 from stem.control import EventType, Controller
+import requests
+import time
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
+BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
 
 
 def main():
     # Define the directory containing Tor control files
-    username = os.getlogin()
+    username = getpass.getuser()
     torrc_dir = f"/home/{username}/git/torConfigTool/torrc"
     control_ports = []
 
@@ -26,7 +29,7 @@ def main():
             if control_port and control_port not in control_ports:
                 control_ports.append(control_port)
                 thread = threading.Thread(target=monitor_traffic_and_flags, args=(control_port,))
-                thread.daemon = True  # Set the thread as a daemon
+                thread.setDaemon(True)  # Set the thread as a daemon
                 threads.append(thread)
                 thread.start()
 
@@ -37,12 +40,13 @@ def main():
 def read_control_port(file_path):
     # Read the control port from the Tor configuration file
     try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                if line.startswith("ControlPort"):
-                    parts = line.strip().split()
-                    if len(parts) == 2:
-                        return int(parts[1])
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as file:
+                for line in file:
+                    if line.startswith("ControlPort"):
+                        parts = line.strip().split()
+                        if len(parts) == 2:
+                            return int(parts[1])
     except FileNotFoundError:
         print(f"File not found: {file_path}")
     except Exception as e:
@@ -97,14 +101,15 @@ def _send_relay_data_entry(control_port, relay_data_entry):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
-    # Send the relay data entry to the API endpoint for the corresponding relay
+    # Print the API endpoint URL
+    print(f"Sending relay data entry to API endpoint: {api_endpoint}")
+
     response = requests.post(api_endpoint, json=relay_data_entry)
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
     else:
         print(f"Failed to send data for ControlPort {control_port}: {response.status_code} - {response.text}")
-
 
 def relay_flags(controller):
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint

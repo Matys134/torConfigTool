@@ -160,7 +160,7 @@ $(document).ready(function () {
         };
 
         $.get("/server-ip", function(serverIp) {
-        $.get("https://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
+        $.get("http://" + serverIp + ":8080/bridge/running-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 

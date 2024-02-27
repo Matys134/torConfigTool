@@ -40,16 +40,9 @@ public class WebSecurityConfig {
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll
                 )
                 .logout(LogoutConfigurer::permitAll)
-                .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository()));
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
-    }
-
-    @Bean
-    public CsrfTokenRepository csrfTokenRepository() {
-        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-        repository.setSessionAttributeName("_csrf");
-        return repository;
     }
 
     @Bean
