@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Define the base API endpoint
-    const baseApiUrl = 'http://192.168.2.126:8080/api/data';
+    const baseApiUrl = 'http://127.0.0.1:8080/api/data';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
