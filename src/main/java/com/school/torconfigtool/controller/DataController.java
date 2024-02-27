@@ -2,6 +2,8 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.DataService;
 import com.school.torconfigtool.model.RelayData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ public class DataController {
 
     // Service to handle operations related to relay data and events
     private final DataService dataService;
+    private static final Logger logger = LoggerFactory.getLogger(DataController.class);
 
     /**
      * Constructor for the DataController class.
@@ -39,6 +42,7 @@ public class DataController {
     @PostMapping("/data/{relayId}")
     public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
         dataService.handleRelayData(relayId, relayData, relayDataMap);
+        logger.info("Relay data for control port {} added. Current data: {}", relayId, relayDataMap);
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
@@ -51,6 +55,7 @@ public class DataController {
     @PostMapping("/data/{relayId}/event")
     public ResponseEntity<String> receiveRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
         dataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
+        logger.info("Relay event for control port {} added. Current events: {}", relayId, relayEventMap);
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 
