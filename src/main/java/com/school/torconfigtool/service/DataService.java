@@ -1,6 +1,8 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.RelayData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Deque;
@@ -17,6 +19,7 @@ public class DataService {
     private static final int MAX_DATA_SIZE = 50;
     // Maximum size for the relay event queue
     private static final int MAX_EVENT_SIZE = 10;
+    private static final Logger logger = LoggerFactory.getLogger(DataService.class);
 
     /**
      * Method to add relay data to the queue. If the queue is full, it removes the oldest data entry.
@@ -53,6 +56,8 @@ public class DataService {
     public void handleRelayData(int relayId, RelayData relayData, Map<Integer, Deque<RelayData>> relayDataMap) {
         Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
         addRelayData(relayDataQueue, relayData);
+
+        logger.info("Relay data for control port {} added. Current data: {}", relayId, relayDataMap);
     }
 
     /**
