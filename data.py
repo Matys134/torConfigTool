@@ -101,10 +101,15 @@ def _send_relay_data_entry(control_port, relay_data_entry):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
-    # Print the API endpoint URL
+    # Print the API endpoint URL and the data being sent
     print(f"Sending relay data entry to API endpoint: {api_endpoint}")
+    print(f"Data: {relay_data_entry}")
 
     response = requests.post(api_endpoint, json=relay_data_entry)
+
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
