@@ -15,6 +15,7 @@
 <div th:replace="navbar :: nav"></div>
 <!-- Footer -->
 <div class="container">
+    <button id="shutdownButton" class="btn btn-danger">Shutdown</button>
     <h2>Tips</h2>
     <div class="row">
         <div class="col-md-6">
@@ -149,7 +150,17 @@
         </div>
     </div>
 </div>
-</div>
+<script>
+    document.getElementById('shutdownButton').addEventListener('click', function() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        fetch('/shutdown', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            }
+        });
+    });
+</script>
 <script src="/js/csrfToken.js"></script>
 </body>
 </html>
