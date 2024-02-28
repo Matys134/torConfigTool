@@ -115,6 +115,11 @@ def _send_relay_data_entry(control_port, relay_data_entry):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send the relay data entry to the API endpoint for the corresponding relay
     response = s.post(api_endpoint, headers=headers, json=relay_data_entry)
 
