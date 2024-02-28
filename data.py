@@ -10,7 +10,7 @@ import requests
 import time
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
+BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/relay-data"
 
 
 def main():
