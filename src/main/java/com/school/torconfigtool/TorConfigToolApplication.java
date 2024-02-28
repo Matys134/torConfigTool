@@ -3,8 +3,14 @@ package com.school.torconfigtool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,20 +41,19 @@ public class TorConfigToolApplication {
             }
         }
 
+        ScriptEngineManager factory = new ScriptEngineManager();
+        ScriptEngine engine = factory.getEngineByName("python");
+
+        try {
+            // Execute the Python script
+            engine.eval(new FileReader("src/main/java/com/school/torconfigtool/python/data.py"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         System.getProperties().put("server.port", 8080);
 
         SpringApplication.run(TorConfigToolApplication.class, args);
-
-        // Call the Python script
-        try {
-            ProcessBuilder pb = new ProcessBuilder("python3", "data.py");
-            Process p = pb.start();
-            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String ret = in.readLine();
-            System.out.println("Python script output: " + ret);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
