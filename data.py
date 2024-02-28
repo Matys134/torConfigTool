@@ -1,6 +1,7 @@
 import os
 import threading
 import time
+import getpass
 
 import requests
 import stem
@@ -12,7 +13,7 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8081/api/relay-data"
 
 def main():
     # Define the directory containing Tor control files
-    username = os.getlogin()
+    username = getpass.getuser()
     torrc_dir = f"/home/{username}/git/torConfigTool/torrc"
     control_ports = []
 
