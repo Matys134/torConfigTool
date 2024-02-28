@@ -109,7 +109,7 @@ def _send_relay_data_entry(control_port, relay_data_entry):
         response = requests.get(api_endpoint)
 
         # Extract the CSRF token from the cookie
-        csrf_token = response.cookies.get('_csrf')
+        csrf_token = response.cookies.get('csrf-token')
 
     # Include the CSRF token in the headers
     headers = {
