@@ -16,8 +16,8 @@ s = requests.Session()
 # Make a GET request to the server
 response = s.get("http://192.168.2.126:8080/")
 
-# Print all the headers
-print(response.headers)
+# Print the JSESSIONID cookie
+print(s.cookies['JSESSIONID'])
 
 # Get the CSRF token from the cookies
 csrf_token = s.cookies['_csrf']
