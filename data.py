@@ -175,6 +175,10 @@ def _send_bandwidth_data(controller, control_port):
     # Send data to the API endpoint for the corresponding relay
     response = s.post(api_endpoint, headers=headers, json=data)
 
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
+
     # Print the response object
     print(f"Response for ControlPort {control_port}: {response}")
 
@@ -203,6 +207,10 @@ def _handle_bandwidth_event(controller, control_port, event):
     # Send data to the API endpoint for the corresponding relay
     response = s.post(api_endpoint, headers=headers, json=data)
 
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
+
     if response.status_code == 200:
         print(
             f"Data sent for ControlPort {control_port}: Downloaded: {download} bytes/s, Uploaded: {upload} bytes/s, Flags: {flags}")
@@ -222,6 +230,10 @@ def _handle_event(controller, control_port, event):
     # Send data to the API endpoint for the corresponding relay
     response = requests.post(api_endpoint, json=data)
 
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
+
     if response.status_code == 200:
         print(f"Event sent for ControlPort {control_port}: {event}")
     else:
@@ -232,6 +244,10 @@ def _handle_event(controller, control_port, event):
 
     # Send data to the API endpoint for the corresponding relay
     response = requests.post(api_endpoint, json=data)
+
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
 
     if response.status_code == 200:
         print(
@@ -253,6 +269,10 @@ def _handle_newconsensus_event(controller, control_port, event):
 
     # Send data to the API endpoint for the corresponding relay
     response = requests.post(api_endpoint, json=data)
+
+    # Print the response status code and text
+    print(f"Response status code: {response.status_code}")
+    print(f"Response text: {response.text}")
 
     if response.status_code == 200:
         print(f"Flags sent for ControlPort {control_port}: Flags: {flags}")
