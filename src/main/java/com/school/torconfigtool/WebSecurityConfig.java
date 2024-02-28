@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll
                 )
                 .logout(LogoutConfigurer::permitAll)
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository()));
 
         return http.build();
     }
