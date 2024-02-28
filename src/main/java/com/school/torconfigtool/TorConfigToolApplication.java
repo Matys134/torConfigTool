@@ -38,8 +38,35 @@ public class TorConfigToolApplication {
             }
         }
 
-        Runtime rt = Runtime.getRuntime();
-        Process pr = rt.exec("src/main/java/com/school/torconfigtool/python/data.py");
+        try {
+            // Specify the path to the Python interpreter and the Python script
+            String pythonInterpreterPath = "venv";
+            String pythonScriptPath = "src/main/java/com/school/torconfigtool/python/data.py";
+
+            // Create a ProcessBuilder
+            ProcessBuilder processBuilder = new ProcessBuilder(pythonInterpreterPath, pythonScriptPath);
+
+            // Start the process
+            Process process = processBuilder.start();
+
+            // Get the input stream
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            // Wait for the process to finish and get the exit value
+            int exitVal = process.waitFor();
+            if (exitVal == 0) {
+                System.out.println("Success!");
+            } else {
+                // Abnormal termination: Log an error, throw an exception, or take other appropriate action
+                System.out.println("Python script execution failed with exit code " + exitVal);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
         System.getProperties().put("server.port", 8080);
