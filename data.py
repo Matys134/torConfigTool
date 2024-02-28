@@ -177,6 +177,11 @@ def _send_bandwidth_data(controller, control_port):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send data to the API endpoint for the corresponding relay
     response = s.post(api_endpoint, headers=headers, json=data)
 
@@ -209,6 +214,11 @@ def _handle_bandwidth_event(controller, control_port, event):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send data to the API endpoint for the corresponding relay
     response = s.post(api_endpoint, headers=headers, json=data)
 
@@ -232,8 +242,13 @@ def _handle_event(controller, control_port, event):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}/event"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = s.post(api_endpoint, headers=headers, json=data)
 
     # Print the response status code and text
     print(f"Response status code: {response.status_code}")
@@ -247,8 +262,13 @@ def _handle_event(controller, control_port, event):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = s.post(api_endpoint, headers=headers, json=data)
 
     # Print the response status code and text
     print(f"Response status code: {response.status_code}")
@@ -272,8 +292,13 @@ def _handle_newconsensus_event(controller, control_port, event):
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # Now include the CSRF token in the headers of your subsequent POST requests
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = s.post(api_endpoint, headers=headers, json=data)
 
     # Print the response status code and text
     print(f"Response status code: {response.status_code}")
