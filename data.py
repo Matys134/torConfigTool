@@ -109,7 +109,10 @@ def _send_relay_data_entry(control_port, relay_data_entry):
         response = requests.get(api_endpoint)
 
         # Extract the CSRF token from the cookie
-        csrf_token = response.cookies.get('csrf-token')
+        csrf_token = response.cookies.get('_csrf')
+
+        # Print the CSRF token for debugging
+        print(f"CSRF token: {csrf_token}")
 
     # Include the CSRF token in the headers
     headers = {
@@ -118,6 +121,9 @@ def _send_relay_data_entry(control_port, relay_data_entry):
 
     # Send the relay data entry to the API endpoint for the corresponding relay
     response = requests.post(api_endpoint, json=relay_data_entry, headers=headers)
+
+    # Print the server's response for debugging
+    print(f"Server's response: {response.text}")
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
