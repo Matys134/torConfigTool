@@ -1,5 +1,11 @@
 const bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 bridgeTypes.forEach(function(bridgeType) {
     $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
         if (data.bridgeLimitReached) {
