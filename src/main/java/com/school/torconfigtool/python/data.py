@@ -8,7 +8,7 @@ import stem
 from stem.control import EventType, Controller
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
+BASE_API_ENDPOINT = "http://192.168.2.126:8080/api/data"
 
 
 def main():
