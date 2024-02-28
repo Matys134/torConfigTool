@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/*@Configuration
+@Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
@@ -73,4 +73,4 @@ public class WebSecurityConfig {
             return new InMemoryUserDetailsManager(user).loadUserByUsername(username);
         };
     }
-}*/
+}
