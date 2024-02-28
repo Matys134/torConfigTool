@@ -14,7 +14,7 @@ BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
 s = requests.Session()
 
 # Make a GET request to the server
-response = s.get("http://192.168.2.126:8080/")
+response = s.get("http://127.0.0.1:8080/")
 
 # Print the JSESSIONID cookie
 print(s.cookies['JSESSIONID'])
