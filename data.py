@@ -24,7 +24,7 @@ csrf_token = s.cookies['JSESSIONID']
 
 # Now include the CSRF token in the headers of your subsequent POST requests
 headers = {
-    'X-CSRFToken': csrf_token
+    'X-CSRF-TOKEN': csrf_token
 }
 
 
@@ -117,7 +117,7 @@ def _send_relay_data_entry(control_port, relay_data_entry):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send the relay data entry to the API endpoint for the corresponding relay
@@ -179,7 +179,7 @@ def _send_bandwidth_data(controller, control_port):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send data to the API endpoint for the corresponding relay
@@ -216,7 +216,7 @@ def _handle_bandwidth_event(controller, control_port, event):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send data to the API endpoint for the corresponding relay
@@ -244,7 +244,7 @@ def _handle_event(controller, control_port, event):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send data to the API endpoint for the corresponding relay
@@ -264,7 +264,7 @@ def _handle_event(controller, control_port, event):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send data to the API endpoint for the corresponding relay
@@ -294,7 +294,7 @@ def _handle_newconsensus_event(controller, control_port, event):
 
     # Now include the CSRF token in the headers of your subsequent POST requests
     headers = {
-        'X-CSRFToken': csrf_token
+        'X-CSRF-TOKEN': csrf_token
     }
 
     # Send data to the API endpoint for the corresponding relay
