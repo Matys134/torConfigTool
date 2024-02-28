@@ -35,7 +35,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("*", "/*/*", "/*/*/*", "/*/*/*/*").permitAll()
+                        .requestMatchers("/*", "/*/*", "/*/*/*", "/*/*/*/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll
