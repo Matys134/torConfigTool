@@ -20,7 +20,7 @@ response = s.get("http://127.0.0.1:8080/")
 print(s.cookies['JSESSIONID'])
 
 # Get the CSRF token from the cookies
-csrf_token = s.cookies['JSESSIONID']
+csrf_token = response.headers['header-name']
 
 # Now include the CSRF token in the headers of your subsequent POST requests
 headers = {
