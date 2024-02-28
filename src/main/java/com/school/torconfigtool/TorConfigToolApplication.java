@@ -42,7 +42,7 @@ public class TorConfigToolApplication {
         }
 
         ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("python");
+        ScriptEngine engine = factory.getEngineByName("python3");
 
         try {
             // Execute the Python script
