@@ -42,7 +42,7 @@ public class TorConfigToolApplication {
 
         // Call the Python script
         try {
-            ProcessBuilder pb = new ProcessBuilder("python3", "/data.py");
+            ProcessBuilder pb = new ProcessBuilder("python3", "data.py");
             Process p = pb.start();
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String ret = in.readLine();
