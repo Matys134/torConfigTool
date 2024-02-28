@@ -6,18 +6,9 @@ import getpass
 import requests
 import stem
 from stem.control import EventType, Controller
-import requests
 
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
-
-# Make a GET request to the server to retrieve the CSRF token
-response = requests.get(BASE_API_ENDPOINT)
-csrf_token = response.cookies['XSRF-TOKEN']
-
-# Include the CSRF token in the headers of your POST request
-headers = {'X-XSRF-TOKEN': csrf_token}
-response = requests.post(api_endpoint, json=data, headers=headers)
 
 
 def main():
