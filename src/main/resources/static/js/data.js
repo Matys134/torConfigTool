@@ -242,7 +242,7 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         // Fetch the list of relay info dynamically
-        $.get('https://' + location.hostname + ':8081/api/relay-info', function (relayInfoArray) {
+        $.get('https://' + location.hostname + ':8080/api/relay-info', function (relayInfoArray) {
             // Create charts for each relay based on the retrieved relay info
             relayInfoArray.forEach(function (relayInfo) {
                 const port = relayInfo.controlPort;
