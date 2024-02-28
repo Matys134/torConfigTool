@@ -7,11 +7,22 @@ import requests
 import stem
 from stem.control import EventType, Controller
 
-# Global variable to store the CSRF token
-csrf_token = None
-
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
+
+# Create a session object
+s = requests.Session()
+
+# Make a GET request to the server
+response = s.get("http://192.168.2.126:8080/")
+
+# Get the CSRF token from the cookies
+csrf_token = s.cookies['_csrf']
+
+# Now include the CSRF token in the headers of your subsequent POST requests
+headers = {
+    'X-CSRFToken': csrf_token
+}
 
 
 def main():
@@ -98,32 +109,11 @@ def monitor_traffic_and_flags(control_port):
 
 
 def _send_relay_data_entry(control_port, relay_data_entry):
-    global csrf_token
-
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
-    # If CSRF token is not available, fetch it
-    if not csrf_token:
-        # Make a GET request to fetch the CSRF token
-        response = requests.get(api_endpoint)
-
-        # Extract the CSRF token from the cookie
-        csrf_token = response.cookies.get('_csrf')
-
-        # Print the CSRF token for debugging
-        print(f"CSRF token: {csrf_token}")
-
-    # Include the CSRF token in the headers
-    headers = {
-        'X-CSRF-TOKEN': csrf_token
-    }
-
     # Send the relay data entry to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=relay_data_entry, headers=headers)
-
-    # Print the server's response for debugging
-    print(f"Server's response: {response.text}")
+    response = s.post(api_endpoint, headers=headers, json=relay_data_entry)
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
@@ -180,7 +170,7 @@ def _send_bandwidth_data(controller, control_port):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = s.post(api_endpoint, headers=headers, json=data)
 
     # Print the response object
     print(f"Response for ControlPort {control_port}: {response}")
@@ -208,7 +198,7 @@ def _handle_bandwidth_event(controller, control_port, event):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = s.post(api_endpoint, headers=headers, json=data)
 
     if response.status_code == 200:
         print(
