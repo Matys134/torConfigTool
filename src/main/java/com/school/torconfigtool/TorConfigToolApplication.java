@@ -7,10 +7,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +15,7 @@ import java.nio.file.Paths;
 @SpringBootApplication
 public class TorConfigToolApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Path torrcPath = Paths.get("torrc", "dataDirectory");
         if (!Files.exists(torrcPath)) {
@@ -41,15 +38,8 @@ public class TorConfigToolApplication {
             }
         }
 
-        ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("python3");
-
-        try {
-            // Execute the Python script
-            engine.eval(new FileReader("src/main/java/com/school/torconfigtool/python/data.py"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Runtime rt = Runtime.getRuntime();
+        Process pr = rt.exec("src/main/java/com/school/torconfigtool/python/data.py");
 
 
         System.getProperties().put("server.port", 8080);
