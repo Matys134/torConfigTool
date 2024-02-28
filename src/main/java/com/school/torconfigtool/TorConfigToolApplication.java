@@ -38,6 +38,11 @@ public class TorConfigToolApplication {
             }
         }
 
+
+        System.getProperties().put("server.port", 8080);
+
+        SpringApplication.run(TorConfigToolApplication.class, args);
+
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("python3", "src/main/java/com/school/torconfigtool/python/data.py");
             processBuilder.redirectErrorStream(true);
@@ -51,10 +56,5 @@ public class TorConfigToolApplication {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
-
-        System.getProperties().put("server.port", 8080);
-
-        SpringApplication.run(TorConfigToolApplication.class, args);
     }
 }
