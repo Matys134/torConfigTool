@@ -7,6 +7,9 @@ import requests
 import stem
 from stem.control import EventType, Controller
 
+# Global variable to store the CSRF token
+csrf_token = None
+
 # Define the base API endpoint
 BASE_API_ENDPOINT = "http://127.0.0.1:8080/api/data"
 
@@ -95,11 +98,26 @@ def monitor_traffic_and_flags(control_port):
 
 
 def _send_relay_data_entry(control_port, relay_data_entry):
+    global csrf_token
+
     # Construct the complete API endpoint URL with the relayId
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
+    # If CSRF token is not available, fetch it
+    if not csrf_token:
+        # Make a GET request to fetch the CSRF token
+        response = requests.get(api_endpoint)
+
+        # Extract the CSRF token from the cookie
+        csrf_token = response.cookies.get('csrftoken')
+
+    # Include the CSRF token in the headers
+    headers = {
+        'X-CSRFToken': csrf_token
+    }
+
     # Send the relay data entry to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=relay_data_entry)
+    response = requests.post(api_endpoint, json=relay_data_entry, headers=headers)
 
     if response.status_code == 200:
         print(f"Data sent for ControlPort {control_port}: {relay_data_entry}")
