@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.service.BridgeConfigService;
 import com.school.torconfigtool.util.RelayUtils;
 import org.slf4j.Logger;

@@ -263,21 +263,7 @@
 <script src="/js/getRunningBridgeTypes.js"></script>
 <script src="/js/updateHostname.js"></script>
 <script src="/js/upnpAvailability.js"></script>
-
-
-<script>
-    $(document).ready(function() {
-        if ($('#guard-configs .list-group-item').length === 0) {
-            $('h2:contains("Guard Relay Configurations")').hide();
-        }
-        if ($('#bridge-configs .list-group-item').length === 0) {
-            $('h2:contains("Bridge Relay Configurations")').hide();
-        }
-        if ($('#onion-configs .list-group-item').length === 0) {
-            $('h2:contains("Onion Relay Configurations")').hide();
-        }
-    });
-</script>
+<script src="/js/hideEmptyElements.js"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="/js/csrfToken.js"></script>

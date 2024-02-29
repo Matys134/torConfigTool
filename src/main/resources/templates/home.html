@@ -150,17 +150,7 @@
         </div>
     </div>
 </div>
-<script>
-    document.getElementById('shutdownButton').addEventListener('click', function() {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        fetch('/shutdown', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            }
-        });
-    });
-</script>
+<script src="/js/shutdown.js"></script>
 <script src="/js/csrfToken.js"></script>
 </body>
 </html>
