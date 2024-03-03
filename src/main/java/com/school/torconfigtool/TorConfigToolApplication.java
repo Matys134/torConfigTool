@@ -3,11 +3,7 @@ package com.school.torconfigtool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleScriptContext;
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +22,6 @@ public class TorConfigToolApplication {
                 e.printStackTrace();
             }
         }
-
         // create the directory for onion
         Path onionPath = Paths.get("onion", "hiddenServiceDirs");
         if (!Files.exists(onionPath)) {
@@ -38,23 +33,9 @@ public class TorConfigToolApplication {
             }
         }
 
-
         System.getProperties().put("server.port", 8080);
 
-        SpringApplication.run(TorConfigToolApplication.class, args);
-
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("python3", "src/main/java/com/school/torconfigtool/python/data.py");
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        SpringApplication app = new SpringApplication(TorConfigToolApplication.class);
+        app.run(args);
     }
 }
