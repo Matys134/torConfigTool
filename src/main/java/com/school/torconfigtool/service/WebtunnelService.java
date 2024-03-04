@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
+import com.simtechdata.waifupnp.UPnP;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class WebtunnelService {
      * @throws Exception If an error occurs during setup.
      */
     public void setupWebtunnel(String webTunnelUrl) throws Exception {
+        UPnP.openPortTCP(80);
 
         // Check if Nginx is running, if not, start it
         if (!nginxService.isNginxRunning()) {
