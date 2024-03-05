@@ -80,7 +80,7 @@ if [ -z "$1" ]
 fi
 
 # Step 1: Install acme.sh
-sudo -u $SUDO_USER curl https://get.acme.sh | sh -s email=$1
+curl https://get.acme.sh | sh -s email=$1
 
 # Step 2: Install golang
 sudo apt install golang
