@@ -25,9 +25,10 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 
 # Update the package list and install Tor and the Tor Project keyring
 apt update
-apt install -t bullseye-backports obfs4proxy
-apt install snowflake-proxy
-apt install nginx
+apt install -y tor deb.torproject.org-keyring
+apt install -y -t bullseye-backports obfs4proxy
+apt install -y snowflake-proxy
+apt install -y nginx
 
 # Get the user who launched the script
 current_user=$SUDO_USER
