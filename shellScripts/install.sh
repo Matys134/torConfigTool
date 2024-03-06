@@ -34,6 +34,8 @@ current_user=$SUDO_USER
 
 # Replace 'user www-data;' with "user $current_user;" in nginx.conf
 # sed -i "s/user www-data;/user $current_user;/" /etc/nginx/nginx.conf
+# Add user to the www-data group
+usermod -a -G www-data "$current_user"
 
 echo "Tor installation completed successfully."
 
