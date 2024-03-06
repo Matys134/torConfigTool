@@ -101,11 +101,3 @@ awk '/# directories via check_private_dir().  Let it./ { print; printf "/usr/loc
 
 # Step 6: Reload the AppArmor profiles
 sudo apparmor_parser -r /etc/apparmor.d/system_tor
-
-echo "Please enter a username for the web application:"
-read APP_USERNAME
-export APP_USERNAME
-
-echo "Please enter a password for the web application:"
-read -s APP_PASSWORD
-export APP_PASSWORD
