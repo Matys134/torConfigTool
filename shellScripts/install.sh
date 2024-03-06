@@ -74,7 +74,7 @@ sudo systemctl disable tor.service
 sudo systemctl disable nginx.service
 
 # Change the ownership of the nginx default site configuration file
-# sudo chown $SUDO_USER /etc/nginx/sites-available/default
+sudo chown $SUDO_USER /etc/nginx/sites-available/default
 
 # Check if email argument is provided
 if [ -z "$1" ]
@@ -83,7 +83,7 @@ if [ -z "$1" ]
 fi
 
 # Step 1: Install acme.sh
-curl https://get.acme.sh | sh -s email=$1
+sudo -u $SUDO_USER bash -c "curl https://get.acme.sh | sh -s email=$1"
 
 # Step 2: Install golang
 sudo apt install golang
