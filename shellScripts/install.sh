@@ -26,7 +26,7 @@ wget -qO- https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8C
 # Update the package list and install Tor and the Tor Project keyring
 apt update
 apt install -y tor deb.torproject.org-keyring
-apt install -y -t bullseye-backports obfs4proxy
+apt install -y obfs4proxy
 apt install -y snowflake-proxy
 apt install -y nginx
 
@@ -37,6 +37,8 @@ current_user=$SUDO_USER
 # sed -i "s/user www-data;/user $current_user;/" /etc/nginx/nginx.conf
 # Add user to the www-data group
 usermod -a -G www-data "$current_user"
+
+sudo chmod o+x /home/$current_user
 
 echo "Tor installation completed successfully."
 
