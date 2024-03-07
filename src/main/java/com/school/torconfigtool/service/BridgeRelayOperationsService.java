@@ -39,7 +39,7 @@ public class BridgeRelayOperationsService {
      */
     public String getWebtunnelLink(String relayNickname) {
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
-        String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";
+        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
 
         // Construct the path to the torrc file
