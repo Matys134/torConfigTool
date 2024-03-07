@@ -38,7 +38,7 @@ public class BridgeRelayOperationsService {
      * @return The web tunnel link.
      */
     public String getWebtunnelLink(String relayNickname) {
-        String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname);
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         String fingerprintFilePath = dataDirectoryPath + File.separator + "fingerprint";
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
 
