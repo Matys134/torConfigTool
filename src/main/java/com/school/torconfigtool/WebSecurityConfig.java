@@ -35,7 +35,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/*", "/*/*", "/*/*/*", "/*/*/*/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll
@@ -56,7 +55,7 @@ public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(BCryptPasswordEncoder encoder) {
         return username -> {
-            Path path = Paths.get("user/user");
+            Path path = Paths.get("shellScripts/user");
             String line;
             try {
                 line = Files.readAllLines(path).getFirst();

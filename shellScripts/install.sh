@@ -157,3 +157,9 @@ for choice in "${choices[@]}"; do
 done
 
 sudo systemctl restart nginx
+
+echo "Running UserHasher..."
+read -p "Enter your username: " username
+read -p "Enter your password: " password
+
+java -cp UserHasher.jar com.example.userhasher.UserHasherApplication $username $password
