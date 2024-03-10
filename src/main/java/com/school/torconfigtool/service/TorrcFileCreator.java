@@ -68,13 +68,8 @@ public class TorrcFileCreator {
             }
 
             // Write specific configuration based on the type of relay
-            if (config instanceof BridgeConfig) {
-                config.writeSpecificConfig(writer);
-            } else if (config instanceof GuardConfig) {
-                config.writeSpecificConfig(writer);
-            } else {
-                logger.error("Unknown relay type");
-            }
+            RelayWriteConfigService relayWriteConfigService = new RelayWriteConfigService();
+            relayWriteConfigService.writeConfig(config, writer);
         } catch (IOException e) {
             // Log any errors that occur during file creation
             logger.error("Error creating Torrc file", e);

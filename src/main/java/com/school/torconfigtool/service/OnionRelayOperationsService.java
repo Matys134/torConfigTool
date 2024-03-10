@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,8 +13,6 @@ import java.util.List;
  */
 @Service
 public class OnionRelayOperationsService {
-    // Logger instance for logging events
-    private static final Logger logger = LoggerFactory.getLogger(OnionRelayOperationsService.class);
 
     /**
      * This method is used to read the hostname file for a given hidden service port.
@@ -36,7 +32,6 @@ public class OnionRelayOperationsService {
             List<String> lines = Files.readAllLines(hostnameFilePath);
             return lines.isEmpty() ? "No hostname found" : lines.getFirst();
         } catch (IOException e) {
-            logger.error("Unable to read hostname file for port {}: {}", hiddenServicePort, e.getMessage());
             return "Unable to read hostname file";
         }
     }

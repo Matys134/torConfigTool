@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -20,9 +18,6 @@ import java.util.List;
  */
 @Service
 public class NginxService {
-
-    // Logger instance for logging events
-    private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
 
     // TorConfigurationService instance for managing Tor configurations
     private final TorConfigService torConfigService;
@@ -54,15 +49,10 @@ public class NginxService {
         try {
             // Start the process and wait for it to finish
             Process process = processBuilder.start();
-            int exitCode = process.waitFor();
+            process.waitFor();
 
-            // If the exit code is not 0, log an error
-            if (exitCode != 0) {
-                logger.error("Error starting Nginx. Exit code: " + exitCode);
-            }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error starting Nginx", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -84,15 +74,10 @@ public class NginxService {
         try {
             // Start the process and wait for it to finish
             Process process = processBuilder.start();
-            int exitCode = process.waitFor();
+            process.waitFor();
 
-            // If the exit code is not 0, log an error
-            if (exitCode != 0) {
-                logger.error("Error reloading Nginx. Exit code: " + exitCode);
-            }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error reloading Nginx", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -114,8 +99,7 @@ public class NginxService {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error generating Nginx configuration", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -175,8 +159,7 @@ public class NginxService {
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
+            throw new RuntimeException(e);
         }
 
         // Create a new process builder
@@ -202,8 +185,7 @@ public class NginxService {
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error reverting Nginx default configuration", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -212,20 +194,9 @@ public class NginxService {
      *
      * @return The default Nginx configuration lines.
      */
-    private static List<String> getDefaultNginxConfigLines() {
+    public List<String> getDefaultNginxConfigLines() {
         String currentDirectory = System.getProperty("user.dir");
-        List<String> lines = new ArrayList<>();
-        lines.add("server {");
-        lines.add("    listen 80 default_server;");
-        lines.add("    listen [::]:80 default_server;");
-        lines.add("    root " + currentDirectory + "/onion/www/service-80;");
-        lines.add("    index index.html index.htm index.nginx-debian.html;");
-        lines.add("    server_name _;");
-        lines.add("    location / {");
-        lines.add("        try_files $uri $uri/ =404;");
-        lines.add("    }");
-        lines.add("}");
-        return lines;
+        return generateNginxConfigLines(currentDirectory + "/onion/www/service-80", "_", "", "");
     }
 
     /**
@@ -243,17 +214,9 @@ public class NginxService {
 
         try {
             // Clear the file and write the initial configuration
-            List<String> lines = new ArrayList<>();
-            lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
+            List<String> lines = generateNginxConfigLines(programLocation + "/onion/www/service-80", "$SERVER_ADDRESS",
+                    programLocation + "/onion/certs/service-80/fullchain.pem",
+                    programLocation + "/onion/certs/service-80/key.pem");
 
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
@@ -261,19 +224,6 @@ public class NginxService {
             // Issue and install the certificates
             acmeService.installCert(webTunnelUrl);
 
-            // Read the file into a list of strings again
-            lines = Files.readAllLines(defaultConfigPath);
-
-            // Clear the list and add the new configuration lines
-            lines.clear();
-            lines.add("server {");
-            lines.add("    listen [::]:443 ssl http2;");
-            lines.add("    listen 443 ssl http2;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name $SERVER_ADDRESS;");
-            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
-            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
             // Add the rest of the configuration lines...
             lines.add("    location = /" + randomString + " {");
             lines.add("        proxy_pass http://127.0.0.1:15000;");
@@ -294,9 +244,8 @@ public class NginxService {
 
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
+        }  catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -322,9 +271,6 @@ public class NginxService {
             // Return true if the exit code is 0, false otherwise
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error checking Nginx status", e);
-
             // Return false if an exception occurs
             return false;
         }
@@ -372,14 +318,12 @@ public class NginxService {
             process = processBuilder.start();
             process.waitFor();
 
-            // Clean up the temporary file
-            boolean isDeleted = tempFile.delete();
-
-            if (!isDeleted) {
-                logger.error("Failed to delete temporary file: " + tempFile);
+            if (!tempFile.delete()) {
+                throw new IOException("Failed to delete temporary file: " + tempFile.getAbsolutePath());
             }
+
         } catch (IOException | InterruptedException e) {
-            logger.error("Error editing Nginx configuration", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -392,7 +336,7 @@ public class NginxService {
                 throw new IOException("Failed to stop Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to stop Nginx", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -410,5 +354,22 @@ public class NginxService {
             allServices.add(config.getBridgeConfig().getNickname());
         }
         return allServices;
+    }
+
+    private List<String> generateNginxConfigLines(String rootDirectory, String serverName, String certPath, String certKey) {
+        List<String> lines = new ArrayList<>();
+        lines.add("server {");
+        lines.add("    listen 80 default_server;");
+        lines.add("    listen [::]:80 default_server;");
+        lines.add("    root " + rootDirectory + ";");
+        lines.add("    index index.html index.htm index.nginx-debian.html;");
+        lines.add("    server_name " + serverName + ";");
+        lines.add("    ssl_certificate " + certPath + ";");
+        lines.add("    ssl_certificate_key " + certKey + ";");
+        lines.add("    location / {");
+        lines.add("        try_files $uri $uri/ =404;");
+        lines.add("    }");
+        lines.add("}");
+        return lines;
     }
 }
