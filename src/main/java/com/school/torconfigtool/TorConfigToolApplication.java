@@ -33,7 +33,10 @@ public class TorConfigToolApplication {
             }
         }
 
-        System.getProperties().put("server.port", 8080);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "src/main/java/com/school/torconfigtool/python/data.py");
+        processBuilder.start();
+
+        System.getProperties().put("server.port", 8443);
 
         SpringApplication app = new SpringApplication(TorConfigToolApplication.class);
         app.run(args);

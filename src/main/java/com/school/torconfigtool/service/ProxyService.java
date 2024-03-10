@@ -1,14 +1,13 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.util.IpAddressRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * ProxyService is a service class responsible for managing a Tor Proxy.

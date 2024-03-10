@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Service class for handling Tor configuration files.

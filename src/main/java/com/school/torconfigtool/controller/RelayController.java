@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.model.RelayInfo;
-import com.school.torconfigtool.service.RelayService;
+import com.school.torconfigtool.service.RelayInformationService;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +22,17 @@ import java.util.List;
 public class RelayController {
 
     // RelayService instance used to fetch relay information
-    private final RelayService relayService;
+    private final RelayInformationService relayInformationService;
 
     /**
      * Constructor for the RelayController class.
      * It uses Spring's @Autowired annotation to automatically inject a RelayService instance.
      *
-     * @param relayService the RelayService instance to be used
+     * @param relayInformationService the RelayService instance to be used
      */
     @Autowired
-    public RelayController(RelayService relayService) {
-        this.relayService = relayService;
+    public RelayController(RelayInformationService relayInformationService) {
+        this.relayInformationService = relayInformationService;
     }
 
     /**
@@ -46,14 +46,14 @@ public class RelayController {
         List<RelayInfo> relayInfoList = new ArrayList<>();
 
         // Fetch the list of all bridges
-        List<BridgeConfig> bridges = relayService.getAllBridges();
+        List<BridgeConfig> bridges = relayInformationService.getAllBridges();
         for (BridgeConfig bridge : bridges) {
             RelayInfo relayInfo = new RelayInfo(Integer.parseInt(bridge.getControlPort()), bridge.getNickname(), "bridge");
             relayInfoList.add(relayInfo);
         }
 
         // Fetch the list of all guards
-        List<GuardConfig> guards = relayService.getAllGuards();
+        List<GuardConfig> guards = relayInformationService.getAllGuards();
         for (GuardConfig guard : guards) {
             RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
             relayInfoList.add(relayInfo);

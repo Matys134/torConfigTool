@@ -79,6 +79,12 @@ echo "Automatic updates and unattended upgrades have been configured."
 # Trigger the initial unattended-upgrades run
 unattended-upgrade -d
 
+# Initialize the config.txt file with all services set to 0
+echo "Onion 0" >> config.txt
+echo "obfs4 0" >> config.txt
+echo "Snowflake 0" >> config.txt
+echo "WebTunnel 0" >> config.txt
+
 # Install software based on user selection
 for choice in "${choices[@]}"; do
     case $choice in
@@ -86,12 +92,15 @@ for choice in "${choices[@]}"; do
         ;;
     2)  # Onion service
         install_package nginx
+        sed -i 's/Onion 0/Onion 1/' config.txt
         ;;
     3)  # obfs4 bridge
         install_package obfs4proxy
+        sed -i 's/obfs4 0/obfs4 1/' config.txt
         ;;
     4)  # Snowflake bridge
         install_package snowflake-proxy
+        sed -i 's/Snowflake 0/Snowflake 1/' config.txt
         ;;
     5)  # WebTunnel bridge
         # Prompt the user for their email address
@@ -119,6 +128,7 @@ for choice in "${choices[@]}"; do
 
         # Step 6: Reload the AppArmor profiles
         sudo apparmor_parser -r /etc/apparmor.d/system_tor
+        sed -i 's/WebTunnel bridge 0/WebTunnel bridge 1/' config.txt
         ;;
     *)
         echo "Invalid selection."
@@ -143,18 +153,6 @@ sudo systemctl disable nginx.service
 
 # Change the ownership of the nginx default site configuration file
 sudo chown $SUDO_USER /etc/nginx/sites-available/default
-
-# Write the user's choices into the config.txt file
-for choice in "${choices[@]}"; do
-    case $choice in
-        1)  echo "Non-exit node or proxy" >> config.txt ;;
-        2)  echo "Onion service" >> config.txt ;;
-        3)  echo "obfs4 bridge" >> config.txt ;;
-        4)  echo "Snowflake bridge" >> config.txt ;;
-        5)  echo "WebTunnel bridge" >> config.txt ;;
-        *)  echo "Invalid selection." >> config.txt ;;
-    esac
-done
 
 sudo systemctl restart nginx
 

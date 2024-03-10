@@ -1,6 +1,6 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.exception.RelayOperationException;
+
 import com.school.torconfigtool.model.TorConfig;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * This class contains methods to perform operations on Tor Relays.
@@ -97,7 +97,7 @@ public class RelayOperationsService {
         try {
             processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
-        } catch (RelayOperationException | IOException | InterruptedException e) {
+        } catch (RuntimeException | IOException | InterruptedException e) {
             logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
@@ -114,7 +114,7 @@ public class RelayOperationsService {
      */
     private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
-            throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
+            throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
         }
         {
             // Step 3: Start the Relay
@@ -122,7 +122,7 @@ public class RelayOperationsService {
             System.out.println("Executing command: " + command);
             int exitCode = executeCommand(command);
             if (exitCode != 0) {
-                throw new RelayOperationException("Failed to start Tor Relay service.");
+                throw new RuntimeException("Failed to start Tor Relay service.");
             }
         }
     }
@@ -142,7 +142,7 @@ public class RelayOperationsService {
         try {
             processRelayOperation(torrcFilePath, relayNickname, start);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
-        } catch (RelayOperationException | IOException | InterruptedException e) {
+        } catch (RuntimeException | IOException | InterruptedException e) {
             logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
@@ -160,7 +160,7 @@ public class RelayOperationsService {
      */
     private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
-            throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
+            throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
         }
         if (start) {
             // Step 1: Retrieve Fingerprints
@@ -174,7 +174,7 @@ public class RelayOperationsService {
             System.out.println("Executing command: " + command);
             int exitCode = executeCommand(command);
             if (exitCode != 0) {
-                throw new RelayOperationException("Failed to start Tor Relay service.");
+                throw new RuntimeException("Failed to start Tor Relay service.");
             }
 
 
@@ -184,12 +184,12 @@ public class RelayOperationsService {
                 String command = "kill -SIGINT " + pid;
                 int exitCode = executeCommand(command);
                 if (exitCode != 0) {
-                    throw new RelayOperationException("Failed to stop Tor Relay service.");
+                    throw new RuntimeException("Failed to stop Tor Relay service.");
                 }
             } else if (pid == -1) {
-                throw new RelayOperationException("Tor Relay is not running.");
+                throw new RuntimeException("Tor Relay is not running.");
             } else {
-                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
+                throw new RuntimeException("Error occurred while retrieving PID for Tor Relay.");
             }
         }
     }

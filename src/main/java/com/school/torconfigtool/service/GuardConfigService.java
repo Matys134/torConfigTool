@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.model.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +9,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 @Service
 public class GuardConfigService implements RelayConfigService<GuardConfig> {

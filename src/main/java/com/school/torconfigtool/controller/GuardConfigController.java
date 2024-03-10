@@ -2,7 +2,7 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardConfigService;
 import com.school.torconfigtool.model.GuardConfig;
-import com.school.torconfigtool.util.RelayUtils;
+import com.school.torconfigtool.service.RelayUtilityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -51,7 +51,7 @@ public class GuardConfigController {
 
     @GetMapping("/check-port-availability")
     public ResponseEntity<?> checkPortAvailability(@RequestParam String nickname, @RequestParam int orPort, @RequestParam int controlPort) {
-        boolean arePortsAvailable = RelayUtils.portsAreAvailable(nickname, orPort, controlPort);
+        boolean arePortsAvailable = RelayUtilityService.portsAreAvailable(nickname, orPort, controlPort);
 
         return ResponseEntity.ok(Map.of("available", arePortsAvailable));
     }

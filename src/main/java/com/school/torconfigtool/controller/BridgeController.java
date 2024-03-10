@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.BridgeService;
-import com.school.torconfigtool.service.RelayService;
+import com.school.torconfigtool.service.RelayInformationService;
 import com.school.torconfigtool.service.SnowflakeProxyService;
 import com.school.torconfigtool.service.NginxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +24,21 @@ import java.util.Map;
 @RequestMapping("/bridge")
 public class BridgeController {
 
-    private final RelayService relayService;
+    private final RelayInformationService relayInformationService;
     private final NginxService nginxService;
     private final BridgeService bridgeService;
     private final SnowflakeProxyService snowflakeProxyService;
 
     /**
      * Constructor for the BridgeController.
-     * @param relayService The relay service.
+     * @param relayInformationService The relay service.
      * @param nginxService The Nginx service.
      * @param bridgeService The bridge service.
      * @param snowflakeProxyService The snowflake proxy service.
      */
     @Autowired
-    public BridgeController(RelayService relayService, NginxService nginxService, BridgeService bridgeService, SnowflakeProxyService snowflakeProxyService) {
-        this.relayService = relayService;
+    public BridgeController(RelayInformationService relayInformationService, NginxService nginxService, BridgeService bridgeService, SnowflakeProxyService snowflakeProxyService) {
+        this.relayInformationService = relayInformationService;
         this.nginxService = nginxService;
         this.bridgeService = bridgeService;
         this.snowflakeProxyService = snowflakeProxyService;
@@ -121,7 +121,7 @@ public class BridgeController {
      */
     @GetMapping("/setup")
     public String setup(Model model) {
-        model.addAttribute("bridgeLimitReached", relayService.getBridgeCount() >= 2);
+        model.addAttribute("bridgeLimitReached", relayInformationService.getBridgeCount() >= 2);
         return "setup";
     }
 
@@ -131,7 +131,7 @@ public class BridgeController {
      */
     @GetMapping("/running-type")
     public ResponseEntity<Map<String, String>> getRunningBridgeType() {
-        Map<String, String> response = relayService.getRunningBridgeType();
+        Map<String, String> response = relayInformationService.getRunningBridgeType();
         return ResponseEntity.ok(response);
     }
 
@@ -155,7 +155,7 @@ public class BridgeController {
      */
     @PostMapping("/toggle-limit")
     public ResponseEntity<Void> toggleLimit() {
-        RelayService.toggleLimit();
+        RelayInformationService.toggleLimit();
         return ResponseEntity.ok().build();
     }
 
@@ -165,6 +165,6 @@ public class BridgeController {
      */
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
-        return ResponseEntity.ok(RelayService.isLimitOn());
+        return ResponseEntity.ok(RelayInformationService.isLimitOn());
     }
 }

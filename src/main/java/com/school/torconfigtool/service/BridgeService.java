@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import com.school.torconfigtool.model.TorrcFileCreator;
-import com.school.torconfigtool.util.RelayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Service class for managing Tor bridges.
@@ -24,19 +22,19 @@ public class BridgeService {
 
     private final NginxService nginxService;
     private final WebtunnelService webtunnelService;
-    private final RelayService relayService;
+    private final RelayInformationService relayInformationService;
 
     /**
      * Constructor for the BridgeService.
      *
      * @param nginxService     The Nginx service.
      * @param webtunnelService The webtunnel service.
-     * @param relayService     The relay service.
+     * @param relayInformationService     The relay service.
      */
-    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayService relayService) {
+    public BridgeService(NginxService nginxService, WebtunnelService webtunnelService, RelayInformationService relayInformationService) {
         this.nginxService = nginxService;
         this.webtunnelService = webtunnelService;
-        this.relayService = relayService;
+        this.relayInformationService = relayInformationService;
     }
 
     /**
@@ -96,26 +94,26 @@ public class BridgeService {
      * @param model Model for the view.
      */
     public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
-        if (relayService.getBridgeCount() >= 2) {
+        if (relayInformationService.getBridgeCount() >= 2) {
             throw new Exception("You can only configure up to 2 bridges.");
         }
 
-        if (RelayUtils.relayExists(bridgeNickname)) {
+        if (RelayUtilityService.relayExists(bridgeNickname)) {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
         // Check if the ports are available
         if (webtunnelPort != null) {
-            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort)) {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort)) {
                 throw new Exception("One or more ports are already in use.");
             }
         }
         else if (bridgePort == null && bridgeTransportListenAddr == null) {
-            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
                 throw new Exception("One or more ports are already in use.");
             }
         } else {
-            if (!RelayUtils.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
                 throw new Exception("One or more ports are already in use.");
             }
         }
@@ -156,9 +154,9 @@ public class BridgeService {
      */
     public Map<String, Object> checkBridgeLimit(String bridgeType) {
         Map<String, Object> response = new HashMap<>();
-        Map<String, Integer> bridgeCountByType = relayService.getBridgeCountByType();
+        Map<String, Integer> bridgeCountByType = relayInformationService.getBridgeCountByType();
 
-        if (!RelayService.isLimitOn()) {
+        if (!RelayInformationService.isLimitOn()) {
             response.put("bridgeLimitReached", false);
             response.put("bridgeCount", bridgeCountByType.get(bridgeType));
             return response;

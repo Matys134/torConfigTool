@@ -1,4 +1,4 @@
-package com.school.torconfigtool.util;
+package com.school.torconfigtool.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,16 +7,16 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Utility class for handling relay operations.
  */
 @Service
-public class RelayUtils {
+public class RelayUtilityService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RelayUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(RelayUtilityService.class);
 
     /**
      * Checks for running relays and logs their process IDs.
@@ -193,7 +193,7 @@ public class RelayUtils {
 
     public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
         try {
-            return RelayUtils.portsAreAvailable(relayNickname, relayPort, controlPort);
+            return RelayUtilityService.portsAreAvailable(relayNickname, relayPort, controlPort);
         } catch (Exception e) {
             logger.error("Error during Tor Relay configuration", e);
             return false;

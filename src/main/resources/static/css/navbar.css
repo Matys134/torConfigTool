@@ -4,6 +4,8 @@
     padding: 0;
     overflow: hidden;
     background-color: #333;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .navbar li {
@@ -42,4 +44,13 @@ h1, h2 {
 #relayCharts, #eventData {
     padding: 0.5em;
     margin: 0.5em 0;
+}
+
+.navbar-right {
+    margin-left: auto;
+}
+
+.special-button {
+    background-color: #e30d26;
+    color: white;
 }

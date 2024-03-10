@@ -1,6 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.util.RelayUtils;
 import com.school.torconfigtool.model.TorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Service for handling Onion Service related operations.
@@ -150,7 +149,7 @@ public class OnionService {
      */
     public void configureOnionService(int onionServicePort) throws IOException {
         // Check port availability before configuring the onion service
-        if (!RelayUtils.portsAreAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion", onionServicePort)) {
+        if (!RelayUtilityService.portsAreAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion", onionServicePort)) {
             throw new IOException("Port is not available.");
         }
 

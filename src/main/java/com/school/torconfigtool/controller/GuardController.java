@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardService;
-import com.school.torconfigtool.util.RelayUtils;
+import com.school.torconfigtool.service.RelayUtilityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ public class GuardController {
     @GetMapping
     public String guardConfigurationForm() {
         logger.info("Relay configuration form requested");
-        RelayUtils.checkRunningRelays();
+        RelayUtilityService.checkRunningRelays();
 
         return "setup";
     }

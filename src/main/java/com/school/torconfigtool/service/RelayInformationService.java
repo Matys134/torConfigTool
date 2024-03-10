@@ -13,12 +13,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 @Service
-public class RelayService {
-    private static final Logger logger = LoggerFactory.getLogger(RelayService.class);
+public class RelayInformationService {
+    private static final Logger logger = LoggerFactory.getLogger(RelayInformationService.class);
 
     public int getBridgeCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);

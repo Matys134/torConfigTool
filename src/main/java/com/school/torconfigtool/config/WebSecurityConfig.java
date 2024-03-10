@@ -1,4 +1,4 @@
-package com.school.torconfigtool;
+package com.school.torconfigtool.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -34,12 +33,15 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure()) // enforce HTTPS
                 .authorizeHttpRequests((requests) -> requests
                         .anyRequest().authenticated()
                 )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll
+                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
                 )
-                .logout(LogoutConfigurer::permitAll)
                 .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository()).ignoringRequestMatchers("/api/data/**"));
 
         return http.build();

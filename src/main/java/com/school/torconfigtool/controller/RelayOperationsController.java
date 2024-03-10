@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 
 /**
  * Controller for handling relay operations.

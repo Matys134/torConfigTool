@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.util.RelayUtils;
-import com.school.torconfigtool.model.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +8,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * This service class is responsible for handling operations related to Guard Relays.
@@ -20,8 +18,8 @@ import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
 public class GuardService {
 
     // RelayService instance for relay operations
-    private final RelayService relayService;
-    private final RelayUtils relayUtils;
+    private final RelayInformationService relayInformationService;
+    private final RelayUtilityService relayUtilityService;
 
     // Directory path for torrc files
 
@@ -29,11 +27,11 @@ public class GuardService {
     /**
      * Constructor for GuardService
      *
-     * @param relayService The service to be used for relay operations.
+     * @param relayInformationService The service to be used for relay operations.
      */
-    public GuardService(RelayService relayService, RelayUtils relayUtils) {
-        this.relayService = relayService;
-        this.relayUtils = relayUtils;
+    public GuardService(RelayInformationService relayInformationService, RelayUtilityService relayUtilityService) {
+        this.relayInformationService = relayInformationService;
+        this.relayUtilityService = relayUtilityService;
     }
 
     /**
@@ -72,11 +70,11 @@ public class GuardService {
         String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        if (RelayUtils.relayExists(relayNickname)) {
+        if (RelayUtilityService.relayExists(relayNickname)) {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (!relayUtils.arePortsAvailable(relayNickname, relayPort, controlPort)) {
+        if (!relayUtilityService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
             throw new Exception("One or more ports are already in use.");
         }
 
@@ -93,9 +91,9 @@ public class GuardService {
      */
     public Map<String, Object> checkGuardLimit() {
         Map<String, Object> response = new HashMap<>();
-        int guardCount = relayService.getGuardCount();
+        int guardCount = relayInformationService.getGuardCount();
 
-        if (!RelayService.isLimitOn()) {
+        if (!RelayInformationService.isLimitOn()) {
             response.put("guardLimitReached", false);
             response.put("guardCount", guardCount);
             return response;
@@ -113,7 +111,7 @@ public class GuardService {
      */
     public Map<String, Boolean> checkBridgeConfigured() {
         Map<String, Boolean> response = new HashMap<>();
-        response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
+        response.put("bridgeConfigured", relayInformationService.getBridgeCount() > 0);
         return response;
     }
 
@@ -124,8 +122,8 @@ public class GuardService {
      */
     public Map<String, Object> getLimitStateAndGuardCount() {
         Map<String, Object> response = new HashMap<>();
-        response.put("limitOn", RelayService.isLimitOn());
-        response.put("guardCount", relayService.getGuardCount());
+        response.put("limitOn", RelayInformationService.isLimitOn());
+        response.put("guardCount", relayInformationService.getGuardCount());
         return response;
     }
 
@@ -136,7 +134,7 @@ public class GuardService {
      */
     public Map<String, Boolean> checkGuardConfigured() {
         Map<String, Boolean> response = new HashMap<>();
-        boolean isGuardConfigured = relayService.getGuardCount() > 0;
+        boolean isGuardConfigured = relayInformationService.getGuardCount() > 0;
         response.put("guardConfigured", isGuardConfigured);
         return response;
     }
