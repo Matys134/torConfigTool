@@ -1,8 +1,10 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.service.OnionService;
+import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.service.TorConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/onion-service")
 public class OnionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OnionController.class);
     private final TorConfigService torConfigService;
     private final OnionService onionService;
     TorConfig torConfig = new TorConfig();
@@ -52,7 +56,7 @@ public class OnionController {
         if (!hiddenServiceDirs.exists()) {
             boolean dirCreated = hiddenServiceDirs.mkdirs();
             if (!dirCreated) {
-                throw new RuntimeException("Failed to create hiddenServiceDirs directory");
+                logger.error("Failed to create directory: " + hiddenServiceDirsPath);
             }
         }
     }
@@ -103,6 +107,7 @@ public class OnionController {
             onionService.configureOnionService(onionServicePort);
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
+            logger.error("Error configuring Tor Onion Service", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
         }
         return "setup";
@@ -138,6 +143,7 @@ public class OnionController {
             onionService.refreshNginx();
             return ResponseEntity.ok().build();
         } catch (IOException | InterruptedException e) {
+            logger.error("Error refreshing Nginx", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

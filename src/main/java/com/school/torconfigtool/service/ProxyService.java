@@ -1,5 +1,7 @@
 package com.school.torconfigtool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -16,6 +18,7 @@ public class ProxyService {
 
     private static final String TORRC_PROXY_FILE = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "proxy";
     private final IpAddressRetriever ipAddressRetriever;
+    private static final Logger logger = LoggerFactory.getLogger(ProxyService.class);
 
     /**
      * Constructor for ProxyService.
@@ -115,11 +118,15 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to start.
      */
     public String configureAndStartProxy() throws IOException, InterruptedException {
+        logger.info("Configuring Tor Proxy...");
         if (!configureProxy()) {
+            logger.error("Failed to configure Tor Proxy.");
             return "Failed to configure Tor Proxy.";
         }
 
+        logger.info("Starting Tor Proxy...");
         if (!startProxy()) {
+            logger.error("Failed to start Tor Proxy.");
             return "Failed to start Tor Proxy.";
         }
 
@@ -137,17 +144,27 @@ public class ProxyService {
     public long start(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid != -1) {
+            logger.info("Tor process already running with PID: " + pid);
             return pid;
         }
 
+        logger.info("Attempting to start Tor process with command: sudo tor -f " + filePath);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
         processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
         Process process = processBuilder.start();
         try {
-
+            logger.info("Waiting for Tor process to complete...");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    logger.info(line); // Log output of a Tor process
+                }
+            }
             int exitCode = process.waitFor();
+            logger.info("Tor process completed with exit code " + exitCode);
             if (exitCode == 0) {
                 pid = process.pid();
+                logger.info("Tor process started with PID: " + pid); // Log the PID immediately after the process starts
                 return pid;
             }
         } finally {
@@ -167,14 +184,30 @@ public class ProxyService {
     public boolean stop(String filePath) throws IOException, InterruptedException {
         long pid = getRunningTorProcessId(filePath);
         if (pid == -1) {
+            logger.info("No running Tor process found with file path: " + filePath);
             return false;
         }
 
+        logger.info("Attempting to stop Tor process with PID: " + pid);
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo kill " + pid);
+        logger.info("Command: " + processBuilder.command());
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    logger.info(line); // Log output of kill command
+                }
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    logger.error(line); // Log error output of kill command
+                }
+            }
             int exitCode = process.waitFor();
+            logger.info("Tor process stop command completed with exit code " + exitCode);
             return exitCode == 0;
         } finally {
             process.destroy();
@@ -189,6 +222,7 @@ public class ProxyService {
      * @throws IOException If an I/O error occurs.
      */
     public long getRunningTorProcessId(String filePath) throws IOException {
+        logger.info("Checking if Tor process is already running...");
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
@@ -196,7 +230,9 @@ public class ProxyService {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line = reader.readLine();
                 if (line != null) {
-                    return Long.parseLong(line);
+                    long pid = Long.parseLong(line);
+                    logger.info("Tor process is already running with PID: " + pid);
+                    return pid;
                 }
             }
             return -1;

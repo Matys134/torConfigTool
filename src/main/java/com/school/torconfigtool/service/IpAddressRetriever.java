@@ -1,5 +1,7 @@
 package com.school.torconfigtool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -13,6 +15,9 @@ import java.util.Enumeration;
 
 @Service
 public class IpAddressRetriever {
+
+    // Logger instance for this class
+    private static final Logger LOGGER = LoggerFactory.getLogger(IpAddressRetriever.class);
 
     /**
      * This method is used to get the local IP address of the machine.
@@ -36,7 +41,8 @@ public class IpAddressRetriever {
                 }
             }
         } catch (SocketException e) {
-            throw new RuntimeException(e);
+            // Log the error if we fail to get the local IP address
+            LOGGER.error("Failed to get local IP address", e);
         }
         // Return the loopback address if no local IP address was found or an error occurred
         return "127.0.0.1";

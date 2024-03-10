@@ -1,6 +1,9 @@
 // RelayConfig.java
 package com.school.torconfigtool.model;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+
 /**
  * This interface defines the methods for managing and writing the configuration of a Tor relay.
  */
@@ -61,6 +64,14 @@ public interface RelayConfig {
      * @param controlPort The control port to be set for the Tor relay.
      */
     void setControlPort(String controlPort);
+
+    /**
+     * Writes the specific configuration of the Tor relay to a BufferedWriter.
+     *
+     * @param writer The BufferedWriter to which the configuration should be written.
+     * @throws IOException If an I/O error occurs.
+     */
+    void writeSpecificConfig(BufferedWriter writer) throws IOException;
 
     // get and set methods for bandwidthRate
     String getBandwidthRate();

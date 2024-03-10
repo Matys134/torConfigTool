@@ -16,7 +16,7 @@ public class DataService {
     // Maximum size for the relay data queue
     private static final int MAX_DATA_SIZE = 50;
     // Maximum size for the relay event queue
-    private static final int MAX_EVENT_SIZE = 50;
+    private static final int MAX_EVENT_SIZE = 10;
 
     /**
      * Method to add relay data to the queue. If the queue is full, it removes the oldest data entry.

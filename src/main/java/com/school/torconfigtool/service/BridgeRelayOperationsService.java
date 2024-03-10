@@ -1,5 +1,7 @@
 package com.school.torconfigtool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -15,6 +17,7 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 @Service
 public class BridgeRelayOperationsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BridgeRelayOperationsService.class);
     private final TorFileService torFileService;
 
     /**
@@ -54,7 +57,7 @@ public class BridgeRelayOperationsService {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read torrc file: " + torrcFilePath, e);
+            logger.error("Failed to read torrc file: {}", torrcFilePath, e);
         }
 
         // Replace the "https://yourdomain/path" in the webtunnel link with the extracted webtunnel domain and path

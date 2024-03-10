@@ -1,6 +1,8 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -23,6 +25,7 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
  */
 @Service
 public class OnionService {
+    private static final Logger logger = LoggerFactory.getLogger(OnionService.class);
     private final NginxService nginxService;
     private final TorConfig torConfig;
 
@@ -66,6 +69,8 @@ public class OnionService {
             // Check the exit code to determine if the start was successful
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
+            logger.error("Error starting Tor Onion Service", e);
+            // Log and handle any exceptions that occur during the start
             return false;
         }
     }
@@ -157,6 +162,7 @@ public class OnionService {
             nginxService.reloadNginx();
         }
         torConfig.setHiddenServicePort(String.valueOf(onionServicePort));
+        logger.info("Hidden Service Port set to: {}", onionServicePort);
     }
 
     /**

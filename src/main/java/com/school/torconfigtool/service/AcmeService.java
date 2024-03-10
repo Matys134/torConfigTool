@@ -1,5 +1,7 @@
 package com.school.torconfigtool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -9,6 +11,9 @@ import java.io.IOException;
 public class AcmeService {
 
     private final CommandService commandService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AcmeService.class);
+
     public AcmeService(CommandService commandService) {
         this.commandService = commandService;
     }
@@ -36,30 +41,23 @@ public class AcmeService {
     /**
      * This method is used to install a certificate.
      * It constructs a command to install the certificate and then executes it.
-     * If the command execution fails, it throws an exception.
+     * If the command execution fails, it logs the error.
      *
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void installCert(String webTunnelUrl) throws IOException, InterruptedException {
+    public void installCert(String webTunnelUrl) {
         // Get the current working directory
         String programLocation = System.getProperty("user.dir");
 
         // Construct the command to install the certificate
         String username = System.getProperty("user.name");
-        Process process = createCertificateInstallationProcess(webTunnelUrl, username, programLocation);
-        int exitCode = process.waitFor();
-
-        // If the exit code is not 0, throw an exception
-        if (exitCode != 0) {
-            throw new IOException("Error during certificate installation. Exit code: " + exitCode);
-        }
-    }
-
-    private static Process createCertificateInstallationProcess(String webTunnelUrl, String username, String programLocation) throws IOException {
         String command = "/home/" + username + "/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd";
+
+        // Print the command to the console
+        System.out.println(command);
 
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -67,7 +65,18 @@ public class AcmeService {
         // Set the command for the process builder
         processBuilder.command("bash", "-c", command);
 
-        // Start the process and wait for it to finish
-        return processBuilder.start();
+        try {
+            // Start the process and wait for it to finish
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+
+            // If the exit code is not 0, log an error
+            if (exitCode != 0) {
+                logger.error("Error during certificate installation. Exit code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            // Log any exceptions that occur during the process
+            logger.error("Error during certificate installation", e);
+        }
     }
 }

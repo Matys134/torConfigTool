@@ -1,5 +1,7 @@
 package com.school.torconfigtool.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -20,6 +22,7 @@ public class RelayStatusService {
 
     private final TorFileService torFileService;
     private final NginxService nginxService;
+    private static final Logger logger = LoggerFactory.getLogger(RelayStatusService.class);
 
     /**
      * Constructor for the RelayStatusService class.
@@ -58,17 +61,26 @@ public class RelayStatusService {
         String relayNickname = new File(torrcFilePath).getName();
         String command = String.format("ps aux | grep -P '\\b%s\\b' | grep -v grep | awk '{print $2}'", relayNickname);
 
+        // Log the command to be executed
+        logger.debug("Command to execute: {}", command);
+
         try {
             List<String> outputLines = getCommandOutput(command);
 
-            // Assuming the PID is on the first line, if not, you need to check the outputLines list.
+            // Log the full output
+            logger.debug("Command output: {}", outputLines);
+
+            // Assuming the PID is on the first line, if not you need to check the outputLines list.
             if (!outputLines.isEmpty()) {
                 String pidString = outputLines.getFirst();
+                logger.debug("PID string: {}", pidString);
                 return Integer.parseInt(pidString);
             } else {
+                logger.debug("No PID found. Output was empty.");
                 return -1;
             }
         } catch (IOException e) {
+            logger.error("Error executing command to get PID: {}", command, e);
             return -1;
         }
     }
@@ -112,7 +124,7 @@ public class RelayStatusService {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         Runnable statusCheck = () -> {
-            if (System.currentTimeMillis() - startTime >= 30000) { // 30-second timeout
+            if (System.currentTimeMillis() - startTime >= 30000) { // 30 seconds timeout
                 executor.shutdown();
             } else {
                 String status = getRelayStatus(relayNickname, relayType);

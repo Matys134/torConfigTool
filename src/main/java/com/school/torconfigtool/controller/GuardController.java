@@ -2,6 +2,8 @@ package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardService;
 import com.school.torconfigtool.service.RelayUtilityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,10 @@ import java.util.Map;
 @Controller
 @RequestMapping("/guard")
 public class GuardController {
+
+    // Logger instance for this class
+    private static final Logger logger = LoggerFactory.getLogger(GuardController.class);
+
     // Service instance for Guard operations
     private final GuardService guardService;
 
@@ -37,6 +43,7 @@ public class GuardController {
      */
     @GetMapping
     public String guardConfigurationForm() {
+        logger.info("Relay configuration form requested");
         RelayUtilityService.checkRunningRelays();
 
         return "setup";
@@ -64,6 +71,7 @@ public class GuardController {
             guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, guardBandwidth);
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
+            logger.error("Error during Tor Relay configuration", e);
             model.addAttribute("errorMessage", "Failed to configure Tor Relay: " + e.getMessage());
         }
         return "setup";

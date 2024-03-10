@@ -7,16 +7,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 public class ConfigController {
 
     @GetMapping("/config")
     public String getConfig() {
-        try (Stream<String> lines = Files.lines(Paths.get("config.txt"))) {
-            return lines.collect(Collectors.joining("\n"));
+        try {
+            return Files.lines(Paths.get("config.txt")).collect(Collectors.joining("\n"));
         } catch (IOException e) {
+            e.printStackTrace();
             return "Error reading config file";
         }
     }

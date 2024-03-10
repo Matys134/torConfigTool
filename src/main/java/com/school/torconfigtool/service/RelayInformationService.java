@@ -2,6 +2,8 @@ package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,10 +18,12 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 @Service
 public class RelayInformationService {
+    private static final Logger logger = LoggerFactory.getLogger(RelayInformationService.class);
 
     public int getBridgeCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
+            logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
             return 0;
         }
 
@@ -38,6 +42,7 @@ public class RelayInformationService {
     public int getGuardCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
+            logger.error("Directory " + TORRC_DIRECTORY_PATH + " does not exist or is not a directory.");
             return 0;
         }
 
@@ -75,7 +80,7 @@ public class RelayInformationService {
                         runningBridgeTypes.put(bridgeNickname, bridgeType);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    logger.error("Error reading torrc file", e);
                 }
             }
         }
@@ -135,7 +140,7 @@ public class RelayInformationService {
                     }
                     bridges.add(bridge);
                 } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
+                    logger.error("Error reading torrc file", e);
                 }
             }
         }
@@ -167,7 +172,7 @@ public class RelayInformationService {
                     }
                     guards.add(guard);
                 } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
+                    logger.error("Error reading torrc file", e);
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.ProxyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,8 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/proxy")
 public class ProxyController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProxyController.class);
     private final ProxyService proxyService;
 
     /**
@@ -37,6 +41,7 @@ public class ProxyController {
         try {
             model.addAttribute("proxyStatus", proxyService.isProxyRunning() ? "Running" : "Stopped");
         } catch (IOException e) {
+            logger.error("Error during checking Tor Proxy status", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
         }
         return "proxy-config";
@@ -59,6 +64,7 @@ public class ProxyController {
                 model.addAttribute("errorMessage", result);
             }
         } catch (Exception e) {
+            logger.error("Error during Tor Proxy configuration or start", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
         }
 
@@ -83,6 +89,7 @@ public class ProxyController {
             model.addAttribute("successMessage", "Tor Proxy stopped successfully!");
 
         } catch (Exception e) {
+            logger.error("Error during Tor Proxy stop", e);
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
         }
 

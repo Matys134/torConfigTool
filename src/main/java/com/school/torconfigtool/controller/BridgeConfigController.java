@@ -3,6 +3,8 @@ package com.school.torconfigtool.controller;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.service.BridgeConfigService;
 import com.school.torconfigtool.service.RelayUtilityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/update-bridge-config")
 public class BridgeConfigController {
     private final BridgeConfigService bridgeConfigService;
+    private static final Logger logger = LoggerFactory.getLogger(BridgeConfigController.class);
 
     /**
      * Constructor for the BridgeConfigController.
@@ -41,7 +44,9 @@ public class BridgeConfigController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
+        logger.info("Received request to update bridge configuration: {}", config);
         Map<String, String> response = bridgeConfigService.updateConfigAndReturnResponse(config);
+        logger.info("Response from bridge configuration update: {}", response);
         if (response.get("message").startsWith("Bridge configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
