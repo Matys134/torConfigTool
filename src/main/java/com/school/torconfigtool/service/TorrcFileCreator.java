@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BaseRelayConfig;
-import com.school.torconfigtool.model.BridgeConfig;
-import com.school.torconfigtool.model.GuardConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +21,8 @@ public class TorrcFileCreator {
      *
      * @param filePath The path where the Torrc file will be created.
      * @param config   The configuration to be written to the Torrc file.
-     * @return
      */
-    public static boolean createTorrcFile(String filePath, BaseRelayConfig config) {
+    public static void createTorrcFile(String filePath, BaseRelayConfig config) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             // Write the nickname to the file
             writer.write("Nickname " + config.getNickname());
@@ -68,17 +65,11 @@ public class TorrcFileCreator {
             }
 
             // Write specific configuration based on the type of relay
-            if (config instanceof BridgeConfig) {
-                config.writeSpecificConfig(writer);
-            } else if (config instanceof GuardConfig) {
-                config.writeSpecificConfig(writer);
-            } else {
-                logger.error("Unknown relay type");
-            }
+            RelayWriteConfigService relayWriteConfigService = new RelayWriteConfigService();
+            relayWriteConfigService.writeConfig(config, writer);
         } catch (IOException e) {
             // Log any errors that occur during file creation
             logger.error("Error creating Torrc file", e);
         }
-        return false;
     }
 }
