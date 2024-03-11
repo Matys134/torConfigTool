@@ -34,8 +34,7 @@ public class BridgeRelayOperationsService {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Failed to read torrc file: " + torrcFilePath);
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to read torrc file", e);
         }
 
         return "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;

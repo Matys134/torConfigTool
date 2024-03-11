@@ -20,11 +20,11 @@ public class SnowflakeProxyService {
         try {
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
             if (!snowflakeProxyRunningFile.createNewFile()) {
-                System.err.println("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
+                throw new IOException("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to create snowflake_proxy_running file", e);
         }
     }
 
@@ -33,7 +33,7 @@ public class SnowflakeProxyService {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "snowflake-proxy");
             processBuilder.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to start snowflake proxy", e);
         }
     }
 
@@ -42,7 +42,7 @@ public class SnowflakeProxyService {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "snowflake-proxy");
             processBuilder.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to stop snowflake proxy", e);
         }
     }
 
@@ -51,10 +51,10 @@ public class SnowflakeProxyService {
         try {
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
             if (!snowflakeProxyRunningFile.delete()) {
-                System.err.println("Failed to delete file: " + snowflakeProxyRunningFile.getAbsolutePath());
+                throw new IOException("Failed to remove file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to remove snowflake_proxy_running file", e);
         }
     }
 }

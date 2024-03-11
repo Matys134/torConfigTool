@@ -48,11 +48,10 @@ public class NginxService {
             int exitCode = process.waitFor();
 
             if (exitCode != 0) {
-                System.err.println("Error starting Nginx. Exit code: " + exitCode);
+                throw new IOException("Failed to start Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error starting Nginx");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to start Nginx", e);
         }
     }
 
@@ -62,9 +61,6 @@ public class NginxService {
      * If the command execution fails, it logs the error.
      */
     public void reloadNginx() {
-        // Print the action to the console
-        System.out.println("Reloading Nginx");
-
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -78,12 +74,10 @@ public class NginxService {
 
             // If the exit code is not 0, print an error
             if (exitCode != 0) {
-                System.err.println("Error reloading Nginx. Exit code: " + exitCode);
+                throw new IOException("Failed to reload Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            // Print any exceptions that occur during the process
-            System.err.println("Error reloading Nginx");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to reload Nginx", e);
         }
     }
 
@@ -105,9 +99,7 @@ public class NginxService {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
         } catch (IOException e) {
-            // Print any exceptions that occur during the process
-            System.err.println("Error generating Nginx configuration");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to generate Nginx configuration", e);
         }
     }
 
@@ -167,9 +159,7 @@ public class NginxService {
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            System.err.println("Error changing root directory");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to change root directory", e);
         }
 
         // Create a new process builder
@@ -195,9 +185,7 @@ public class NginxService {
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            System.err.println("Error reverting Nginx default configuration");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to revert Nginx default configuration", e);
         }
     }
 
@@ -289,9 +277,7 @@ public class NginxService {
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            System.err.println("Error modifying Nginx default configuration");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to modify Nginx default configuration", e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -319,11 +305,6 @@ public class NginxService {
             // Return true if the exit code is 0, false otherwise
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
-            // Print any exceptions that occur during the process
-            System.err.println("Error checking Nginx status");
-            e.printStackTrace();
-
-            // Return false if an exception occurs
             return false;
         }
     }
@@ -377,8 +358,7 @@ public class NginxService {
                 throw new IOException("Failed to delete temporary file");
             }
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error generating Nginx configuration");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to edit Nginx configuration", e);
         }
     }
 
@@ -391,8 +371,7 @@ public class NginxService {
                 throw new IOException("Failed to stop Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error stopping Nginx");
-            e.printStackTrace();
+            throw new RuntimeException("Failed to stop Nginx", e);
         }
     }
 

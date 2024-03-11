@@ -64,8 +64,7 @@ public class TorrcFileCreator {
             RelayWriteConfigService relayWriteConfigService = new RelayWriteConfigService();
             relayWriteConfigService.writeConfig(config, writer);
         } catch (IOException e) {
-            // Print any errors that occur during file creation
-            System.err.println("Error creating Torrc file: " + e.getMessage());
+            throw new RuntimeException("Failed to create Torrc file", e);
         }
     }
 }

@@ -26,7 +26,6 @@ public class AcmeService {
         // Generate the certificate
         String username = System.getProperty("user.name");
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt --force";
-        System.out.println("Generating certificate: " + command);
 
         Process certProcess = commandService.executeCommand(command);
         if (certProcess == null || certProcess.exitValue() != 0) {
@@ -35,11 +34,10 @@ public class AcmeService {
     }
 
     /**
-     * This method is used to install a certificate.
-     * It constructs a command to install the certificate and then executes it.
-     * If the command execution fails, it logs the error.
+     * Installs the certificate for the given web tunnel URL.
      *
-     * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
+     * @param webTunnelUrl The web tunnel URL.
+     * @throws Exception If an error occurs during the installation.
      */
     public void installCert(String webTunnelUrl) throws Exception {
         // Get the current working directory
@@ -51,9 +49,6 @@ public class AcmeService {
                 " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
                 " --reloadcmd";
-
-        // Print the command to the console
-        System.out.println(command);
 
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();

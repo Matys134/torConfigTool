@@ -20,13 +20,11 @@ public class CommandService {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                System.err.println("Error during command execution. Exit code: " + exitCode);
+                throw new RuntimeException("Command execution failed with exit code: " + exitCode);
             }
             return process;
         } catch (IOException | InterruptedException e) {
-            System.err.println("Error during command execution");
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Failed to execute command", e);
         }
     }
 }

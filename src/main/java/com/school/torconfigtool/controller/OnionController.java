@@ -38,7 +38,7 @@ public class OnionController {
         if (!hiddenServiceDirs.exists()) {
             boolean dirCreated = hiddenServiceDirs.mkdirs();
             if (!dirCreated) {
-                System.err.println("Failed to create directory: " + hiddenServiceDirsPath);
+                throw new RuntimeException("Failed to create hiddenServiceDirs directory");
             }
         }
     }

@@ -107,7 +107,6 @@ public class RelayStatusService {
      * @throws InterruptedException If the thread is interrupted while waiting.
      */
     public void waitForStatusChange(String relayNickname, String relayType, String expectedStatus) throws InterruptedException {
-        System.out.println("Waiting for status change");
         long startTime = System.currentTimeMillis();
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -116,7 +115,6 @@ public class RelayStatusService {
                 executor.shutdown();
             } else {
                 String status = getRelayStatus(relayNickname, relayType);
-                System.out.println("Status: " + status);
                 if (expectedStatus.equals(status)) {
                     checkAndManageNginxStatus();
                     executor.shutdown();

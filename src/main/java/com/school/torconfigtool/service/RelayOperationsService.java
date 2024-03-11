@@ -65,16 +65,8 @@ public class RelayOperationsService {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
         Process process = processBuilder.start();
 
-        // Log the command being executed
-        System.out.println("Executing command: " + command);
-
         try {
-            int exitCode = process.waitFor();
-
-            // Log the exit code
-            System.out.println("Command exit code: " + exitCode);
-
-            return exitCode;
+            return process.waitFor();
         } finally {
             process.destroy();
         }
@@ -95,8 +87,6 @@ public class RelayOperationsService {
             processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
-            System.err.println("Failed to " + operation + " Tor Relay for relayNickname: " + relayNickname);
-            e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
         return relayOperations(model);
@@ -117,7 +107,6 @@ public class RelayOperationsService {
         {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            System.out.println("Executing command: " + command);
             int exitCode = executeCommand(command);
             if (exitCode != 0) {
                 throw new RuntimeException("Failed to start Tor Relay service.");
@@ -141,8 +130,6 @@ public class RelayOperationsService {
             processRelayOperation(torrcFilePath, relayNickname, start);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
-            System.err.println("Failed to " + operation + " Tor Relay for relayNickname: " + relayNickname);
-            e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
         return relayOperations(model);
@@ -170,7 +157,6 @@ public class RelayOperationsService {
 
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            System.out.println("Executing command: " + command);
             int exitCode = executeCommand(command);
             if (exitCode != 0) {
                 throw new RuntimeException("Failed to start Tor Relay service.");
@@ -222,7 +208,6 @@ public class RelayOperationsService {
 
 
     public String relayOperations(Model model) {
-        System.out.println("Inside relayOperations method");
         String folderPath = torConfigService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "guard"));
 
@@ -231,14 +216,11 @@ public class RelayOperationsService {
         model.addAttribute("onionConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "onion"));
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "onion");
 
-        System.out.println("OnionConfigs: " + onionConfigs);
-
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
             String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
-            System.out.println("Hostname for port " + config.getHiddenServicePort() + ": " + hostname);
         }
 
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge");
@@ -246,11 +228,9 @@ public class RelayOperationsService {
         for (TorConfig config : bridgeConfigs) {
             String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
-            System.out.println("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
 
-        System.out.println("Hostnames: " + hostnames);
         model.addAttribute("hostnames", hostnames);
 
         List<Integer> upnpPorts = upnpService.getUPnPPorts();
@@ -275,8 +255,7 @@ public class RelayOperationsService {
                 // Close the ORPort after the relay has stopped
                 upnpService.closeOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                System.err.println("Error while waiting for relay to stop");
-                e.printStackTrace();
+                throw new RuntimeException("Error while waiting for relay to stop", e);
             }
         }).start();
 
@@ -297,18 +276,15 @@ public class RelayOperationsService {
         } else {
             view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
         }
-        System.out.println("Relay state changed");
 
         new Thread(() -> {
             try {
                 relayStatusService.waitForStatusChange(relayNickname, relayType, "online");
                 upnpService.openOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                System.err.println("Error while waiting for relay to start");
-                e.printStackTrace();
+                throw new RuntimeException("Error while waiting for relay to start", e);
             }
         }).start();
-        System.out.println("Returning view");
 
         return view;
     }
@@ -328,7 +304,6 @@ public class RelayOperationsService {
             String capitalizedRelayType = relayType.substring(0, 1).toUpperCase() + relayType.substring(1);
 
             String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + capitalizedRelayType + "Config");
-            System.out.println("DataDirectoryPath: " + dataDirectoryPath);
 
             // Delete Torrc file
             Files.deleteIfExists(torrcFilePath);
@@ -350,8 +325,6 @@ public class RelayOperationsService {
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
-            System.err.println("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: " + relayNickname);
-            e.printStackTrace();
             response.put("success", false);
         }
         return response;

@@ -135,7 +135,7 @@ public class UPnPService {
                 }
             }
         } catch (IOException e) {
-            System.err.println("An error occurred while reading the torrc file: " + e.getMessage());
+            throw new RuntimeException("Failed to read torrc file", e);
         }
         return orPort;
     }
@@ -185,7 +185,7 @@ public class UPnPService {
                 }
             }
         } catch (IOException e) {
-            System.err.println("An error occurred while reading the torrc file: " + e.getMessage());
+            throw new RuntimeException("Failed to read torrc file", e);
         }
         return additionalPorts;
     }

@@ -130,7 +130,6 @@ public class OnionService {
 
         // Build the correct path to the hostname file
         Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
-        System.out.println(path);
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
