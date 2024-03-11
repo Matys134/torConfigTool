@@ -1,10 +1,10 @@
 $(document).ready(function() {
     // Function to check the limit state and bridge, guard, onion configuration
     function checkStateAndUpdate() {
-        $.get("/guard/limit-state-and-guard-count", function(data) {
+        $.get("/setup/limit-state-and-count", function(data) {
             if (data.limitOn) {
                 const runningTypeRequest = $.get("/bridge/running-type");
-                const bridgeConfiguredRequest = $.get("/guard/bridge-configured");
+                const bridgeConfiguredRequest = $.get("/bridge/bridge-configured");
                 const guardConfiguredRequest = $.get("/guard/guard-configured");
                 const onionConfiguredRequest = $.get("/onion-service/onion-configured");
 

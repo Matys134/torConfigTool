@@ -169,4 +169,15 @@ public class BridgeService {
 
         return response;
     }
+
+    /**
+     * Checks if a Bridge has been configured.
+     *
+     * @return A map containing the result.
+     */
+    public Map<String, Boolean> checkBridgeConfigured() {
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("bridgeConfigured", relayInformationService.getBridgeCount() > 0);
+        return response;
+    }
 }

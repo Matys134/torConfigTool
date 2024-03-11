@@ -1,9 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.BridgeService;
-import com.school.torconfigtool.service.RelayInformationService;
-import com.school.torconfigtool.service.SnowflakeProxyService;
-import com.school.torconfigtool.service.NginxService;
+import com.school.torconfigtool.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +54,7 @@ public class BridgeController {
      * Endpoint for configuring the bridge.
      * @param bridgeType The type of bridge.
      * @param bridgePort The port of the bridge.
-     * @param bridgeTransportListenAddr The transport listen address of the bridge.
+     * @param bridgeTransportListenAddr The transport listen to address of the bridge.
      * @param bridgeContact The contact of the bridge.
      * @param bridgeNickname The nickname of the bridge.
      * @param webtunnelDomain The domain of the web tunnel.
@@ -106,7 +103,7 @@ public class BridgeController {
     /**
      * Endpoint for checking if the bridge limit has been reached.
      * @param bridgeType - The type of bridge to check the limit for.
-     * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge count.
+     * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge counts.
      */
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
@@ -119,11 +116,11 @@ public class BridgeController {
      * @param model The model for the view.
      * @return The name of the setup view.
      */
-    @GetMapping("/setup")
+    /*@GetMapping("/setup")
     public String setup(Model model) {
         model.addAttribute("bridgeLimitReached", relayInformationService.getBridgeCount() >= 2);
         return "setup";
-    }
+    }*/
 
     /**
      * Endpoint for getting the running bridge type.
@@ -166,5 +163,10 @@ public class BridgeController {
     @GetMapping("/limit-state")
     public ResponseEntity<Boolean> getLimitState() {
         return ResponseEntity.ok(RelayInformationService.isLimitOn());
+    }
+
+    @GetMapping("/bridge-configured")
+    public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
+        return ResponseEntity.ok(bridgeService.checkBridgeConfigured());
     }
 }

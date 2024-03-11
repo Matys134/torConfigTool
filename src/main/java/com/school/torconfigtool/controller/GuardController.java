@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardService;
-import com.school.torconfigtool.service.RelayUtilityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,16 +45,6 @@ public class GuardController {
     @GetMapping("/limit-reached")
     public ResponseEntity<Map<String, Object>> checkGuardLimit() {
         return ResponseEntity.ok(guardService.checkGuardLimit());
-    }
-
-    @GetMapping("/bridge-configured")
-    public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
-        return ResponseEntity.ok(guardService.checkBridgeConfigured());
-    }
-
-    @GetMapping("/limit-state-and-guard-count")
-    public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
-        return ResponseEntity.ok(guardService.getLimitStateAndGuardCount());
     }
 
     @GetMapping("/guard-configured")

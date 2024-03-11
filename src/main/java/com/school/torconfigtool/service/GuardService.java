@@ -105,29 +105,6 @@ public class GuardService {
     }
 
     /**
-     * Checks if a Bridge has been configured.
-     *
-     * @return A map containing the result.
-     */
-    public Map<String, Boolean> checkBridgeConfigured() {
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("bridgeConfigured", relayInformationService.getBridgeCount() > 0);
-        return response;
-    }
-
-    /**
-     * Gets the limit state and Guard count.
-     *
-     * @return A map containing the limit state and Guard count.
-     */
-    public Map<String, Object> getLimitStateAndGuardCount() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("limitOn", RelayInformationService.isLimitOn());
-        response.put("guardCount", relayInformationService.getGuardCount());
-        return response;
-    }
-
-    /**
      * Checks if a Guard has been configured.
      *
      * @return A map containing the result.

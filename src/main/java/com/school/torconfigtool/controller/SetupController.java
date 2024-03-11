@@ -1,16 +1,20 @@
 package com.school.torconfigtool.controller;
 
-import org.springframework.http.HttpStatus;
+import com.school.torconfigtool.service.SetupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Map;
 
 @Controller
 public class SetupController {
+
+    private final SetupService setupService;
+
+    public SetupController(SetupService setupService) {
+        this.setupService = setupService;
+    }
 
     /**
      * Handles GET requests to the "/setup" endpoint.
@@ -22,5 +26,10 @@ public class SetupController {
     public String setup() {
         // Add any necessary data to the model
         return "setup"; // "setup" corresponds to your Thymeleaf template file
+    }
+
+    @GetMapping("/limit-state-and-count")
+    public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
+        return ResponseEntity.ok(setupService.getLimitStateAndCount());
     }
 }
