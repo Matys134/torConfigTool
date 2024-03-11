@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -20,9 +18,6 @@ import java.util.List;
  */
 @Service
 public class NginxService {
-
-    // Logger instance for logging events
-    private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
 
     // TorConfigurationService instance for managing Tor configurations
     private final TorConfigService torConfigService;
@@ -45,24 +40,19 @@ public class NginxService {
      * If the command execution fails, it logs the error.
      */
     public void startNginx() {
-        // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
-
-        // Set the command for the process builder
         processBuilder.command("bash", "-c", "sudo systemctl start nginx");
 
         try {
-            // Start the process and wait for it to finish
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
 
-            // If the exit code is not 0, log an error
             if (exitCode != 0) {
-                logger.error("Error starting Nginx. Exit code: " + exitCode);
+                System.err.println("Error starting Nginx. Exit code: " + exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error starting Nginx", e);
+            System.err.println("Error starting Nginx");
+            e.printStackTrace();
         }
     }
 
@@ -86,13 +76,14 @@ public class NginxService {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
 
-            // If the exit code is not 0, log an error
+            // If the exit code is not 0, print an error
             if (exitCode != 0) {
-                logger.error("Error reloading Nginx. Exit code: " + exitCode);
+                System.err.println("Error reloading Nginx. Exit code: " + exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error reloading Nginx", e);
+            // Print any exceptions that occur during the process
+            System.err.println("Error reloading Nginx");
+            e.printStackTrace();
         }
     }
 
@@ -114,8 +105,9 @@ public class NginxService {
                 writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
             }
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error generating Nginx configuration", e);
+            // Print any exceptions that occur during the process
+            System.err.println("Error generating Nginx configuration");
+            e.printStackTrace();
         }
     }
 
@@ -176,7 +168,8 @@ public class NginxService {
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
             // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
+            System.err.println("Error changing root directory");
+            e.printStackTrace();
         }
 
         // Create a new process builder
@@ -203,7 +196,8 @@ public class NginxService {
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
             // Log any exceptions that occur during the process
-            logger.error("Error reverting Nginx default configuration", e);
+            System.err.println("Error reverting Nginx default configuration");
+            e.printStackTrace();
         }
     }
 
@@ -296,7 +290,10 @@ public class NginxService {
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
             // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
+            System.err.println("Error modifying Nginx default configuration");
+            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -322,8 +319,9 @@ public class NginxService {
             // Return true if the exit code is 0, false otherwise
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error checking Nginx status", e);
+            // Print any exceptions that occur during the process
+            System.err.println("Error checking Nginx status");
+            e.printStackTrace();
 
             // Return false if an exception occurs
             return false;
@@ -376,10 +374,11 @@ public class NginxService {
             boolean isDeleted = tempFile.delete();
 
             if (!isDeleted) {
-                logger.error("Failed to delete temporary file: " + tempFile);
+                throw new IOException("Failed to delete temporary file");
             }
         } catch (IOException | InterruptedException e) {
-            logger.error("Error editing Nginx configuration", e);
+            System.err.println("Error generating Nginx configuration");
+            e.printStackTrace();
         }
     }
 
@@ -392,7 +391,8 @@ public class NginxService {
                 throw new IOException("Failed to stop Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to stop Nginx", e);
+            System.err.println("Error stopping Nginx");
+            e.printStackTrace();
         }
     }
 

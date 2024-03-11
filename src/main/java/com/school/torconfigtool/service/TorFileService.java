@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -17,8 +15,6 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
  */
 @Service
 public class TorFileService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TorFileService.class);
 
     /**
      * Builds the file path for a Tor configuration file.
@@ -94,7 +90,6 @@ public class TorFileService {
         try (BufferedReader reader = new BufferedReader(new FileReader(fingerprintFilePath))) {
             return reader.readLine().split(" ")[1].trim();
         } catch (IOException e) {
-            logger.error("Failed to read fingerprint file: {}", fingerprintFilePath, e);
             return null;
         }
     }

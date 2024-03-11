@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -11,8 +9,6 @@ import java.io.IOException;
 public class AcmeService {
 
     private final CommandService commandService;
-
-    private static final Logger logger = LoggerFactory.getLogger(AcmeService.class);
 
     public AcmeService(CommandService commandService) {
         this.commandService = commandService;
@@ -45,7 +41,7 @@ public class AcmeService {
      *
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void installCert(String webTunnelUrl) {
+    public void installCert(String webTunnelUrl) throws Exception {
         // Get the current working directory
         String programLocation = System.getProperty("user.dir");
 
@@ -72,11 +68,13 @@ public class AcmeService {
 
             // If the exit code is not 0, log an error
             if (exitCode != 0) {
-                logger.error("Error during certificate installation. Exit code: " + exitCode);
+                throw new Exception("Error during certificate installation. Exit code: " + exitCode);
             }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error during certificate installation", e);
+            // Create a custom error message
+            String errorMessage = "Error during certificate installation: " + e.getMessage();
+            // Throw a new exception with the custom error message
+            throw new Exception(errorMessage, e);
         }
     }
 }

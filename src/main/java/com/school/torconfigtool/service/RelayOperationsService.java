@@ -3,8 +3,6 @@ package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -26,7 +24,6 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 @Service
 public class RelayOperationsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
     private final TorConfigService torConfigService;
     private final NginxService nginxService;
     private final OnionRelayOperationsService onionRelayOperationsService;
@@ -69,13 +66,13 @@ public class RelayOperationsService {
         Process process = processBuilder.start();
 
         // Log the command being executed
-        logger.info("Executing command: {}", command);
+        System.out.println("Executing command: " + command);
 
         try {
             int exitCode = process.waitFor();
 
             // Log the exit code
-            logger.info("Command exit code: {}", exitCode);
+            System.out.println("Command exit code: " + exitCode);
 
             return exitCode;
         } finally {
@@ -98,7 +95,8 @@ public class RelayOperationsService {
             processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
-            logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
+            System.err.println("Failed to " + operation + " Tor Relay for relayNickname: " + relayNickname);
+            e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
         return relayOperations(model);
@@ -143,7 +141,8 @@ public class RelayOperationsService {
             processRelayOperation(torrcFilePath, relayNickname, start);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
-            logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
+            System.err.println("Failed to " + operation + " Tor Relay for relayNickname: " + relayNickname);
+            e.printStackTrace();
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
         return relayOperations(model);
@@ -232,14 +231,14 @@ public class RelayOperationsService {
         model.addAttribute("onionConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "onion"));
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "onion");
 
-        logger.info("OnionConfigs: {}", onionConfigs);
+        System.out.println("OnionConfigs: " + onionConfigs);
 
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
             String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
-            logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
+            System.out.println("Hostname for port " + config.getHiddenServicePort() + ": " + hostname);
         }
 
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge");
@@ -247,11 +246,11 @@ public class RelayOperationsService {
         for (TorConfig config : bridgeConfigs) {
             String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
-            logger.info("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
+            System.out.println("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
 
-        logger.info("Hostnames: {}", hostnames);
+        System.out.println("Hostnames: " + hostnames);
         model.addAttribute("hostnames", hostnames);
 
         List<Integer> upnpPorts = upnpService.getUPnPPorts();
@@ -276,7 +275,8 @@ public class RelayOperationsService {
                 // Close the ORPort after the relay has stopped
                 upnpService.closeOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to stop", e);
+                System.err.println("Error while waiting for relay to stop");
+                e.printStackTrace();
             }
         }).start();
 
@@ -304,7 +304,8 @@ public class RelayOperationsService {
                 relayStatusService.waitForStatusChange(relayNickname, relayType, "online");
                 upnpService.openOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to start", e);
+                System.err.println("Error while waiting for relay to start");
+                e.printStackTrace();
             }
         }).start();
         System.out.println("Returning view");
@@ -349,7 +350,8 @@ public class RelayOperationsService {
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
+            System.err.println("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: " + relayNickname);
+            e.printStackTrace();
             response.put("success", false);
         }
         return response;

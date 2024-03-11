@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,7 +12,6 @@ import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
  */
 @Service
 public class SnowflakeProxyService {
-    private static final Logger logger = LoggerFactory.getLogger(SnowflakeProxyService.class);
 
     /**
      * Runs the Snowflake proxy.
@@ -23,11 +20,11 @@ public class SnowflakeProxyService {
         try {
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
             if (!snowflakeProxyRunningFile.createNewFile()) {
-                logger.error("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
+                System.err.println("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
 
         } catch (IOException e) {
-            logger.error("Error running snowflake proxy", e);
+            e.printStackTrace();
         }
     }
 
@@ -36,7 +33,7 @@ public class SnowflakeProxyService {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "snowflake-proxy");
             processBuilder.start();
         } catch (IOException e) {
-            logger.error("Error starting Snowflake proxy", e);
+            e.printStackTrace();
         }
     }
 
@@ -45,7 +42,7 @@ public class SnowflakeProxyService {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "snowflake-proxy");
             processBuilder.start();
         } catch (IOException e) {
-            logger.error("Error stopping Snowflake proxy", e);
+            e.printStackTrace();
         }
     }
 
@@ -54,10 +51,10 @@ public class SnowflakeProxyService {
         try {
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
             if (!snowflakeProxyRunningFile.delete()) {
-                logger.error("Failed to delete file: " + snowflakeProxyRunningFile.getAbsolutePath());
+                System.err.println("Failed to delete file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
         } catch (Exception e) {
-            logger.error("Error removing snowflake proxy", e);
+            e.printStackTrace();
         }
     }
 }

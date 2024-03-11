@@ -1,14 +1,13 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
@@ -17,7 +16,6 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
  */
 @Service
 public class BridgeService {
-    private static final Logger logger = LoggerFactory.getLogger(BridgeService.class);
     private static final String TORRC_DIRECTORY_PATH = "torrc";
 
     private final NginxService nginxService;
@@ -40,7 +38,7 @@ public class BridgeService {
     /**
      * Creates a BridgeConfig object.
      *
-     * @param bridgeTransportListenAddr Transport listen address of the bridge.
+     * @param bridgeTransportListenAddr Transport listen to the address of the bridge.
      * @param bridgeType Type of the bridge.
      * @param bridgeNickname Nickname of the bridge.
      * @param bridgePort Port of the bridge.
@@ -55,10 +53,6 @@ public class BridgeService {
     private BridgeConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
         BridgeConfig config = new BridgeConfig();
         config.setBridgeType(bridgeType);
-
-        // Log the bridgeType after setting it in the BridgeRelayConfig object
-        logger.info("Bridge type after setting in BridgeRelayConfig: " + config.getBridgeType());
-
         config.setNickname(bridgeNickname);
         if (bridgePort != null)
             config.setOrPort(String.valueOf(bridgePort));
@@ -83,7 +77,7 @@ public class BridgeService {
      *
      * @param bridgeType Type of the bridge.
      * @param bridgePort Port of the bridge.
-     * @param bridgeTransportListenAddr Transport listen address of the bridge.
+     * @param bridgeTransportListenAddr Transport listen to the address of the bridge.
      * @param bridgeContact Contact of the bridge.
      * @param bridgeNickname Nickname of the bridge.
      * @param webtunnelDomain Domain of the webtunnel.
@@ -91,9 +85,8 @@ public class BridgeService {
      * @param webtunnelUrl URL of the webtunnel.
      * @param webtunnelPort Port of the webtunnel.
      * @param bridgeBandwidth Bandwidth of the bridge.
-     * @param model Model for the view.
      */
-    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth, Model model) throws Exception {
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth) throws Exception {
         if (relayInformationService.getBridgeCount() >= 2) {
             throw new Exception("You can only configure up to 2 bridges.");
         }
@@ -121,13 +114,7 @@ public class BridgeService {
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        // Log the bridgeType before creating the BridgeRelayConfig object
-        logger.info("Bridge type before creating BridgeRelayConfig: " + bridgeType);
-
         BridgeConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
-
-        // Log the bridgeType after creating the BridgeRelayConfig object
-        logger.info("Bridge type after creating BridgeRelayConfig: " + config.getBridgeType());
 
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
@@ -150,7 +137,7 @@ public class BridgeService {
      * Checks if the bridge limit has been reached.
      *
      * @param bridgeType Type of the bridge.
-     * @return Map containing the bridge limit reached status and the bridge count.
+     * @return Map containing the bridge limit reached status and the bridge counts.
      */
     public Map<String, Object> checkBridgeLimit(String bridgeType) {
         Map<String, Object> response = new HashMap<>();

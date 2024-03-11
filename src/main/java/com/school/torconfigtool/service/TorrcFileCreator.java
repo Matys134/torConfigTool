@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BaseRelayConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,8 +11,6 @@ import java.io.IOException;
  * This class is responsible for creating a Torrc file based on the provided configuration.
  */
 public class TorrcFileCreator {
-
-    private static final Logger logger = LoggerFactory.getLogger(TorrcFileCreator.class);
 
     /**
      * Creates a Torrc file at the specified file path with the provided configuration.
@@ -68,8 +64,8 @@ public class TorrcFileCreator {
             RelayWriteConfigService relayWriteConfigService = new RelayWriteConfigService();
             relayWriteConfigService.writeConfig(config, writer);
         } catch (IOException e) {
-            // Log any errors that occur during file creation
-            logger.error("Error creating Torrc file", e);
+            // Print any errors that occur during file creation
+            System.err.println("Error creating Torrc file: " + e.getMessage());
         }
     }
 }

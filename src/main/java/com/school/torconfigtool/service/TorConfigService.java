@@ -4,8 +4,6 @@ import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.model.RelayConfig;
 import com.school.torconfigtool.model.TorConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -21,8 +19,6 @@ import java.util.List;
  */
 @Service
 public class TorConfigService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TorConfigService.class);
 
     /**
      * Reads Tor configurations from the specified folder.
@@ -68,7 +64,7 @@ public class TorConfigService {
                         TorConfig config = parseTorConfiguration(file, relayType);
                         configs.add(config);
                     } catch (IOException e) {
-                        logger.error("Error reading Tor configuration file: {}", file.getName(), e);
+                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -85,7 +81,7 @@ public class TorConfigService {
      */
     private String parseRelayTypeFromFile(File file) {
         String fileName = file.getName();
-        // e.g. assuming file name is "torrc-relayNickname_relayType"
+        // e.g., assuming file name is "torrc-relayNickname_relayType"
         return fileName.substring(fileName.indexOf("_") + 1);
     }
 

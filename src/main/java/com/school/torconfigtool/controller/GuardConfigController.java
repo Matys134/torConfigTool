@@ -3,8 +3,6 @@ package com.school.torconfigtool.controller;
 import com.school.torconfigtool.service.GuardConfigService;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.service.RelayUtilityService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +18,6 @@ import java.util.Map;
 public class GuardConfigController {
 
     private final GuardConfigService guardConfigService;
-    private static final Logger logger = LoggerFactory.getLogger(GuardConfigController.class);
 
     /**
      * Constructs a new GuardConfigController with the provided GuardConfigService.
@@ -39,9 +36,7 @@ public class GuardConfigController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody GuardConfig config) {
-        logger.info("Received request to update guard configuration: {}", config);
         Map<String, String> response = guardConfigService.updateConfigAndReturnResponse(config);
-        logger.info("Response from guard configuration update: {}", response);
         if (response.get("message").startsWith("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
