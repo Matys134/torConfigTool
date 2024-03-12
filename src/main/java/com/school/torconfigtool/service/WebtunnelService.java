@@ -4,6 +4,9 @@ import com.school.torconfigtool.model.BridgeConfig;
 import com.simtechdata.waifupnp.UPnP;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +23,7 @@ public class WebtunnelService {
     private final NginxService nginxService;
     private final AcmeService acmeService;
     private final CommandService commandService;
+    private final TorFileService torFileService;
     private static final String TORRC_DIRECTORY_PATH = "torrc";
 
     /**
@@ -27,10 +31,11 @@ public class WebtunnelService {
      *
      * @param nginxService The NginxService to use.
      */
-    public WebtunnelService(NginxService nginxService, AcmeService acmeService, CommandService commandService) {
+    public WebtunnelService(NginxService nginxService, AcmeService acmeService, CommandService commandService, TorFileService torFileService) {
         this.nginxService = nginxService;
         this.acmeService = acmeService;
         this.commandService = commandService;
+        this.torFileService = torFileService;
     }
 
     /**
@@ -82,5 +87,28 @@ public class WebtunnelService {
         }
         // Write the updated lines back to the file
         Files.write(torrcFilePath, lines);
+    }
+
+    public String getWebtunnelLink(String relayNickname) {
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
+        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
+        String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
+
+        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
+
+        String webtunnelDomainAndPath = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ServerTransportOptions webtunnel url")) {
+                    webtunnelDomainAndPath = line.split("=")[1].trim();
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read torrc file", e);
+        }
+
+        return "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;
     }
 }

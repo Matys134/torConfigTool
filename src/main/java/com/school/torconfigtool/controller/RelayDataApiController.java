@@ -3,7 +3,7 @@ package com.school.torconfigtool.controller;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.model.RelayInfo;
-import com.school.torconfigtool.service.DataService;
+import com.school.torconfigtool.service.RelayDataService;
 import com.school.torconfigtool.model.RelayData;
 import com.school.torconfigtool.service.RelayInformationService;
 import org.springframework.http.ResponseEntity;
@@ -24,29 +24,29 @@ public class RelayDataApiController {
     private final Map<Integer, Deque<String>> relayEventMap = new ConcurrentHashMap<>();
 
     // Service to handle operations related to relay data and events
-    private final DataService dataService;
+    private final RelayDataService relayDataService;
     private final RelayInformationService relayInformationService;
 
     /**
      * Constructor for the DataController class.
-     * @param dataService The service to handle operations related to relay data and events.
+     * @param relayDataService The service to handle operations related to relay data and events.
      */
-    public RelayDataApiController(DataService dataService, RelayInformationService relayInformationService) {
-        this.dataService = dataService;
+    public RelayDataApiController(RelayDataService relayDataService, RelayInformationService relayInformationService) {
+        this.relayDataService = relayDataService;
         this.relayInformationService = relayInformationService;
     }
 
 
     @PostMapping("/relays/{relayId}")
     public ResponseEntity<String> createRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
-        dataService.handleRelayData(relayId, relayData, relayDataMap);
+        relayDataService.handleRelayData(relayId, relayData, relayDataMap);
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
 
     @PostMapping("/relays/{relayId}/event")
     public ResponseEntity<String> createRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
-        dataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
+        relayDataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
 

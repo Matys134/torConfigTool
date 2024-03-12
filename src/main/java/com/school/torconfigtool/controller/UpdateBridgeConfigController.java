@@ -1,7 +1,7 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import com.school.torconfigtool.service.BridgeConfigService;
+import com.school.torconfigtool.service.UpdateBridgeConfigService;
 import com.school.torconfigtool.service.RelayUtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,16 +17,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/update-bridge-config")
 public class UpdateBridgeConfigController {
-    private final BridgeConfigService bridgeConfigService;
+    private final UpdateBridgeConfigService updateBridgeConfigService;
 
     /**
      * This is the constructor for the BridgeConfigController class.
      * It initializes the BridgeConfigService.
-     * @param bridgeConfigService The service to be used for operations related to the bridge configuration.
+     * @param updateBridgeConfigService The service to be used for operations related to the bridge configuration.
      */
     @Autowired
-    public UpdateBridgeConfigController(BridgeConfigService bridgeConfigService) {
-        this.bridgeConfigService = bridgeConfigService;
+    public UpdateBridgeConfigController(UpdateBridgeConfigService updateBridgeConfigService) {
+        this.updateBridgeConfigService = updateBridgeConfigService;
     }
 
     /**
@@ -37,7 +37,7 @@ public class UpdateBridgeConfigController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
-        Map<String, String> response = bridgeConfigService.updateConfigAndReturnResponse(config);
+        Map<String, String> response = updateBridgeConfigService.updateConfigAndReturnResponse(config);
         if (response.get("message").startsWith("Bridge configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {

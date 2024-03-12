@@ -131,7 +131,7 @@ public class RelayStatusService {
      */
     public void checkAndManageNginxStatus() {
         // Get the list of all webTunnels and Onion services
-        List<String> allServices = nginxService.getAllServices();
+        List<String> allServices = nginxService.getAllOnionAndWebTunnelServices();
 
         // Iterate over the list and check the status of each service
         for (String service : allServices) {

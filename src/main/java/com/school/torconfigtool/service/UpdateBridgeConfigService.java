@@ -12,9 +12,9 @@ import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 @Service
-public class BridgeConfigService implements RelayConfigService<BridgeConfig> {
+public class UpdateBridgeConfigService implements RelayConfigService<BridgeConfig> {
 
-    public BridgeConfigService() {
+    public UpdateBridgeConfigService() {
     }
 
     @Override

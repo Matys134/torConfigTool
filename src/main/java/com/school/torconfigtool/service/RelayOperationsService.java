@@ -30,7 +30,8 @@ public class RelayOperationsService {
     private final TorFileService torFileService;
     private final RelayStatusService relayStatusService;
     private final UPnPService upnpService;
-    private final BridgeRelayOperationsService bridgeRelayOperationsService;
+    private final WebtunnelService webtunnelService;
+    private final OnionService onionService;
 
     /**
      * Constructor for RelayOperationsService.
@@ -41,16 +42,16 @@ public class RelayOperationsService {
      * @param torFileService The TorFileService to use.
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
-     * @param bridgeRelayOperationsService The BridgeRelayOperationsService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
         this.onionRelayOperationsService = onionRelayOperationsService;
         this.torFileService = torFileService;
         this.relayStatusService = relayStatusService;
         this.upnpService = upnpService;
-        this.bridgeRelayOperationsService = bridgeRelayOperationsService;
+        this.webtunnelService = webtunnelService;
+        this.onionService = onionService;
     }
 
     /**
@@ -219,14 +220,14 @@ public class RelayOperationsService {
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
-            String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
+            String hostname = onionService.readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
 
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
-            String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
+            String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);

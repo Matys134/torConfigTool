@@ -13,33 +13,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class TorConfig {
 
-    /**
-     * Configuration for the guard node in the Tor network.
-     */
+    // Configuration for the guard node in the Tor network.
     private GuardConfig guardConfig;
 
-    /**
-     * Configuration for the bridge node in the Tor network.
-     */
+    // Configuration for the bridge node in the Tor network.
     private BridgeConfig bridgeConfig;
 
-    /**
-     * Directory for the hidden service in the Tor network.
-     */
+    // The directory for the hidden service in the Tor network
     private String hiddenServiceDir;
 
-    /**
-     * Port for the hidden service in the Tor network.
-     */
+    // The port for the hidden service in the Tor network
     private String hiddenServicePort;
 
-    /**
-     * Bandwidth rate for the Tor network.
-     */
+    // The bandwidth rate of the Tor network
     private String bandwidthRate;
 
-    /**
-     * Hostname for the Tor network.
-     */
+    // The hostname of the Tor network
     private String hostname;
 }

@@ -92,7 +92,7 @@ public class NginxService {
             String currentDirectory = System.getProperty("user.dir");
 
             // Get the index.html file
-            File indexHtml = getFile(currentDirectory);
+            File indexHtml = createAndGetIndexHtmlFile(currentDirectory);
 
             // Write the HTML content to the file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
@@ -111,7 +111,7 @@ public class NginxService {
      * @return The index.html file.
      * @throws IOException If an I/O error occurs.
      */
-    private File getFile(String currentDirectory) throws IOException {
+    private File createAndGetIndexHtmlFile(String currentDirectory) throws IOException {
         // Create the www directory if it does not exist
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
@@ -225,18 +225,7 @@ public class NginxService {
 
         try {
             // Clear the file and write the initial configuration
-            List<String> lines = new ArrayList<>();
-            lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
-
+            List<String> lines = getDefaultNginxConfigLines();
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
 
@@ -375,7 +364,7 @@ public class NginxService {
         }
     }
 
-    public List<String> getAllServices() {
+    public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "onion");

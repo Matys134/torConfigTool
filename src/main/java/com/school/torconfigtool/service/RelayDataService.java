@@ -11,7 +11,7 @@ import java.util.Map;
  * This is a service class that handles operations related to relay data and events.
  */
 @Service
-public class DataService {
+public class RelayDataService {
 
     // Maximum size for the relay data queue
     private static final int MAX_DATA_SIZE = 50;

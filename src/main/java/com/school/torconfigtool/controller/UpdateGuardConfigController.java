@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.GuardConfigService;
+import com.school.torconfigtool.service.UpdateGuardConfigService;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.service.RelayUtilityService;
 import org.springframework.http.HttpStatus;
@@ -17,15 +17,15 @@ import java.util.Map;
 @RequestMapping("/update-guard-config")
 public class UpdateGuardConfigController {
 
-    private final GuardConfigService guardConfigService;
+    private final UpdateGuardConfigService updateGuardConfigService;
 
     /**
      * Constructs a new GuardConfigController with the provided GuardConfigService.
      *
-     * @param guardConfigService the GuardConfigService to be used for GuardConfig operations
+     * @param updateGuardConfigService the GuardConfigService to be used for GuardConfig operations
      */
-    public UpdateGuardConfigController(GuardConfigService guardConfigService) {
-        this.guardConfigService = guardConfigService;
+    public UpdateGuardConfigController(UpdateGuardConfigService updateGuardConfigService) {
+        this.updateGuardConfigService = updateGuardConfigService;
     }
 
     /**
@@ -36,7 +36,7 @@ public class UpdateGuardConfigController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody GuardConfig config) {
-        Map<String, String> response = guardConfigService.updateConfigAndReturnResponse(config);
+        Map<String, String> response = updateGuardConfigService.updateConfigAndReturnResponse(config);
         if (response.get("message").startsWith("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
@@ -44,6 +44,14 @@ public class UpdateGuardConfigController {
         }
     }
 
+    /**
+     * Handles GET requests to check the availability of ports.
+     *
+     * @param nickname     the nickname of the relay
+     * @param orPort       the OR port to be checked
+     * @param controlPort  the control port to be checked
+     * @return a ResponseEntity that contains the availability status of the ports
+     */
     @GetMapping("/check-port-availability")
     public ResponseEntity<?> checkPortAvailability(@RequestParam String nickname, @RequestParam int orPort, @RequestParam int controlPort) {
         boolean arePortsAvailable = RelayUtilityService.portsAreAvailable(nickname, orPort, controlPort);

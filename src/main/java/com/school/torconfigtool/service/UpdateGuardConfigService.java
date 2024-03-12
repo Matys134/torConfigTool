@@ -12,9 +12,9 @@ import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 @Service
-public class GuardConfigService implements RelayConfigService<GuardConfig> {
+public class UpdateGuardConfigService implements RelayConfigService<GuardConfig> {
 
-    public GuardConfigService() {
+    public UpdateGuardConfigService() {
     }
 
     @Override

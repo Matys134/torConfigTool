@@ -206,7 +206,7 @@
 </script>
 <script>
     $(document).ready(function() {
-        $.get("/setup/limit-state", function(data) {
+        $.get("/setup-api/limit-state", function(data) {
             const toggleLimitButton = document.getElementById("toggleLimitButton");
             if (data) {
                 toggleLimitButton.textContent = "Turn Limit Off";
