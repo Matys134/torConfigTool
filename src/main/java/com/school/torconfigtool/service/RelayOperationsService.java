@@ -31,6 +31,7 @@ public class RelayOperationsService {
     private final UPnPService upnpService;
     private final WebtunnelService webtunnelService;
     private final OnionService onionService;
+    private final CommandService commandService;
 
     /**
      * Constructor for RelayOperationsService.
@@ -41,7 +42,7 @@ public class RelayOperationsService {
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService, CommandService commandService) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
         this.torFileService = torFileService;
@@ -49,6 +50,7 @@ public class RelayOperationsService {
         this.upnpService = upnpService;
         this.webtunnelService = webtunnelService;
         this.onionService = onionService;
+        this.commandService = commandService;
     }
 
     /**
@@ -59,7 +61,7 @@ public class RelayOperationsService {
      * @throws IOException If an I/O error occurs.
      * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
      */
-    public int executeCommand(String command) throws IOException, InterruptedException {
+    /*public int executeCommand(String command) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
         Process process = processBuilder.start();
 
@@ -68,7 +70,7 @@ public class RelayOperationsService {
         } finally {
             process.destroy();
         }
-    }
+    }*/
 
     /**
      * This method starts a Tor Relay without updating the torrc file with fingerprints.
@@ -105,9 +107,10 @@ public class RelayOperationsService {
         {
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            int exitCode = executeCommand(command);
-            if (exitCode != 0) {
-                throw new RuntimeException("Failed to start Tor Relay service.");
+            try {
+                commandService.executeCommand(command);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Failed to start Tor Relay service.", e);
             }
         }
     }
@@ -155,19 +158,20 @@ public class RelayOperationsService {
 
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            int exitCode = executeCommand(command);
-            if (exitCode != 0) {
-                throw new RuntimeException("Failed to start Tor Relay service.");
+            try {
+                commandService.executeCommand(command);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Failed to start Tor Relay service.", e);
             }
-
 
         } else {
             int pid = relayStatusService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
                 String command = "kill -SIGINT " + pid;
-                int exitCode = executeCommand(command);
-                if (exitCode != 0) {
-                    throw new RuntimeException("Failed to stop Tor Relay service.");
+                try {
+                    commandService.executeCommand(command);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Failed to stop Tor Relay service.", e);
                 }
             } else if (pid == -1) {
                 throw new RuntimeException("Tor Relay is not running.");
@@ -345,7 +349,7 @@ public class RelayOperationsService {
         String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + relayNickname;
         String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + relayNickname;
 
-        executeCommand(removeNginxConfigCommand);
-        executeCommand(removeSymbolicLinkCommand);
+        commandService.executeCommand(removeNginxConfigCommand);
+        commandService.executeCommand(removeSymbolicLinkCommand);
     }
 }

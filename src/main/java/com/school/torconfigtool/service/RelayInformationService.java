@@ -14,9 +14,18 @@ import java.util.*;
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
+/**
+ * Service class for managing relay information.
+ */
 @Service
 public class RelayInformationService {
 
+    /**
+     * Returns the count of bridge files in the TORRC directory.
+     *
+     * @return the count of bridge files.
+     * @throws RuntimeException if the TORRC directory does not exist or is not a directory.
+     */
     public int getBridgeCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
@@ -35,6 +44,12 @@ public class RelayInformationService {
         return files != null ? files.length : 0;
     }
 
+    /**
+     * Returns the count of guard files in the TORRC directory.
+     *
+     * @return the count of guard files.
+     * @throws RuntimeException if the TORRC directory does not exist or is not a directory.
+     */
     public int getGuardCount() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         if (!torrcDirectory.exists() || !torrcDirectory.isDirectory()) {
@@ -53,6 +68,12 @@ public class RelayInformationService {
         return files != null ? files.length : 0;
     }
 
+    /**
+     * Returns a map of running bridge types with their nicknames.
+     *
+     * @return a map of running bridge types with their nicknames.
+     * @throws RuntimeException if there is an error reading the torrc file.
+     */
     public Map<String, String> getRunningBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
@@ -87,6 +108,11 @@ public class RelayInformationService {
         return runningBridgeTypes;
     }
 
+    /**
+     * Returns a map of bridge types with their counts.
+     *
+     * @return a map of bridge types with their counts.
+     */
     public Map<String, Integer> getBridgeCountByType() {
         Map<String, Integer> bridgeCountByType = new HashMap<>();
         bridgeCountByType.put("obfs4", 0);
@@ -110,6 +136,12 @@ public class RelayInformationService {
         return bridgeCountByType;
     }
 
+    /**
+     * Returns a list of all bridges.
+     *
+     * @return a list of all bridges.
+     * @throws RuntimeException if there is an error reading the torrc file.
+     */
     public List<BridgeConfig> getAllBridges() {
         List<BridgeConfig> bridges = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
@@ -143,7 +175,12 @@ public class RelayInformationService {
         return bridges;
     }
 
-    // method to get all guard relays
+    /**
+     * Returns a list of all guards.
+     *
+     * @return a list of all guards.
+     * @throws RuntimeException if there is an error reading the torrc file.
+     */
     public List<GuardConfig> getAllGuards() {
         List<GuardConfig> guards = new ArrayList<>();
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);

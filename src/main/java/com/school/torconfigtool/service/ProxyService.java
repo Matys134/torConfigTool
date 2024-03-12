@@ -84,7 +84,7 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to start.
      */
     public boolean startProxy() throws IOException, InterruptedException {
-        long proxyPid = start(TORRC_PROXY_FILE);
+        long proxyPid = startProxy(TORRC_PROXY_FILE);
         return proxyPid != -1;
     }
 
@@ -96,7 +96,7 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to stop.
      */
     public boolean stopProxy() throws IOException, InterruptedException {
-        return stop(TORRC_PROXY_FILE);
+        return stopProxy(TORRC_PROXY_FILE);
     }
 
     /**
@@ -136,7 +136,7 @@ public class ProxyService {
      * @throws IOException      If an I/O error occurs.
      * @throws InterruptedException If the current thread is interrupted while waiting for the process to start.
      */
-    public long start(String filePath) throws IOException, InterruptedException {
+    public long startProxy(String filePath) throws IOException, InterruptedException {
         long pid = relayStatusService.getTorRelayPID(filePath);
         if (pid != -1) {
             return pid;
@@ -165,7 +165,7 @@ public class ProxyService {
      * @throws IOException      If an I/O error occurs.
      * @throws InterruptedException If the current thread is interrupted while waiting for the process to stop.
      */
-    public boolean stop(String filePath) throws IOException, InterruptedException {
+    public boolean stopProxy(String filePath) throws IOException, InterruptedException {
         long pid = relayStatusService.getTorRelayPID(filePath);
         if (pid == -1) {
             return false;
@@ -181,28 +181,4 @@ public class ProxyService {
             process.destroy();
         }
     }
-
-    /**
-     * Retrieves the process ID of the running Tor process associated with the given file path.
-     *
-     * @param filePath The file path of the Tor configuration file.
-     * @return The process ID of the running Tor process, or -1 if no process is found.
-     * @throws IOException If an I/O error occurs.
-     */
-    /*public long getRunningTorProcessId(String filePath) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");
-        processBuilder.redirectErrorStream(true);
-        Process process = processBuilder.start();
-        try {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line = reader.readLine();
-                if (line != null) {
-                    return Long.parseLong(line);
-                }
-            }
-            return -1;
-        } finally {
-            process.destroy();
-        }
-    }*/
 }
