@@ -31,7 +31,6 @@ public class RelayOperationsService {
     private final RelayStatusService relayStatusService;
     private final UPnPService upnpService;
     private final WebtunnelService webtunnelService;
-    private final OnionService onionService;
 
     /**
      * Constructor for RelayOperationsService.
@@ -43,7 +42,7 @@ public class RelayOperationsService {
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
         this.onionRelayOperationsService = onionRelayOperationsService;
@@ -51,7 +50,6 @@ public class RelayOperationsService {
         this.relayStatusService = relayStatusService;
         this.upnpService = upnpService;
         this.webtunnelService = webtunnelService;
-        this.onionService = onionService;
     }
 
     /**
@@ -220,7 +218,7 @@ public class RelayOperationsService {
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
-            String hostname = onionService.readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
+            String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
 
