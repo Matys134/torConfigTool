@@ -5,8 +5,8 @@ $(document).ready(function() {
             if (data.limitOn) {
                 const runningTypeRequest = $.get("/bridge-api/bridges/running-type");
                 const bridgeConfiguredRequest = $.get("/bridge-api/bridge-configured");
-                const guardConfiguredRequest = $.get("/guard/guard-configured");
-                const onionConfiguredRequest = $.get("/onion-service/onion-configured");
+                const guardConfiguredRequest = $.get("/guard-api/guard-configured");
+                const onionConfiguredRequest = $.get("/onion-api/onion-configured");
 
                 $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest).done(function(runningTypeData, bridgeData, guardData, onionData) {
                     // Add a new AJAX call to get the bridge count

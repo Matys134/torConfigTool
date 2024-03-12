@@ -2,7 +2,7 @@ $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'obfs4' }, function(dat
     $('#bridgeCount').text(data.bridgeCount + "/2");
 });
 
-$.get("/guard/limit-reached", function(data) {
+$.get("/guard-api/guards/limit-reached", function(data) {
     $('#guardCount').text(data.guardCount + "/8");
 });
 

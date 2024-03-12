@@ -1,7 +1,11 @@
 package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.model.GuardConfig;
+import com.school.torconfigtool.model.RelayInfo;
 import com.school.torconfigtool.service.DataService;
 import com.school.torconfigtool.model.RelayData;
+import com.school.torconfigtool.service.RelayInformationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * This is a REST controller that handles requests related to relay data and events.
  */
 @RestController
-@RequestMapping("/data-api")
-public class DataController {
+@RequestMapping("/relay-data")
+public class RelayDataApiController {
 
     // Maps to store relay data and events, with relay ID as the key
     private final Map<Integer, Deque<RelayData>> relayDataMap = new ConcurrentHashMap<>();
@@ -21,35 +25,27 @@ public class DataController {
 
     // Service to handle operations related to relay data and events
     private final DataService dataService;
+    private final RelayInformationService relayInformationService;
 
     /**
      * Constructor for the DataController class.
      * @param dataService The service to handle operations related to relay data and events.
      */
-    public DataController(DataService dataService) {
+    public RelayDataApiController(DataService dataService, RelayInformationService relayInformationService) {
         this.dataService = dataService;
+        this.relayInformationService = relayInformationService;
     }
 
-    /**
-     * Endpoint to receive relay data.
-     * @param relayId The ID of the relay.
-     * @param relayData The data of the relay.
-     * @return A response entity with a success message.
-     */
-    @PostMapping("/data/{relayId}")
-    public ResponseEntity<String> receiveRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
+
+    @PostMapping("/relays/{relayId}")
+    public ResponseEntity<String> createRelayData(@PathVariable int relayId, @RequestBody RelayData relayData) {
         dataService.handleRelayData(relayId, relayData, relayDataMap);
         return ResponseEntity.ok("Data received successfully for Relay ID: " + relayId);
     }
 
-    /**
-     * Endpoint to receive relay event.
-     * @param relayId The ID of the relay.
-     * @param eventData The event data of the relay.
-     * @return A response entity with a success message.
-     */
-    @PostMapping("/data/{relayId}/event")
-    public ResponseEntity<String> receiveRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
+
+    @PostMapping("/relays/{relayId}/event")
+    public ResponseEntity<String> createRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
         dataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
@@ -59,7 +55,7 @@ public class DataController {
      * @param relayId The ID of the relay.
      * @return A list of events for the given relay ID.
      */
-    @GetMapping("/data/{relayId}/events")
+    @GetMapping("/relays/{relayId}/events")
     public List<String> getRelayEvents(@PathVariable int relayId) {
         return new ArrayList<>(relayEventMap.getOrDefault(relayId, new LinkedList<>()));
     }
@@ -69,7 +65,7 @@ public class DataController {
      * @param relayId The ID of the relay.
      * @return A list of data for the given relay ID.
      */
-    @GetMapping("/data/{relayId}")
+    @GetMapping("/relays/{relayId}")
     public List<RelayData> getRelayData(@PathVariable int relayId) {
         synchronized (relayDataMap) {
             return new ArrayList<>(relayDataMap.getOrDefault(relayId, new LinkedList<>()));
@@ -83,5 +79,32 @@ public class DataController {
     @GetMapping("/control-ports")
     public List<Integer> getControlPorts() {
         return new ArrayList<>(relayDataMap.keySet());
+    }
+
+    /**
+     * This method handles GET requests to "/relay-info".
+     * It fetches and returns a list of all relay information.
+     *
+     * @return a list of RelayInfo instances
+     */
+    @GetMapping("/relay-info")
+    public List<RelayInfo> getRelayInfo() {
+        List<RelayInfo> relayInfoList = new ArrayList<>();
+
+        // Fetch the list of all bridges
+        List<BridgeConfig> bridges = relayInformationService.getAllBridges();
+        for (BridgeConfig bridge : bridges) {
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(bridge.getControlPort()), bridge.getNickname(), "bridge");
+            relayInfoList.add(relayInfo);
+        }
+
+        // Fetch the list of all guards
+        List<GuardConfig> guards = relayInformationService.getAllGuards();
+        for (GuardConfig guard : guards) {
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
+            relayInfoList.add(relayInfo);
+        }
+
+        return relayInfoList;
     }
 }

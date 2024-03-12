@@ -9,16 +9,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 
+/**
+ * This is a Spring MVC Controller that handles requests related to the Proxy.
+ */
 @Controller
 @RequestMapping("/proxy")
 public class ProxyController {
 
     private final ProxyService proxyService;
 
+    /**
+     * Constructor for the ProxyController class.
+     * @param proxyService The service to handle operations related to the Proxy.
+     */
     public ProxyController(ProxyService proxyService) {
         this.proxyService = proxyService;
     }
 
+    /**
+     * Endpoint to display the proxy configuration form.
+     * @param model The Model object to bind data to the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping
     public String proxyConfigurationForm(Model model) {
         try {
@@ -29,6 +41,11 @@ public class ProxyController {
         return "proxy-config";
     }
 
+    /**
+     * Endpoint to start the proxy.
+     * @param model The Model object to bind data to the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/start")
     public String startProxy(Model model) {
         try {
@@ -45,6 +62,11 @@ public class ProxyController {
         return "proxy-config";
     }
 
+    /**
+     * Endpoint to stop the proxy.
+     * @param model The Model object to bind data to the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/stop")
     public String stopProxy(Model model) {
         try {

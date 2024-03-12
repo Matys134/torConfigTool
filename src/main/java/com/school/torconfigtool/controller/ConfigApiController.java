@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * This is a Rest Controller class for handling configuration related requests.
  */
 @RestController
-public class ConfigController {
+public class ConfigApiController {
 
     /**
      * This method is mapped to the "/config" endpoint.

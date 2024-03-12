@@ -21,7 +21,7 @@ $(document).ready(function () {
                         // Make an AJAX call to revert the Nginx configuration
                         $.ajax({
                             type: "POST",
-                            url: "/nginx/revert-nginx-config",
+                            url: "/nginx-api/revert-nginx-config",
                             success: function (response) {
                                 if (response.status === 200) {
                                     alert("Nginx configuration reverted successfully!");

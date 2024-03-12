@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 $('#refresh-nginx').on('click', function () {
     $.ajax({
-        url: '/onion-service/refresh-nginx',
+        url: '/nginx-api/refresh-nginx',
         type: 'POST',
         success: function() {
             alert('Nginx refreshed successfully');

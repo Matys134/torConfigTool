@@ -23,7 +23,7 @@ bridgeTypes.forEach(function(bridgeType) {
     });
 });
 
-$.get("/guard/limit-reached", function(data) {
+$.get("/guard-api/guards/limit-reached", function(data) {
     if (data.guardLimitReached) {
         // Disable the form fields and buttons
         const guardForm = document.getElementById('guardForm');
@@ -58,7 +58,7 @@ $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'obfs4' }, function(dat
     }
 });
 
-$.get("/guard/limit-reached", function(data) {
+$.get("/guard-api/guards/limit-reached", function(data) {
     const guardCountElement = $('#guardCount');
     guardCountElement.text(data.guardCount + "/8");
     if (data.guardCount > 8) {

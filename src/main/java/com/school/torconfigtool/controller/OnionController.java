@@ -24,21 +24,26 @@ public class OnionController {
     TorConfig torConfig = new TorConfig();
 
     @Autowired
-    public OnionController(TorConfigService torConfigService, OnionService onionService, OnionService onionService1) {
+    public OnionController(TorConfigService torConfigService, OnionService onionService) {
         this.torConfigService = torConfigService;
-        this.onionService = onionService1;
+        this.onionService = onionService;
+        initializeOnionController();
+    }
+
+    private void initializeOnionController() {
+        /*
         List<String> onionServicePorts = onionService.getAllOnionServicePorts();
 
         if (!onionServicePorts.isEmpty()) {
             torConfig.setHiddenServicePort(onionServicePorts.getFirst());
-        }
+        }*/
 
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
         File hiddenServiceDirs = new File(hiddenServiceDirsPath);
         if (!hiddenServiceDirs.exists()) {
             boolean dirCreated = hiddenServiceDirs.mkdirs();
             if (!dirCreated) {
-                throw new RuntimeException("Failed to create hiddenServiceDirs directory");
+                throw new RuntimeException("Failed to create hiddenServiceDirs directory.");
             }
         }
     }
@@ -54,12 +59,6 @@ public class OnionController {
         model.addAttribute("hostnames", hostnames);
 
         return "setup";
-    }
-
-    @GetMapping("/current-hostnames")
-    @ResponseBody
-    public Map<String, String> getCurrentHostnames() {
-        return onionService.getCurrentHostnames();
     }
 
     @PostMapping("/configure")
@@ -82,23 +81,5 @@ public class OnionController {
             model.addAttribute("errorMessage", "Failed to start Tor Onion Service.");
         }
         return "setup";
-    }
-
-    @PostMapping("/refresh-nginx")
-    public ResponseEntity<Void> refreshNginx() {
-        try {
-            onionService.refreshNginx();
-            return ResponseEntity.ok().build();
-        } catch (IOException | InterruptedException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/onion-configured")
-    public ResponseEntity<Map<String, Boolean>> checkOnionConfigured() {
-        Map<String, Boolean> response = new HashMap<>();
-        boolean isOnionConfigured = onionService.checkOnionConfigured();
-        response.put("onionConfigured", isOnionConfigured);
-        return ResponseEntity.ok(response);
     }
 }
