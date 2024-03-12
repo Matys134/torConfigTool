@@ -53,63 +53,15 @@ public class RelayOperationsService {
         this.commandService = commandService;
     }
 
-    /**
-     * This method starts a Tor Relay without updating the torrc file with fingerprints.
-     *
-     * @param relayNickname The nickname of the Tor Relay to start.
-     * @param relayType The type of the Tor Relay to start.
-     * @param model The Model to add attributes to.
-     * @return String The name of the view to render.
-     */
-    public String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
-        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-        String operation = "start";
-        try {
-            processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
-            model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
-        } catch (RuntimeException | IOException | InterruptedException e) {
-            model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
-        }
-        return prepareModelForRelayOperationsView(model);
-    }
-
-    /**
-     * This method starts a Tor Relay without updating the torrc file with fingerprints.
-     *
-     * @param torrcFilePath The path to the torrc file of the Tor Relay to start.
-     * @param relayNickname The nickname of the Tor Relay to start.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname) throws IOException, InterruptedException {
-        if (!torrcFilePath.toFile().exists()) {
-            throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
-        }
-        {
-            // Step 3: Start the Relay
-            String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            try {
-                commandService.executeCommand(command);
-            } catch (RuntimeException e) {
-                throw new RuntimeException("Failed to start Tor Relay service.", e);
-            }
-        }
-    }
-
-    /**
-     * This method starts or stops a Tor Relay.
-     *
-     * @param relayNickname The nickname of the Tor Relay to start or stop.
-     * @param relayType The type of the Tor Relay to start or stop.
-     * @param model The Model to add attributes to.
-     * @param start Whether to start or stop the Tor Relay.
-     * @return String The name of the view to render.
-     */
-    public String changeRelayState(String relayNickname, String relayType, Model model, boolean start) {
+    public String changeRelayState(String relayNickname, String relayType, Model model, boolean start, boolean updateFingerprint) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
         try {
-            processRelayOperation(torrcFilePath, relayNickname, start);
+            if (updateFingerprint) {
+                processRelayOperation(torrcFilePath, relayNickname, start, true);
+            } else {
+                processRelayOperation(torrcFilePath, relayNickname, start, false);
+            }
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
@@ -117,25 +69,18 @@ public class RelayOperationsService {
         return prepareModelForRelayOperationsView(model);
     }
 
-    /**
-     * This method starts or stops a Tor Relay.
-     *
-     * @param torrcFilePath The path to the torrc file of the Tor Relay to start or stop.
-     * @param relayNickname The nickname of the Tor Relay to start or stop.
-     * @param start Whether to start or stop the Tor Relay.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
+    private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start, boolean updateFingerprint) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
             throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
         }
         if (start) {
-            // Step 1: Retrieve Fingerprints
-            List<String> allFingerprints = getAllRelayFingerprints();
+            if (updateFingerprint) {
+                // Step 1: Retrieve Fingerprints
+                List<String> allFingerprints = getAllRelayFingerprints();
 
-            // Step 2: Update the torrc File with fingerprints
-            torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+                // Step 2: Update the torrc File with fingerprints
+                torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
+            }
 
             // Step 3: Start the Relay
             String command = "tor -f " + torrcFilePath.toAbsolutePath();
@@ -230,7 +175,7 @@ public class RelayOperationsService {
      * @return String The name of the view to render.
      */
     public String stopRelay(String relayNickname, String relayType, Model model) {
-        String view = changeRelayState(relayNickname, relayType, model, false);
+        String view = changeRelayState(relayNickname, relayType, model, false, true);
 
         new Thread(() -> {
             try {
@@ -255,9 +200,9 @@ public class RelayOperationsService {
     public String startRelay(String relayNickname, String relayType, Model model) {
         String view;
         if ("guard".equals(relayType)) {
-            view = changeRelayState(relayNickname, relayType, model, true);
+            view = changeRelayState(relayNickname, relayType, model, true, true);
         } else {
-            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
+            view = changeRelayState(relayNickname, relayType, model, true, false);
         }
 
         new Thread(() -> {
