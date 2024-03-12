@@ -26,7 +26,6 @@ public class RelayOperationsService {
 
     private final TorConfigService torConfigService;
     private final NginxService nginxService;
-    private final OnionRelayOperationsService onionRelayOperationsService;
     private final TorFileService torFileService;
     private final RelayStatusService relayStatusService;
     private final UPnPService upnpService;
@@ -38,15 +37,13 @@ public class RelayOperationsService {
      *
      * @param torConfigService The TorConfigurationService to use.
      * @param nginxService The NginxService to use.
-     * @param onionRelayOperationsService The OnionRelayOperationsService to use.
      * @param torFileService The TorFileService to use.
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
-        this.onionRelayOperationsService = onionRelayOperationsService;
         this.torFileService = torFileService;
         this.relayStatusService = relayStatusService;
         this.upnpService = upnpService;

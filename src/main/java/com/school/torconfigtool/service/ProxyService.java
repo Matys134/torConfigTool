@@ -16,14 +16,16 @@ public class ProxyService {
 
     private static final String TORRC_PROXY_FILE = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "proxy";
     private final IpAddressRetriever ipAddressRetriever;
+    private final RelayStatusService relayStatusService;
 
     /**
      * Constructor for ProxyService.
      *
      * @param ipAddressRetriever The IpAddressRetriever instance used to retrieve the local IP address.
      */
-    public ProxyService(IpAddressRetriever ipAddressRetriever) {
+    public ProxyService(IpAddressRetriever ipAddressRetriever, RelayStatusService relayStatusService) {
         this.ipAddressRetriever = ipAddressRetriever;
+        this.relayStatusService = relayStatusService;
     }
 
     /**
@@ -33,7 +35,7 @@ public class ProxyService {
      * @return The created File instance.
      * @throws IOException If an I/O error occurs.
      */
-    public File createFile(String filePath) throws IOException {
+    public File createProxyFile(String filePath) throws IOException {
         File file = new File(filePath);
         if (!file.exists() && !file.createNewFile()) {
             throw new IOException("Failed to create " + filePath);
@@ -68,7 +70,7 @@ public class ProxyService {
      * @throws IOException If an I/O error occurs.
      */
     public boolean configureProxy() throws IOException {
-        File torrcFile = createFile(TORRC_PROXY_FILE);
+        File torrcFile = createProxyFile(TORRC_PROXY_FILE);
         String localIpAddress = ipAddressRetriever.getLocalIpAddress();
         writeConfiguration(torrcFile, localIpAddress);
         return true;
@@ -104,7 +106,7 @@ public class ProxyService {
      * @throws IOException If an I/O error occurs.
      */
     public boolean isProxyRunning() throws IOException {
-        return getRunningTorProcessId(TORRC_PROXY_FILE) != -1;
+        return relayStatusService.getTorRelayPID(TORRC_PROXY_FILE) != -1;
     }
 
     /**
@@ -135,13 +137,13 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the process to start.
      */
     public long start(String filePath) throws IOException, InterruptedException {
-        long pid = getRunningTorProcessId(filePath);
+        long pid = relayStatusService.getTorRelayPID(filePath);
         if (pid != -1) {
             return pid;
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "sudo tor -f " + filePath);
-        processBuilder.redirectErrorStream(true); // Redirect stderr to stdout
+        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         try {
             int exitCode = process.waitFor();
@@ -164,7 +166,7 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the process to stop.
      */
     public boolean stop(String filePath) throws IOException, InterruptedException {
-        long pid = getRunningTorProcessId(filePath);
+        long pid = relayStatusService.getTorRelayPID(filePath);
         if (pid == -1) {
             return false;
         }
@@ -187,7 +189,7 @@ public class ProxyService {
      * @return The process ID of the running Tor process, or -1 if no process is found.
      * @throws IOException If an I/O error occurs.
      */
-    public long getRunningTorProcessId(String filePath) throws IOException {
+    /*public long getRunningTorProcessId(String filePath) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", "ps -ef | grep tor | grep " + filePath + " | grep -v grep | awk '{print $2}'");
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
@@ -202,5 +204,5 @@ public class ProxyService {
         } finally {
             process.destroy();
         }
-    }
+    }*/
 }
