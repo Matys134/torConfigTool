@@ -1,12 +1,10 @@
 package com.school.torconfigtool.service;
 
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,18 +17,11 @@ import java.util.concurrent.TimeUnit;
 public class RelayStatusService {
 
     private final TorFileService torFileService;
-    private final NginxService nginxService;
+    @Setter
+    private StatusChangeListener statusChangeListener;
 
-    /**
-     * Constructor for the RelayStatusService class.
-     * It initializes the TorFileService and NginxService instances.
-     *
-     * @param torFileService The TorFileService instance.
-     * @param nginxService The NginxService instance.
-     */
-    public RelayStatusService(TorFileService torFileService, NginxService nginxService) {
+    public RelayStatusService(TorFileService torFileService) {
         this.torFileService = torFileService;
-        this.nginxService = nginxService;
     }
 
     /**
@@ -93,35 +84,15 @@ public class RelayStatusService {
             } else {
                 String status = getRelayStatus(relayNickname, relayType);
                 if (expectedStatus.equals(status)) {
-                    checkAndManageNginxStatus();
+                    if (statusChangeListener != null) {
+                        statusChangeListener.onStatusChange(status);
+                    }
                     executor.shutdown();
                 }
             }
         };
 
         executor.scheduleAtFixedRate(statusCheck, 0, 500, TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * This method is used to check the status of all services and manage the status of the Nginx service accordingly.
-     * If at least one service is online, it starts the Nginx service. If no service is online, it stops the Nginx service.
-     */
-    public void checkAndManageNginxStatus() {
-        // Get the list of all webTunnels and Onion services
-        List<String> allServices = nginxService.getAllOnionAndWebTunnelServices();
-
-        // Iterate over the list and check the status of each service
-        for (String service : allServices) {
-            String status = getRelayStatus(service, "onion");
-            // If at least one service is online, start the Nginx service and return
-            if ("online".equals(status)) {
-                nginxService.startNginx();
-                return;
-            }
-        }
-
-        // If no service is online, stop the Nginx service
-        nginxService.stopNginx();
     }
 
 }
