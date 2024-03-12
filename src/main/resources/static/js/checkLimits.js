@@ -1,13 +1,7 @@
 const bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
 
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
 bridgeTypes.forEach(function(bridgeType) {
-    $.get("/bridge/limit-reached", { bridgeType: bridgeType }, function(data) {
+    $.get("/bridge-api/limit-reached", { bridgeType: bridgeType }, function(data) {
         if (data.bridgeLimitReached) {
             // Disable the bridge form fields and buttons
             const bridgeForm = document.getElementById('bridgeForm');
@@ -50,7 +44,7 @@ $.get("/guard/limit-reached", function(data) {
     }
 });
 
-$.get("/bridge/limit-reached", { bridgeType: 'obfs4' }, function(data) {
+$.get("/bridge-api/limit-reached", { bridgeType: 'obfs4' }, function(data) {
     const bridgeCountElement = $('#bridgeCount');
     bridgeCountElement.text(data.bridgeCount + "/2");
     if (data.bridgeCount > 2) {
@@ -78,7 +72,7 @@ $.get("/guard/limit-reached", function(data) {
     }
 });
 
-$.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
+$.get("/bridge-api/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
     const webtunnelCountElement = $('#webtunnelCount');
     webtunnelCountElement.text(data.bridgeCount + "/1");
     if (data.bridgeCount > 1) {
@@ -92,7 +86,7 @@ $.get("/bridge/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
     }
 });
 
-$.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
+$.get("/bridge-api/limit-reached", { bridgeType: 'snowflake' }, function(data) {
     const snowflakeCountElement = $('#snowflakeCount');
     snowflakeCountElement.text(data.bridgeCount + "/1");
     if (data.bridgeCount > 1) {
@@ -106,7 +100,7 @@ $.get("/bridge/limit-reached", { bridgeType: 'snowflake' }, function(data) {
     }
 });
 
-$.get("/bridge/running-type", function(runningBridgeTypes) {
+$.get("/bridge-api/running-type", function(runningBridgeTypes) {
     if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
         // Extract the first bridge type from the response
         const runningBridgeType = Object.values(runningBridgeTypes)[0];

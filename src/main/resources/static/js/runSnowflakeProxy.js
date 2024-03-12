@@ -1,6 +1,6 @@
 document.getElementById("runSnowflakeProxyButton").addEventListener("click", function () {
     $.ajax({
-        url: '/bridge/run-snowflake-proxy',
+        url: '/bridge-api/run-snowflake-proxy',
         type: 'POST',
         success: function (response) {
             alert("Snowflake proxy started successfully");
