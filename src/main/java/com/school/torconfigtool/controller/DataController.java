@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This is a REST controller that handles requests related to relay data and events.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/data-api")
 public class DataController {
 
     // Maps to store relay data and events, with relay ID as the key

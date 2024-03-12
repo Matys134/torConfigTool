@@ -18,7 +18,7 @@ import java.util.List;
  * @RequestMapping to map the requests to "/api".
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/data-api")
 public class RelayController {
 
     // RelayService instance used to fetch relay information

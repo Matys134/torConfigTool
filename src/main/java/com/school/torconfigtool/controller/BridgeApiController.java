@@ -43,13 +43,13 @@ public class BridgeApiController {
      *
      * @return ResponseEntity<String> - The response entity containing the result of the operation and the corresponding HTTP status.
      */
-    @PostMapping("/run-snowflake-proxy")
-    public ResponseEntity<String> runSnowflakeProxy() {
+    @PostMapping("/setup-snowflake-proxy")
+    public ResponseEntity<String> setupSnowflakeProxy() {
         try {
             snowflakeProxyService.setupSnowflakeProxy();
-            return new ResponseEntity<>("Snowflake proxy started successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Snowflake proxy ready", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error starting snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error configuring snowflake proxy: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -60,7 +60,7 @@ public class BridgeApiController {
      * @param bridgeType - The type of bridge to check the limit for.
      * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge counts.
      */
-    @GetMapping("/limit-reached")
+    @GetMapping("/bridges/limit-reached")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
         Map<String, Object> response = bridgeService.checkBridgeLimit(bridgeType);
         return ResponseEntity.ok(response);
@@ -72,7 +72,7 @@ public class BridgeApiController {
      *
      * @return ResponseEntity<Map<String, String>> - The response entity containing the map with the running bridge type.
      */
-    @GetMapping("/running-type")
+    @GetMapping("/bridges/running-type")
     public ResponseEntity<Map<String, String>> getRunningBridgeType() {
         Map<String, String> response = relayInformationService.getRunningBridgeType();
         return ResponseEntity.ok(response);
@@ -85,7 +85,7 @@ public class BridgeApiController {
      * @return ResponseEntity<Map<String, Boolean>> - The response entity containing the map with the bridge configured status.
      */
     @GetMapping("/bridge-configured")
-    public ResponseEntity<Map<String, Boolean>> checkBridgeConfigured() {
+    public ResponseEntity<Map<String, Boolean>> isBridgeLimitReached() {
         return ResponseEntity.ok(bridgeService.checkBridgeConfigured());
     }
 }

@@ -32,7 +32,7 @@ public class BridgeController {
      * @return The name of the setup view.
      */
     @GetMapping
-    public String bridgeConfigurationForm() {
+    public String getBridgeConfigurationForm() {
         return "setup";
     }
 

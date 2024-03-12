@@ -19,15 +19,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Configuration class for web security.
+ * It provides beans for password encoding, security filter chain and user details service.
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    /**
+     * Bean for password encoder.
+     * @return BCryptPasswordEncoder instance.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Bean for security filter chain.
+     * It configures the security filter chain with http security.
+     * @param http HttpSecurity instance.
+     * @return SecurityFilterChain instance.
+     * @throws Exception if any error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -45,6 +60,12 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Bean for user details service.
+     * It provides a user details service that reads user credentials from a file.
+     * @param encoder BCryptPasswordEncoder instance.
+     * @return UserDetailsService instance.
+     */
     @Bean
     public UserDetailsService userDetailsService(BCryptPasswordEncoder encoder) {
         return username -> {
