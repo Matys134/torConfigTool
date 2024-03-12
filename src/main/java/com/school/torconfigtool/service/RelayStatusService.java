@@ -59,7 +59,7 @@ public class RelayStatusService {
         String command = String.format("ps aux | grep -P '\\b%s\\b' | grep -v grep | awk '{print $2}'", relayNickname);
 
         try {
-            List<String> outputLines = getCommandOutput(command);
+            List<String> outputLines = CommandService.getCommandOutput(command);
 
             // Assuming the PID is on the first line, if not, you need to check the outputLines list.
             if (!outputLines.isEmpty()) {
@@ -71,29 +71,6 @@ public class RelayStatusService {
         } catch (IOException e) {
             return -1;
         }
-    }
-
-    /**
-     * This method is used to execute a bash command and get its output.
-     * It returns the output as a list of strings.
-     *
-     * @param command The bash command to execute.
-     * @return The output of the command as a list of strings.
-     * @throws IOException If an I/O error occurs.
-     */
-    private static List<String> getCommandOutput(String command) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        Process process = processBuilder.start();
-
-        // Read the entire output to ensure we're not missing anything.
-        List<String> outputLines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                outputLines.add(line);
-            }
-        }
-        return outputLines;
     }
 
     /**

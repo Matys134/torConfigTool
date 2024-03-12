@@ -57,11 +57,7 @@ public class RelayOperationsService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
         try {
-            if (updateFingerprint) {
-                processRelayOperation(torrcFilePath, relayNickname, start, true);
-            } else {
-                processRelayOperation(torrcFilePath, relayNickname, start, false);
-            }
+            processRelayOperation(torrcFilePath, relayNickname, start, updateFingerprint);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
         } catch (RuntimeException | IOException | InterruptedException e) {
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
