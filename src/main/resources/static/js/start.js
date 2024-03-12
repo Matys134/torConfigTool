@@ -6,7 +6,7 @@ $(document).ready(function () {
 
         // Send an AJAX request to start the relay
         $.ajax({
-            url: '/relay-operations/start',
+            url: '/relay-operations-api/start',
             type: 'POST',
             data: {
                 relayNickname: nickname,
