@@ -93,7 +93,7 @@ public class RelayOperationsApiController {
     @PostMapping("/open-orport")
     @ResponseBody
     public Map<String, Object> openOrPort(@RequestParam String relayNickname, @RequestParam String relayType) {
-        return relayOperationsService.openOrPort(relayNickname, relayType);
+        return upnpService.openOrPort(relayNickname, relayType);
     }
 
     /**
@@ -104,7 +104,7 @@ public class RelayOperationsApiController {
     @PostMapping("/toggle-upnp")
     @ResponseBody
     public Map<String, Object> toggleUPnP(@RequestParam boolean enable) {
-        return relayOperationsService.toggleUPnP(enable);
+        return upnpService.toggleUPnP(enable);
     }
 
     /**

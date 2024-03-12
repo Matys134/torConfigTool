@@ -25,10 +25,12 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 public class OnionService {
     private final NginxService nginxService;
     private final TorConfig torConfig;
+    private final CommandService commandService;
 
-    public OnionService(NginxService nginxService, TorConfig torConfig) {
+    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService) {
         this.nginxService = nginxService;
         this.torConfig = torConfig;
+        this.commandService = commandService;
     }
 
     /**
@@ -191,5 +193,21 @@ public class OnionService {
             }
         }
         return hostnames;
+    }
+
+    /**
+     * Removes the Nginx configuration and symbolic link files associated with the given relay nickname.
+     * This method is used when you want to completely remove an onion service from the system.
+     *
+     * @param relayNickname The nickname of the relay for which the onion files should be removed.
+     * @throws IOException If an I/O error occurs during the execution of the remove commands.
+     * @throws InterruptedException If the current thread is interrupted while waiting for the command execution process to complete.
+     */
+    public void removeOnionFiles(String relayNickname) throws IOException, InterruptedException {
+        String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + relayNickname;
+        String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + relayNickname;
+
+        commandService.executeCommand(removeNginxConfigCommand);
+        commandService.executeCommand(removeSymbolicLinkCommand);
     }
 }

@@ -54,25 +54,6 @@ public class RelayOperationsService {
     }
 
     /**
-     * This method executes a bash command and returns its exit code.
-     *
-     * @param command The bash command to execute.
-     * @return int The exit code of the command.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    /*public int executeCommand(String command) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        Process process = processBuilder.start();
-
-        try {
-            return process.waitFor();
-        } finally {
-            process.destroy();
-        }
-    }*/
-
-    /**
      * This method starts a Tor Relay without updating the torrc file with fingerprints.
      *
      * @param relayNickname The nickname of the Tor Relay to start.
@@ -89,7 +70,7 @@ public class RelayOperationsService {
         } catch (RuntimeException | IOException | InterruptedException e) {
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
-        return relayOperations(model);
+        return prepareModelForRelayOperationsView(model);
     }
 
     /**
@@ -133,7 +114,7 @@ public class RelayOperationsService {
         } catch (RuntimeException | IOException | InterruptedException e) {
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
-        return relayOperations(model);
+        return prepareModelForRelayOperationsView(model);
     }
 
     /**
@@ -209,7 +190,7 @@ public class RelayOperationsService {
     }
 
 
-    public String relayOperations(Model model) {
+    public String prepareModelForRelayOperationsView(Model model) {
         String folderPath = torConfigService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "guard"));
 
@@ -321,7 +302,7 @@ public class RelayOperationsService {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
             Files.deleteIfExists(torrcOnionFilePath);
 
-            removeOnionFiles(relayNickname);
+            onionService.removeOnionFiles(relayNickname);
 
             nginxService.reloadNginx();
 
@@ -334,22 +315,5 @@ public class RelayOperationsService {
 
     public String getRelayStatus(String relayNickname, String relayType) {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
-    }
-    // openOrPort and closeOrPort methods that take from the UPnPService class
-    public Map<String, Object> openOrPort(String relayNickname, String relayType) {
-        return upnpService.openOrPort(relayNickname, relayType);
-    }
-
-    // toggleUPnP method that takes from the UPnPService class
-    public Map<String, Object> toggleUPnP(boolean enable) {
-        return upnpService.toggleUPnP(enable);
-    }
-
-    public void removeOnionFiles(String relayNickname) throws IOException, InterruptedException {
-        String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + relayNickname;
-        String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + relayNickname;
-
-        commandService.executeCommand(removeNginxConfigCommand);
-        commandService.executeCommand(removeSymbolicLinkCommand);
     }
 }

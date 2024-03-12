@@ -6,7 +6,7 @@ $(document).ready(function () {
 
         // Send an AJAX request to stop the relay
         $.ajax({
-            url: '/relay-operations/stop',
+            url: '/relay-operations-api/stop',
             type: 'POST',
             data: {
                 relayNickname: nickname,
