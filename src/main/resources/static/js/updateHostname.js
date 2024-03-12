@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     function updateHostname() {
-        fetch('/onion-service-api/current-hostnames')
+        fetch('/onion-api/current-hostnames')
             .then(response => response.json())
             .then(hostnames => {
                 for (const [port, hostname] of Object.entries(hostnames)) {
