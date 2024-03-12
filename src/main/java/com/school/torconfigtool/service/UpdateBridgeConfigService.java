@@ -11,12 +11,18 @@ import java.util.Map;
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
+/**
+ * Service class for updating the bridge configuration.
+ */
 @Service
 public class UpdateBridgeConfigService implements RelayConfigService<BridgeConfig> {
 
-    public UpdateBridgeConfigService() {
-    }
-
+    /**
+     * Updates the configuration for a given BridgeConfig object.
+     *
+     * @param config The BridgeConfig object containing the configuration to be updated.
+     * @return true if the configuration was successfully updated, false otherwise.
+     */
     @Override
     public boolean updateConfiguration(BridgeConfig config) {
         try {
@@ -35,11 +41,23 @@ public class UpdateBridgeConfigService implements RelayConfigService<BridgeConfi
         }
     }
 
+    /**
+     * Builds the file path for the torrc file based on the given nickname.
+     *
+     * @param nickname The nickname of the bridge.
+     * @return The file path for the torrc file.
+     */
     @Override
     public String buildTorrcFilePath(String nickname) {
         return String.format(TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "%s_bridge", nickname);
     }
 
+    /**
+     * Updates the configuration for a given BridgeConfig object and returns a response.
+     *
+     * @param config The BridgeConfig object containing the configuration to be updated.
+     * @return A map containing the status and message of the update operation.
+     */
     @Override
     public Map<String, String> updateConfigAndReturnResponse(BridgeConfig config) {
         Map<String, String> response = new HashMap<>();

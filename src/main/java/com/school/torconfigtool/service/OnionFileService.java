@@ -14,7 +14,7 @@ import java.util.Objects;
  * FileService is a Spring Service that provides methods for file operations such as uploading and deleting files.
  */
 @Service
-public class FileService {
+public class OnionFileService {
 
     /**
      * Uploads an array of files to a specified directory.

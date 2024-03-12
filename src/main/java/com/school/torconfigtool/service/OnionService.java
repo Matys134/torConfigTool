@@ -26,11 +26,13 @@ public class OnionService {
     private final NginxService nginxService;
     private final TorConfig torConfig;
     private final CommandService commandService;
+    private final TorrcWriteConfigService torrcWriteConfigService;
 
-    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService) {
+    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService, TorrcWriteConfigService torrcWriteConfigService) {
         this.nginxService = nginxService;
         this.torConfig = torConfig;
         this.commandService = commandService;
+        this.torrcWriteConfigService = torrcWriteConfigService;
     }
 
     /**
@@ -88,9 +90,9 @@ public class OnionService {
         }
 
         try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
-            String currentDirectory = System.getProperty("user.dir");
-            String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
+            torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, torrcWriter);
 
+            String currentDirectory = System.getProperty("user.dir");
             File wwwDir = new File(currentDirectory + "/onion/www");
             if (!wwwDir.exists() && !wwwDir.mkdirs()) {
                 throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
@@ -100,19 +102,6 @@ public class OnionService {
             if (!serviceDir.exists() && !serviceDir.mkdirs()) {
                 throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
             }
-
-            torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
-            torrcWriter.newLine();
-            torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
-            torrcWriter.newLine();
-            torrcWriter.write("RunAsDaemon 1");
-            torrcWriter.newLine();
-            torrcWriter.write("SocksPort 0");
-            torrcWriter.newLine();
-            // Write the DataDirectory configuration to the file
-            String dataDirectoryPath = currentDirectory + "/" + TORRC_DIRECTORY_PATH + "dataDirectory/onion_" + onionServicePort;
-            torrcWriter.write("DataDirectory " + dataDirectoryPath);
-            torrcWriter.newLine();
 
             File indexHtml = new File(serviceDir, "index.html");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {

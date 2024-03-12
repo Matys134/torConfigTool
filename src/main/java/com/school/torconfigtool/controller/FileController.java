@@ -1,6 +1,6 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.FileService;
+import com.school.torconfigtool.service.OnionFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,16 +18,16 @@ import java.util.List;
 @RequestMapping("/file")
 public class FileController {
 
-    private final FileService fileService;
+    private final OnionFileService onionFileService;
 
     /**
      * Constructs a new FileController with the provided FileService.
      *
-     * @param fileService the FileService to be used for file operations
+     * @param onionFileService the FileService to be used for file operations
      */
     @Autowired
-    public FileController(FileService fileService) {
-        this.fileService = fileService;
+    public FileController(OnionFileService onionFileService) {
+        this.onionFileService = onionFileService;
     }
 
     /**
@@ -41,7 +41,7 @@ public class FileController {
     @PostMapping("/upload/{port}")
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port, Model model) {
         try {
-            List<String> fileNames = fileService.uploadFilesToPort(files, port);
+            List<String> fileNames = onionFileService.uploadFilesToPort(files, port);
             model.addAttribute("uploadedFiles", fileNames);
             model.addAttribute("message", "Files uploaded successfully!");
         } catch (Exception e) {
@@ -61,8 +61,8 @@ public class FileController {
     @PostMapping("/remove-files/{port}")
     public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port, Model model) {
         try {
-            fileService.deleteFilesFromPort(fileNames, port);
-            List<String> remainingFileNames = fileService.getUploadedFilesFromPort(port);
+            onionFileService.deleteFilesFromPort(fileNames, port);
+            List<String> remainingFileNames = onionFileService.getUploadedFilesFromPort(port);
             model.addAttribute("uploadedFiles", remainingFileNames);
             model.addAttribute("message", "Files deleted successfully.");
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class FileController {
      */
     @GetMapping("/upload/{port}")
     public String showUploadForm(@PathVariable("port") int port, Model model) {
-        List<String> fileNames = fileService.getUploadedFilesFromPort(port);
+        List<String> fileNames = onionFileService.getUploadedFilesFromPort(port);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
     }

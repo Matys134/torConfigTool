@@ -8,13 +8,16 @@ import java.io.IOException;
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 
 /**
- * Service class for running the Snowflake proxy.
+ * This service class is responsible for managing the Snowflake proxy.
+ * It provides methods to setup, start, stop, and remove the Snowflake proxy.
  */
 @Service
 public class SnowflakeProxyService {
 
     /**
-     * Runs the Snowflake proxy.
+     * This method sets up the Snowflake proxy.
+     * It creates a new file named "snowflake_proxy_running" in the TORRC_DIRECTORY_PATH.
+     * If the file creation fails, it throws an IOException.
      */
     public void setupSnowflakeProxy() {
         try {
@@ -28,6 +31,11 @@ public class SnowflakeProxyService {
         }
     }
 
+    /**
+     * This method starts the Snowflake proxy.
+     * It uses a ProcessBuilder to execute the command "sudo systemctl start snowflake-proxy".
+     * If the command execution fails, it throws an IOException.
+     */
     public void startSnowflakeProxy() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "start", "snowflake-proxy");
@@ -37,6 +45,11 @@ public class SnowflakeProxyService {
         }
     }
 
+    /**
+     * This method stops the Snowflake proxy.
+     * It uses a ProcessBuilder to execute the command "sudo systemctl stop snowflake-proxy".
+     * If the command execution fails, it throws an IOException.
+     */
     public void stopSnowflakeProxy() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "snowflake-proxy");
@@ -46,7 +59,11 @@ public class SnowflakeProxyService {
         }
     }
 
-    // method to remove the snowflake proxy file
+    /**
+     * This method removes the Snowflake proxy.
+     * It deletes the file named "snowflake_proxy_running" from the TORRC_DIRECTORY_PATH.
+     * If the file deletion fails, it throws an IOException.
+     */
     public void removeSnowflakeProxy() {
         try {
             File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");

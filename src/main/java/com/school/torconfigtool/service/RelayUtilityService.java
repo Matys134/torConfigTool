@@ -13,6 +13,12 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 @Service
 public class RelayUtilityService {
 
+    /**
+     * Checks if a relay with the given nickname exists.
+     *
+     * @param relayNickname the nickname of the relay
+     * @return true if the relay exists, false otherwise
+     */
     public static boolean relayExists(String relayNickname) {
         String torrcDirectory = System.getProperty("user.dir") + File.separator + TORRC_DIRECTORY_PATH;
 
@@ -32,6 +38,13 @@ public class RelayUtilityService {
         return false;
     }
 
+    /**
+     * Checks if the given ports are available for the relay with the given nickname.
+     *
+     * @param relayNickname the nickname of the relay
+     * @param ports the ports to check
+     * @return true if the ports are available, false otherwise
+     */
     public static boolean portsAreAvailable(String relayNickname, int... ports) {
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
@@ -66,6 +79,14 @@ public class RelayUtilityService {
         return true;
     }
 
+    /**
+     * Checks if the given relay port and control port are available for the relay with the given nickname.
+     *
+     * @param relayNickname the nickname of the relay
+     * @param relayPort the relay port to check
+     * @param controlPort the control port to check
+     * @return true if the ports are available, false otherwise
+     */
     public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
         try {
             return RelayUtilityService.portsAreAvailable(relayNickname, relayPort, controlPort);

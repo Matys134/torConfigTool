@@ -11,12 +11,19 @@ import java.util.Map;
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
+/**
+ * Service class for updating the Guard Configuration.
+ * Implements the RelayConfigService interface.
+ */
 @Service
 public class UpdateGuardConfigService implements RelayConfigService<GuardConfig> {
 
-    public UpdateGuardConfigService() {
-    }
-
+    /**
+     * Updates the configuration for a given GuardConfig.
+     * If a file with the same name exists, it is deleted and a new one is created.
+     * @param config The GuardConfig to update.
+     * @return true if the update was successful, false otherwise.
+     */
     @Override
     public boolean updateConfiguration(GuardConfig config) {
         try {
@@ -25,8 +32,6 @@ public class UpdateGuardConfigService implements RelayConfigService<GuardConfig>
             if (file.exists()) {
                 boolean deleteResult = file.delete();
                 if (!deleteResult) {
-                    // Handle the case where the file was not successfully deleted,
-                    // For example, you could throw an IOException
                     throw new IOException("Failed to delete file: " + filePath);
                 }
             }
@@ -37,11 +42,22 @@ public class UpdateGuardConfigService implements RelayConfigService<GuardConfig>
         }
     }
 
+    /**
+     * Builds the file path for the Torrc file.
+     * @param nickname The nickname of the GuardConfig.
+     * @return The file path as a string.
+     */
     @Override
     public String buildTorrcFilePath(String nickname) {
         return String.format(TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + "%s_guard", nickname);
     }
 
+    /**
+     * Updates the configuration and returns a response.
+     * The response contains the status and a message.
+     * @param config The GuardConfig to update.
+     * @return A map containing the status and a message.
+     */
     @Override
     public Map<String, String> updateConfigAndReturnResponse(GuardConfig config) {
         Map<String, String> response = new HashMap<>();
