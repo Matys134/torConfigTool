@@ -27,4 +27,9 @@ public class OnionApiController {
         response.put("onionConfigured", isOnionConfigured);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/current-hostnames")
+    public Map<String, String> getCurrentHostnames() {
+        return onionService.getCurrentHostnames();
+    }
 }
