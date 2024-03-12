@@ -1,7 +1,7 @@
 $(document).ready(function () {
     // Function to check and update relay status
     function updateRelayStatus(nickname, relayType) {
-        $.get("/relay-operations/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
+        $.get("/relay-operations-api/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
             console.log(data); // Log the server response
 
             const statusElement = $("#status-" + nickname);

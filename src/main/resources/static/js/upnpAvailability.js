@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $.get("/relay-operations/upnp-availability", function(upnpAvailable) {
+    $.get("/relay-operations-api/upnp-availability", function(upnpAvailable) {
         if (upnpAvailable) {
             $('#upnp-toggle-button').prop('disabled', false);
         } else {
