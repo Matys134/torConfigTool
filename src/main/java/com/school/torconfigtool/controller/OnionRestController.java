@@ -12,11 +12,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/onion-api")
-public class OnionApiController {
+public class OnionRestController {
     private final OnionService onionService;
 
     @Autowired
-    public OnionApiController(OnionService onionService) {
+    public OnionRestController(OnionService onionService) {
         this.onionService = onionService;
     }
 

@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/update-bridge-config")
-public class UpdateBridgeConfigController {
+public class UpdateBridgeConfigRestController {
     private final UpdateBridgeConfigService updateBridgeConfigService;
 
     /**
@@ -25,7 +25,7 @@ public class UpdateBridgeConfigController {
      * @param updateBridgeConfigService The service to be used for operations related to the bridge configuration.
      */
     @Autowired
-    public UpdateBridgeConfigController(UpdateBridgeConfigService updateBridgeConfigService) {
+    public UpdateBridgeConfigRestController(UpdateBridgeConfigService updateBridgeConfigService) {
         this.updateBridgeConfigService = updateBridgeConfigService;
     }
 

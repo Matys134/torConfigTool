@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  * It provides an endpoint for retrieving the server IP address.
  */
 @RestController
-public class ServerController {
+public class ServerRestController {
 
     private final IpAddressRetriever ipAddressRetriever;
 
@@ -19,7 +19,7 @@ public class ServerController {
      * @param ipAddressRetriever The service for retrieving IP address.
      */
     @Autowired
-    public ServerController(IpAddressRetriever ipAddressRetriever) {
+    public ServerRestController(IpAddressRetriever ipAddressRetriever) {
         this.ipAddressRetriever = ipAddressRetriever;
     }
 

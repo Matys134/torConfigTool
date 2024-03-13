@@ -1,4 +1,5 @@
 import os
+import socket
 import threading
 import time
 import getpass
@@ -7,8 +8,13 @@ import requests
 import stem
 from stem.control import EventType, Controller
 
+def get_local_ip():
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    return local_ip
+
 # Define the base API endpoint
-BASE_API_ENDPOINT = "http://192.168.2.126:8080/api/data"
+BASE_API_ENDPOINT = f"https://{get_local_ip()}:8080/api/data"
 
 
 def main():

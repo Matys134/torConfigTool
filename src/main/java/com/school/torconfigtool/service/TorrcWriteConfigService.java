@@ -4,6 +4,7 @@ import com.school.torconfigtool.model.BaseRelayConfig;
 import com.school.torconfigtool.model.BridgeConfig;
 import com.school.torconfigtool.model.GuardConfig;
 import com.school.torconfigtool.model.RelayConfig;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.IOException;
 
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 
+@Service
 public class TorrcWriteConfigService {
 
     private final SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();

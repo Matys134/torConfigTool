@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/relay-operations-api")
-public class RelayOperationsApiController {
+public class RelayOperationsRestController {
 
     private final RelayOperationsService relayOperationsService;
     private final SnowflakeProxyService snowflakeProxyService;
@@ -30,7 +30,7 @@ public class RelayOperationsApiController {
      * @param upnpService The service for UPnP operations.
      */
     @Autowired
-    public RelayOperationsApiController(RelayOperationsService relayOperationsService, SnowflakeProxyService snowflakeProxyService, UPnPService upnpService) {
+    public RelayOperationsRestController(RelayOperationsService relayOperationsService, SnowflakeProxyService snowflakeProxyService, UPnPService upnpService) {
         this.relayOperationsService = relayOperationsService;
         this.snowflakeProxyService = snowflakeProxyService;
         this.upnpService = upnpService;

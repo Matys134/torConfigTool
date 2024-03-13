@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/update-guard-config")
-public class UpdateGuardConfigController {
+public class UpdateGuardConfigRestController {
 
     private final UpdateGuardConfigService updateGuardConfigService;
 
@@ -24,7 +24,7 @@ public class UpdateGuardConfigController {
      *
      * @param updateGuardConfigService the GuardConfigService to be used for GuardConfig operations
      */
-    public UpdateGuardConfigController(UpdateGuardConfigService updateGuardConfigService) {
+    public UpdateGuardConfigRestController(UpdateGuardConfigService updateGuardConfigService) {
         this.updateGuardConfigService = updateGuardConfigService;
     }
 

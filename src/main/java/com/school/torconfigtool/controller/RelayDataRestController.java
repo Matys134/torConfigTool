@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RestController
 @RequestMapping("/relay-data")
-public class RelayDataApiController {
+public class RelayDataRestController {
 
     // Maps to store relay data and events, with relay ID as the key
     private final Map<Integer, Deque<RelayData>> relayDataMap = new ConcurrentHashMap<>();
@@ -31,7 +31,7 @@ public class RelayDataApiController {
      * Constructor for the DataController class.
      * @param relayDataService The service to handle operations related to relay data and events.
      */
-    public RelayDataApiController(RelayDataService relayDataService, RelayInformationService relayInformationService) {
+    public RelayDataRestController(RelayDataService relayDataService, RelayInformationService relayInformationService) {
         this.relayDataService = relayDataService;
         this.relayInformationService = relayInformationService;
     }

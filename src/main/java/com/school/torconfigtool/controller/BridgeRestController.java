@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/bridge-api")
-public class BridgeApiController {
+public class BridgeRestController {
 
     private final RelayInformationService relayInformationService;
     private final BridgeService bridgeService;
@@ -31,7 +31,7 @@ public class BridgeApiController {
      * @param snowflakeProxyService - service for managing the Snowflake proxy
      */
     @Autowired
-    public BridgeApiController(RelayInformationService relayInformationService, BridgeService bridgeService, SnowflakeProxyService snowflakeProxyService) {
+    public BridgeRestController(RelayInformationService relayInformationService, BridgeService bridgeService, SnowflakeProxyService snowflakeProxyService) {
         this.relayInformationService = relayInformationService;
         this.bridgeService = bridgeService;
         this.snowflakeProxyService = snowflakeProxyService;

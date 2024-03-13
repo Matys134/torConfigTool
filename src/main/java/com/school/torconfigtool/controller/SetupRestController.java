@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/setup-api")
-public class SetupApiController {
+public class SetupRestController {
 
     private final SetupService setupService;
 
@@ -26,7 +26,7 @@ public class SetupApiController {
      * @param setupService The service for setup operations.
      */
     @Autowired
-    public SetupApiController(SetupService setupService) {
+    public SetupRestController(SetupService setupService) {
         this.setupService = setupService;
     }
 

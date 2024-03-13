@@ -13,13 +13,13 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/nginx-api")
-public class NginxApiController {
+public class NginxRestController {
 
     private final NginxService nginxService;
     private final OnionService onionService;
 
     @Autowired
-    public NginxApiController(NginxService nginxService, OnionService onionService) {
+    public NginxRestController(NginxService nginxService, OnionService onionService) {
         this.nginxService = nginxService;
         this.onionService = onionService;
     }

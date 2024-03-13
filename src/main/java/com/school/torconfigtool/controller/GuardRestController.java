@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/guard-api")
-public class GuardApiController {
+public class GuardRestController {
 
     // GuardService instance used to perform operations related to Guard.
     private final GuardService guardService;
@@ -25,7 +25,7 @@ public class GuardApiController {
      * @param guardService - GuardService instance is Autowired (injected automatically by Spring).
      */
     @Autowired
-    public GuardApiController(GuardService guardService) {
+    public GuardRestController(GuardService guardService) {
         this.guardService = guardService;
     }
 
