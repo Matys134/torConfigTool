@@ -30,31 +30,15 @@ public class SetupRestController {
         this.setupService = setupService;
     }
 
-    /**
-     * Endpoint to get the limit state and guard count.
-     * @return The limit state and guard count.
-     */
-    @GetMapping("/limit-state-and-count")
-    public ResponseEntity<Map<String, Object>> getLimitStateAndGuardCount() {
-        return ResponseEntity.ok(setupService.getLimitStateAndCount());
+
+    @GetMapping("/limit-state")
+    public ResponseEntity<Map<String, Object>> getLimitState() {
+        return ResponseEntity.ok(setupService.getLimitState());
     }
 
-    /**
-     * Endpoint for toggling the limit on the number of bridges that can be configured.
-     * @return ResponseEntity<Void> - The response entity indicating the result of the operation.
-     */
     @PostMapping("/toggle-limit")
     public ResponseEntity<Void> toggleLimit() {
         RelayInformationService.toggleLimit();
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Endpoint for getting the state of the bridge limit.
-     * @return ResponseEntity<Boolean> - The response entity containing the state of the bridge limit.
-     */
-    @GetMapping("/limit-state")
-    public ResponseEntity<Boolean> getLimitState() {
-        return ResponseEntity.ok(RelayInformationService.isLimitOn());
     }
 }

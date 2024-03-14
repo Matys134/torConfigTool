@@ -8,21 +8,14 @@ import java.util.Map;
 @Service
 public class SetupService {
 
-    private final RelayInformationService relayInformationService;
-
-    public SetupService(RelayInformationService relayInformationService) {
-        this.relayInformationService = relayInformationService;
-    }
-
     /**
-     * Gets the limit state and relay count.
+     * Gets the limit state
      *
-     * @return A map containing the limit state and count.
+     * @return A map containing the limit state
      */
-    public Map<String, Object> getLimitStateAndCount() {
+    public Map<String, Object> getLimitState() {
         Map<String, Object> response = new HashMap<>();
         response.put("limitOn", RelayInformationService.isLimitOn());
-        response.put("guardCount", relayInformationService.getGuardCount());
         return response;
     }
 }

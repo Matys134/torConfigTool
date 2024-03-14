@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Function to check the limit state and bridge, guard, onion configuration
     function checkStateAndUpdate() {
-        $.get("/setup-api/limit-state-and-count", function(data) {
+        $.get("/setup-api/limit-state", function(data) {
             if (data.limitOn) {
                 const runningTypeRequest = $.get("/bridge-api/bridges/configured-type");
                 const bridgeConfiguredRequest = $.get("/bridge-api/bridge-configured");
@@ -74,31 +74,11 @@ $(document).ready(function() {
         $.post("/setup-api/toggle-limit", function() {
             $.get("/setup-api/limit-state", function(data) {
                 const toggleLimitButton = $("#toggleLimitButton");
-                const warningTexts = $(".alert-warning"); // select all warning texts
-
-                if (data) {
-                    // Update the button text
+                if (data.limitOn) {
                     toggleLimitButton.text("Turn Limit Off");
-                    // Show the warning texts
-                    warningTexts.show();
-
-                    // Check if a snowflake bridge is running
-                    $.get("/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
-                        if (runningBridgeTypes && runningBridgeTypes.snowflake_proxy === "snowflake") {
-                            // Disable the form fields in the bridge tab
-                            $('#bridgeForm :input').prop('disabled', true);
-                        }
-                    });
                 } else {
-                    // Update the button text
                     toggleLimitButton.text("Turn Limit On");
-                    // Hide the warning texts
-                    warningTexts.hide();
-                    // Enable the form fields in the bridge tab
-                    $('#bridgeForm :input').prop('disabled', false);
                 }
-
-                // Call the function to update the state of the tabs
                 checkStateAndUpdate();
             });
         });
@@ -230,15 +210,4 @@ $.get("/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
 document.getElementById("toggleLimitButton").addEventListener("click", function () {
     const limitStateCheckbox = document.getElementById("limitState");
     limitStateCheckbox.checked = !limitStateCheckbox.checked;
-});
-
-$(document).ready(function() {
-    $.get("/setup-api/limit-state", function(data) {
-        const toggleLimitButton = document.getElementById("toggleLimitButton");
-        if (data) {
-            toggleLimitButton.textContent = "Turn Limit Off";
-        } else {
-            toggleLimitButton.textContent = "Turn Limit On";
-        }
-    });
 });
