@@ -66,21 +66,25 @@ $(document).ready(function() {
         });
     }
 
-    // Call the function when the page is loaded
+    function updateButtonText() {
+        $.get("/setup-api/limit-state", function(data) {
+            const toggleLimitButton = $("#toggleLimitButton");
+            if (data.limitOn) {
+                toggleLimitButton.text("Turn Limit Off");
+            } else {
+                toggleLimitButton.text("Turn Limit On");
+            }
+        });
+    }
+
     checkStateAndUpdate();
+    updateButtonText();
 
     // Call the function when the button is clicked
     $("#toggleLimitButton").click(function() {
         $.post("/setup-api/toggle-limit", function() {
-            $.get("/setup-api/limit-state", function(data) {
-                const toggleLimitButton = $("#toggleLimitButton");
-                if (data.limitOn) {
-                    toggleLimitButton.text("Turn Limit Off");
-                } else {
-                    toggleLimitButton.text("Turn Limit On");
-                }
-                checkStateAndUpdate();
-            });
+            updateButtonText();
+            checkStateAndUpdate();
         });
     });
 });
