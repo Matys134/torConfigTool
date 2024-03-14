@@ -3,7 +3,7 @@ $(document).ready(function() {
     function checkStateAndUpdate() {
         $.get("/setup-api/limit-state-and-count", function(data) {
             if (data.limitOn) {
-                const runningTypeRequest = $.get("/bridge-api/bridges/running-type");
+                const runningTypeRequest = $.get("/bridge-api/bridges/configured-type");
                 const bridgeConfiguredRequest = $.get("/bridge-api/bridge-configured");
                 const guardConfiguredRequest = $.get("/guard-api/guard-configured");
                 const onionConfiguredRequest = $.get("/onion-api/onion-configured");
@@ -83,7 +83,7 @@ $(document).ready(function() {
                     warningTexts.show();
 
                     // Check if a snowflake bridge is running
-                    $.get("/bridge-api/bridges/running-type", function(runningBridgeTypes) {
+                    $.get("/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
                         if (runningBridgeTypes && runningBridgeTypes.snowflake_proxy === "snowflake") {
                             // Disable the form fields in the bridge tab
                             $('#bridgeForm :input').prop('disabled', true);
@@ -207,7 +207,7 @@ $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'snowflake' }, function
     }
 });
 
-$.get("/bridge-api/bridges/running-type", function(runningBridgeTypes) {
+$.get("/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
     if (runningBridgeTypes && !jQuery.isEmptyObject(runningBridgeTypes)) {
         // Extract the first bridge type from the response
         const runningBridgeType = Object.values(runningBridgeTypes)[0];

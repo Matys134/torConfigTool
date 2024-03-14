@@ -69,7 +69,7 @@ public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(BCryptPasswordEncoder encoder) {
         return username -> {
-            Path path = Paths.get("shellScripts/user");
+            Path path = Paths.get("installation/user");
             String line;
             try {
                 line = Files.readAllLines(path).getFirst();

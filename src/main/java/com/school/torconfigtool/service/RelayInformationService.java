@@ -74,7 +74,7 @@ public class RelayInformationService {
      * @return a map of running bridge types with their nicknames.
      * @throws RuntimeException if there is an error reading the torrc file.
      */
-    public Map<String, String> getRunningBridgeType() {
+    public Map<String, String> getConfiguredBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
         File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
         Map<String, String> runningBridgeTypes = new HashMap<>();

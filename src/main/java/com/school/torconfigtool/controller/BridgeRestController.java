@@ -72,9 +72,9 @@ public class BridgeRestController {
      *
      * @return ResponseEntity<Map<String, String>> - The response entity containing the map with the running bridge type.
      */
-    @GetMapping("/bridges/running-type")
-    public ResponseEntity<Map<String, String>> getRunningBridgeType() {
-        Map<String, String> response = relayInformationService.getRunningBridgeType();
+    @GetMapping("/bridges/configured-type")
+    public ResponseEntity<Map<String, String>> getConfiguredBridgeType() {
+        Map<String, String> response = relayInformationService.getConfiguredBridgeType();
         return ResponseEntity.ok(response);
     }
 
