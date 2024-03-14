@@ -1,8 +1,8 @@
 $(document).ready(function() {
     // Function to check the limit state and bridge, guard, onion configuration
     function checkStateAndUpdate() {
-        $.get("/setup-api/limit-state", function(data) {
-            if (data.limitOn) {
+        $.get("/setup-api/limit-state", function(limitOn) {
+            if (limitOn) {
                 const runningTypeRequest = $.get("/bridge-api/bridges/configured-type");
                 const bridgeConfiguredRequest = $.get("/bridge-api/bridge-configured");
                 const guardConfiguredRequest = $.get("/guard-api/guard-configured");
@@ -67,9 +67,9 @@ $(document).ready(function() {
     }
 
     function updateButtonText() {
-        $.get("/setup-api/limit-state", function(data) {
+        $.get("/setup-api/limit-state", function(limitOn) {
             const toggleLimitButton = $("#toggleLimitButton");
-            if (data.limitOn) {
+            if (limitOn) {
                 toggleLimitButton.text("Turn Limit Off");
             } else {
                 toggleLimitButton.text("Turn Limit On");
