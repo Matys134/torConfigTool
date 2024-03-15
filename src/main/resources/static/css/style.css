@@ -38,3 +38,11 @@ button:hover {
     margin-bottom: 20px;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,.05)!important;
 }
+
+.blue-text {
+    color: blue;
+}
+
+.red-text {
+    color: red;
+}

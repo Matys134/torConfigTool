@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.GuardConfig;
+import com.school.torconfigtool.util.Constants;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -99,7 +100,7 @@ public class GuardService {
             return response;
         }
 
-        response.put("guardLimitReached", guardCount >= 8);
+        response.put("guardLimitReached", guardCount >= Constants.MAX_GUARD_COUNT);
         response.put("guardCount", guardCount);
         return response;
     }

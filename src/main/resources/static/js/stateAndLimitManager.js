@@ -8,21 +8,6 @@ $(document).ready(function() {
         }
     }
 
-    function updateCountAndApplyClasses(countElementId, count, limit) {
-        const countElement = $(countElementId);
-        console.log(`countElement: ${countElement}`);
-        countElement.text(count + "/" + limit);
-        if (count > limit) {
-            countElement.removeClass('limit-reached');
-            countElement.addClass('over-limit');
-        } else if (count == limit) {
-            countElement.removeClass('over-limit');
-            countElement.addClass('limit-reached');
-        } else {
-            countElement.removeClass('limit-reached over-limit');
-        }
-    }
-
     function handleLimitReached(apiEndpoint, bridgeType, formId) {
         $.get(apiEndpoint, { bridgeType: bridgeType }, function(data) {
             if (data.bridgeLimitReached) {
@@ -35,8 +20,6 @@ $(document).ready(function() {
 
                 document.querySelector('.container').appendChild(messageDiv);
             }
-
-            updateCountAndApplyClasses('#' + bridgeType + 'Count', data.bridgeCount, bridgeType === 'webtunnel' || bridgeType === 'snowflake' ? 1 : 2);
         });
     }
 

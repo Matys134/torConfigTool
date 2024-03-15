@@ -3,11 +3,13 @@ package com.school.torconfigtool.controller;
 import com.school.torconfigtool.service.BridgeService;
 import com.school.torconfigtool.service.RelayInformationService;
 import com.school.torconfigtool.service.SnowflakeProxyService;
+import com.school.torconfigtool.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -87,5 +89,14 @@ public class BridgeRestController {
     @GetMapping("/bridge-configured")
     public ResponseEntity<Map<String, Boolean>> isBridgeLimitReached() {
         return ResponseEntity.ok(bridgeService.checkBridgeConfigured());
+    }
+
+    @GetMapping("/bridges/max-count")
+    public ResponseEntity<Map<String, Integer>> getMaxBridgeCount() {
+        Map<String, Integer> response = new HashMap<>();
+        response.put("obfs4", Constants.MAX_OBFS4_COUNT);
+        response.put("webtunnel", Constants.MAX_WEBTUNNEL_COUNT);
+        response.put("snowflake", Constants.MAX_SNOWFLAKE_COUNT);
+        return ResponseEntity.ok(response);
     }
 }

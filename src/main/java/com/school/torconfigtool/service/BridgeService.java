@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.util.Constants;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -87,9 +88,6 @@ public class BridgeService {
      * @param bridgeBandwidth Bandwidth of the bridge.
      */
     public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth) throws Exception {
-        if (relayInformationService.getBridgeCount() >= 2) {
-            throw new Exception("You can only configure up to 2 bridges.");
-        }
 
         if (RelayUtilityService.relayExists(bridgeNickname)) {
             throw new Exception("A relay with the same nickname already exists.");
@@ -151,15 +149,15 @@ public class BridgeService {
 
         switch (bridgeType) {
             case "obfs4":
-                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= 2);
+                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= Constants.MAX_OBFS4_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("obfs4"));
                 break;
             case "webtunnel":
-                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= 1);
+                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= Constants.MAX_WEBTUNNEL_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
                 break;
             case "snowflake":
-                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= 1);
+                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= Constants.MAX_SNOWFLAKE_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("snowflake"));
                 break;
             default:
