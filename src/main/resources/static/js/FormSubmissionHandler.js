@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('#guardForm').on('submit', function(e) {
-        const bandwidth = parseInt($('#guardBandwidth').val());
+        const bandwidth = parseInt($('#relayBandwidth').val());
         if (bandwidth !== 0 && bandwidth < 75) {
             alert("Bandwidth must be 0 or 75 and larger");
             e.preventDefault(); // prevent form from being submitted

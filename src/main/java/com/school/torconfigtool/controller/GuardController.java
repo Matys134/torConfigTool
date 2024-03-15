@@ -41,7 +41,7 @@ public class GuardController {
      * @param relayPort The port of the relay.
      * @param relayContact The contact information for the relay.
      * @param controlPort The control port for the relay.
-     * @param guardBandwidth The bandwidth for the guard. This is optional.
+     * @param relayBandwidth The bandwidth for the guard. This is optional.
      * @param model The Model object to be used for adding attributes to the view.
      * @return The name of the view to be rendered, in this case "setup".
      */
@@ -50,10 +50,10 @@ public class GuardController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
-                                 @RequestParam(required = false) Integer guardBandwidth,
+                                 @RequestParam(required = false) Integer relayBandwidth,
                                  Model model) {
         try {
-            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, guardBandwidth);
+            guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
             model.addAttribute("successMessage", "Tor Relay configured successfully!");
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Failed to configure Tor Relay: " + e.getMessage());
