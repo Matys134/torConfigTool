@@ -63,36 +63,18 @@ public class RelayUtilityService {
                         String line;
                         while ((line = reader.readLine()) != null) {
                             for (int port : ports) {
-                                if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort")) &&
+                                if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort") || line.contains("ServerTransportListenAddr")) &&
                                         (line.contains(String.valueOf(port)))) {
                                     return false;
                                 }
                             }
                         }
                     } catch (IOException e) {
-                        // Handle exceptions as needed
+                        throw new RuntimeException("Failed to read torrc file: " + e.getMessage());
                     }
                 }
             }
         }
-
         return true;
-    }
-
-    /**
-     * Checks if the given relay port and control port are available for the relay with the given nickname.
-     *
-     * @param relayNickname the nickname of the relay
-     * @param relayPort the relay port to check
-     * @param controlPort the control port to check
-     * @return true if the ports are available, false otherwise
-     */
-    public boolean arePortsAvailable(String relayNickname, int relayPort, int controlPort) {
-        try {
-            return RelayUtilityService.portsAreAvailable(relayNickname, relayPort, controlPort);
-        } catch (Exception e) {
-            // Handle exceptions as needed
-            return false;
-        }
     }
 }

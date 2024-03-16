@@ -36,22 +36,26 @@ public class BridgeService {
         this.relayInformationService = relayInformationService;
     }
 
-    /**
-     * Creates a BridgeConfig object.
-     *
-     * @param bridgeTransportListenAddr Transport listen to the address of the bridge.
-     * @param bridgeType Type of the bridge.
-     * @param bridgeNickname Nickname of the bridge.
-     * @param bridgePort Port of the bridge.
-     * @param bridgeContact Contact of the bridge.
-     * @param bridgeControlPort Control port of the bridge.
-     * @param bridgeBandwidth Bandwidth of the bridge.
-     * @param webtunnelDomain Domain of the webtunnel.
-     * @param webtunnelUrl URL of the webtunnel.
-     * @param webtunnelPort Port of the webtunnel.
-     * @return BridgeConfig object.
-     */
-    private BridgeConfig createBridgeConfig(Integer bridgeTransportListenAddr, String bridgeType, String bridgeNickname, Integer bridgePort, String bridgeContact, int bridgeControlPort, Integer bridgeBandwidth, String webtunnelDomain, String webtunnelUrl, Integer webtunnelPort) {
+    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth) throws Exception {
+
+        if (RelayUtilityService.relayExists(bridgeNickname)) {
+            throw new Exception("A relay with the same nickname already exists.");
+        }
+
+        if (bridgePort == null && bridgeTransportListenAddr == null) {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
+                throw new Exception("One or more ports are already in use.");
+            }
+        } else {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
+                throw new Exception("One or more ports are already in use.");
+            }
+        }
+
+        String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
+        Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
+
+        // Create BridgeConfig directly in the configureBridge method
         BridgeConfig config = new BridgeConfig();
         config.setBridgeType(bridgeType);
         config.setNickname(bridgeNickname);
@@ -69,50 +73,6 @@ public class BridgeService {
             config.setWebtunnelPort(webtunnelPort);
         if (bridgeTransportListenAddr != null)
             config.setServerTransport(String.valueOf(bridgeTransportListenAddr));
-
-        return config;
-    }
-
-    /**
-     * Configures a Tor bridge.
-     *
-     * @param bridgeType Type of the bridge.
-     * @param bridgePort Port of the bridge.
-     * @param bridgeTransportListenAddr Transport listen to the address of the bridge.
-     * @param bridgeContact Contact of the bridge.
-     * @param bridgeNickname Nickname of the bridge.
-     * @param webtunnelDomain Domain of the webtunnel.
-     * @param bridgeControlPort Control port of the bridge.
-     * @param webtunnelUrl URL of the webtunnel.
-     * @param webtunnelPort Port of the webtunnel.
-     * @param bridgeBandwidth Bandwidth of the bridge.
-     */
-    public void configureBridge(String bridgeType, Integer bridgePort, Integer bridgeTransportListenAddr, String bridgeContact, String bridgeNickname, String webtunnelDomain, int bridgeControlPort, String webtunnelUrl, Integer webtunnelPort, Integer bridgeBandwidth) throws Exception {
-
-        if (RelayUtilityService.relayExists(bridgeNickname)) {
-            throw new Exception("A relay with the same nickname already exists.");
-        }
-
-        // Check if the ports are available
-        if (webtunnelPort != null) {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort, webtunnelPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        }
-        else if (bridgePort == null && bridgeTransportListenAddr == null) {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        } else {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        }
-
-        String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
-        Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
-
-        BridgeConfig config = createBridgeConfig(bridgeTransportListenAddr, bridgeType, bridgeNickname, bridgePort, bridgeContact, bridgeControlPort, bridgeBandwidth, webtunnelDomain, webtunnelUrl, webtunnelPort);
 
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);

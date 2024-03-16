@@ -20,7 +20,6 @@ public class GuardService {
 
     // RelayService instance for relay operations
     private final RelayInformationService relayInformationService;
-    private final RelayUtilityService relayUtilityService;
 
     // Directory path for torrc files
 
@@ -30,42 +29,19 @@ public class GuardService {
      *
      * @param relayInformationService The service to be used for relay operations.
      */
-    public GuardService(RelayInformationService relayInformationService, RelayUtilityService relayUtilityService) {
+    public GuardService(RelayInformationService relayInformationService) {
         this.relayInformationService = relayInformationService;
-        this.relayUtilityService = relayUtilityService;
     }
 
     /**
-     * Creates a new GuardRelayConfig object with the given parameters.
+     * Configures a Guard relay with the provided parameters.
      *
-     * @param relayNickname   The nickname of the Guard Relay.
-     * @param relayPort       The OR port of the Guard Relay.
-     * @param relayContact    The contact information of the Guard Relay.
-     * @param controlPort     The control port of the Guard Relay.
-     * @param relayBandwidth  The bandwidth of the Guard Relay.
-     * @return A new GuardRelayConfig object with the given parameters.
-     */
-    private GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) {
-        GuardConfig config = new GuardConfig();
-        config.setNickname(relayNickname);
-        config.setOrPort(String.valueOf(relayPort));
-        config.setContact(relayContact);
-        config.setControlPort(String.valueOf(controlPort));
-        if (relayBandwidth != null) {
-            config.setBandwidthRate(String.valueOf(relayBandwidth));
-        }
-        return config;
-    }
-
-    /**
-     * Configures a Guard Relay with the given parameters.
-     *
-     * @param relayNickname   The nickname of the Guard Relay.
-     * @param relayPort       The OR port of the Guard Relay.
-     * @param relayContact    The contact information of the Guard Relay.
-     * @param controlPort     The control port of the Guard Relay.
-     * @param relayBandwidth  The bandwidth of the Guard Relay.
-     * @throws Exception If the ports are not available or a relay with the same nickname already exists.
+     * @param relayNickname   The nickname of the relay.
+     * @param relayPort       The port of the relay.
+     * @param relayContact    The contact information for the relay.
+     * @param controlPort     The control port for the relay.
+     * @param relayBandwidth  The bandwidth for the guard. This is optional.
+     * @throws Exception if the relay already exists, or if the ports are already in use.
      */
     public void configureGuard(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) throws Exception {
         String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
@@ -75,11 +51,17 @@ public class GuardService {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (!relayUtilityService.arePortsAvailable(relayNickname, relayPort, controlPort)) {
+        if (!RelayUtilityService.portsAreAvailable(relayNickname, relayPort, controlPort)) {
             throw new Exception("One or more ports are already in use.");
         }
 
-        GuardConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+        GuardConfig config = new GuardConfig();
+        config.setNickname(relayNickname);
+        config.setOrPort(String.valueOf(relayPort));
+        config.setContact(relayContact);
+        config.setControlPort(String.valueOf(controlPort));
+        config.setBandwidthRate(String.valueOf(relayBandwidth));
+
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }

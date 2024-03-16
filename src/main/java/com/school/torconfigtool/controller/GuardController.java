@@ -50,7 +50,7 @@ public class GuardController {
                                  @RequestParam int relayPort,
                                  @RequestParam String relayContact,
                                  @RequestParam int controlPort,
-                                 @RequestParam(required = false) Integer relayBandwidth,
+                                 @RequestParam Integer relayBandwidth,
                                  Model model) {
         try {
             guardService.configureGuard(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
