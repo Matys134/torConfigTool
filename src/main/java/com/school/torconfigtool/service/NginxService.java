@@ -197,7 +197,7 @@ public class NginxService {
         lines.add("server {");
         lines.add("    listen 80 default_server;");
         lines.add("    listen [::]:80 default_server;");
-        lines.add("    root " + currentDirectory + "/onion/www/service-80;");
+        lines.add("    root " + currentDirectory + "/onion/www/service-443;");
         lines.add("    index index.html index.htm index.nginx-debian.html;");
         lines.add("    server_name _;");
         lines.add("    location / {");
@@ -237,11 +237,11 @@ public class NginxService {
             lines.add("server {");
             lines.add("    listen [::]:443 ssl http2;");
             lines.add("    listen 443 ssl http2;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
+            lines.add("    root " + programLocation + "/onion/www/service-443;");
             lines.add("    index index.html index.htm index.nginx-debian.html;");
             lines.add("    server_name $SERVER_ADDRESS;");
-            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
-            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
+            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-443/fullchain.pem;");
+            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-443/key.pem;");
             lines.add("    location = /" + randomString + " {");
             lines.add("        proxy_pass http://127.0.0.1:15000;");
             lines.add("        proxy_http_version 1.1;");
