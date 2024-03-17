@@ -56,7 +56,7 @@ public class WebtunnelService {
         String programLocation = System.getProperty("user.dir");
 
         String username = System.getProperty("user.name");
-        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-80";
+        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-443";
         Process chownProcess = commandService.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
@@ -64,6 +64,8 @@ public class WebtunnelService {
 
         // Call the new method to generate the certificate
         acmeService.generateCertificate(webTunnelUrl, programLocation);
+
+        UPnP.closePortTCP(80);
     }
 
     /**

@@ -101,7 +101,7 @@ public class RelayInformationService {
             }
         }
 
-        if (new File(torrcDirectory, "snowflake_proxy_running").exists()) {
+        if (new File(torrcDirectory, "snowflake_proxy_configured").exists()) {
             runningBridgeTypes.put("snowflake_proxy", "snowflake");
         }
 
@@ -129,7 +129,7 @@ public class RelayInformationService {
         }
 
         // Count the number of running snowflake proxies
-        if (new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running").exists()) {
+        if (new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_configured").exists()) {
             bridgeCountByType.put("snowflake", bridgeCountByType.get("snowflake") + 1);
         }
 

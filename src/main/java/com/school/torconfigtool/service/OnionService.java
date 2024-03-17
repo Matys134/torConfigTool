@@ -142,7 +142,7 @@ public class OnionService {
         String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + onionServicePort + "_onion";
         if (!new File(pathToFile).exists()) {
             createTorrcFile(pathToFile, onionServicePort);
-            nginxService.generateNginxConfig(onionServicePort);
+            nginxService.generateIndexConfig(onionServicePort);
 
             // Restart nginx
             nginxService.reloadNginx();

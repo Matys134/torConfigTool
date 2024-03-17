@@ -16,18 +16,18 @@ public class SnowflakeProxyService {
 
     /**
      * This method sets up the Snowflake proxy.
-     * It creates a new file named "snowflake_proxy_running" in the TORRC_DIRECTORY_PATH.
+     * It creates a new file named "snowflake_proxy_configured" in the TORRC_DIRECTORY_PATH.
      * If the file creation fails, it throws an IOException.
      */
     public void setupSnowflakeProxy() {
         try {
-            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
+            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_configured");
             if (!snowflakeProxyRunningFile.createNewFile()) {
                 throw new IOException("Failed to create file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create snowflake_proxy_running file", e);
+            throw new RuntimeException("Failed to create snowflake_proxy_configured file", e);
         }
     }
 
@@ -61,17 +61,17 @@ public class SnowflakeProxyService {
 
     /**
      * This method removes the Snowflake proxy.
-     * It deletes the file named "snowflake_proxy_running" from the TORRC_DIRECTORY_PATH.
+     * It deletes the file named "snowflake_proxy_configured" from the TORRC_DIRECTORY_PATH.
      * If the file deletion fails, it throws an IOException.
      */
     public void removeSnowflakeProxy() {
         try {
-            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_running");
+            File snowflakeProxyRunningFile = new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_configured");
             if (!snowflakeProxyRunningFile.delete()) {
                 throw new IOException("Failed to remove file: " + snowflakeProxyRunningFile.getAbsolutePath());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to remove snowflake_proxy_running file", e);
+            throw new RuntimeException("Failed to remove snowflake_proxy_configured file", e);
         }
     }
 }

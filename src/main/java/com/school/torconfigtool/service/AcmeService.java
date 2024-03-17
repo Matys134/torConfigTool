@@ -31,7 +31,7 @@ public class AcmeService {
      */
     public void generateCertificate(String webTunnelUrl, String programLocation) throws Exception {
         // Create the directory for the certificate files
-        String certDirectory = programLocation + "/onion/certs/service-80/";
+        String certDirectory = programLocation + "/onion/certs/service-443/";
         File dir = new File(certDirectory);
         boolean isDirectoryCreated = dir.mkdirs();
         if (!isDirectoryCreated && !dir.exists()) {
@@ -40,7 +40,8 @@ public class AcmeService {
 
         // Generate the certificate
         String username = System.getProperty("user.name");
-        String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation + "/onion/www/service-80/ --nginx --server letsencrypt --force";
+        String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
+                + "/onion/www/service-443/ --nginx --server letsencrypt";
 
         Process certProcess = commandService.executeCommand(command);
         if (certProcess == null || certProcess.exitValue() != 0) {
@@ -87,10 +88,12 @@ public class AcmeService {
      * @param programLocation The location of the program.
      * @return The process builder for the certificate installation command.
      */
-    private static ProcessBuilder createCertInstallationProcessBuilder(String webTunnelUrl, String username, String programLocation) {
-        String command = "/home/" + username + "/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d " + webTunnelUrl +
-                " --key-file " + programLocation + "/onion/certs/service-80/key.pem" +
-                " --fullchain-file " + programLocation + "/onion/certs/service-80/fullchain.pem" +
+    private static ProcessBuilder createCertInstallationProcessBuilder(String webTunnelUrl, String username,
+                                                                       String programLocation) {
+        String command = "/home/" + username + "/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d "
+                + webTunnelUrl +
+                " --key-file " + programLocation + "/onion/certs/service-443/key.pem" +
+                " --fullchain-file " + programLocation + "/onion/certs/service-443/fullchain.pem" +
                 " --reloadcmd";
 
         // Create a new process builder

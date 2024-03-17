@@ -24,7 +24,7 @@ public class NginxRestController {
         this.onionService = onionService;
     }
 
-    @PostMapping("/revert-config")
+    @PostMapping("/revert-nginx-config")
     public ResponseEntity<String> revertNginxConfig() {
         try {
             nginxService.revertNginxDefaultConfig();

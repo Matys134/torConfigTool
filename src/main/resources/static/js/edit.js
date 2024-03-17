@@ -160,7 +160,7 @@ $(document).ready(function () {
         };
 
         $.get("/server-ip", function(serverIp) {
-        $.get("https://" + serverIp + ":8080/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
@@ -196,7 +196,7 @@ $(document).ready(function () {
         console.log('path:', data.path);
 
         $.get("/server-ip", function(serverIp) {
-        $.get("https://" + serverIp + ":8080/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
 
             hideModal();

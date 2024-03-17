@@ -35,7 +35,7 @@ public class RelayOperationsController {
     @GetMapping
     public String relayOperations(Model model) {
         relayOperationsService.prepareModelForRelayOperationsView(model);
-        boolean isSnowflakeConfigured = new File(TORRC_DIRECTORY_PATH + "snowflake_proxy_running").exists();
+        boolean isSnowflakeConfigured = new File(TORRC_DIRECTORY_PATH + "snowflake_proxy_configured").exists();
         model.addAttribute("isSnowflakeConfigured", isSnowflakeConfigured);
         return "relay-operations";
     }

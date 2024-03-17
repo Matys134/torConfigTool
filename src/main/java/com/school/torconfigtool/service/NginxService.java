@@ -61,42 +61,44 @@ public class NginxService {
      * If the command execution fails, it logs the error.
      */
     public void reloadNginx() {
-        // Create a new process builder
-        ProcessBuilder processBuilder = new ProcessBuilder();
+        // Check if Nginx is running
+        if (!isNginxRunning()) {
+            // If Nginx is not running, start it
+            startNginx();
+        } else {
+            // If Nginx is running, reload it
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
 
-        // Set the command for the process builder
-        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
+            try {
+                Process process = processBuilder.start();
+                int exitCode = process.waitFor();
 
-        try {
-            // Start the process and wait for it to finish
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            // If the exit code is not 0, print an error
-            if (exitCode != 0) {
-                throw new IOException("Failed to reload Nginx");
+                if (exitCode != 0) {
+                    throw new IOException("Failed to reload Nginx");
+                }
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Failed to reload Nginx", e);
             }
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Failed to reload Nginx", e);
         }
     }
 
     /**
      * This method is used to generate the Nginx configuration.
-     * It creates a new index.html file in the appropriate directory.
-     * If the file creation fails, it logs the error.
+     * It creates the necessary directories and the index.html file.
+     * If the file writing fails, it logs the error.
      */
-    public void generateNginxConfig() {
+    public void generateIndexConfig() {
         try {
             // Get the current working directory
             String currentDirectory = System.getProperty("user.dir");
 
             // Get the index.html file
-            File indexHtml = createAndGetIndexHtmlFile(currentDirectory);
+            File indexHtml = createIndexHtmlFile(currentDirectory);
 
             // Write the HTML content to the file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
-                writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
+                writer.write("<html><body><h1>Hello, World!</h1></body></html>");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to generate Nginx configuration", e);
@@ -111,7 +113,7 @@ public class NginxService {
      * @return The index.html file.
      * @throws IOException If an I/O error occurs.
      */
-    private File createAndGetIndexHtmlFile(String currentDirectory) throws IOException {
+    private File createIndexHtmlFile(String currentDirectory) throws IOException {
         // Create the www directory if it does not exist
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
@@ -119,7 +121,7 @@ public class NginxService {
         }
 
         // Create the service directory if it does not exist
-        File serviceDir = new File(wwwDir, "service-" + 80);
+        File serviceDir = new File(wwwDir, "service-" + 443);
         if (!serviceDir.exists() && !serviceDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
@@ -143,18 +145,13 @@ public class NginxService {
             // Read the file into a list of strings
             List<String> lines = Files.readAllLines(defaultConfigPath);
 
-            // Clear the list and add the new configuration lines
-            lines.clear();
-            lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + rootDirectory + ";");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
+            // Find the line that starts with "root" and replace it
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).startsWith("    root")) {
+                    lines.set(i, "    root " + rootDirectory + ";");
+                    break;
+                }
+            }
 
             // Write the list back to the file
             Files.write(defaultConfigPath, lines);
@@ -245,7 +242,6 @@ public class NginxService {
             lines.add("    server_name $SERVER_ADDRESS;");
             lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
             lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
-            // Add the rest of the configuration lines...
             lines.add("    location = /" + randomString + " {");
             lines.add("        proxy_pass http://127.0.0.1:15000;");
             lines.add("        proxy_http_version 1.1;");
@@ -298,7 +294,7 @@ public class NginxService {
         }
     }
 
-    public void generateNginxConfig(int onionServicePort) {
+    public void generateIndexConfig(int onionServicePort) {
         String nginxConfig = buildNginxConfig(onionServicePort);
         editNginxConfig(nginxConfig, onionServicePort);
     }
