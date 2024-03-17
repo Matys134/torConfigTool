@@ -41,7 +41,7 @@ public class AcmeService {
         // Generate the certificate
         String username = System.getProperty("user.name");
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
-                + "/onion/www/service-443/ --nginx --server letsencrypt";
+                + "/onion/www/service-443/ --nginx --server letsencrypt --force";
 
         System.out.println("Command: " + command);
 
