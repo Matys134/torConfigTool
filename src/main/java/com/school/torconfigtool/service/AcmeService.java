@@ -43,9 +43,9 @@ public class AcmeService {
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
                 + "/onion/www/service-443/ --nginx --server letsencrypt";
 
-        Process certProcess = commandService.executeCommand(command);
-
         System.out.println("Command: " + command);
+
+        Process certProcess = commandService.executeCommand(command);
 
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
@@ -99,10 +99,10 @@ public class AcmeService {
                 " --fullchain-file " + programLocation + "/onion/certs/service-443/fullchain.pem" +
                 " --reloadcmd";
 
+        System.out.println("Command: " + command);
+
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
-
-        System.out.println("Command: " + command);
 
         // Set the command for the process builder
         processBuilder.command("bash", "-c", command);
