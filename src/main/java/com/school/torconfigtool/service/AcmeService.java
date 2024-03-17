@@ -43,8 +43,6 @@ public class AcmeService {
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
                 + "/onion/www/service-443/ --nginx --server letsencrypt --force";
 
-        System.out.println("Command: " + command);
-
         Process certProcess = commandService.executeCommand(command);
 
         if (certProcess == null || certProcess.exitValue() != 0) {
@@ -98,8 +96,6 @@ public class AcmeService {
                 " --key-file " + programLocation + "/onion/certs/service-443/key.pem" +
                 " --fullchain-file " + programLocation + "/onion/certs/service-443/fullchain.pem" +
                 " --reloadcmd";
-
-        System.out.println("Command: " + command);
 
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
