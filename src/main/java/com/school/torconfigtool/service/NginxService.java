@@ -88,7 +88,7 @@ public class NginxService {
      * It creates the necessary directories and the index.html file.
      * If the file writing fails, it logs the error.
      */
-    public void generateIndexConfig() {
+    public void configureNginxForOnionService() {
         try {
             // Get the current working directory
             String currentDirectory = System.getProperty("user.dir");
@@ -294,19 +294,18 @@ public class NginxService {
         }
     }
 
-    public void generateIndexConfig(int onionServicePort) {
-        String nginxConfig = buildNginxConfig(onionServicePort);
-        editNginxConfig(nginxConfig, onionServicePort);
+    public void configureNginxForOnionService(int onionServicePort) {
+        String nginxConfig = buildNginxServerBlock(onionServicePort);
+        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
     }
 
-    private String buildNginxConfig(int onionServicePort) {
+    private String buildNginxServerBlock(int onionServicePort) {
 
         String currentDirectory = System.getProperty("user.dir");
         // Build the server block
         return String.format("""
                 server {
                     listen 127.0.0.1:%d;
-                    server_name torrc-test_guard;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
                     root %s/onion/www/service-%d;
@@ -315,7 +314,7 @@ public class NginxService {
     }
 
 
-    private void editNginxConfig(String nginxConfig, int onionServicePort) {
+    private void deployOnionServiceNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
             File tempFile = File.createTempFile("nginx_config", null);
@@ -326,7 +325,8 @@ public class NginxService {
             String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
 
             // Use sudo to copy the temporary file to the actual nginx configuration file
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath);
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(),
+                    onionServiceConfigPath);
             Process process = processBuilder.start();
             process.waitFor();
 

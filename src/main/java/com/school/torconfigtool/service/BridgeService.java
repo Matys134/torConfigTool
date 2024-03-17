@@ -79,7 +79,7 @@ public class BridgeService {
         }
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
-            nginxService.generateIndexConfig();
+            nginxService.configureNginxForOnionService();
             nginxService.changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-443");
             webtunnelService.setupWebtunnel(webtunnelUrl);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);

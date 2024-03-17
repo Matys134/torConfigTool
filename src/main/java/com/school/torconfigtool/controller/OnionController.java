@@ -1,18 +1,18 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.OnionService;
 import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.service.OnionService;
 import com.school.torconfigtool.service.TorConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +31,6 @@ public class OnionController {
     }
 
     private void initializeOnionController() {
-        /*
-        List<String> onionServicePorts = onionService.getAllOnionServicePorts();
-
-        if (!onionServicePorts.isEmpty()) {
-            torConfig.setHiddenServicePort(onionServicePorts.getFirst());
-        }*/
 
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
         File hiddenServiceDirs = new File(hiddenServiceDirsPath);
