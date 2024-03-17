@@ -44,6 +44,9 @@ public class AcmeService {
                 + "/onion/www/service-443/ --nginx --server letsencrypt";
 
         Process certProcess = commandService.executeCommand(command);
+
+        System.out.println("Command: " + command);
+
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
         }
@@ -98,6 +101,8 @@ public class AcmeService {
 
         // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
+
+        System.out.println("Command: " + command);
 
         // Set the command for the process builder
         processBuilder.command("bash", "-c", command);
