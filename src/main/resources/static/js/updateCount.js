@@ -49,3 +49,14 @@ $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'snowflake' }, function
         snowflakeCountElement.addClass('blue-text');
     }
 });
+
+let onionServiceCount = 0;
+
+$.get("/onion-api/onion-configured", function(data) {
+    if (data.onionConfigured) {
+        onionServiceCount++;
+    }
+    const onionServiceCountElement = $('#onionServiceCount');
+    onionServiceCountElement.text(onionServiceCount);
+});
+

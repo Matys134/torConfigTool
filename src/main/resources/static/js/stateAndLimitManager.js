@@ -8,25 +8,37 @@ $(document).ready(function() {
         }
     }
 
-    function handleLimitReached(apiEndpoint, bridgeType, formId) {
-        $.get(apiEndpoint, { bridgeType: bridgeType }, function(data) {
-            if (data.bridgeLimitReached) {
-                disableFormFields(formId);
+    function checkLimitAndDisableForm(apiUrl, formId, message) {
+        $.get(apiUrl, function(data) {
+            if (data.guardLimitReached || data.bridgeLimitReached) {
+                // Disable the form fields and buttons
+                var form = document.getElementById(formId);
+                form.disabled = true;
+                var formElements = form.elements;
+                for (var i = 0; i < formElements.length; i++) {
+                    formElements[i].disabled = true;
+                }
 
-                const messageDiv = document.createElement("div");
+                // Create a new div element for the message
+                var messageDiv = document.createElement("div");
                 messageDiv.className = "alert alert-warning";
                 messageDiv.role = "alert";
-                messageDiv.innerHTML = "Maximum number of " + bridgeType + " bridges has been reached. You can edit an existing bridge or remove some to create a new one.";
+                messageDiv.innerHTML = message;
 
+                // Append the message div to the container
                 document.querySelector('.container').appendChild(messageDiv);
             }
         });
     }
 
-    const bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
+    var bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
+
     bridgeTypes.forEach(function(bridgeType) {
-        handleLimitReached("/bridge-api/bridges/limit-reached", bridgeType, 'bridgeForm');
+        checkLimitAndDisableForm("/bridge-api/bridges/limit-reached", 'bridgeForm', "Maximum number of " + bridgeType + " bridges has been reached. You can edit an existing bridge or remove some to create a new one.");
     });
+
+    checkLimitAndDisableForm("/guard-api/guards/limit-reached", 'guardForm', "Maximum number of guard relays has been reached. You can edit an existing relay or remove some to create a new one.");
+
 
     function checkStateAndUpdate() {
         $.get("/setup-api/limit-state", function(limitOn) {
@@ -36,7 +48,8 @@ $(document).ready(function() {
                 const guardConfiguredRequest = $.get("/guard-api/guard-configured");
                 const onionConfiguredRequest = $.get("/onion-api/onion-configured");
 
-                $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest).done(function(runningTypeData, bridgeData, guardData, onionData) {
+                $.when(runningTypeRequest, bridgeConfiguredRequest, guardConfiguredRequest, onionConfiguredRequest)
+                    .done(function(runningTypeData, bridgeData, guardData, onionData) {
                     if (runningTypeData[0] && !jQuery.isEmptyObject(runningTypeData[0])) {
                         const runningBridgeType = Object.values(runningTypeData[0])[0];
                         if (runningBridgeType === 'obfs4' || runningBridgeType === 'snowflake') {
@@ -55,6 +68,7 @@ $(document).ready(function() {
                     if (bridgeData[0].bridgeConfigured) {
                         disableFormFields('guardForm');
                         disableFormFields('onionForm');
+                        showWarningMessage('Bridge');
                     } else {
                         $('#guardForm :input').prop('disabled', false);
                         $('#onionForm :input').prop('disabled', false);
@@ -63,12 +77,15 @@ $(document).ready(function() {
                     if (guardData[0].guardConfigured) {
                         disableFormFields('onionForm');
                         disableFormFields('bridgeForm');
+                        showWarningMessage('Guard');
                     }
 
                     if (onionData[0].onionConfigured) {
                         disableFormFields('guardForm');
                         disableFormFields('bridgeForm');
+                        showWarningMessage('Onion');
                     }
+
                 });
             } else {
                 $('#bridgeForm :input').prop('disabled', false);
@@ -76,6 +93,20 @@ $(document).ready(function() {
                 $('#onionForm :input').prop('disabled', false);
             }
         });
+    }
+
+    function showWarningMessage(serviceName) {
+        // Check if a warning message for this service already exists
+        const existingWarning = document.querySelector('.alert-warning[data-service="' + serviceName + '"]');
+        if (!existingWarning) {
+            // Create and append new warning message
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "alert alert-warning";
+            messageDiv.dataset.service = serviceName; // Add a data attribute to identify the service
+            messageDiv.role = "alert";
+            messageDiv.innerHTML = serviceName + " service has been configured. Other services are now blocked due to the limit.";
+            document.querySelector('.container').appendChild(messageDiv);
+        }
     }
 
     function updateButtonText() {
