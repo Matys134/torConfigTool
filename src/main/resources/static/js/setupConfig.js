@@ -20,5 +20,7 @@ $(document).ready(function() {
         if (allBridgeTypesZero) {
             $('#bridge-tab').hide();
         }
+        // Call the function to toggle bridge fields based on the selected bridge type
+        toggleBridgeFields();
     });
 });

@@ -1,4 +1,5 @@
 let maxBridgeCount = {};
+let totalRelays = 0;
 
 $.get("/bridge-api/bridges/max-count", function(data) {
     maxBridgeCount = data;
@@ -12,51 +13,94 @@ $.get("/guard-api/guards/max-count", function(data) {
 
 $.get("/guard-api/guards/limit-reached", function(data) {
     const guardCountElement = $('#guardCount');
-    guardCountElement.text(data.guardCount + "/" + maxGuardCount);
-    if (data.guardCount >= maxGuardCount) {
-        guardCountElement.addClass('red-text');
-    } else {
-        guardCountElement.addClass('blue-text');
-    }
+    guardCountElement.text(data.guardCount);
+    guardCountElement.addClass('blue-text');
+    totalRelays += data.guardCount;
 });
 
 $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'obfs4' }, function(data) {
     const bridgeCountElement = $('#bridgeCount');
-    bridgeCountElement.text(data.bridgeCount + "/" + maxBridgeCount['obfs4']);
-    if (data.bridgeCount >= maxBridgeCount['obfs4']) {
-        bridgeCountElement.addClass('red-text');
-    } else {
-        bridgeCountElement.addClass('blue-text');
-    }
+    bridgeCountElement.text(data.bridgeCount);
+    bridgeCountElement.addClass('blue-text');
+    totalRelays += data.bridgeCount;
 });
 
 $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
     const webtunnelCountElement = $('#webtunnelCount');
-    webtunnelCountElement.text(data.bridgeCount + "/" + maxBridgeCount['webtunnel']);
-    if (data.bridgeCount >= maxBridgeCount['webtunnel']) {
-        webtunnelCountElement.addClass('red-text');
-    } else {
-        webtunnelCountElement.addClass('blue-text');
-    }
+    webtunnelCountElement.text(data.bridgeCount);
+    webtunnelCountElement.addClass('blue-text');
+    totalRelays += data.bridgeCount;
+
+    updateTotalRelays();
 });
 
 $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'snowflake' }, function(data) {
     const snowflakeCountElement = $('#snowflakeCount');
-    snowflakeCountElement.text(data.bridgeCount + "/" + maxBridgeCount['snowflake']);
-    if (data.bridgeCount >= maxBridgeCount['snowflake']) {
-        snowflakeCountElement.addClass('red-text');
-    } else {
-        snowflakeCountElement.addClass('blue-text');
-    }
+    snowflakeCountElement.text(data.bridgeCount);
+    snowflakeCountElement.addClass('blue-text');
+    totalRelays += data.bridgeCount;
+
+    updateTotalRelays();
 });
 
 let onionServiceCount = 0;
 
 $.get("/onion-api/onion-configured", function(data) {
-    if (data.onionConfigured) {
-        onionServiceCount++;
-    }
     const onionServiceCountElement = $('#onionServiceCount');
     onionServiceCountElement.text(onionServiceCount);
+    onionServiceCountElement.addClass('blue-text');
 });
 
+function updateTotalRelays() {
+    // Update total relays
+    const totalRelaysElement = $('#totalRelays');
+    totalRelaysElement.text(totalRelays + "/8");
+    if (totalRelays >= 8) {
+        totalRelaysElement.addClass('red-text');
+
+        // Display warning message
+        $('#relayLimitWarning').show();
+
+        // Disable the forms
+        $('#guardForm :input').prop('disabled', true);
+        $('#bridgeForm :input').prop('disabled', true);
+    } else {
+        totalRelaysElement.addClass('green-text');
+    }
+}
+
+// Check if any bridge is configured
+$.get("/bridge-api/bridge-configured", function(data) {
+    if (data.bridgeConfigured) {
+        // If a bridge is configured, show the warning message and disable the form
+        $('#guardWarning').show();
+        $('#guardForm :input').prop('disabled', true);
+    }
+});
+
+// When the "I Understand" button is clicked, hide the warning message and enable the form
+$('#understandButton').click(function() {
+    $('#guardWarning').hide();
+    // Only enable the form if the relay limit warning is not visible
+    if (!$('#relayLimitWarning').is(':visible')) {
+        $('#guardForm :input').prop('disabled', false);
+    }
+});
+
+// Check if any guard is configured
+$.get("/guard-api/guard-configured", function(data) {
+    if (data.guardConfigured) {
+        // If a guard is configured, show the warning message and disable the form
+        $('#bridgeWarning').show();
+        $('#bridgeForm :input').prop('disabled', true);
+    }
+});
+
+// When the "I Understand" button is clicked, hide the warning message and enable the form
+$('#understandBridgeButton').click(function() {
+    $('#bridgeWarning').hide();
+    // Only enable the form if the relay limit warning is not visible
+    if (!$('#relayLimitWarning').is(':visible')) {
+        $('#bridgeForm :input').prop('disabled', false);
+    }
+});

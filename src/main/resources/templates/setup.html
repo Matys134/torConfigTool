@@ -42,10 +42,19 @@
             <a class="nav-link" id="onion-tab" data-toggle="tab" href="#onionTab" role="tab" aria-controls="onionTab" aria-selected="false">Onion Service</a>
         </li>
     </ul>
+            <div id="relayLimitWarning" style="display: none;" class="alert alert-warning">
+                <p>You have reached the maximum limit of 8 relays. You can't add more relays. You can edit or delete existing relays.</p>
+            </div>
 
     <div class="tab-content" id="myTabContent">
         <!-- Relay Tab Content -->
         <div class="tab-pane fade show active" id="relayTab" role="tabpanel" aria-labelledby="relay-tab">
+
+            <div id="guardWarning" style="display: none;" class="alert alert-warning">
+                <p>You have configured a bridge. It's recommended to only run one type of relay.</p>
+                <button id="understandButton" class="btn btn-primary">I Understand</button>
+            </div>
+
             <form action="/guard/configure" id="guardForm" method="post">
                 <div class="form-group">
                     <label for="relayNickname">Nickname:</label>
@@ -74,6 +83,13 @@
 
         <!-- Bridge Tab Content -->
         <div class="tab-pane fade" id="bridgeTab" role="tabpanel" aria-labelledby="bridge-tab">
+
+
+            <div id="bridgeWarning" style="display: none;" class="alert alert-warning">
+                <p>You have configured a non-exit relay. It's recommended to only run one type of relay.</p>
+                <button id="understandBridgeButton" class="btn btn-primary">I Understand</button>
+            </div>
+
             <form action="/bridge/configure" id="bridgeForm" method="post">
                 <div class="form-group">
                     <label for="bridgeType">Bridge Type:</label>
@@ -155,6 +171,7 @@
     </div>
         </div>
         <div class="col-md-4">
+            <!-- First Part -->
             <table class="table">
                 <thead>
                 <tr>
@@ -180,12 +197,27 @@
                     <td id="snowflakeCount">0/1</td>
                 </tr>
                 <tr>
+                    <td>Total</td>
+                    <td id="totalRelays">0/8</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Second Part -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Relay Type</th>
+                    <th>Current</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
                     <td>Onion Services</td>
                     <td id="onionServiceCount">0</td>
                 </tr>
                 </tbody>
             </table>
-            <button id="toggleLimitButton" type="button" class="btn btn-primary">Turn Limit Off</button>
         </div>
     </div>
 </div>
