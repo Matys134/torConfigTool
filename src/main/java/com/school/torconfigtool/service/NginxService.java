@@ -112,62 +112,6 @@ public class NginxService {
     }
 
     /**
-     * This method is used to change the root directory in the Nginx configuration.
-     * It reads the configuration file, modifies the root directory line, and then writes the file back.
-     * If the file reading or writing fails, it logs the error.
-     *
-     * @param rootDirectory The new root directory.
-     */
-    public void changeRootDirectory(String rootDirectory) {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
-
-        try {
-            // Read the file into a list of strings
-            List<String> lines = Files.readAllLines(defaultConfigPath);
-
-            // Find the line that starts with "root" and replace it
-            for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).startsWith("    root")) {
-                    lines.set(i, "    root " + rootDirectory + ";");
-                    break;
-                }
-            }
-
-            // Write the list back to the file
-            Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to change root directory", e);
-        }
-
-        // Create a new process builder
-        ProcessBuilder processBuilder = new ProcessBuilder();
-
-        // Set the command for the process builder
-        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
-    }
-
-    /**
-     * This method is used to revert the Nginx configuration to its default state.
-     * It clears the configuration file and writes the initial configuration.
-     * If the file writing fails, it logs the error.
-     */
-    public void revertNginxDefaultConfig() {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
-
-        try {
-            // Clear the file and write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines(80);
-
-            // Write the list to the file
-            Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to revert Nginx default configuration", e);
-        }
-    }
-
-    /**
      * This method is used to get the default Nginx configuration lines.
      *
      * @return The default Nginx configuration lines.
@@ -198,20 +142,20 @@ public class NginxService {
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
     public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+        // The path to the webTunnel configuration file
+        Path webTunnelConfigPath = Paths.get("/etc/nginx/sites-available/webtunnel-" + webtunnelPort);
 
         try {
-            // Clear the file and write the initial configuration
+            // Write the initial configuration
             List<String> lines = getDefaultNginxConfigLines(webtunnelPort);
             // Write the list to the file
-            Files.write(defaultConfigPath, lines);
+            Files.write(webTunnelConfigPath, lines);
 
             // Issue and install the certificates
             acmeService.installCert(webTunnelUrl, webtunnelPort);
 
             // Read the file into a list of strings again
-            lines = Files.readAllLines(defaultConfigPath);
+            lines = Files.readAllLines(webTunnelConfigPath);
 
             // Clear the list and add the new configuration lines
             lines.clear();
@@ -241,7 +185,13 @@ public class NginxService {
             lines.add("}");
 
             // Write the list back to the file
-            Files.write(defaultConfigPath, lines);
+            Files.write(webTunnelConfigPath, lines);
+
+            // Create a symbolic link to the webTunnel configuration file
+            String enableConfigPath = "/etc/nginx/sites-enabled/webtunnel-" + webtunnelPort;
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "ln", "-s", webTunnelConfigPath.toString(), enableConfigPath);
+            Process process = processBuilder.start();
+            process.waitFor();
         } catch (IOException e) {
             throw new RuntimeException("Failed to modify Nginx default configuration", e);
         } catch (Exception e) {

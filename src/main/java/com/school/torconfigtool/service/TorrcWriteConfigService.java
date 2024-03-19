@@ -48,6 +48,7 @@ public class TorrcWriteConfigService {
                 writer.newLine();
                 writer.write("ExtORPort auto");
                 writer.newLine();
+                writer.write("# webtunnel" + config.getWebtunnelPort());
                 break;
             case "snowflake":
                 snowflakeProxyService.setupSnowflakeProxy();

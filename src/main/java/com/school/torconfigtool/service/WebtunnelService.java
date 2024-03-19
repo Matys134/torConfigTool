@@ -99,14 +99,15 @@ public class WebtunnelService {
         String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
-        int webtunnelPort = 0;
+        String webtunnelPort = null; // Changed from int to String
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ServerTransportOptions webtunnel url")) {
                     webtunnelDomainAndPath = line.split("=")[1].trim();
-                } else if (line.startsWith("# webtunnel")) {
-                    webtunnelPort = Integer.parseInt(line.split(" ")[1].trim());
+                }
+                if (line.startsWith("# webtunnel")) {
+                    webtunnelPort = line.split(" ")[2];
                 }
             }
         } catch (IOException e) {
