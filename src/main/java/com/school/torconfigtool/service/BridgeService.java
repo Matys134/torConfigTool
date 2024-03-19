@@ -78,7 +78,7 @@ public class BridgeService {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
 
-        if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
+        if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null) {
             nginxService.configureNginxForOnionService(webtunnelPort);
             nginxService.changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-" + webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
