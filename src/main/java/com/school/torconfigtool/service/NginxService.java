@@ -88,46 +88,27 @@ public class NginxService {
      * It creates the necessary directories and the index.html file.
      * If the file writing fails, it logs the error.
      */
-    public void configureNginxForOnionService() {
-        try {
-            // Get the current working directory
-            String currentDirectory = System.getProperty("user.dir");
-
-            // Get the index.html file
-            File indexHtml = createIndexHtmlFile(currentDirectory);
-
-            // Write the HTML content to the file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
-                writer.write("<html><body><h1>Hello, World!</h1></body></html>");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to generate Nginx configuration", e);
-        }
+    public void configureNginxForOnionService(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxServerBlock(onionServicePort);
+        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
+        createIndexFile(onionServicePort, System.getProperty("user.dir"));
     }
 
-    /**
-     * This method is used to get the index.html file.
-     * It creates the necessary directories and the file if they do not exist.
-     *
-     * @param currentDirectory The current working directory.
-     * @return The index.html file.
-     * @throws IOException If an I/O error occurs.
-     */
-    private File createIndexHtmlFile(String currentDirectory) throws IOException {
-        // Create the www directory if it does not exist
+    public void createIndexFile(int onionServicePort, String currentDirectory) throws IOException {
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
         }
 
-        // Create the service directory if it does not exist
-        File serviceDir = new File(wwwDir, "service-" + 443);
+        File serviceDir = new File(wwwDir, "service-" + onionServicePort);
         if (!serviceDir.exists() && !serviceDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
 
-        // Return the index.html file
-        return new File(serviceDir, "index.html");
+        File indexHtml = new File(serviceDir, "index.html");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
+            writer.write("<html><body><h1>Onion Service</h1></body></html>");
+        }
     }
 
     /**
@@ -177,7 +158,7 @@ public class NginxService {
 
         try {
             // Clear the file and write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines();
+            List<String> lines = getDefaultNginxConfigLines(80);
 
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
@@ -191,13 +172,13 @@ public class NginxService {
      *
      * @return The default Nginx configuration lines.
      */
-    private static List<String> getDefaultNginxConfigLines() {
+    private static List<String> getDefaultNginxConfigLines(int webtunnelPort) {
         String currentDirectory = System.getProperty("user.dir");
         List<String> lines = new ArrayList<>();
         lines.add("server {");
         lines.add("    listen 80 default_server;");
         lines.add("    listen [::]:80 default_server;");
-        lines.add("    root " + currentDirectory + "/onion/www/service-443;");
+        lines.add("    root " + currentDirectory + "/onion/www/service-" + webtunnelPort + ";");
         lines.add("    index index.html index.htm index.nginx-debian.html;");
         lines.add("    server_name _;");
         lines.add("    location / {");
@@ -216,18 +197,18 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) {
         // The path to the default configuration file
         Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
 
         try {
             // Clear the file and write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines();
+            List<String> lines = getDefaultNginxConfigLines(webtunnelPort);
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
 
             // Issue and install the certificates
-            acmeService.installCert(webTunnelUrl);
+            acmeService.installCert(webTunnelUrl, webtunnelPort);
 
             // Read the file into a list of strings again
             lines = Files.readAllLines(defaultConfigPath);
@@ -235,13 +216,13 @@ public class NginxService {
             // Clear the list and add the new configuration lines
             lines.clear();
             lines.add("server {");
-            lines.add("    listen [::]:443 ssl http2;");
-            lines.add("    listen 443 ssl http2;");
-            lines.add("    root " + programLocation + "/onion/www/service-443;");
+            lines.add("    listen [::]:" + webtunnelPort + " ssl http2;");
+            lines.add("    listen " + webtunnelPort + " ssl http2;");
+            lines.add("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";");
             lines.add("    index index.html index.htm index.nginx-debian.html;");
             lines.add("    server_name $SERVER_ADDRESS;");
-            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-443/fullchain.pem;");
-            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-443/key.pem;");
+            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;");
+            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;");
             lines.add("    location = /" + randomString + " {");
             lines.add("        proxy_pass http://127.0.0.1:15000;");
             lines.add("        proxy_http_version 1.1;");
@@ -292,11 +273,6 @@ public class NginxService {
         } catch (IOException | InterruptedException e) {
             return false;
         }
-    }
-
-    public void configureNginxForOnionService(int onionServicePort) {
-        String nginxConfig = buildNginxServerBlock(onionServicePort);
-        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
     }
 
     private String buildNginxServerBlock(int onionServicePort) {

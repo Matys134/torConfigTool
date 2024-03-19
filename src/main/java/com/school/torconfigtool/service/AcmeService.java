@@ -22,16 +22,9 @@ public class AcmeService {
         this.commandService = commandService;
     }
 
-    /**
-     * Generates a certificate for the given web tunnel URL.
-     *
-     * @param webTunnelUrl The web tunnel URL.
-     * @param programLocation The location of the program.
-     * @throws Exception If an error occurs during the generation of the certificate.
-     */
-    public void generateCertificate(String webTunnelUrl, String programLocation) throws Exception {
+    public void generateCertificate(String webTunnelUrl, String programLocation, int webtunnelPort) throws Exception {
         // Create the directory for the certificate files
-        String certDirectory = programLocation + "/onion/certs/service-443/";
+        String certDirectory = programLocation + "/onion/certs/service-" + webtunnelPort + "/";
         File dir = new File(certDirectory);
         boolean isDirectoryCreated = dir.mkdirs();
         if (!isDirectoryCreated && !dir.exists()) {
@@ -41,7 +34,7 @@ public class AcmeService {
         // Generate the certificate
         String username = System.getProperty("user.name");
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
-                + "/onion/www/service-443/ --nginx --server letsencrypt --force";
+                + "/onion/www/service-" + webtunnelPort + "/ --nginx --server letsencrypt --force";
 
         Process certProcess = commandService.executeCommand(command);
 
@@ -56,13 +49,13 @@ public class AcmeService {
      * @param webTunnelUrl The web tunnel URL.
      * @throws Exception If an error occurs during the installation.
      */
-    public void installCert(String webTunnelUrl) throws Exception {
+    public void installCert(String webTunnelUrl, int webtunnelPort) throws Exception {
         // Get the current working directory
         String programLocation = System.getProperty("user.dir");
 
         // Construct the command to install the certificate
         String username = System.getProperty("user.name");
-        ProcessBuilder processBuilder = createCertInstallationProcessBuilder(webTunnelUrl, username, programLocation);
+        ProcessBuilder processBuilder = createCertInstallationProcessBuilder(webTunnelUrl, username, programLocation, webtunnelPort);
 
         try {
             // Start the process and wait for it to finish
@@ -81,20 +74,12 @@ public class AcmeService {
         }
     }
 
-    /**
-     * Creates a process builder for the certificate installation command.
-     *
-     * @param webTunnelUrl The web tunnel URL.
-     * @param username The username of the current user.
-     * @param programLocation The location of the program.
-     * @return The process builder for the certificate installation command.
-     */
     private static ProcessBuilder createCertInstallationProcessBuilder(String webTunnelUrl, String username,
-                                                                       String programLocation) {
+                                                                       String programLocation, int webtunnelPort) {
         String command = "/home/" + username + "/.acme.sh/acme.sh --install-cert -d " + webTunnelUrl + " -d "
                 + webTunnelUrl +
-                " --key-file " + programLocation + "/onion/certs/service-443/key.pem" +
-                " --fullchain-file " + programLocation + "/onion/certs/service-443/fullchain.pem" +
+                " --key-file " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem" +
+                " --fullchain-file " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem" +
                 " --reloadcmd";
 
         // Create a new process builder

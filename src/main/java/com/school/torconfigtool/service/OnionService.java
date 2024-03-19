@@ -75,12 +75,6 @@ public class OnionService {
         }
     }
 
-    /**
-     * Creates a Torrc file for the given onion service port.
-     * @param filePath The path to the file.
-     * @param onionServicePort The onion service port.
-     * @throws IOException If an I/O error occurs.
-     */
     public void setupOnionService(String filePath, int onionServicePort) throws IOException {
         File torrcFile = new File(filePath);
 
@@ -91,27 +85,8 @@ public class OnionService {
 
         try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
             torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, torrcWriter);
-
-            String currentDirectory = System.getProperty("user.dir");
-            File indexHtml = getIndexFile(onionServicePort, currentDirectory);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
-                writer.write("<html><body><h1>Onion Service</h1></body></html>");
-            }
+            nginxService.createIndexFile(onionServicePort, System.getProperty("user.dir"));
         }
-    }
-
-    private static File getIndexFile(int onionServicePort, String currentDirectory) throws IOException {
-        File wwwDir = new File(currentDirectory + "/onion/www");
-        if (!wwwDir.exists() && !wwwDir.mkdirs()) {
-            throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
-        }
-
-        File serviceDir = new File(wwwDir, "service-" + onionServicePort);
-        if (!serviceDir.exists() && !serviceDir.mkdirs()) {
-            throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
-        }
-
-        return new File(serviceDir, "index.html");
     }
 
     /**

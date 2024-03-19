@@ -180,8 +180,13 @@ public class UPnPService {
                     }
                 }
                 if (line.contains("webtunnel")) {
-                    additionalPorts.add(80);
-                    additionalPorts.add(443);
+                    String[] parts = line.split(" ");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
+                        if (addrParts.length > 1) {
+                            additionalPorts.add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
                 }
             }
         } catch (IOException e) {

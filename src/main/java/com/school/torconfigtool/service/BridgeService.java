@@ -79,11 +79,11 @@ public class BridgeService {
         }
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty()) {
-            nginxService.configureNginxForOnionService();
-            nginxService.changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-443");
-            webtunnelService.setupWebtunnel(webtunnelUrl);
+            nginxService.configureNginxForOnionService(webtunnelPort);
+            nginxService.changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-" + webtunnelPort);
+            webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl);
+            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort);
             config.setPath(randomString);
             webtunnelService.updateTorrcFile(config);
 

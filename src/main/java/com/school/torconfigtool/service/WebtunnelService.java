@@ -44,7 +44,7 @@ public class WebtunnelService {
      * @param webTunnelUrl The URL of the web tunnel.
      * @throws Exception If an error occurs during setup.
      */
-    public void setupWebtunnel(String webTunnelUrl) throws Exception {
+    public void setupWebtunnel(String webTunnelUrl, int webtunnelPort) throws Exception {
         UPnP.openPortTCP(80);
 
         // Check if Nginx is running, if not, start it
@@ -56,14 +56,14 @@ public class WebtunnelService {
         String programLocation = System.getProperty("user.dir");
 
         String username = System.getProperty("user.name");
-        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-443";
+        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-" + webtunnelPort;
         Process chownProcess = commandService.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
         }
 
         // Call the new method to generate the certificate
-        acmeService.generateCertificate(webTunnelUrl, programLocation);
+        acmeService.generateCertificate(webTunnelUrl, programLocation, webtunnelPort);
 
         UPnP.closePortTCP(80);
     }
@@ -91,7 +91,7 @@ public class WebtunnelService {
         Files.write(torrcFilePath, lines);
     }
 
-    public String getWebtunnelLink(String relayNickname) {
+    public String getWebtunnelLink(String relayNickname, int webtunnelPort) {
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
@@ -111,6 +111,6 @@ public class WebtunnelService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
-        return "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + webtunnelDomainAndPath;
     }
 }

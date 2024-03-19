@@ -62,7 +62,7 @@ $(document).ready(function() {
 
                     const bridgeTypes = ['obfs4', 'webtunnel', 'snowflake'];
                     bridgeTypes.forEach(function(bridgeType) {
-                        handleLimitReached("/bridge-api/bridges/limit-reached", bridgeType, 'bridgeForm');
+                        checkLimitAndDisableForm("/bridge-api/bridges/limit-reached", bridgeType, 'bridgeForm');
                     });
 
                     if (bridgeData[0].bridgeConfigured) {
