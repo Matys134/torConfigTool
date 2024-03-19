@@ -162,62 +162,39 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) {
-        // The path to the webTunnel configuration file
-        Path webTunnelConfigPath = Paths.get("/etc/nginx/sites-available/webtunnel-" + webtunnelPort);
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) throws Exception {
+        // Build the new configuration
+        StringBuilder sb = new StringBuilder();
+        sb.append("server {\n");
+        sb.append("    listen [::]:" + webtunnelPort + " ssl http2;\n");
+        sb.append("    listen " + webtunnelPort + " ssl http2;\n");
+        sb.append("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n");
+        sb.append("    index index.html index.htm index.nginx-debian.html;\n");
+        sb.append("    server_name $SERVER_ADDRESS;\n");
+        sb.append("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n");
+        sb.append("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n");
+        sb.append("    location = /" + randomString + " {\n");
+        sb.append("        proxy_pass http://127.0.0.1:15000;\n");
+        sb.append("        proxy_http_version 1.1;\n");
+        sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
+        sb.append("        proxy_set_header Connection \"upgrade\";\n");
+        sb.append("        proxy_set_header Accept-Encoding \"\";\n");
+        sb.append("        proxy_set_header Host $host;\n");
+        sb.append("        proxy_set_header X-Real-IP $remote_addr;\n");
+        sb.append("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n");
+        sb.append("        proxy_set_header X-Forwarded-Proto $scheme;\n");
+        sb.append("        add_header Front-End-Https on;\n");
+        sb.append("        proxy_redirect off;\n");
+        sb.append("        access_log off;\n");
+        sb.append("        error_log off;\n");
+        sb.append("    }\n");
+        sb.append("}\n");
 
-        try {
-            // Write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines(webtunnelPort);
-            // Write the list to the file
-            Files.write(webTunnelConfigPath, lines);
+        // Issue and install the certificates
+        acmeService.installCert(webTunnelUrl, webtunnelPort);
 
-            // Issue and install the certificates
-            acmeService.installCert(webTunnelUrl, webtunnelPort);
-
-            // Read the file into a list of strings again
-            lines = Files.readAllLines(webTunnelConfigPath);
-
-            // Clear the list and add the new configuration lines
-            lines.clear();
-            lines.add("server {");
-            lines.add("    listen [::]:" + webtunnelPort + " ssl http2;");
-            lines.add("    listen " + webtunnelPort + " ssl http2;");
-            lines.add("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name $SERVER_ADDRESS;");
-            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;");
-            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;");
-            lines.add("    location = /" + randomString + " {");
-            lines.add("        proxy_pass http://127.0.0.1:15000;");
-            lines.add("        proxy_http_version 1.1;");
-            lines.add("        proxy_set_header Upgrade $http_upgrade;");
-            lines.add("        proxy_set_header Connection \"upgrade\";");
-            lines.add("        proxy_set_header Accept-Encoding \"\";");
-            lines.add("        proxy_set_header Host $host;");
-            lines.add("        proxy_set_header X-Real-IP $remote_addr;");
-            lines.add("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
-            lines.add("        proxy_set_header X-Forwarded-Proto $scheme;");
-            lines.add("        add_header Front-End-Https on;");
-            lines.add("        proxy_redirect off;");
-            lines.add("        access_log off;");
-            lines.add("        error_log off;");
-            lines.add("    }");
-            lines.add("}");
-
-            // Write the list back to the file
-            Files.write(webTunnelConfigPath, lines);
-
-            // Create a symbolic link to the webTunnel configuration file
-            String enableConfigPath = "/etc/nginx/sites-enabled/webtunnel-" + webtunnelPort;
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "ln", "-s", webTunnelConfigPath.toString(), enableConfigPath);
-            Process process = processBuilder.start();
-            process.waitFor();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to modify Nginx default configuration", e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // Deploy the configuration
+        deployOnionServiceNginxConfig(sb.toString(), webtunnelPort);
     }
 
     /**
