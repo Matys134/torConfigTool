@@ -89,7 +89,6 @@
                     <p th:text="'ServerTransportListenAddr: ' + ${config.getBridgeConfig.getServerTransport}"></p>
                     <p th:text="'Contact: ' + ${config.getBridgeConfig.contact}"></p>
                     <p th:text="'Control Port: ' + ${config.getBridgeConfig.controlPort}"></p>
-                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + ${config.getBridgeConfig.webtunnelPort} + ' null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>                    <p th:text="'Bandwidth Limit: ' + ${config.getBridgeConfig.bandwidthRate}"></p>
                     <p>Status: <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
                     <!-- Display type of bridge -->
@@ -124,9 +123,7 @@
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Stop
                         </button>
-                        <button class="btn btn-secondary">
-                            <a th:href="@{'/file/upload/' + ${config.getBridgeConfig.webtunnelPort}}">Edit Files</a>
-                        </button>
+
                     </div>
                 </div>
                 <div th:if="${isSnowflakeConfigured}" id="snowflakeTab" class="tab-pane fade show active">
