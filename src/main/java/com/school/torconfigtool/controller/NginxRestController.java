@@ -1,6 +1,5 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.service.NginxService;
 import com.school.torconfigtool.service.OnionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,23 +14,11 @@ import java.io.IOException;
 @RequestMapping("/nginx-api")
 public class NginxRestController {
 
-    private final NginxService nginxService;
     private final OnionService onionService;
 
     @Autowired
-    public NginxRestController(NginxService nginxService, OnionService onionService) {
-        this.nginxService = nginxService;
+    public NginxRestController(OnionService onionService) {
         this.onionService = onionService;
-    }
-
-    @PostMapping("/revert-nginx-config")
-    public ResponseEntity<String> revertNginxConfig() {
-        try {
-            nginxService.revertNginxDefaultConfig();
-            return new ResponseEntity<>("Nginx configuration reverted successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error reverting Nginx configuration: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @PostMapping("/refresh-nginx")

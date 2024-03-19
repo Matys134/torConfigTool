@@ -80,7 +80,6 @@ public class BridgeService {
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null) {
             nginxService.configureNginxForOnionService(webtunnelPort);
-            nginxService.changeRootDirectory(System.getProperty("user.dir") + "/onion/www/service-" + webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
             nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort);

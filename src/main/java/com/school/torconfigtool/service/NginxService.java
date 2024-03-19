@@ -111,6 +111,27 @@ public class NginxService {
         }
     }
 
+
+    /**
+     * This method is used to revert the Nginx configuration to its default state.
+     * It clears the configuration file and writes the initial configuration.
+     * If the file writing fails, it logs the error.
+     */
+    public void revertNginxDefaultConfig() {
+        // The path to the default configuration file
+        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+
+        try {
+            // Clear the file and write the initial configuration
+            List<String> lines = getDefaultNginxConfigLines(80);
+
+            // Write the list to the file
+            Files.write(defaultConfigPath, lines);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to revert Nginx default configuration", e);
+        }
+    }
+
     /**
      * This method is used to get the default Nginx configuration lines.
      *
