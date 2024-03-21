@@ -29,6 +29,9 @@
 <div th:replace="navbar :: nav"></div>
 <div class="container">
     <h1>Tor Relay Operations</h1>
+
+    <div id="spinner" class="spinner" style="display: none;"></div>
+
     <button id="upnp-toggle-button" class="btn btn-primary" data-upnp-enabled="true">Disable UPnP for Guard Relays</button>
 
     <!-- Guard Relay Configurations -->

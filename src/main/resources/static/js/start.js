@@ -1,6 +1,9 @@
 $(document).ready(function () {
     // Add a click event handler for the "Start" buttons
     $(".start-button").click(function () {
+        // Show the spinner
+        $("#spinner").show();
+
         const nickname = $(this).data("config-nickname");
         const relayType = $(this).data("config-type");
 
@@ -13,11 +16,13 @@ $(document).ready(function () {
                 relayType: relayType
             },
             success: function (data) {
-                // Handle the server response here (if needed)
+                // Hide the spinner
+                $("#spinner").hide();
                 console.log('Relay started:', data);
             },
             error: function (error) {
-                // Handle any errors here
+                // Hide the spinner
+                $("#spinner").hide();
                 console.error('Error starting relay:', error);
             }
         });
