@@ -220,7 +220,7 @@ $(document).ready(function () {
                             const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                             const eventElement = document.createElement('p');
                             eventElement.innerText = '(' + timeLabel + '): ' + event;
-                            eventContainer.prepend(eventElement);
+                            eventContainer.append(eventElement);
                         }
                     }
                 }
