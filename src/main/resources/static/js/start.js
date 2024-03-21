@@ -15,9 +15,9 @@ $(document).ready(function () {
         editButton.prop('disabled', true);
         removeButton.prop('disabled', true);
 
-        // Show the appropriate spinner
+        startButton.prop('disabled', true);
+        console.log('Start button clicked, showing spinner');
         $("#spinner-" + nickname).show();
-        console.log("Nickname: " + nickname);
 
         // Send an AJAX request to start the relay
         $.ajax({
