@@ -66,11 +66,11 @@
                 </div>
                 <div class="form-group">
                     <label for="relayPort">ORPort:</label>
-                    <input id="relayPort" name="relayPort" required type="number" min="1024" max="65535" class="form-control">
+                    <input id="relayPort" name="relayPort" required type="number" min="1" max="65535" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="controlPort">Control Port:</label>
-                    <input id="controlPort" name="controlPort" required type="number" min="1024" max="65535" class="form-control">
+                    <input id="controlPort" name="controlPort" required type="number" min="1" max="65535" class="form-control">
                 </div>
                 <div class="form-group" id="relayBandwidthField">
                     <label for="relayBandwidth">Bandwidth limit (KB/s, 0 = unlimited)</label>
@@ -114,7 +114,7 @@
 
                     <div class="form-group">
                         <label for="bridgeControlPort">ControlPort:</label>
-                        <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1024" max="65535" class="form-control">
+                        <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group" id="bridgeBandwidthField">
@@ -127,12 +127,12 @@
                 <div class="bridge-specific" id="bridgeFields">
                     <div class="form-group">
                         <label for="bridgePort">ORPort:</label>
-                        <input id="bridgePort" name="bridgePort" required type="number" min="1024" max="65535" class="form-control">
+                        <input id="bridgePort" name="bridgePort" required type="number" min="1" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label for="bridgeTransportListenAddr">ServerTransportListenAddr:</label>
-                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1024" max="65535" class="form-control">
+                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1" max="65535" class="form-control">
                     </div>
                 </div>
 
@@ -143,7 +143,7 @@
                         <input id="webtunnelUrl" name="webtunnelUrl" type="text" class="form-control">
 
                         <label for="webtunnelPort">Webtunnel Port:</label>
-                        <input id="webtunnelPort" name="webtunnelPort" type="number" min="1024" max="65535" class="form-control">
+                        <input id="webtunnelPort" name="webtunnelPort" type="number" min="1" max="65535" class="form-control">
                     </div>
                 </div>
 
@@ -162,7 +162,7 @@
             <form action="/onion-service/configure" id="onionForm" method="post">
                 <div class="form-group">
                     <label for="onionServicePort">HiddenServicePort:</label>
-                    <input id="onionServicePort" name="onionServicePort" required type="number" min="1024" max="65535" class="form-control">
+                    <input id="onionServicePort" name="onionServicePort" required type="number" min="1" max="65535" class="form-control">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>

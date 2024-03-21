@@ -1,15 +1,4 @@
-let maxBridgeCount = {};
 let totalRelays = 0;
-
-$.get("/bridge-api/bridges/max-count", function(data) {
-    maxBridgeCount = data;
-});
-
-let maxGuardCount;
-
-$.get("/guard-api/guards/max-count", function(data) {
-    maxGuardCount = data;
-});
 
 $.get("/guard-api/guards/limit-reached", function(data) {
     const guardCountElement = $('#guardCount');
@@ -18,14 +7,14 @@ $.get("/guard-api/guards/limit-reached", function(data) {
     totalRelays += data.guardCount;
 });
 
-$.get("/bridge-api/bridges/limit-reached", { bridgeType: 'obfs4' }, function(data) {
+$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'obfs4' }, function(data) {
     const bridgeCountElement = $('#bridgeCount');
     bridgeCountElement.text(data.bridgeCount);
     bridgeCountElement.addClass('blue-text');
     totalRelays += data.bridgeCount;
 });
 
-$.get("/bridge-api/bridges/limit-reached", { bridgeType: 'webtunnel' }, function(data) {
+$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'webtunnel' }, function(data) {
     const webtunnelCountElement = $('#webtunnelCount');
     webtunnelCountElement.text(data.bridgeCount);
     webtunnelCountElement.addClass('blue-text');
@@ -34,7 +23,7 @@ $.get("/bridge-api/bridges/limit-reached", { bridgeType: 'webtunnel' }, function
     updateTotalRelays();
 });
 
-$.get("/bridge-api/bridges/limit-reached", { bridgeType: 'snowflake' }, function(data) {
+$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'snowflake' }, function(data) {
     const snowflakeCountElement = $('#snowflakeCount');
     snowflakeCountElement.text(data.bridgeCount);
     snowflakeCountElement.addClass('blue-text');

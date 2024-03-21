@@ -1,7 +1,6 @@
 package com.school.torconfigtool.controller;
 
 import com.school.torconfigtool.service.GuardService;
-import com.school.torconfigtool.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +36,7 @@ public class GuardRestController {
      */
     @GetMapping("/guards/limit-reached")
     public ResponseEntity<Map<String, Object>> checkGuardLimit() {
-        return ResponseEntity.ok(guardService.checkGuardLimit());
+        return ResponseEntity.ok(guardService.countGuards());
     }
 
     /**
@@ -48,10 +47,5 @@ public class GuardRestController {
     @GetMapping("/guard-configured")
     public ResponseEntity<Map<String, Boolean>> checkGuardConfigured() {
         return ResponseEntity.ok(guardService.checkGuardConfigured());
-    }
-
-    @GetMapping("/guards/max-count")
-    public ResponseEntity<Integer> getMaxGuardCount() {
-        return ResponseEntity.ok(Constants.MAX_GUARD_COUNT);
     }
 }

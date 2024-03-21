@@ -1,7 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
-import com.school.torconfigtool.util.Constants;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -96,31 +95,21 @@ public class BridgeService {
      * @param bridgeType Type of the bridge.
      * @return Map containing the bridge limit reached status and the bridge counts.
      */
-    public Map<String, Object> checkBridgeLimit(String bridgeType) {
+    public Map<String, Object> countBridges(String bridgeType) {
         Map<String, Object> response = new HashMap<>();
         Map<String, Integer> bridgeCountByType = relayInformationService.getBridgeCountByType();
 
-        if (!RelayInformationService.isLimitOn()) {
-            response.put("bridgeLimitReached", false);
-            response.put("bridgeCount", bridgeCountByType.get(bridgeType));
-            return response;
-        }
-
         switch (bridgeType) {
             case "obfs4":
-                response.put("bridgeLimitReached", bridgeCountByType.get("obfs4") >= Constants.MAX_OBFS4_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("obfs4"));
                 break;
             case "webtunnel":
-                response.put("bridgeLimitReached", bridgeCountByType.get("webtunnel") >= Constants.MAX_WEBTUNNEL_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("webtunnel"));
                 break;
             case "snowflake":
-                response.put("bridgeLimitReached", bridgeCountByType.get("snowflake") >= Constants.MAX_SNOWFLAKE_COUNT);
                 response.put("bridgeCount", bridgeCountByType.get("snowflake"));
                 break;
             default:
-                response.put("bridgeLimitReached", false);
                 response.put("bridgeCount", 0);
         }
 

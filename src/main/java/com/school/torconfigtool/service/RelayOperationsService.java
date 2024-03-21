@@ -79,7 +79,7 @@ public class RelayOperationsService {
             }
 
             // Step 3: Start the Relay
-            String command = "tor -f " + torrcFilePath.toAbsolutePath();
+            String command = "sudo tor -f " + torrcFilePath.toAbsolutePath();
             try {
                 commandService.executeCommand(command);
             } catch (RuntimeException e) {

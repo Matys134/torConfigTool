@@ -3,13 +3,11 @@ package com.school.torconfigtool.controller;
 import com.school.torconfigtool.service.BridgeService;
 import com.school.torconfigtool.service.RelayInformationService;
 import com.school.torconfigtool.service.SnowflakeProxyService;
-import com.school.torconfigtool.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,9 +60,9 @@ public class BridgeRestController {
      * @param bridgeType - The type of bridge to check the limit for.
      * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge counts.
      */
-    @GetMapping("/bridges/limit-reached")
+    @GetMapping("/bridges/bridge-count")
     public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
-        Map<String, Object> response = bridgeService.checkBridgeLimit(bridgeType);
+        Map<String, Object> response = bridgeService.countBridges(bridgeType);
         return ResponseEntity.ok(response);
     }
 
@@ -89,14 +87,5 @@ public class BridgeRestController {
     @GetMapping("/bridge-configured")
     public ResponseEntity<Map<String, Boolean>> isBridgeLimitReached() {
         return ResponseEntity.ok(bridgeService.checkBridgeConfigured());
-    }
-
-    @GetMapping("/bridges/max-count")
-    public ResponseEntity<Map<String, Integer>> getMaxBridgeCount() {
-        Map<String, Integer> response = new HashMap<>();
-        response.put("obfs4", Constants.MAX_OBFS4_COUNT);
-        response.put("webtunnel", Constants.MAX_WEBTUNNEL_COUNT);
-        response.put("snowflake", Constants.MAX_SNOWFLAKE_COUNT);
-        return ResponseEntity.ok(response);
     }
 }
