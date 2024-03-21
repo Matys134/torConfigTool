@@ -1,13 +1,13 @@
 $(document).ready(function () {
     // Define the base API endpoint
-    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
+    var baseApiUrl = 'http://' + location.hostname + ':8081/api/relay-data';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart and hide it initially
-        const chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
-        const chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
-        const relayName = 'Relay on Port ' + port;
+        var chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
+        var chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
+        var relayName = 'Relay on Port ' + port;
 
         // Create a container for the upload and download rates
         $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
@@ -15,7 +15,7 @@ $(document).ready(function () {
         $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
 // Create a container for the flags
         $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
-        const eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
+        var eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
 
 
@@ -23,10 +23,10 @@ $(document).ready(function () {
         chartContainer.appendTo($('#relayCharts'));
 
         // Get references to the chart canvas and its context
-        const ctx = chartCanvas[0].getContext('2d');
+        var ctx = chartCanvas[0].getContext('2d');
 
         // Create an initial empty chart
-        const relayChart = new Chart(ctx, {
+        var relayChart = new Chart(ctx, {
             type: 'bar', // Change this line
             data: {
                 labels: [],
@@ -91,7 +91,7 @@ $(document).ready(function () {
         // Function to update the traffic data and chart for the relay
         // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
-            const apiUrl = baseApiUrl + '/' + port;
+            var apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
                 if (data && data.length > 0) {
                     // Filter out null values from the data
@@ -99,27 +99,27 @@ $(document).ready(function () {
                         return relayData !== null;
                     });
 
-                    let uploadData = data.map(function (relayData) {
+                    var uploadData = data.map(function (relayData) {
                         return relayData.upload;
                     });
-                    let downloadData = data.map(function (relayData) {
+                    var downloadData = data.map(function (relayData) {
                         return relayData.download;
                     });
 
                     // Fetch the flags data
-                    const flagsData = data.map(function (relayData) {
+                    var flagsData = data.map(function (relayData) {
                         return relayData.flags;
                     });
 
                     // Update the flagsData div with the fetched flags data
-                    const flagsContainer = $('#relayFlags' + port);
+                    var flagsContainer = $('#relayFlags' + port);
                     flagsContainer.html('Flags: ' + flagsData[flagsData.length - 1]);
 
                     // Determine the maximum value among the upload and download data
-                    const maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
+                    var maxDataValue = Math.max(Math.max(...uploadData), Math.max(...downloadData));
 
                     // Determine the scale and unit based on the maximum value
-                    let scale, unit;
+                    var scale, unit;
                     if (maxDataValue >= 1e6) { // More than a million bytes (1 MB)
                         scale = 1e6;
                         unit = 'MB/s';
@@ -145,8 +145,8 @@ $(document).ready(function () {
                     }
 
                     // Get the current time and format it as a string
-                    const currentTime = new Date();
-                    const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                    var currentTime = new Date();
+                    var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
                     // Update the chart's data and labels
                     relayChart.data.labels.push(timeLabel);
@@ -161,16 +161,16 @@ $(document).ready(function () {
                     }
 
                     // Fetch the uptime
-                    const uptime = data.map(function (relayData) {
+                    var uptime = data.map(function (relayData) {
                         return relayData.uptime;
                     });
 
-                    const torVersion = data.map(function (relayData) {
+                    var torVersion = data.map(function (relayData) {
                         return relayData.version;
                     });
 
                     // Update the relay-rates div with the latest upload and download rates and uptime
-                    const ratesContainer = $('#relayRates' + port);
+                    var ratesContainer = $('#relayRates' + port);
                     ratesContainer.html(`
     <div class="card">
         <div class="card-body">
@@ -198,8 +198,8 @@ $(document).ready(function () {
         }
 
         // Store the last fetched events and the last event index
-        const lastEvents = {};
-        const lastEventIndex = {};
+        var lastEvents = {};
+        var lastEventIndex = {};
 
         function updateRelayEventData(port, eventContainer) {
             var apiUrl = baseApiUrl + '/' + port + '/events';
@@ -242,17 +242,17 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         // Fetch the list of relay info dynamically
-        $.get('https://' + location.hostname + ':8443/relay-data/relay-info', function (relayInfoArray) {
+        $.get('http://' + location.hostname + ':8081/api/relay-info', function (relayInfoArray) {
             // Create charts for each relay based on the retrieved relay info
             relayInfoArray.forEach(function (relayInfo) {
-                const port = relayInfo.controlPort;
-                const nickname = relayInfo.nickname;
-                const type = relayInfo.type; // Add this line
+                var port = relayInfo.controlPort;
+                var nickname = relayInfo.nickname;
+                var type = relayInfo.type; // Add this line
 
                 createRelayChart(port, nickname);
 
                 // Add an item to the dropdown menu for this relay
-                const menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>'); // Modify this line
+                var menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>'); // Modify this line
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
