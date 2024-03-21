@@ -89,7 +89,14 @@ $(document).ready(function () {
             }
         });
 
-        // Function to update the traffic data and chart for the relay
+        // Helper function to convert seconds into hours:minutes:seconds format
+        function formatTime(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hrs}:${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
         // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
             const apiUrl = baseApiUrl + '/' + port;
@@ -149,8 +156,6 @@ $(document).ready(function () {
                     const currentTime = new Date();
                     const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
-                    // Update the chart's data and labels
-                    relayChart.data.labels.push(timeLabel);
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
@@ -173,16 +178,16 @@ $(document).ready(function () {
                     // Update the relay-rates div with the latest upload and download rates and uptime
                     const ratesContainer = $('#relayRates' + port);
                     ratesContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Statistics</h5>
-            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
-            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Relay Statistics</h5>
+                <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
+                <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
+                <p class="card-text">Uptime: ${formatTime(uptime[uptime.length - 1])}</p>
+                <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
+            </div>
         </div>
-    </div>
-`);
+    `);
 
 // Update the flagsData div with the fetched flags data
                     flagsContainer.html(`
@@ -222,7 +227,7 @@ $(document).ready(function () {
                             const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                             const eventElement = document.createElement('p');
                             eventElement.innerText = '(' + timeLabel + '): ' + event;
-                            eventContainer.append(eventElement);
+                            eventContainer.prepend(eventElement);
                         }
                     }
                 }
