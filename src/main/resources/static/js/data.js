@@ -227,10 +227,13 @@ $(document).ready(function () {
             });
         }
 
-
-        // Update the data and chart for the relay initially
-        updateRelayTrafficDataAndChart();
+// Call the function initially
         updateRelayEventData(port, eventContainer);
+
+// Set an interval to update the events periodically (e.g., every 1 seconds)
+        setInterval(function () {
+            updateRelayEventData(port, eventContainer);
+        }, 1000); // 1 seconds
 
         // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
