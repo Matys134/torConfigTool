@@ -1,9 +1,7 @@
 $(document).ready(function () {
-    // Disable SSL certificate verification
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
     // Define the base API endpoint
-    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
+    const baseApiUrl = 'http://' + location.hostname + ':8443/relay-data/relays';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
@@ -244,7 +242,7 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         // Fetch the list of relay info dynamically
-        $.get('https://' + location.hostname + ':8443/relay-data/relay-info', function (relayInfoArray) {
+        $.get('http://' + location.hostname + ':8443/relay-data/relay-info', function (relayInfoArray) {
             // Create charts for each relay based on the retrieved relay info
             relayInfoArray.forEach(function (relayInfo) {
                 const port = relayInfo.controlPort;
