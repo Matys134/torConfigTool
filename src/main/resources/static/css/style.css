@@ -48,11 +48,7 @@ button:hover {
 }
 
 .spinner {
-    border: 4px solid #f3f3f3; /* Adjust border size */
-    border-top: 4px solid #3498db; /* Adjust border size */
     border-radius: 50%;
-    width: 20px; /* Adjust width */
-    height: 20px; /* Adjust height */
     animation: spin 2s linear infinite;
     display: inline-block; /* Add this to align the spinner with the buttons */
     vertical-align: middle; /* Add this to align the spinner vertically */
