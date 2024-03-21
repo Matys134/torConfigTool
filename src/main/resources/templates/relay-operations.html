@@ -39,12 +39,12 @@
             <div id="guard-configs" class="list-group">
                 <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
-                    <strong><h5 th:text="'Nickname: ' + ${config.getGuardConfig.nickname}"></h5></strong>
-                    <strong><p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p></strong>
-                    <strong><p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p></strong>
-                    <strong><p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p></strong>
-                    <strong><p th:text="'Bandwidth Limit: ' + ${config.getGuardConfig.bandwidthRate}"></p></strong>
-                    <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
+                    <strong>Nickname:</strong> <h5 th:text="${config.getGuardConfig.nickname}"></h5>
+                    <strong>ORPort:</strong> <p th:text="${config.getGuardConfig.orPort}"></p>
+                    <strong>Contact:</strong> <p th:text="${config.getGuardConfig.contact}"></p>
+                    <strong>Control Port:</strong> <p th:text="${config.getGuardConfig.controlPort}"></p>
+                    <strong>Bandwidth Limit:</strong> <p th:text="${config.getGuardConfig.bandwidthRate}"></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"
                                 th:attr="data-config-type='guard'"
@@ -85,15 +85,14 @@
             <div id="bridge-configs" class="list-group">
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
-                    <h5 th:text="'Nickname: ' + ${config.getBridgeConfig.nickname}"></h5>
-
-                    <p th:text="'ORPort: ' + ${config.getBridgeConfig.orPort}"></p>
-                    <p th:text="'ServerTransportListenAddr: ' + ${config.getBridgeConfig.getServerTransport}"></p>
-                    <p th:text="'Contact: ' + ${config.getBridgeConfig.contact}"></p>
-                    <p th:text="'Control Port: ' + ${config.getBridgeConfig.controlPort}"></p>
-                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
-                    <p th:text="'Bandwidth Limit: ' + ${config.getBridgeConfig.bandwidthRate}"></p>
-                    <p>Status: <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
+                    <strong>Nickname:</strong> <h5 th:text="${config.getBridgeConfig.nickname}"></h5>
+                    <strong>ORPort:</strong> <p th:text="${config.getBridgeConfig.orPort}"></p>
+                    <strong>ServerTransportListenAddr:</strong> <p th:text="${config.getBridgeConfig.getServerTransport}"></p>
+                    <strong>Contact:</strong> <p th:text="${config.getBridgeConfig.contact}"></p>
+                    <strong>Control Port:</strong> <p th:text="${config.getBridgeConfig.controlPort}"></p>
+                    <strong>Webtunnel Link:</strong> <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}"><span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
+                    <strong>Bandwidth Limit:</strong> <p th:text="${config.getBridgeConfig.bandwidthRate}"></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.getBridgeConfig.nickname}">Unknown</span></p>
@@ -149,9 +148,9 @@
             <div id="onion-configs" class="list-group">
                 <div th:each="config : ${onionConfigs}" class="list-group-item">
                     <!-- Display Onion relay configuration fields -->
-                    <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-                    <p>Hostname: <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
-                    <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
+                    <strong>HiddenServicePort:</strong> <p th:text="${config.hiddenServicePort}"></p>
+                    <strong>Hostname:</strong> <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span>
+                    <strong>Status:</strong> <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span>
                     <div class="btn-group" role="group" aria-label="Basic example">
 
                         <button class="btn btn-secondary remove-button"
