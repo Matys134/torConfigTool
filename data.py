@@ -194,7 +194,7 @@ def _send_bandwidth_data(controller, control_port):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = requests.post(api_endpoint, json=data, verify=False)
 
     # Print the response object
     print(f"Response for ControlPort {control_port}: {response}")
@@ -223,7 +223,7 @@ def _handle_event(controller, control_port, event):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}/event"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data)
+    response = requests.post(api_endpoint, json=data, verify=False)
 
     if response.status_code == 200:
         print(f"Event sent for ControlPort {control_port}: {event}")
