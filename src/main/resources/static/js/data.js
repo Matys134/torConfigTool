@@ -203,6 +203,7 @@ $(document).ready(function () {
         function updateRelayEventData(port, eventContainer) {
             const apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
+                console.log(data);  // Log the data received from the server
                 // Check if the events have changed
                 if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
                     // Determine the start index for new events
