@@ -217,9 +217,9 @@ $(document).ready(function () {
                         // Create a new Date object with the date and time parts
                         const date = new Date(datePart + 'T' + timePart);
 
-                        // Format the date and time
-                        const formattedDate = date.toLocaleDateString();
-                        const formattedTime = date.toLocaleTimeString();
+                        // Manually format the date and time
+                        const formattedDate = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+                        const formattedTime = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
                         const eventElement = document.createElement('p');
                         eventElement.innerText = formattedDate + ' ' + formattedTime + ': ' + event.split(' ').slice(1).join(' '); // The event data now includes the formatted timestamp
