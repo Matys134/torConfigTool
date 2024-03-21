@@ -138,7 +138,7 @@ $(document).ready(function () {
 
                     // Update the y-axis label
                     if (relayChart && relayChart.options && relayChart.options.scales && relayChart.options.scales.yAxes && relayChart.options.scales.yAxes[0]) {
-                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
+                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = 'Data Rate (' + unit + ')';
                     }
 
                     // Get the current time and format it as a string
