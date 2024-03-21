@@ -218,8 +218,7 @@ $(document).ready(function () {
                         if (event !== null) { // Check if the event is not null
                             const currentTime = new Date();
                             const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                            const eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            const eventElement = $('<p></p>').text('(' + timeLabel + '): ' + event);
                             eventContainer.append(eventElement);
                         }
                     }
@@ -227,12 +226,11 @@ $(document).ready(function () {
             });
         }
 
-
-        // Update the data and chart for the relay initially
+// Update the data and chart for the relay initially
         updateRelayTrafficDataAndChart();
         updateRelayEventData(port, eventContainer);
 
-        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
+// Set an interval to update the data and chart periodically (e.g., every 1 seconds)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
