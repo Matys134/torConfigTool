@@ -236,7 +236,7 @@ $(document).ready(function () {
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
-        }, 100); // 1 seconds
+        }, 1000); // 1 seconds
     }
 
     $(document).ready(function () {
