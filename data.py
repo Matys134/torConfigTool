@@ -14,7 +14,7 @@ def get_local_ip():
     return local_ip
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = f"https://{get_local_ip()}:8443/relay-data/relays"
+BASE_API_ENDPOINT = f"https://{get_local_ip()}:8443/api/data"
 
 
 def main():
@@ -140,14 +140,8 @@ def relay_flags(controller):
     :return: List of relay flags.
     """
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
-    print(f"Relay fingerprint: {my_fingerprint}")  # Debug print
-
     status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
-    print(f"Network status: {status}")  # Debug print
-
     flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
-    print(f"Flags: {flags}")  # Debug print
-
     return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
 
 
