@@ -216,10 +216,9 @@ $(document).ready(function () {
                     for (let i = startIndex; i < data.length; i++) {
                         const event = data[i];
                         if (event !== null) { // Check if the event is not null
-                            const currentTime = new Date();
-                            const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                            const timeLabel = event.timestamp;  // Use the timestamp from the server
                             const eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event;
+                            eventElement.innerText = '(' + timeLabel + '): ' + event.event;
                             eventContainer.append(eventElement);
                         }
                     }
@@ -232,11 +231,11 @@ $(document).ready(function () {
         updateRelayTrafficDataAndChart();
         updateRelayEventData(port, eventContainer);
 
-        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
+        // Set an interval to update the data and chart periodically (e.g., every 1 second)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
-        }, 1000); // 1 seconds
+        }, 100); // 1 seconds
     }
 
     $(document).ready(function () {
