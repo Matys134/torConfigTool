@@ -270,3 +270,12 @@ function formatUptime(uptime) {
 
     return hours + ":" + minutes + ":" + seconds;
 }
+
+$(document).ready(function() {
+    $('#eventData').on('show.bs.collapse', function () {
+        $('#eventsArrow').addClass('rotated');
+    });
+    $('#eventData').on('hide.bs.collapse', function () {
+        $('#eventsArrow').removeClass('rotated');
+    });
+});

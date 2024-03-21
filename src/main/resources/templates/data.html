@@ -46,8 +46,8 @@
                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#eventData">
                     Events
                     <span class="circle">
-            <span class="arrow" id="eventDataArrow"></span>
-        </span>
+        <span class="arrow" id="eventsArrow"></span>
+    </span>
                 </button>
             </h2>
             <div id="eventData" class="collapse"></div>
@@ -60,15 +60,5 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/data.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#eventData').on('show.bs.collapse', function () {
-            $('#eventDataArrow').addClass('rotated');
-        });
-        $('#eventData').on('hide.bs.collapse', function () {
-            $('#eventDataArrow').removeClass('rotated');
-        });
-    });
-</script>
 </body>
 </html>
