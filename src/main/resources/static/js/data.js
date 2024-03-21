@@ -56,18 +56,6 @@ $(document).ready(function () {
                     }
                 },
                 scales: {
-                    xAxes: [{
-                        display: false, // Set this to false to hide the x-axis
-                        scaleLabel: {
-                            display: false, // Set this to false to hide the x-axis label
-                        },
-                        ticks: {
-                            fontColor: '#00ff00', // Green color
-                        },
-                        gridLines: {
-                            color: '#333333' // Dark gray color
-                        }
-                    }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
