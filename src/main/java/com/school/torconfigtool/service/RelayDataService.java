@@ -4,7 +4,6 @@ import com.school.torconfigtool.model.RelayData;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
@@ -44,8 +43,7 @@ public class RelayDataService {
             relayEventQueue.poll(); // Remove the oldest event
         }
         // Add the current timestamp to the event
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String timestampedEvent = LocalDateTime.now().format(formatter) + ": " + event;
+        String timestampedEvent = LocalDateTime.now() + ": " + event;
         relayEventQueue.offer(timestampedEvent); // Add the new event
     }
 
@@ -57,7 +55,6 @@ public class RelayDataService {
      */
     public void handleRelayData(int relayId, RelayData relayData, Map<Integer, Deque<RelayData>> relayDataMap) {
         Deque<RelayData> relayDataQueue = relayDataMap.computeIfAbsent(relayId, k -> new LinkedList<>());
-        relayData.setFormattedUptime(formatUptime(relayData.getUptime()));
         addRelayData(relayDataQueue, relayData);
     }
 
@@ -83,12 +80,5 @@ public class RelayDataService {
         // Add the event to the relay events
         Deque<String> relayEventQueue = relayEventMap.computeIfAbsent(relayId, k -> new LinkedList<>());
         addRelayEvent(relayEventQueue, event);
-    }
-
-    public String formatUptime(double uptimeInSeconds) {
-        int hours = (int) (uptimeInSeconds / 3600);
-        int minutes = (int) ((uptimeInSeconds % 3600) / 60);
-        int seconds = (int) (uptimeInSeconds % 60);
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 }

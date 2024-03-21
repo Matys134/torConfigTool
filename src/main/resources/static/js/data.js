@@ -168,18 +168,31 @@ $(document).ready(function () {
                         return relayData.version;
                     });
 
-                    // Update the relay-rates div with the latest upload and download rates and uptime
+                    // Calculate hours, minutes, and seconds
+                    const hours = Math.floor(uptime / 3600);
+                    const minutes = Math.floor((uptime % 3600) / 60);
+                    const seconds = Math.floor(uptime % 60);
+
+// Format hours, minutes, and seconds as strings with leading zeros
+                    const hoursStr = String(hours).padStart(2, '0');
+                    const minutesStr = String(minutes).padStart(2, '0');
+                    const secondsStr = String(seconds).padStart(2, '0');
+
+// Concatenate hours, minutes, and seconds strings
+                    const uptimeStr = hoursStr + ':' + minutesStr + ':' + secondsStr;
+
+                    // Update the relay-rates div with the latest upload and download rates and formatted uptime
                     const ratesContainer = $('#relayRates' + port);
                     ratesContainer.html(`
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Relay Statistics</h5>
-            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
-            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
-        </div>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Relay Statistics</h5>
+        <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
+        <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
+        <p class="card-text">Uptime: ${uptimeStr}</p>
+        <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
     </div>
+</div>
 `);
 
 // Update the flagsData div with the fetched flags data
