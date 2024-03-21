@@ -1,11 +1,11 @@
 $(document).ready(function () {
     // Add a click event handler for the "Start" buttons
     $(".start-button").click(function () {
-        // Show the spinner
-        $("#spinner").show();
-
         const nickname = $(this).data("config-nickname");
         const relayType = $(this).data("config-type");
+
+        // Show the appropriate spinner
+        $("#spinner-" + relayType).show();
 
         // Send an AJAX request to start the relay
         $.ajax({

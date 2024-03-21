@@ -48,6 +48,11 @@ $(document).ready(function () {
             if (statusMessageElement.text() === "Shutting down" && data !== "online") {
                 statusMessageElement.text("Idle");
             }
+
+            if (data === "online" || data === "offline") {
+                // Hide the appropriate spinner
+                $("#spinner-" + relayType).hide();
+            }
         });
     }
 
