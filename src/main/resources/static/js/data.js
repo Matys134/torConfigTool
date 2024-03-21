@@ -57,24 +57,13 @@ $(document).ready(function () {
                 },
                 scales: {
                     xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Time',
-                            fontColor: '#00ff00', // Green color
-                        },
-                        ticks: {
-                            fontColor: '#00ff00', // Green color
-                        },
-                        gridLines: {
-                            color: '#333333' // Dark gray color
-                        }
+                        display: false, // Hide the x-axis
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Bytes/s',
+                            labelString: unit, // Display the unit on the y-axis
                             fontColor: '#00ff00', // Green color
                         },
                         ticks: {
@@ -176,7 +165,7 @@ $(document).ready(function () {
             <h5 class="card-title">Relay Statistics</h5>
             <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
             <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
+            <p class="card-text">Uptime: ${uptime[uptime.length - 1]}</p>
             <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
         </div>
     </div>
