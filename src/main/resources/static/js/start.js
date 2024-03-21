@@ -3,6 +3,7 @@ $(document).ready(function () {
         const nickname = $(this).data("config-nickname");
         const relayType = $(this).data("config-type");
 
+
         // Select the start, stop and edit buttons
         const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
         const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
@@ -15,8 +16,7 @@ $(document).ready(function () {
         editButton.prop('disabled', true);
         removeButton.prop('disabled', true);
 
-        startButton.prop('disabled', true);
-        console.log('Start button clicked, showing spinner');
+        // Show the appropriate spinner
         $("#spinner-" + nickname).show();
 
         // Send an AJAX request to start the relay
