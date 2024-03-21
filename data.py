@@ -7,6 +7,8 @@ import getpass
 import requests
 import stem
 from stem.control import EventType, Controller
+from datetime import datetime
+
 
 def get_local_ip():
     hostname = socket.gethostname()
@@ -207,13 +209,9 @@ def _send_bandwidth_data(controller, control_port):
 
 
 def _handle_event(controller, control_port, event):
-    """
-    Handle event and send it to the API endpoint.
+    # Format the timestamp of the event
+    event.timestamp = format_timestamp(event.timestamp)
 
-    :param controller: Controller object.
-    :param control_port: Control port number.
-    :param event: Event to handle.
-    """
     # Create a dictionary with the event data and an identifier
     data = {
         "event": str(event),
@@ -229,6 +227,18 @@ def _handle_event(controller, control_port, event):
         print(f"Event sent for ControlPort {control_port}: {event}")
     else:
         print(f"Failed to send event for ControlPort {control_port}: {response.status_code} - {response.text}")
+
+def format_timestamp(timestamp):
+    # Remove the fractional part of the seconds
+    timestamp = timestamp.split('.')[0]
+
+    # Parse the timestamp string into a datetime object
+    dt = datetime.fromisoformat(timestamp)
+
+    # Format the datetime object into the desired format
+    formatted_timestamp = dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    return formatted_timestamp
 
 
 if __name__ == '__main__':
