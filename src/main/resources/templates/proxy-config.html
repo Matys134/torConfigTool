@@ -4,14 +4,21 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/homeArrow.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Tor Proxy Configuration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Tor Proxy Configuration</h1>
+
+    <div class="alert alert-warning" role="alert">
+        <p><strong>Warning:</strong> This is not the ideal usage of Tor and the Tor Browser is still recommended.</p>
+    </div>
 
     <!-- Display success or error messages if needed -->
     <div class="alert alert-success" th:if="${successMessage}" role="alert">
@@ -21,11 +28,16 @@
         <p th:text="${errorMessage}"></p>
     </div>
 
-    <!-- Button to turn on the Tor Proxy -->
-    <form action="/proxy/start" method="post" class="mb-3">
-
-        <button type="submit" class="btn btn-success btn-block" onclick="showWarning()">Start Tor Proxy</button>
+    <div class="button-container">
+        <form action="/proxy/start" method="post" class="proxy-button">
+            <button type="submit" class="btn btn-success" onclick="showWarning()">Start Tor Proxy</button>
+        </form>
+    </div>
+    <div class="button-container">
+    <form action="/proxy/stop" method="post" class="proxy-button">
+        <button type="submit" class="btn btn-danger">Stop Tor Proxy</button>
     </form>
+</div>
 
     <!-- Display proxy status -->
     <div class="card mb-3">
@@ -33,14 +45,96 @@
             <p class="card-text">Proxy Status: <span th:text="${proxyStatus}"></span></p>
         </div>
     </div>
+</div>
 
-    <!-- Button to turn off the Tor Proxy -->
-    <form action="/proxy/stop" method="post">
+<!-- Tutorial Section -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">How to Setup a Proxy on Client Computer</h2>
 
-        <button type="submit" class="btn btn-danger btn-block">Stop Tor Proxy</button>
-    </form>
+    <div class="card">
+        <div class="card-header" id="dnsHeading" data-toggle="collapse" data-target="#dnsTips" aria-expanded="false" aria-controls="dnsTips" style="cursor: pointer;">
+            <h3 class="mb-0 d-flex justify-content-between align-items-center">
+                DNS Settings
+                <span class="circle">
+                    <span class="arrow" id="dnsArrow"></span>
+                </span>
+            </h3>
+        </div>
+        <div id="dnsTips" class="collapse" aria-labelledby="dnsHeading">
+            <div class="card-body">
+                <div class="image-text-wrapper">
+                    <img src="/images/dns1.png" alt="DNS Setup 1">
+                    <p>Press Windows + R, type "ncpa.cpl" and press Enter.</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/dns2.png" alt="DNS Setup 2">
+                <p>Right-click on the network adapter you are using and select "Properties".</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/dns3.png" alt="DNS Setup 3">
+                <p>Click on "Internet Protocol Version 4 (TCP/IPv4)" and then click "Properties".</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/dns4.png" alt="DNS Setup 4">
+                <p>Click on "Use the following DNS server addresses" and enter the local IP address of the computer running the Tor proxy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header" id="proxyHeading" data-toggle="collapse" data-target="#proxyTips" aria-expanded="false" aria-controls="proxyTips" style="cursor: pointer;">
+            <h3 class="mb-0 d-flex justify-content-between align-items-center">
+                Proxy SOCKS Setup
+                <span class="circle">
+                    <span class="arrow" id="proxyArrow"></span>
+                </span>
+            </h3>
+        </div>
+        <div id="proxyTips" class="collapse" aria-labelledby="proxyHeading">
+            <div class="card-body">
+                <!-- Proxy Images -->
+                <div class="image-text-wrapper">
+                <img src="/images/proxy1.png" alt="Proxy Setup 1">
+                <p>Press Windows + R, type "inetcpl.cpl" and press Enter.</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/proxy3.png" alt="Proxy Setup 3">
+                <p>Click on the "Connections" tab and then click "LAN settings".</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/proxy4.png" alt="Proxy Setup 4">
+                <p>Check "Use a proxy server for your LAN" and click "Advanced".</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                <img src="/images/proxy5.png" alt="Proxy Setup 5">
+                <p>In the "Socks" section, enter the local IP address of the computer running the Tor proxy and the port number.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="/js/warning.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#dnsHeading, #proxyHeading').on('click', function() {
+            var arrowId = this.id.replace('Heading', 'Arrow');
+            var arrow = $('#' + arrowId);
+            var contentId = this.id.replace('Heading', 'Tips');
+            if ($('#' + contentId).hasClass('show')) {
+                arrow.removeClass('rotated');
+            } else {
+                arrow.addClass('rotated');
+            }
+        });
+    });
+</script>
 </body>
 </html>

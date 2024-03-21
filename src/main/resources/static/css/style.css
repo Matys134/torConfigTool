@@ -60,3 +60,32 @@ button:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.proxy-button .btn {
+    width: 100%;  /* Adjust this value as needed */
+}
+
+.image-text-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust as needed */
+    margin-bottom: 20px; /* Adjust as needed */
+    border-bottom: 1px solid #ddd; /* Adjust as needed */
+}
+
+.image-text-wrapper:last-child {
+    border-bottom: none;
+}
+
+.image-text-wrapper img {
+    flex-shrink: 0; /* Prevents the image from shrinking */
+}
+
+.image-text-wrapper p {
+    margin: 0; /* Removes the default paragraph margin */
+}
