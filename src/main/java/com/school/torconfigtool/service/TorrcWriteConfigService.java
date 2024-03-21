@@ -16,6 +16,7 @@ import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 public class TorrcWriteConfigService {
 
     private final SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();
+    String activeUserNickname = System.getProperty("user.name");
 
     public void writeSpecificConfig(RelayConfig config, BufferedWriter writer) throws IOException {
         if (config instanceof BridgeConfig) {
@@ -105,5 +106,9 @@ public class TorrcWriteConfigService {
 
         // Write specific configuration based on the type of relay
         writeSpecificConfig(config, writer);
+        writer.newLine();
+
+        writer.write("User " + activeUserNickname);
+
     }
 }
