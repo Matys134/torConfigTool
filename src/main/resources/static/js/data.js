@@ -56,6 +56,20 @@ $(document).ready(function () {
                     }
                 },
                 scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time',
+                            fontColor: '#00ff00', // Green color
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
+                        }
+                    }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
@@ -133,6 +147,7 @@ $(document).ready(function () {
                     const currentTime = new Date();
                     const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
+                    // Update the chart's data and labels
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
