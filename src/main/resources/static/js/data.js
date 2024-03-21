@@ -191,6 +191,7 @@ $(document).ready(function () {
         </div>
     </div>
 `);
+                    relayChart.options.scales.xAxes[0].ticks.display = false;
                     relayChart.update();
                 }
             });
