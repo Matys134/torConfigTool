@@ -270,3 +270,14 @@ function formatUptime(uptime) {
 
     return hours + ":" + minutes + ":" + seconds;
 }
+
+$(document).ready(function() {
+    $('#eventsButton').on('click', function() {
+        var arrow = $(this).find('.arrow');
+        if ($('#eventsSection').hasClass('show')) {
+            arrow.removeClass('rotated');
+        } else {
+            arrow.addClass('rotated');
+        }
+    });
+});
