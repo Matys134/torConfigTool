@@ -57,13 +57,22 @@ $(document).ready(function () {
                 },
                 scales: {
                     xAxes: [{
-                        display: false, // Hide the x-axis
+                        display: false, // Set this to false to hide the x-axis
+                        scaleLabel: {
+                            display: false, // Set this to false to hide the x-axis label
+                        },
+                        ticks: {
+                            fontColor: '#00ff00', // Green color
+                        },
+                        gridLines: {
+                            color: '#333333' // Dark gray color
+                        }
                     }],
                     yAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: unit, // Display the unit on the y-axis
+                            labelString: 'Bytes/s',
                             fontColor: '#00ff00', // Green color
                         },
                         ticks: {
