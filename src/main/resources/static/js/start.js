@@ -16,9 +16,9 @@ $(document).ready(function () {
                 relayType: relayType
             },
             success: function (data) {
-                // Hide the spinner
-                $("#spinner").hide();
                 console.log('Relay started:', data);
+                // Call the updateRelayStatus function
+                updateRelayStatus(nickname, relayType);
             },
             error: function (error) {
                 // Hide the spinner
