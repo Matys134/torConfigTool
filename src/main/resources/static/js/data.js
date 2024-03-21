@@ -1,4 +1,11 @@
 $(document).ready(function () {
+    // Disable SSL verification for all AJAX requests
+    $.ajaxSetup({
+        beforeSend: function(xhr) {
+            xhr.withCredentials = false;
+        }
+    });
+
     // Define the base API endpoint
     const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
