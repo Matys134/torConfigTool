@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Define the base API endpoint
-    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
+    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
@@ -88,6 +88,7 @@ $(document).ready(function () {
             }
         });
 
+        // Function to update the traffic data and chart for the relay
         // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
             const apiUrl = baseApiUrl + '/' + port;
@@ -203,17 +204,16 @@ $(document).ready(function () {
         function updateRelayEventData(port, eventContainer) {
             const apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                // Check if the events have changed
-                if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
-                    // Determine the start index for new events
-                    const startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
+                // Check if the number of events has increased
+                if (data.length > (lastEventIndex[port] || 0)) {
+                    // Clear the event container
+                    eventContainer.empty();
 
-                    // Update the last fetched events and the last event index
-                    lastEvents[port] = data;
+                    // Update the last event index
                     lastEventIndex[port] = data.length;
 
-                    // Add new events from the start index onwards
-                    for (let i = startIndex; i < data.length; i++) {
+                    // Add all events to the container
+                    for (let i = 0; i < data.length; i++) {
                         const event = data[i];
                         if (event !== null) { // Check if the event is not null
                             const currentTime = new Date();
