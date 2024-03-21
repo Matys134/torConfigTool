@@ -47,11 +47,15 @@ button:hover {
     color: red;
 }
 
+.btn-group {
+    position: relative;
+}
+
 .spinner {
-    border-radius: 50%;
-    animation: spin 2s linear infinite;
-    display: inline-block; /* Add this to align the spinner with the buttons */
-    vertical-align: middle; /* Add this to align the spinner vertically */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes spin {
