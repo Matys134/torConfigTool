@@ -47,15 +47,13 @@ button:hover {
     color: red;
 }
 
-.btn-group {
-    position: relative;
-}
-
 .spinner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    border: 4px solid #f3f3f3; /* Adjust border width */
+    border-top: 4px solid #3498db; /* Adjust border width */
+    border-radius: 50%;
+    width: 40px; /* Adjust width */
+    height: 40px; /* Adjust height */
+    animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
