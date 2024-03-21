@@ -161,38 +161,25 @@ $(document).ready(function () {
 
                     // Fetch the uptime
                     const uptime = data.map(function (relayData) {
-                        return relayData.uptime;
+                        return formatUptime(relayData.uptime);
                     });
 
                     const torVersion = data.map(function (relayData) {
                         return relayData.version;
                     });
 
-                    // Calculate hours, minutes, and seconds
-                    const hours = Math.floor(uptime / 3600);
-                    const minutes = Math.floor((uptime % 3600) / 60);
-                    const seconds = Math.floor(uptime % 60);
-
-// Format hours, minutes, and seconds as strings with leading zeros
-                    const hoursStr = String(hours).padStart(2, '0');
-                    const minutesStr = String(minutes).padStart(2, '0');
-                    const secondsStr = String(seconds).padStart(2, '0');
-
-// Concatenate hours, minutes, and seconds strings
-                    const uptimeStr = hoursStr + ':' + minutesStr + ':' + secondsStr;
-
-                    // Update the relay-rates div with the latest upload and download rates and formatted uptime
+                    // Update the relay-rates div with the latest upload and download rates and uptime
                     const ratesContainer = $('#relayRates' + port);
                     ratesContainer.html(`
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Relay Statistics</h5>
-        <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-        <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
-        <p class="card-text">Uptime: ${uptimeStr}</p>
-        <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Relay Statistics</h5>
+            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
+            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
+            <p class="card-text">Uptime: ${uptime[uptime.length - 1]} seconds</p>
+            <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
+        </div>
     </div>
-</div>
 `);
 
 // Update the flagsData div with the fetched flags data
@@ -272,3 +259,16 @@ $(document).ready(function () {
         });
     });
 });
+
+function formatUptime(uptime) {
+    let hours = Math.floor(uptime / 3600);
+    let minutes = Math.floor((uptime % 3600) / 60);
+    let seconds = uptime % 60;
+
+    // Pad the minutes and seconds with leading zeros, if required
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return hours + ":" + minutes + ":" + seconds;
+}
