@@ -48,8 +48,8 @@ button:hover {
 }
 
 .spinner {
-    border: 4px solid #f3f3f3; /* Adjust border width */
-    border-top: 4px solid #3498db; /* Adjust border width */
+    border: 8px solid #f3f3f3; /* Adjust border width */
+    border-top: 8px solid #3498db; /* Adjust border width */
     border-radius: 50%;
     width: 40px; /* Adjust width */
     height: 40px; /* Adjust height */
