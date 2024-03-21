@@ -48,6 +48,7 @@ public class WebSecurityConfig {
         http
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/relay-data/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)

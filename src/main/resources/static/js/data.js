@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     // Define the base API endpoint
-    const baseApiUrl = 'https://192.168.2.126:8443/relay-data/relays';
+    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
