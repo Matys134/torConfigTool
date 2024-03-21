@@ -15,7 +15,7 @@ import java.util.Map;
 public class RelayDataService {
 
     // Maximum size for the relay data queue
-    private static final int MAX_DATA_SIZE = 50;
+    private static final int MAX_DATA_SIZE = 20;
     // Maximum size for the relay event queue
     private static final int MAX_EVENT_SIZE = 10;
 

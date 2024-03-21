@@ -28,17 +28,17 @@ $(document).ready(function () {
         const relayChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(50).fill(''), // Initialize with 50 empty labels
+                labels: Array(20).fill(''), // Initialize with 50 empty labels
                 datasets: [
                     {
                         label: 'Upload',
                         backgroundColor: '#00ff00',
-                        data: Array(50).fill(0), // Initialize with 50 zeros
+                        data: Array(20).fill(0), // Initialize with 50 zeros
                     },
                     {
                         label: 'Download',
                         backgroundColor: '#ff0000',
-                        data: Array(50).fill(0), // Initialize with 50 zeros
+                        data: Array(20).fill(0), // Initialize with 50 zeros
                     },
                 ],
             },
@@ -151,7 +151,7 @@ $(document).ready(function () {
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
                     // If the number of data points exceeds a certain limit (e.g., 50), remove the oldest data point
-                    if (relayChart.data.labels.length > 50) {
+                    if (relayChart.data.labels.length > 20) {
                         relayChart.data.labels.shift();
                         relayChart.data.datasets[0].data.shift();
                         relayChart.data.datasets[1].data.shift();
