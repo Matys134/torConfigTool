@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    // Disable SSL certificate verification
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
     // Define the base API endpoint
     const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
