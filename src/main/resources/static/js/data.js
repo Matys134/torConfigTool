@@ -138,7 +138,7 @@ $(document).ready(function () {
 
                     // Update the y-axis label
                     if (relayChart && relayChart.options && relayChart.options.scales && relayChart.options.scales.yAxes && relayChart.options.scales.yAxes[0]) {
-                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = 'Data Rate (' + unit + ')';
+                        relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
                     }
 
                     // Get the current time and format it as a string
@@ -266,6 +266,12 @@ $(document).ready(function () {
 
                     // Show the selected relay's chart
                     $('#relayChart' + port).show();
+
+                    // Hide all event containers
+                    $('.relay-event').hide();
+
+                    // Show the selected relay's event container
+                    $('#eventData' + port).show();
                 });
             });
         }).catch(function (jqXHR, textStatus, errorThrown) {  // Use catch instead of fail
