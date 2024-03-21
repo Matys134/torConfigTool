@@ -202,29 +202,38 @@ $(document).ready(function () {
 
         function updateRelayEventData(port, eventContainer) {
             const apiUrl = baseApiUrl + '/' + port + '/events';
-            $.get(apiUrl, function (data) {
-                // Check if the events have changed
-                if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
-                    // Determine the start index for new events
-                    const startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
 
-                    // Update the last fetched events and the last event index
-                    lastEvents[port] = data;
-                    lastEventIndex[port] = data.length;
+            // Fetch the events initially
+            fetchEvents();
 
-                    // Add new events from the start index onwards
-                    for (let i = startIndex; i < data.length; i++) {
-                        const event = data[i];
-                        if (event !== null) { // Check if the event is not null
-                            const currentTime = new Date();
-                            const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                            const eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event;
-                            eventContainer.append(eventElement);
+            // Set an interval to fetch new events periodically (e.g., every 1 second)
+            setInterval(fetchEvents, 1000); // 1 second
+
+            function fetchEvents() {
+                $.get(apiUrl, function (data) {
+                    // Check if the events have changed
+                    if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
+                        // Determine the start index for new events
+                        const startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
+
+                        // Update the last fetched events and the last event index
+                        lastEvents[port] = data;
+                        lastEventIndex[port] = data.length;
+
+                        // Add new events from the start index onwards
+                        for (let i = startIndex; i < data.length; i++) {
+                            const event = data[i];
+                            if (event !== null) { // Check if the event is not null
+                                const currentTime = new Date();
+                                const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                                const eventElement = document.createElement('p');
+                                eventElement.innerText = '(' + timeLabel + '): ' + event;
+                                eventContainer.append(eventElement);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
 
 
