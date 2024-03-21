@@ -211,7 +211,7 @@ $(document).ready(function () {
                         // Parse the timestamp from the event data
                         const timestampParts = event.split(' ')[0].split('T'); // Split the timestamp into date and time parts
                         const datePart = timestampParts[0];
-                        const timeParts = timestampParts[1].split('\-'); // Split the time part into time and nanoseconds
+                        const timeParts = timestampParts[1].split('.'); // Split the time part into time and nanoseconds
                         const timePart = timeParts[0];
 
                         // Create a new Date object with the date and time parts
