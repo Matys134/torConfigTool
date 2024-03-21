@@ -4,6 +4,7 @@ import com.school.torconfigtool.model.RelayData;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class RelayDataService {
             relayEventQueue.poll(); // Remove the oldest event
         }
         // Add the current timestamp to the event
-        String timestampedEvent = LocalDateTime.now() + ": " + event;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String timestampedEvent = LocalDateTime.now().format(formatter) + ": " + event;
         relayEventQueue.offer(timestampedEvent); // Add the new event
     }
 
