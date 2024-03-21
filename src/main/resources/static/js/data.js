@@ -209,7 +209,7 @@ $(document).ready(function () {
                 // Add new events
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
-                    if (event !== null) { // Check if the event is not null
+                    if (event && event.time && event.message) { // Check if the event, time and message are not null
                         // Use the time from the event data instead of the current time
                         const eventTime = new Date(event.time);
                         const timeLabel = eventTime.getHours() + ':' + eventTime.getMinutes() + ':' + eventTime.getSeconds();
