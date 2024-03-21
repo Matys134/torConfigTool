@@ -2,9 +2,6 @@ $(document).ready(function () {
     // Define the base API endpoint
     const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
-    // Create a container for the events
-    const eventContainer = $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
-
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart and hide it initially
@@ -221,7 +218,8 @@ $(document).ready(function () {
                         if (event !== null) { // Check if the event is not null
                             const currentTime = new Date();
                             const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                            const eventElement = $('<p>(' + timeLabel + '): ' + event + '</p>');
+                            const eventElement = document.createElement('p');
+                            eventElement.innerText = '(' + timeLabel + '): ' + event;
                             eventContainer.append(eventElement);
                         }
                     }
