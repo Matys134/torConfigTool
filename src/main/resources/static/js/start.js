@@ -3,21 +3,19 @@ $(document).ready(function () {
         const nickname = $(this).data("config-nickname");
         const relayType = $(this).data("config-type");
 
-
-        // Select the start, stop and edit buttons
+        // Select the start, stop, edit buttons and spinner
         const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
         const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
         const editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
         const removeButton = $(".remove-button[data-config-nickname='" + nickname + "']");
+        const spinner = startButton.find(".spinner");
 
-        // Disable the buttons
+        // Disable the buttons and show the spinner
         startButton.prop('disabled', true);
         stopButton.prop('disabled', true);
         editButton.prop('disabled', true);
         removeButton.prop('disabled', true);
-
-        // Show the appropriate spinner
-        $("#spinner-" + nickname).show();
+        spinner.show();
 
         // Send an AJAX request to start the relay
         $.ajax({
@@ -33,16 +31,14 @@ $(document).ready(function () {
                 updateRelayStatus(nickname, relayType);
             },
             error: function (error) {
-                // Hide the spinner
-                $("#spinner-" + nickname).hide();
                 console.error('Error starting relay:', error);
             },
             complete: function () {
-                // Enable the buttons
+                // Enable the buttons and hide the spinner
                 startButton.prop('disabled', false);
                 stopButton.prop('disabled', false);
                 editButton.prop('disabled', false);
-
+                spinner.hide();
             }
         });
     });
