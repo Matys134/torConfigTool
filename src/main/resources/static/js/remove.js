@@ -11,7 +11,7 @@ $(document).ready(function () {
         if (confirm("Are you sure you want to remove the Torrc file and DataDirectory for this relay?")) {
             $.ajax({
                 type: "POST",
-                url: "/relay-operations/remove",
+                url: "/relay-operations-api/remove",
                 data: data,
                 success: function (response) {
                     if (response.success) {
