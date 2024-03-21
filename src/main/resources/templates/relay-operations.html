@@ -61,11 +61,13 @@
                             Remove
                         </button>
                         <button class="btn start-button-green start-button"
-                                th:attr="data-config-type='guard', data-config-nickname='${config.getGuardConfig.nickname}'">
+                                th:attr="data-config-type='guard'"
+                                th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Start
                         </button>
                         <button class="btn stop-button-red stop-button"
-                                th:attr="data-config-type='guard', data-config-nickname='${config.getGuardConfig.nickname}'">
+                                th:attr="data-config-type='guard'"
+                                th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Stop
                         </button>
                         <div id="spinner-${config.getGuardConfig.nickname}" class="spinner" style="display: none;"></div>
