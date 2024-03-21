@@ -201,6 +201,10 @@ $(document).ready(function () {
         const lastEventIndex = {};
 
         function updateRelayEventData(port, eventContainer) {
+            if (!$('#relayChart' + port).is(':visible')) {
+                // If the chart is not visible, return immediately without fetching and displaying the events
+                return;
+            }
             const apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Clear the event container
