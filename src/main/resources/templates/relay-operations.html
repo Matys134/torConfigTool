@@ -39,11 +39,11 @@
             <div id="guard-configs" class="list-group">
                 <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
-                    <h5 th:text="'Nickname: ' + ${config.getGuardConfig.nickname}"></h5>
-                    <p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p>
-                    <p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p>
-                    <p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p>
-                    <p th:text="'Bandwidth Limit: ' + ${config.getGuardConfig.bandwidthRate}"></p>
+                    <strong><h5 th:text="'Nickname: ' + ${config.getGuardConfig.nickname}"></h5></strong>
+                    <strong><p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p></strong>
+                    <strong><p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p></strong>
+                    <strong><p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p></strong>
+                    <strong><p th:text="'Bandwidth Limit: ' + ${config.getGuardConfig.bandwidthRate}"></p></strong>
                     <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"
@@ -234,20 +234,6 @@
         </div>
     </div>
 </div>
-
-<table>
-    <thead>
-    <tr>
-        <th>UPnP Managed Ports</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Loop through the list of ports managed by UPnP -->
-    <tr th:each="port : ${upnpPorts}">
-        <td th:text="${port}"></td>
-    </tr>
-    </tbody>
-</table>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
