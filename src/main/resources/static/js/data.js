@@ -59,12 +59,12 @@ $(document).ready(function () {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
-                            display: false,
+                            display: true,
                             labelString: 'Time',
                             fontColor: '#00ff00', // Green color
                         },
                         ticks: {
-                            fontColor: '#00ff00', // Green color
+                            display: false,
                         },
                         gridLines: {
                             color: '#333333' // Dark gray color
