@@ -143,12 +143,11 @@ $(document).ready(function () {
                         relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
                     }
 
-                    // Get the current time and format it as a string
-                    // const currentTime = new Date();
-                    // const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                    // Use the index as the label
+                    const indexLabel = relayChart.data.datasets[0].data.length;
 
                     // Update the chart's data and labels
-                    // relayChart.data.labels.push(timeLabel);
+                    relayChart.data.labels.push(indexLabel);
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
