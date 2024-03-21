@@ -13,6 +13,7 @@ $(document).ready(function () {
         startButton.prop('disabled', true);
         stopButton.prop('disabled', true);
         editButton.prop('disabled', true);
+        removeButton.prop('disabled', true);
 
         // Show the appropriate spinner
         $("#spinner-" + relayType).show();
@@ -40,7 +41,6 @@ $(document).ready(function () {
                 startButton.prop('disabled', false);
                 stopButton.prop('disabled', false);
                 editButton.prop('disabled', false);
-                removeButton.prop('disabled', true);
 
             }
         });
