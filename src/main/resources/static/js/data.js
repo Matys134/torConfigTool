@@ -27,18 +27,18 @@ $(document).ready(function () {
 
         // Create an initial empty chart
         const relayChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'bar', // Change this line
             data: {
                 labels: [],
                 datasets: [
                     {
                         label: 'Upload',
-                        backgroundColor: '#00ff00',
+                        backgroundColor: '#00ff00', // Use backgroundColor for bar charts
                         data: [],
                     },
                     {
                         label: 'Download',
-                        backgroundColor: '#ff0000',
+                        backgroundColor: '#ff0000', // Use backgroundColor for bar charts
                         data: [],
                     },
                 ],
@@ -48,11 +48,11 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     text: relayName,
-                    fontColor: '#00ff00',
+                    fontColor: '#00ff00', // Green color
                 },
                 legend: {
                     labels: {
-                        fontColor: '#00ff00',
+                        fontColor: '#00ff00', // Green color
                     }
                 },
                 scales: {
@@ -61,13 +61,14 @@ $(document).ready(function () {
                         scaleLabel: {
                             display: true,
                             labelString: 'Time',
-                            fontColor: '#00ff00',
+                            fontColor: '#00ff00', // Green color
                         },
                         ticks: {
-                            display: false, // Do not display the x-axis labels
+                            display: false, // Set this to false to hide the labels
+                            fontColor: '#00ff00', // Green color
                         },
                         gridLines: {
-                            color: '#333333'
+                            color: '#333333' // Dark gray color
                         }
                     }],
                     yAxes: [{
@@ -75,13 +76,13 @@ $(document).ready(function () {
                         scaleLabel: {
                             display: true,
                             labelString: 'Bytes/s',
-                            fontColor: '#00ff00',
+                            fontColor: '#00ff00', // Green color
                         },
                         ticks: {
-                            fontColor: '#00ff00',
+                            fontColor: '#00ff00', // Green color
                         },
                         gridLines: {
-                            color: '#333333'
+                            color: '#333333' // Dark gray color
                         }
                     }]
                 }
@@ -143,11 +144,12 @@ $(document).ready(function () {
                         relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
                     }
 
-                    // Use the index as the label
-                    const indexLabel = relayChart.data.datasets[0].data.length;
+                    // Get the current time and format it as a string
+                    const currentTime = new Date();
+                    const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
                     // Update the chart's data and labels
-                    relayChart.data.labels.push(indexLabel);
+                    relayChart.data.labels.push(timeLabel);
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
