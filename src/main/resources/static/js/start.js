@@ -16,8 +16,7 @@ $(document).ready(function () {
         removeButton.prop('disabled', true);
 
         // Show the appropriate spinner
-        $("#spinner-guard-" + nickname).show();
-        $("#spinner-bridge-" + nickname).show();
+        $("#spinner-" + nickname).show();
 
         // Send an AJAX request to start the relay
         $.ajax({
@@ -34,8 +33,7 @@ $(document).ready(function () {
             },
             error: function (error) {
                 // Hide the spinner
-                $("#spinner-guard-" + nickname).hide();
-                $("#spinner-bridge-" + nickname).hide();
+                $("#spinner-" + nickname).hide();
                 console.error('Error starting relay:', error);
             },
             complete: function () {
