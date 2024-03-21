@@ -77,6 +77,8 @@ $(document).ready(function () {
                         },
                         ticks: {
                             fontColor: '#00ff00',
+                            beginAtZero: true,
+                            max: 100, // Set a fixed maximum value
                         },
                         gridLines: {
                             color: '#333333'
