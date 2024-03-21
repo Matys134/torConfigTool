@@ -140,7 +140,7 @@ def relay_flags(controller):
     :return: List of relay flags.
     """
     my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
-    status = controller.get_network_status(my_fingerprint, None)  # Get the status entry for this relay
+    status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
     flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
     return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
 
