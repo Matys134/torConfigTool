@@ -208,8 +208,16 @@ $(document).ready(function () {
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
+                        // Parse the timestamp from the event data
+                        const timestamp = event.split(' ')[0]; // Assuming the timestamp is the first part of the event data
+                        const date = new Date(timestamp);
+
+                        // Format the date and time
+                        const formattedDate = date.toLocaleDateString();
+                        const formattedTime = date.toLocaleTimeString();
+
                         const eventElement = document.createElement('p');
-                        eventElement.innerText = event; // The event data now includes the timestamp
+                        eventElement.innerText = formattedDate + ' ' + formattedTime + ': ' + event.split(' ').slice(1).join(' '); // The event data now includes the formatted timestamp
                         eventContainer.append(eventElement);
                     }
                 }
