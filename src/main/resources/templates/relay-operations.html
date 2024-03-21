@@ -59,6 +59,9 @@
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Remove
                         </button>
+                        <div class="spinner-border text-primary" role="status" id="spinner-nickname" style="display: none;">
+                            <span class="sr-only">Loading...</span>
+                        </div>
                         <button class="btn start-button-green start-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
