@@ -14,7 +14,7 @@ def get_local_ip():
     return local_ip
 
 # Define the base API endpoint
-BASE_API_ENDPOINT = f"https://{get_local_ip()}:8443/relay-data"
+BASE_API_ENDPOINT = f"https://{get_local_ip()}:8443/relay-data/relays"
 
 
 def main():
