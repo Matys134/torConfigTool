@@ -209,8 +209,13 @@ $(document).ready(function () {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
                         // Parse the timestamp from the event data
-                        const timestamp = event.split(' ')[0]; // Assuming the timestamp is the first part of the event data
-                        const date = new Date(timestamp);
+                        const timestampParts = event.split(' ')[0].split('T'); // Split the timestamp into date and time parts
+                        const datePart = timestampParts[0];
+                        const timeParts = timestampParts[1].split('.'); // Split the time part into time and nanoseconds
+                        const timePart = timeParts[0];
+
+                        // Create a new Date object with the date and time parts
+                        const date = new Date(datePart + 'T' + timePart);
 
                         // Format the date and time
                         const formattedDate = date.toLocaleDateString();
