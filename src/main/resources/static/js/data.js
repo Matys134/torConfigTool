@@ -2,6 +2,8 @@ $(document).ready(function () {
     // Define the base API endpoint
     const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
+    $('.relay-event').hide();
+
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
         // Create a container for the relay chart and hide it initially
