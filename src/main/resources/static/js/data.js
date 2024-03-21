@@ -210,10 +210,8 @@ $(document).ready(function () {
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
-                        const currentTime = new Date();
-                        const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                         const eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + event;
+                        eventElement.innerText = event; // The event data now includes the timestamp
                         eventContainer.append(eventElement);
                     }
                 }

@@ -3,6 +3,7 @@ package com.school.torconfigtool.service;
 import com.school.torconfigtool.model.RelayData;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
@@ -41,7 +42,9 @@ public class RelayDataService {
         if (relayEventQueue.size() >= MAX_EVENT_SIZE) {
             relayEventQueue.poll(); // Remove the oldest event
         }
-        relayEventQueue.offer(event); // Add the new event
+        // Add the current timestamp to the event
+        String timestampedEvent = LocalDateTime.now() + ": " + event;
+        relayEventQueue.offer(timestampedEvent); // Add the new event
     }
 
     /**
