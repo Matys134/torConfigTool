@@ -203,7 +203,6 @@ $(document).ready(function () {
         function updateRelayEventData(port, eventContainer) {
             const apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
-                console.log(data);  // Log the data received from the server
                 // Check if the events have changed
                 if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
                     // Determine the start index for new events
@@ -217,9 +216,10 @@ $(document).ready(function () {
                     for (let i = startIndex; i < data.length; i++) {
                         const event = data[i];
                         if (event !== null) { // Check if the event is not null
-                            const timeLabel = event.timestamp;  // Use the timestamp from the server
+                            const currentTime = new Date();
+                            const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                             const eventElement = document.createElement('p');
-                            eventElement.innerText = '(' + timeLabel + '): ' + event.event;
+                            eventElement.innerText = '(' + timeLabel + '): ' + event;
                             eventContainer.append(eventElement);
                         }
                     }
@@ -232,7 +232,7 @@ $(document).ready(function () {
         updateRelayTrafficDataAndChart();
         updateRelayEventData(port, eventContainer);
 
-        // Set an interval to update the data and chart periodically (e.g., every 1 second)
+        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
