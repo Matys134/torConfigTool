@@ -77,8 +77,6 @@ $(document).ready(function () {
                         },
                         ticks: {
                             fontColor: '#00ff00',
-                            beginAtZero: true,
-                            max: 100, // Set a fixed maximum value
                         },
                         gridLines: {
                             color: '#333333'
@@ -87,6 +85,9 @@ $(document).ready(function () {
                 }
             }
         });
+
+        let uploadData = new Array(50).fill(0);
+        let downloadData = new Array(50).fill(0);
 
         // Function to update the traffic data and chart for the relay
         function updateRelayTrafficDataAndChart() {
@@ -147,10 +148,16 @@ $(document).ready(function () {
                     const currentTime = new Date();
                     const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
+                    // Update the upload and download data
+                    uploadData.shift();
+                    uploadData.push(data[data.length - 1].upload);
+                    downloadData.shift();
+                    downloadData.push(data[data.length - 1].download);
+
                     // Update the chart's data and labels
                     relayChart.data.labels.push(''); // Add a label for each data point
-                    relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
-                    relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
+                    relayChart.data.datasets[0].data = uploadData;
+                    relayChart.data.datasets[1].data = downloadData;
 
                     // If the number of data points exceeds a certain limit (e.g., 50), remove the oldest data point
                     if (relayChart.data.labels.length > 50) {
