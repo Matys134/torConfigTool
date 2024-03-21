@@ -59,9 +59,7 @@ $(document).ready(function () {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
-                            display: true,
-                            labelString: 'Time',
-                            fontColor: '#00ff00', // Green color
+                            display: false, // This will hide the label under the x-axis
                         },
                         ticks: {
                             display: false, // Hide labels
