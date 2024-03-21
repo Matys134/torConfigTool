@@ -212,6 +212,9 @@ $(document).ready(function () {
                     lastEvents[port] = data;
                     lastEventIndex[port] = data.length;
 
+                    // Clear the eventContainer before adding new events
+                    eventContainer.empty();
+
                     // Add new events from the start index onwards
                     for (let i = startIndex; i < data.length; i++) {
                         const event = data[i];
