@@ -78,6 +78,7 @@ public class TorrcWriteConfigService {
         String dataDirectoryPath = currentDirectory + File.separator + TORRC_DIRECTORY_PATH + "dataDirectory/onion_" + onionServicePort;
         torrcWriter.write("DataDirectory " + dataDirectoryPath);
         torrcWriter.newLine();
+        torrcWriter.write("User " + activeUserNickname);
     }
 
     public void writeTorrcFileConfig(BaseRelayConfig config, BufferedWriter writer) throws IOException {
