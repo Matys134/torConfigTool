@@ -204,6 +204,9 @@ $(document).ready(function () {
                 // Clear the event container
                 eventContainer.empty();
 
+                // Reverse the order of the events
+                data = data.reverse();
+
                 // Add new events
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
