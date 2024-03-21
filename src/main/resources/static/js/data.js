@@ -200,7 +200,7 @@ $(document).ready(function () {
         const lastEvents = {};
         const lastEventIndex = {};
 
-        function updateRelayEventData(port) {
+        function updateRelayEventData(port, eventContainer) {
             const apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Check if the events have changed
@@ -220,10 +220,7 @@ $(document).ready(function () {
                             const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
                             const eventElement = document.createElement('p');
                             eventElement.innerText = '(' + timeLabel + '): ' + event;
-                            const eventContainer = $('#eventData' + port);
-                            if (eventContainer.length > 0) { // Check if eventContainer is correctly initialized
-                                eventContainer.append(eventElement);
-                            }
+                            eventContainer.append(eventElement);
                         }
                     }
                 }
