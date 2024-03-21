@@ -70,6 +70,7 @@
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <div id="spinner-${config.getGuardConfig.nickname}" class="spinner" style="display: none;"></div>
                     </div>
@@ -121,11 +122,13 @@
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Start
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <div id="spinner-${config.getBridgeConfig.nickname}" class="spinner" style="display: none;"></div>
 
@@ -162,6 +165,7 @@
                         <button type="button" class="btn start-button-green start-button" th:attr="data-config-type='onion'"
                                 th:data-config-nickname="${config.hiddenServicePort}">
                             Start
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='onion'"
@@ -169,6 +173,7 @@
                                 th:data-config-nickname="${config.hiddenServicePort}"
                                 th:data-config-port="${config.hiddenServicePort}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn btn-secondary">
                             <a th:href="@{/file/upload/{port}(port=${config.hiddenServicePort})}">Edit Files</a>

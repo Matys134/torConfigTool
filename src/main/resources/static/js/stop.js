@@ -8,12 +8,14 @@ $(document).ready(function () {
         const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
         const editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
         const removeButton = $(".remove-button[data-config-nickname='" + nickname + "']");
+        const spinner = stopButton.find(".spinner");
 
         // Disable the buttons
         startButton.prop('disabled', true);
         stopButton.prop('disabled', true);
         editButton.prop('disabled', true);
         removeButton.prop('disabled', true);
+        spinner.show();
 
         // Show the appropriate spinner
         $("#spinner-" + nickname).show();
@@ -32,8 +34,6 @@ $(document).ready(function () {
                 updateRelayStatus(nickname, relayType);
             },
             error: function (error) {
-                // Hide the spinner
-                $("#spinner-" + nickname).hide();
                 console.error('Error stopping relay:', error);
             },
             complete: function () {
@@ -41,6 +41,7 @@ $(document).ready(function () {
                 startButton.prop('disabled', false);
                 stopButton.prop('disabled', false);
                 editButton.prop('disabled', false);
+                spinner.hide();
             }
         });
     });
