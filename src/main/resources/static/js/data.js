@@ -64,7 +64,7 @@ $(document).ready(function () {
                             fontColor: '#00ff00', // Green color
                         },
                         ticks: {
-                            display: false,
+                            display: false, // This line hides the x-axis labels
                         },
                         gridLines: {
                             color: '#333333' // Dark gray color
