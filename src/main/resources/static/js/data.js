@@ -27,18 +27,18 @@ $(document).ready(function () {
 
         // Create an initial empty chart
         const relayChart = new Chart(ctx, {
-            type: 'bar', // Change this line
+            type: 'bar',
             data: {
                 labels: [],
                 datasets: [
                     {
                         label: 'Upload',
-                        backgroundColor: '#00ff00', // Use backgroundColor for bar charts
+                        backgroundColor: '#00ff00',
                         data: [],
                     },
                     {
                         label: 'Download',
-                        backgroundColor: '#ff0000', // Use backgroundColor for bar charts
+                        backgroundColor: '#ff0000',
                         data: [],
                     },
                 ],
@@ -48,11 +48,11 @@ $(document).ready(function () {
                 title: {
                     display: true,
                     text: relayName,
-                    fontColor: '#00ff00', // Green color
+                    fontColor: '#00ff00',
                 },
                 legend: {
                     labels: {
-                        fontColor: '#00ff00', // Green color
+                        fontColor: '#00ff00',
                     }
                 },
                 scales: {
@@ -61,13 +61,13 @@ $(document).ready(function () {
                         scaleLabel: {
                             display: true,
                             labelString: 'Time',
-                            fontColor: '#00ff00', // Green color
+                            fontColor: '#00ff00',
                         },
                         ticks: {
-                            fontColor: '#00ff00', // Green color
+                            display: false, // Do not display the x-axis labels
                         },
                         gridLines: {
-                            color: '#333333' // Dark gray color
+                            color: '#333333'
                         }
                     }],
                     yAxes: [{
@@ -75,13 +75,13 @@ $(document).ready(function () {
                         scaleLabel: {
                             display: true,
                             labelString: 'Bytes/s',
-                            fontColor: '#00ff00', // Green color
+                            fontColor: '#00ff00',
                         },
                         ticks: {
-                            fontColor: '#00ff00', // Green color
+                            fontColor: '#00ff00',
                         },
                         gridLines: {
-                            color: '#333333' // Dark gray color
+                            color: '#333333'
                         }
                     }]
                 }
