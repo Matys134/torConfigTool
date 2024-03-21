@@ -272,10 +272,14 @@ function formatUptime(uptime) {
 }
 
 $(document).ready(function() {
-    $('#eventData').on('show.bs.collapse', function () {
-        $('#eventsArrow').addClass('rotated');
-    });
-    $('#eventData').on('hide.bs.collapse', function () {
-        $('#eventsArrow').removeClass('rotated');
+    $('#eventsHeading').on('click', function() {
+        var arrowId = this.id.replace('Heading', 'Arrow');
+        var arrow = $('#' + arrowId);
+        var contentId = this.id.replace('Heading', 'Data');
+        if ($('#' + contentId).hasClass('show')) {
+            arrow.removeClass('rotated');
+        } else {
+            arrow.addClass('rotated');
+        }
     });
 });
