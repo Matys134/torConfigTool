@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Define the base API endpoint
-    const baseApiUrl = 'https://' + location.hostname + ':8443/api/data';
+    const baseApiUrl = 'https://' + location.hostname + ':8443/traffic-data';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
