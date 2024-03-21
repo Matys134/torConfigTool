@@ -208,8 +208,11 @@ $(document).ready(function () {
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
-                        // Create a new Date object from the timestamp string
-                        const timestamp = new Date(event.timestamp);
+                        // Truncate the timestamp string to only include up to 3 digits in the fractional seconds part
+                        const truncatedTimestamp = event.timestamp.slice(0, 23);
+
+                        // Create a new Date object from the truncated timestamp string
+                        const timestamp = new Date(truncatedTimestamp);
 
                         // Format the timestamp as date and hh:mm:ss
                         const formattedTimestamp = timestamp.toLocaleDateString() + ' ' +
