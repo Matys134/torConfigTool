@@ -59,10 +59,11 @@ $(document).ready(function () {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
-                            display: false, // This will hide the label under the x-axis
+                            display: false, // Hide the x-axis labels
+                            labelString: 'Time',  // This becomes irrelevant
+                            fontColor: '#00ff00',
                         },
                         ticks: {
-                            display: false, // Hide labels
                             fontColor: '#00ff00', // Green color
                         },
                         gridLines: {
@@ -156,11 +157,6 @@ $(document).ready(function () {
                         relayChart.data.labels.shift();
                         relayChart.data.datasets[0].data.shift();
                         relayChart.data.datasets[1].data.shift();
-                    }
-
-                    // Ensure that the labels on the x-axis are hidden
-                    if (relayChart.options.scales.xAxes[0].ticks) {
-                        relayChart.options.scales.xAxes[0].ticks.display = false;
                     }
 
                     // Fetch the uptime
