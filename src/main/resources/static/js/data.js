@@ -202,24 +202,24 @@ $(document).ready(function () {
         const lastEventIndex = {};
 
         function updateRelayEventData(port, eventContainer) {
-            const apiUrl = baseApiUrl + '/' + port + '/events';
+            var apiUrl = baseApiUrl + '/' + port + '/events';
             $.get(apiUrl, function (data) {
                 // Check if the events have changed
                 if (JSON.stringify(data) !== JSON.stringify(lastEvents[port])) {
                     // Determine the start index for new events
-                    const startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
+                    var startIndex = lastEventIndex[port] !== undefined ? lastEventIndex[port] : 0;
 
                     // Update the last fetched events and the last event index
                     lastEvents[port] = data;
                     lastEventIndex[port] = data.length;
 
                     // Add new events from the start index onwards
-                    for (let i = startIndex; i < data.length; i++) {
-                        const event = data[i];
+                    for (var i = startIndex; i < data.length; i++) {
+                        var event = data[i];
                         if (event !== null) { // Check if the event is not null
-                            const currentTime = new Date();
-                            const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
-                            const eventElement = document.createElement('p');
+                            var currentTime = new Date();
+                            var timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                            var eventElement = document.createElement('p');
                             eventElement.innerText = '(' + timeLabel + '): ' + event;
                             eventContainer.append(eventElement);
                         }
