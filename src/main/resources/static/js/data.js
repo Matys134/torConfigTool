@@ -146,7 +146,7 @@ $(document).ready(function () {
                     const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
                     // Update the chart's data and labels
-                    relayChart.data.labels.push(timeLabel); // Add a label for each data point
+                    relayChart.data.labels.push(''); // Add a label for each data point
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
