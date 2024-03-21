@@ -218,8 +218,10 @@ def _handle_event(controller, control_port, event):
     """
     # Create a dictionary with the event data and an identifier
     data = {
-        "event": str(event),
-        "timestamp": datetime.datetime.now().isoformat()  # Add a timestamp for the event
+        "event": {
+            "event": str(event),
+            "timestamp": datetime.datetime.now().isoformat()  # Add a timestamp for the event
+        }
     }
 
     # Construct the complete API endpoint URL with the relayId
