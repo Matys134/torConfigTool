@@ -144,10 +144,11 @@ $(document).ready(function () {
                     }
 
                     // Get the current time and format it as a string
-                    const currentTime = new Date();
-                    const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                    // const currentTime = new Date();
+                    // const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
                     // Update the chart's data and labels
+                    // relayChart.data.labels.push(timeLabel);
                     relayChart.data.datasets[0].data.push(uploadData[uploadData.length - 1]);
                     relayChart.data.datasets[1].data.push(downloadData[downloadData.length - 1]);
 
