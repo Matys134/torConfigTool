@@ -194,7 +194,7 @@ def _send_bandwidth_data(controller, control_port):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data, verify=False)
+    response = requests.post(api_endpoint, json=data)
 
     # Print the response object
     print(f"Response for ControlPort {control_port}: {response}")
