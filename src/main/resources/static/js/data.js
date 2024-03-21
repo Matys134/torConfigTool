@@ -172,8 +172,8 @@ $(document).ready(function () {
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Relay Statistics</h5>
-            <p class="card-text">Upload: ${uploadData[uploadData.length - 1]} ${unit}</p>
-            <p class="card-text">Download: ${downloadData[downloadData.length - 1]} ${unit}</p>
+            <p class="card-text">Upload: ${uploadData[uploadData.length - 1].toFixed(2)} ${unit}</p>
+            <p class="card-text">Download: ${downloadData[downloadData.length - 1].toFixed(2)} ${unit}</p>
             <p class="card-text">Uptime: ${uptime[uptime.length - 1]}</p>
             <p class="card-text">Tor Version: ${torVersion[torVersion.length - 1]}</p>
         </div>
