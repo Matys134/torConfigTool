@@ -16,7 +16,8 @@ $(document).ready(function () {
         removeButton.prop('disabled', true);
 
         // Show the appropriate spinner
-        $("#spinner-[data-config-nickname='" + nickname + "']").show();
+        $("#spinner-" + nickname).show();
+        console.log("Nickname: " + nickname);
 
         // Send an AJAX request to start the relay
         $.ajax({
