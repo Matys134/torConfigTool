@@ -209,8 +209,7 @@ $(document).ready(function () {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
                         const eventElement = document.createElement('p');
-                        const formattedTimestamp = formatTimestamp(event.timestamp); // Format the timestamp
-                        eventElement.innerText = formattedTimestamp + ' ' + event.message; // Include the formatted timestamp
+                        eventElement.innerText = formatTimestamp(event);
                         eventContainer.append(eventElement);
                     }
                 }
