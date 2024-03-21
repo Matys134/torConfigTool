@@ -20,6 +20,9 @@ $(document).ready(function () {
                 startButton.prop('disabled', true);
                 stopButton.prop('disabled', false);
                 editButton.prop('disabled', true);
+
+                // Hide the spinner
+                $("#spinner").hide();
             } else if (data === "offline") {
                 statusElement.text("Offline");
                 statusElement.css("color", "red");
@@ -28,6 +31,9 @@ $(document).ready(function () {
                 startButton.prop('disabled', false);
                 stopButton.prop('disabled', true);
                 editButton.prop('disabled', false);
+
+                // Hide the spinner
+                $("#spinner").hide();
             } else {
                 statusElement.text("Unknown"); // Handle any other status
                 statusElement.css("color", "blue"); // Adjust color as needed
