@@ -7,6 +7,7 @@ $(document).ready(function () {
         const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
         const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
         const editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
+        const removeButton = $(".remove-button[data-config-nickname='" + nickname + "']");
 
         // Disable the buttons
         startButton.prop('disabled', true);
@@ -39,6 +40,8 @@ $(document).ready(function () {
                 startButton.prop('disabled', false);
                 stopButton.prop('disabled', false);
                 editButton.prop('disabled', false);
+                removeButton.prop('disabled', true);
+
             }
         });
     });
