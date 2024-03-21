@@ -209,7 +209,7 @@ $(document).ready(function () {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
                         const eventElement = document.createElement('p');
-                        eventElement.innerText = formatTimestamp(event);
+                        eventElement.innerText = event; // The event data now includes the timestamp
                         eventContainer.append(eventElement);
                     }
                 }
@@ -268,23 +268,5 @@ function formatUptime(uptime) {
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-    return hours + ":" + minutes + ":" + seconds;
-}
-
-function formatTimestamp(timestamp) {
-    // Create a new Date object with the timestamp
-    const date = new Date(timestamp);
-
-    // Get the hours, minutes, and seconds
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    let seconds = date.getSeconds();
-
-    // Pad the hours, minutes, and seconds with leading zeros, if required
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-    // Return the formatted timestamp
     return hours + ":" + minutes + ":" + seconds;
 }
