@@ -64,7 +64,8 @@ $(document).ready(function () {
                             fontColor: '#00ff00', // Green color
                         },
                         ticks: {
-                            display: false, // This line hides the x-axis labels
+                            display: false, // Hide labels
+                            fontColor: '#00ff00', // Green color
                         },
                         gridLines: {
                             color: '#333333' // Dark gray color
@@ -191,7 +192,6 @@ $(document).ready(function () {
         </div>
     </div>
 `);
-                    relayChart.options.scales.xAxes[0].ticks.display = false;
                     relayChart.update();
                 }
             });
