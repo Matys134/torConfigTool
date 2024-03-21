@@ -6,6 +6,7 @@ $(document).ready(function () {
 
             const statusElement = $("#status-" + nickname);
             const statusMessageElement = $("#status-message-" + nickname);
+            const spinner = $(".start-button[data-config-nickname='" + nickname + "']").find(".spinner");
 
             // Select the start, stop and edit buttons
             const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
@@ -22,7 +23,7 @@ $(document).ready(function () {
                 editButton.prop('disabled', true);
 
                 // Hide the spinner
-                $("#spinner").hide();
+                spinner.hide();
             } else if (data === "offline") {
                 statusElement.text("Offline");
                 statusElement.css("color", "red");
@@ -33,7 +34,7 @@ $(document).ready(function () {
                 editButton.prop('disabled', false);
 
                 // Hide the spinner
-                $("#spinner").hide();
+                spinner.hide();
             } else {
                 statusElement.text("Unknown"); // Handle any other status
                 statusElement.css("color", "blue"); // Adjust color as needed
