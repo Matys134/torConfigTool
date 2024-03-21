@@ -6,7 +6,7 @@ import getpass
 
 import requests
 import stem
-from stem.control import EventType, Controller
+from stem import EventType, Controller
 
 def get_local_ip():
     hostname = socket.gethostname()
