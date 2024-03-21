@@ -6,7 +6,7 @@ import getpass
 
 import requests
 import stem
-from stem import EventType, Controller
+from stem.control import EventType, Controller
 
 def get_local_ip():
     hostname = socket.gethostname()
@@ -139,20 +139,16 @@ def relay_flags(controller):
     :param controller: Controller object.
     :return: List of relay flags.
     """
-    try:
-        my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
-        print(f"Relay fingerprint: {my_fingerprint}")  # Debug print
+    my_fingerprint = controller.get_info("fingerprint")  # Get the relay's fingerprint
+    print(f"Relay fingerprint: {my_fingerprint}")  # Debug print
 
-        status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
-        print(f"Network status: {status}")  # Debug print
+    status = controller.get_network_status(default=my_fingerprint)  # Get the status entry for this relay
+    print(f"Network status: {status}")  # Debug print
 
-        flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
-        print(f"Flags: {flags}")  # Debug print
+    flags = getattr(status, 'flags', [])  # Get the flags, return an empty list if not present
+    print(f"Flags: {flags}")  # Debug print
 
-        return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
-    except Exception as e:
-        print(f"Error fetching relay flags: {str(e)}")
-        return []
+    return flags if isinstance(flags, list) else [flags]  # Convert to a list if not already
 
 
 def _send_bandwidth_data(controller, control_port):
