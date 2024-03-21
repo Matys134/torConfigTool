@@ -158,6 +158,11 @@ $(document).ready(function () {
                         relayChart.data.datasets[1].data.shift();
                     }
 
+                    // Ensure that the labels on the x-axis are hidden
+                    if (relayChart.options.scales.xAxes[0].ticks) {
+                        relayChart.options.scales.xAxes[0].ticks.display = false;
+                    }
+
                     // Fetch the uptime
                     const uptime = data.map(function (relayData) {
                         return formatUptime(relayData.uptime);
