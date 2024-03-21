@@ -210,10 +210,11 @@ $(document).ready(function () {
                 for (let i = 0; i < data.length; i++) {
                     const event = data[i];
                     if (event !== null) { // Check if the event is not null
-                        const currentTime = new Date();
-                        const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
+                        // Use the time from the event data instead of the current time
+                        const eventTime = new Date(event.time);
+                        const timeLabel = eventTime.getHours() + ':' + eventTime.getMinutes() + ':' + eventTime.getSeconds();
                         const eventElement = document.createElement('p');
-                        eventElement.innerText = '(' + timeLabel + '): ' + event;
+                        eventElement.innerText = '(' + timeLabel + '): ' + event.message; // Use event.message instead of event
                         eventContainer.append(eventElement);
                     }
                 }
