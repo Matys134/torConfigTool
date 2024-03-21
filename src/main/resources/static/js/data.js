@@ -1,7 +1,6 @@
 $(document).ready(function () {
-
     // Define the base API endpoint
-    const baseApiUrl = 'http://' + location.hostname + ':8443/relay-data/relays';
+    const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
     // Function to create and update a chart for a given relay
     function createRelayChart(port) {
@@ -242,7 +241,7 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         // Fetch the list of relay info dynamically
-        $.get('http://' + location.hostname + ':8443/relay-data/relay-info', function (relayInfoArray) {
+        $.get('https://' + location.hostname + ':8443/relay-data/relay-info', function (relayInfoArray) {
             // Create charts for each relay based on the retrieved relay info
             relayInfoArray.forEach(function (relayInfo) {
                 const port = relayInfo.controlPort;
