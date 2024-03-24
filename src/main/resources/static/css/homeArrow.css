@@ -1,0 +1,23 @@
+.circle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 10px solid black;
+    transition: all 0.3s ease;
+}
+
+.arrow.rotated {
+    transform: rotate(90deg);
+}

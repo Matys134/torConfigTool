@@ -1,15 +1,19 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.BridgeConfig;
+import com.simtechdata.waifupnp.UPnP;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * Service class for managing web tunnels.
@@ -19,6 +23,7 @@ public class WebtunnelService {
     private final NginxService nginxService;
     private final AcmeService acmeService;
     private final CommandService commandService;
+    private final TorFileService torFileService;
     private static final String TORRC_DIRECTORY_PATH = "torrc";
 
     /**
@@ -26,10 +31,11 @@ public class WebtunnelService {
      *
      * @param nginxService The NginxService to use.
      */
-    public WebtunnelService(NginxService nginxService, AcmeService acmeService, CommandService commandService) {
+    public WebtunnelService(NginxService nginxService, AcmeService acmeService, CommandService commandService, TorFileService torFileService) {
         this.nginxService = nginxService;
         this.acmeService = acmeService;
         this.commandService = commandService;
+        this.torFileService = torFileService;
     }
 
     /**
@@ -38,7 +44,8 @@ public class WebtunnelService {
      * @param webTunnelUrl The URL of the web tunnel.
      * @throws Exception If an error occurs during setup.
      */
-    public void setupWebtunnel(String webTunnelUrl) throws Exception {
+    public void setupWebtunnel(String webTunnelUrl, int webtunnelPort) throws Exception {
+        UPnP.openPortTCP(80);
 
         // Check if Nginx is running, if not, start it
         if (!nginxService.isNginxRunning()) {
@@ -49,14 +56,16 @@ public class WebtunnelService {
         String programLocation = System.getProperty("user.dir");
 
         String username = System.getProperty("user.name");
-        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-80";
+        String chownCommand = "sudo chown -R " + username + ":" + username + " " + programLocation + "/onion/www/service-" + webtunnelPort;
         Process chownProcess = commandService.executeCommand(chownCommand);
         if (chownProcess == null || chownProcess.exitValue() != 0) {
             throw new Exception("Failed to change ownership of the directory");
         }
 
         // Call the new method to generate the certificate
-        acmeService.generateCertificate(webTunnelUrl, programLocation);
+        acmeService.generateCertificate(webTunnelUrl, programLocation, webtunnelPort);
+
+        UPnP.closePortTCP(80);
     }
 
     /**
@@ -80,5 +89,31 @@ public class WebtunnelService {
         }
         // Write the updated lines back to the file
         Files.write(torrcFilePath, lines);
+    }
+
+    public String getWebtunnelLink(String relayNickname) {
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
+        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
+        String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
+
+        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
+
+        String webtunnelDomainAndPath = null;
+        String webtunnelPort = null; // Changed from int to String
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ServerTransportOptions webtunnel url")) {
+                    webtunnelDomainAndPath = line.split("=")[1].trim();
+                }
+                if (line.startsWith("# webtunnel")) {
+                    webtunnelPort = line.split(" ")[2];
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read torrc file", e);
+        }
+
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + webtunnelDomainAndPath;
     }
 }

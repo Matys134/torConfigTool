@@ -3,27 +3,42 @@ package com.school.torconfigtool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SpringBootApplication
 public class TorConfigToolApplication {
 
-    public static void main(String[] args) {
-        //change port to 8081
-        System.getProperties().put("server.port", 8080);
+    public static void main(String[] args) throws IOException {
 
-        SpringApplication.run(TorConfigToolApplication.class, args);
-
-        // Call the Python script
-        try {
-            ProcessBuilder pb = new ProcessBuilder("python", "/path/to/__init__.py");
-            Process p = pb.start();
-            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String ret = in.readLine();
-            System.out.println("Python script output: " + ret);
-        } catch (Exception e) {
-            e.printStackTrace();
+        Path torrcPath = Paths.get("torrc", "dataDirectory");
+        if (!Files.exists(torrcPath)) {
+            try {
+                // Create the directory
+                Files.createDirectories(torrcPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        // create the directory for onion
+        Path onionPath = Paths.get("onion", "hiddenServiceDirs");
+        if (!Files.exists(onionPath)) {
+            try {
+                // Create the directory
+                Files.createDirectories(onionPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "src/main/java/com/school/torconfigtool/python/data.py");
+        processBuilder.start();
+
+        System.getProperties().put("server.port", 8443);
+
+        SpringApplication app = new SpringApplication(TorConfigToolApplication.class);
+        app.run(args);
     }
 }

@@ -1,7 +1,5 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.util.RelayUtils;
-import com.school.torconfigtool.model.TorrcFileCreator;
 import com.school.torconfigtool.model.GuardConfig;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +8,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_DIRECTORY_PATH;
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * This service class is responsible for handling operations related to Guard Relays.
@@ -20,8 +18,7 @@ import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
 public class GuardService {
 
     // RelayService instance for relay operations
-    private final RelayService relayService;
-    private final RelayUtils relayUtils;
+    private final RelayInformationService relayInformationService;
 
     // Directory path for torrc files
 
@@ -29,58 +26,41 @@ public class GuardService {
     /**
      * Constructor for GuardService
      *
-     * @param relayService The service to be used for relay operations.
+     * @param relayInformationService The service to be used for relay operations.
      */
-    public GuardService(RelayService relayService, RelayUtils relayUtils) {
-        this.relayService = relayService;
-        this.relayUtils = relayUtils;
+    public GuardService(RelayInformationService relayInformationService) {
+        this.relayInformationService = relayInformationService;
     }
 
     /**
-     * Creates a new GuardRelayConfig object with the given parameters.
+     * Configures a Guard relay with the provided parameters.
      *
-     * @param relayNickname   The nickname of the Guard Relay.
-     * @param relayPort       The OR port of the Guard Relay.
-     * @param relayContact    The contact information of the Guard Relay.
-     * @param controlPort     The control port of the Guard Relay.
-     * @param guardBandwidth  The bandwidth of the Guard Relay.
-     * @return A new GuardRelayConfig object with the given parameters.
-     */
-    private GuardConfig createGuardConfig(String relayNickname, int relayPort, String relayContact, int controlPort, Integer guardBandwidth) {
-        GuardConfig config = new GuardConfig();
-        config.setNickname(relayNickname);
-        config.setOrPort(String.valueOf(relayPort));
-        config.setContact(relayContact);
-        config.setControlPort(String.valueOf(controlPort));
-        if (guardBandwidth != null) {
-            config.setBandwidthRate(String.valueOf(guardBandwidth));
-        }
-        return config;
-    }
-
-    /**
-     * Configures a Guard Relay with the given parameters.
-     *
-     * @param relayNickname   The nickname of the Guard Relay.
-     * @param relayPort       The OR port of the Guard Relay.
-     * @param relayContact    The contact information of the Guard Relay.
-     * @param controlPort     The control port of the Guard Relay.
-     * @param relayBandwidth  The bandwidth of the Guard Relay.
-     * @throws Exception If the ports are not available or a relay with the same nickname already exists.
+     * @param relayNickname   The nickname of the relay.
+     * @param relayPort       The port of the relay.
+     * @param relayContact    The contact information for the relay.
+     * @param controlPort     The control port for the relay.
+     * @param relayBandwidth  The bandwidth for the guard. This is optional.
+     * @throws Exception if the relay already exists, or if the ports are already in use.
      */
     public void configureGuard(String relayNickname, int relayPort, String relayContact, int controlPort, Integer relayBandwidth) throws Exception {
         String torrcFileName = TORRC_FILE_PREFIX + relayNickname + "_guard";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
 
-        if (!relayUtils.arePortsAvailable(relayNickname, relayPort, controlPort)) {
-            throw new Exception("One or more ports are already in use.");
-        }
-
-        if (RelayUtils.relayExists(relayNickname)) {
+        if (RelayUtilityService.relayExists(relayNickname)) {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        GuardConfig config = createGuardConfig(relayNickname, relayPort, relayContact, controlPort, relayBandwidth);
+        if (!RelayUtilityService.portsAreAvailable(relayNickname, relayPort, controlPort)) {
+            throw new Exception("One or more ports are already in use.");
+        }
+
+        GuardConfig config = new GuardConfig();
+        config.setNickname(relayNickname);
+        config.setOrPort(String.valueOf(relayPort));
+        config.setContact(relayContact);
+        config.setControlPort(String.valueOf(controlPort));
+        config.setBandwidthRate(String.valueOf(relayBandwidth));
+
         if (!torrcFilePath.toFile().exists()) {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
@@ -91,41 +71,11 @@ public class GuardService {
      *
      * @return A map containing the result and the current Guard count.
      */
-    public Map<String, Object> checkGuardLimit() {
+    public Map<String, Object> countGuards() {
         Map<String, Object> response = new HashMap<>();
-        int guardCount = relayService.getGuardCount();
+        int guardCount = relayInformationService.getGuardCount();
 
-        if (!RelayService.isLimitOn()) {
-            response.put("guardLimitReached", false);
-            response.put("guardCount", guardCount);
-            return response;
-        }
-
-        response.put("guardLimitReached", guardCount >= 8);
         response.put("guardCount", guardCount);
-        return response;
-    }
-
-    /**
-     * Checks if a Bridge has been configured.
-     *
-     * @return A map containing the result.
-     */
-    public Map<String, Boolean> checkBridgeConfigured() {
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("bridgeConfigured", relayService.getBridgeCount() > 0);
-        return response;
-    }
-
-    /**
-     * Gets the limit state and Guard count.
-     *
-     * @return A map containing the limit state and Guard count.
-     */
-    public Map<String, Object> getLimitStateAndGuardCount() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("limitOn", RelayService.isLimitOn());
-        response.put("guardCount", relayService.getGuardCount());
         return response;
     }
 
@@ -136,7 +86,7 @@ public class GuardService {
      */
     public Map<String, Boolean> checkGuardConfigured() {
         Map<String, Boolean> response = new HashMap<>();
-        boolean isGuardConfigured = relayService.getGuardCount() > 0;
+        boolean isGuardConfigured = relayInformationService.getGuardCount() > 0;
         response.put("guardConfigured", isGuardConfigured);
         return response;
     }

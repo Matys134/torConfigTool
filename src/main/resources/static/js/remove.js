@@ -11,7 +11,7 @@ $(document).ready(function () {
         if (confirm("Are you sure you want to remove the Torrc file and DataDirectory for this relay?")) {
             $.ajax({
                 type: "POST",
-                url: "/relay-operations/remove",
+                url: "/relay-operations-api/remove",
                 data: data,
                 success: function (response) {
                     if (response.success) {
@@ -21,7 +21,7 @@ $(document).ready(function () {
                         // Make an AJAX call to revert the Nginx configuration
                         $.ajax({
                             type: "POST",
-                            url: "/bridge/revert-nginx-config",
+                            url: "/nginx-api/revert-nginx-config",
                             success: function (response) {
                                 if (response.status === 200) {
                                     alert("Nginx configuration reverted successfully!");

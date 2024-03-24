@@ -1,8 +1,6 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -20,9 +18,6 @@ import java.util.List;
  */
 @Service
 public class NginxService {
-
-    // Logger instance for logging events
-    private static final Logger logger = LoggerFactory.getLogger(NginxService.class);
 
     // TorConfigurationService instance for managing Tor configurations
     private final TorConfigService torConfigService;
@@ -45,24 +40,18 @@ public class NginxService {
      * If the command execution fails, it logs the error.
      */
     public void startNginx() {
-        // Create a new process builder
         ProcessBuilder processBuilder = new ProcessBuilder();
-
-        // Set the command for the process builder
         processBuilder.command("bash", "-c", "sudo systemctl start nginx");
 
         try {
-            // Start the process and wait for it to finish
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
 
-            // If the exit code is not 0, log an error
             if (exitCode != 0) {
-                logger.error("Error starting Nginx. Exit code: " + exitCode);
+                throw new IOException("Failed to start Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error starting Nginx", e);
+            throw new RuntimeException("Failed to start Nginx", e);
         }
     }
 
@@ -72,119 +61,56 @@ public class NginxService {
      * If the command execution fails, it logs the error.
      */
     public void reloadNginx() {
-        // Print the action to the console
-        System.out.println("Reloading Nginx");
+        // Check if Nginx is running
+        if (!isNginxRunning()) {
+            // If Nginx is not running, start it
+            startNginx();
+        } else {
+            // If Nginx is running, reload it
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
 
-        // Create a new process builder
-        ProcessBuilder processBuilder = new ProcessBuilder();
+            try {
+                Process process = processBuilder.start();
+                int exitCode = process.waitFor();
 
-        // Set the command for the process builder
-        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
-
-        try {
-            // Start the process and wait for it to finish
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            // If the exit code is not 0, log an error
-            if (exitCode != 0) {
-                logger.error("Error reloading Nginx. Exit code: " + exitCode);
+                if (exitCode != 0) {
+                    throw new IOException("Failed to reload Nginx");
+                }
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Failed to reload Nginx", e);
             }
-        } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error reloading Nginx", e);
         }
     }
 
     /**
      * This method is used to generate the Nginx configuration.
-     * It creates a new index.html file in the appropriate directory.
-     * If the file creation fails, it logs the error.
+     * It creates the necessary directories and the index.html file.
+     * If the file writing fails, it logs the error.
      */
-    public void generateNginxConfig() {
-        try {
-            // Get the current working directory
-            String currentDirectory = System.getProperty("user.dir");
-
-            // Get the index.html file
-            File indexHtml = getFile(currentDirectory);
-
-            // Write the HTML content to the file
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
-                writer.write("<html><body><h1>Test Onion Service</h1></body></html>");
-            }
-        } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error generating Nginx configuration", e);
-        }
+    public void configureNginxForOnionService(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxServerBlock(onionServicePort);
+        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
+        createIndexFile(onionServicePort, System.getProperty("user.dir"));
     }
 
-    /**
-     * This method is used to get the index.html file.
-     * It creates the necessary directories and the file if they do not exist.
-     *
-     * @param currentDirectory The current working directory.
-     * @return The index.html file.
-     * @throws IOException If an I/O error occurs.
-     */
-    private File getFile(String currentDirectory) throws IOException {
-        // Create the www directory if it does not exist
+    public void createIndexFile(int onionServicePort, String currentDirectory) throws IOException {
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
         }
 
-        // Create the service directory if it does not exist
-        File serviceDir = new File(wwwDir, "service-" + 80);
+        File serviceDir = new File(wwwDir, "service-" + onionServicePort);
         if (!serviceDir.exists() && !serviceDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
 
-        // Return the index.html file
-        return new File(serviceDir, "index.html");
-    }
-
-    /**
-     * This method is used to change the root directory in the Nginx configuration.
-     * It reads the configuration file, modifies the root directory line, and then writes the file back.
-     * If the file reading or writing fails, it logs the error.
-     *
-     * @param rootDirectory The new root directory.
-     */
-    public void changeRootDirectory(String rootDirectory) {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
-
-        try {
-            // Read the file into a list of strings
-            List<String> lines = Files.readAllLines(defaultConfigPath);
-
-            // Clear the list and add the new configuration lines
-            lines.clear();
-            lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + rootDirectory + ";");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
-
-            // Write the list back to the file
-            Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
+        File indexHtml = new File(serviceDir, "index.html");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexHtml))) {
+            writer.write("<html><body><h1>Onion Service</h1></body></html>");
         }
-
-        // Create a new process builder
-        ProcessBuilder processBuilder = new ProcessBuilder();
-
-        // Set the command for the process builder
-        processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
     }
+
 
     /**
      * This method is used to revert the Nginx configuration to its default state.
@@ -197,13 +123,12 @@ public class NginxService {
 
         try {
             // Clear the file and write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines();
+            List<String> lines = getDefaultNginxConfigLines(80);
 
             // Write the list to the file
             Files.write(defaultConfigPath, lines);
         } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error reverting Nginx default configuration", e);
+            throw new RuntimeException("Failed to revert Nginx default configuration", e);
         }
     }
 
@@ -212,13 +137,13 @@ public class NginxService {
      *
      * @return The default Nginx configuration lines.
      */
-    private static List<String> getDefaultNginxConfigLines() {
+    private static List<String> getDefaultNginxConfigLines(int webtunnelPort) {
         String currentDirectory = System.getProperty("user.dir");
         List<String> lines = new ArrayList<>();
         lines.add("server {");
         lines.add("    listen 80 default_server;");
         lines.add("    listen [::]:80 default_server;");
-        lines.add("    root " + currentDirectory + "/onion/www/service-80;");
+        lines.add("    root " + currentDirectory + "/onion/www/service-" + webtunnelPort + ";");
         lines.add("    index index.html index.htm index.nginx-debian.html;");
         lines.add("    server_name _;");
         lines.add("    location / {");
@@ -237,67 +162,39 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl) {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) throws Exception {
+        // Build the new configuration
+        StringBuilder sb = new StringBuilder();
+        sb.append("server {\n");
+        sb.append("    listen [::]:" + webtunnelPort + " ssl http2;\n");
+        sb.append("    listen " + webtunnelPort + " ssl http2;\n");
+        sb.append("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n");
+        sb.append("    index index.html index.htm index.nginx-debian.html;\n");
+        sb.append("    server_name $SERVER_ADDRESS;\n");
+        sb.append("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n");
+        sb.append("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n");
+        sb.append("    location = /" + randomString + " {\n");
+        sb.append("        proxy_pass http://127.0.0.1:15000;\n");
+        sb.append("        proxy_http_version 1.1;\n");
+        sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
+        sb.append("        proxy_set_header Connection \"upgrade\";\n");
+        sb.append("        proxy_set_header Accept-Encoding \"\";\n");
+        sb.append("        proxy_set_header Host $host;\n");
+        sb.append("        proxy_set_header X-Real-IP $remote_addr;\n");
+        sb.append("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n");
+        sb.append("        proxy_set_header X-Forwarded-Proto $scheme;\n");
+        sb.append("        add_header Front-End-Https on;\n");
+        sb.append("        proxy_redirect off;\n");
+        sb.append("        access_log off;\n");
+        sb.append("        error_log off;\n");
+        sb.append("    }\n");
+        sb.append("}\n");
 
-        try {
-            // Clear the file and write the initial configuration
-            List<String> lines = new ArrayList<>();
-            lines.add("server {");
-            lines.add("    listen 80 default_server;");
-            lines.add("    listen [::]:80 default_server;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name _;");
-            lines.add("    location / {");
-            lines.add("        try_files $uri $uri/ =404;");
-            lines.add("    }");
-            lines.add("}");
+        // Issue and install the certificates
+        acmeService.installCert(webTunnelUrl, webtunnelPort);
 
-            // Write the list to the file
-            Files.write(defaultConfigPath, lines);
-
-            // Issue and install the certificates
-            acmeService.installCert(webTunnelUrl);
-
-            // Read the file into a list of strings again
-            lines = Files.readAllLines(defaultConfigPath);
-
-            // Clear the list and add the new configuration lines
-            lines.clear();
-            lines.add("server {");
-            lines.add("    listen [::]:443 ssl http2;");
-            lines.add("    listen 443 ssl http2;");
-            lines.add("    root " + programLocation + "/onion/www/service-80;");
-            lines.add("    index index.html index.htm index.nginx-debian.html;");
-            lines.add("    server_name $SERVER_ADDRESS;");
-            lines.add("    ssl_certificate " + programLocation + "/onion/certs/service-80/fullchain.pem;");
-            lines.add("    ssl_certificate_key " + programLocation + "/onion/certs/service-80/key.pem;");
-            // Add the rest of the configuration lines...
-            lines.add("    location = /" + randomString + " {");
-            lines.add("        proxy_pass http://127.0.0.1:15000;");
-            lines.add("        proxy_http_version 1.1;");
-            lines.add("        proxy_set_header Upgrade $http_upgrade;");
-            lines.add("        proxy_set_header Connection \"upgrade\";");
-            lines.add("        proxy_set_header Accept-Encoding \"\";");
-            lines.add("        proxy_set_header Host $host;");
-            lines.add("        proxy_set_header X-Real-IP $remote_addr;");
-            lines.add("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;");
-            lines.add("        proxy_set_header X-Forwarded-Proto $scheme;");
-            lines.add("        add_header Front-End-Https on;");
-            lines.add("        proxy_redirect off;");
-            lines.add("        access_log off;");
-            lines.add("        error_log off;");
-            lines.add("    }");
-            lines.add("}");
-
-            // Write the list back to the file
-            Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error modifying Nginx default configuration", e);
-        }
+        // Deploy the configuration
+        deployOnionServiceNginxConfig(sb.toString(), webtunnelPort);
     }
 
     /**
@@ -322,27 +219,17 @@ public class NginxService {
             // Return true if the exit code is 0, false otherwise
             return exitCode == 0;
         } catch (IOException | InterruptedException e) {
-            // Log any exceptions that occur during the process
-            logger.error("Error checking Nginx status", e);
-
-            // Return false if an exception occurs
             return false;
         }
     }
 
-    public void generateNginxConfig(int onionServicePort) {
-        String nginxConfig = buildNginxConfig(onionServicePort);
-        editNginxConfig(nginxConfig, onionServicePort);
-    }
-
-    private String buildNginxConfig(int onionServicePort) {
+    private String buildNginxServerBlock(int onionServicePort) {
 
         String currentDirectory = System.getProperty("user.dir");
         // Build the server block
         return String.format("""
                 server {
                     listen 127.0.0.1:%d;
-                    server_name test;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
                     root %s/onion/www/service-%d;
@@ -351,7 +238,7 @@ public class NginxService {
     }
 
 
-    private void editNginxConfig(String nginxConfig, int onionServicePort) {
+    private void deployOnionServiceNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
             File tempFile = File.createTempFile("nginx_config", null);
@@ -362,7 +249,8 @@ public class NginxService {
             String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
 
             // Use sudo to copy the temporary file to the actual nginx configuration file
-            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(), onionServiceConfigPath);
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(),
+                    onionServiceConfigPath);
             Process process = processBuilder.start();
             process.waitFor();
 
@@ -376,10 +264,10 @@ public class NginxService {
             boolean isDeleted = tempFile.delete();
 
             if (!isDeleted) {
-                logger.error("Failed to delete temporary file: " + tempFile);
+                throw new IOException("Failed to delete temporary file");
             }
         } catch (IOException | InterruptedException e) {
-            logger.error("Error editing Nginx configuration", e);
+            throw new RuntimeException("Failed to edit Nginx configuration", e);
         }
     }
 
@@ -392,11 +280,11 @@ public class NginxService {
                 throw new IOException("Failed to stop Nginx");
             }
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to stop Nginx", e);
+            throw new RuntimeException("Failed to stop Nginx", e);
         }
     }
 
-    public List<String> getAllServices() {
+    public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "onion");

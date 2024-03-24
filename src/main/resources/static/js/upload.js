@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $('#upload-form').on('submit', function () {
-        var files = $('#file-input').get(0).files;
+        const files = $('#file-input').get(0).files;
         if (files.length === 0) {
             alert('Please select a file to upload');
             return false;
@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 $('#refresh-nginx').on('click', function () {
     $.ajax({
-        url: '/onion-service/refresh-nginx',
+        url: '/nginx-api/refresh-nginx',
         type: 'POST',
         success: function() {
             alert('Nginx refreshed successfully');

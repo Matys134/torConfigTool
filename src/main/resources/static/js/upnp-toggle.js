@@ -14,8 +14,8 @@ function toggleUPnP(enable) {
 
 $(document).ready(function() {
     $('#upnp-toggle-button').click(function() {
-        var button = $(this);
-        var upnpEnabled = button.data('upnp-enabled');
+        const button = $(this);
+        const upnpEnabled = button.data('upnp-enabled');
         if (upnpEnabled) {
             toggleUPnP(false);
             button.text('Enable UPnP for Guard Relays');

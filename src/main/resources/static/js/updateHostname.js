@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     function updateHostname() {
-        fetch('/onion-service/current-hostnames')
+        fetch('/onion-api/current-hostnames')
             .then(response => response.json())
             .then(hostnames => {
                 for (const [port, hostname] of Object.entries(hostnames)) {
                     const element = document.getElementById('hostname-display-' + port);
                     if (element) {
-                        element.textContent = hostname;
+                        element.textContent = hostname.toString();
                     }
                 }
             })

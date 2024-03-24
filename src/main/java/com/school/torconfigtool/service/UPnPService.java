@@ -2,8 +2,6 @@ package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
 import com.simtechdata.waifupnp.UPnP;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -24,8 +22,6 @@ public class UPnPService {
     private final TorFileService torFileService;
     private final TorConfigService torConfigService;
     private final RelayStatusService relayStatusService;
-
-    private static final Logger logger = LoggerFactory.getLogger(UPnPService.class);
 
     /**
      * Constructor for UPnPService.
@@ -53,23 +49,11 @@ public class UPnPService {
 
         int orPort = getOrPort(torrcFilePath);
         boolean success = UPnP.openPortTCP(orPort);
-        logger.info("Attempting to open ORPort: {}", orPort);
-        if (success) {
-            logger.info("Successfully opened ORPort: {}", orPort);
-        } else {
-            logger.error("Failed to open ORPort: {}", orPort);
-        }
 
         // Open ServerTransportListenAddr ports and webtunnel ports
         List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
         for (int port : additionalPorts) {
-            logger.info("Attempting to open additional port: {}", port);
             success &= UPnP.openPortTCP(port);
-            if (success) {
-                logger.info("Successfully opened additional port: {}", port);
-            } else {
-                logger.error("Failed to open additional port: {}", port);
-            }
         }
 
         if (success) {
@@ -110,7 +94,6 @@ public class UPnPService {
             response.put("success", true);
             response.put("message", "UPnP for Guard and Bridge Relays " + (enable ? "enabled" : "disabled") + " successfully!");
         } catch (Exception e) {
-            logger.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays", e);
             response.put("success", false);
             response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.");
         }
@@ -152,7 +135,7 @@ public class UPnPService {
                 }
             }
         } catch (IOException e) {
-            logger.error("Failed to read ORPort from torrc file: {}", torrcFilePath, e);
+            throw new RuntimeException("Failed to read torrc file", e);
         }
         return orPort;
     }
@@ -197,12 +180,17 @@ public class UPnPService {
                     }
                 }
                 if (line.contains("webtunnel")) {
-                    additionalPorts.add(80);
-                    additionalPorts.add(443);
+                    String[] parts = line.split(" ");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
+                        if (addrParts.length > 1) {
+                            additionalPorts.add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
                 }
             }
         } catch (IOException e) {
-            logger.error("Failed to read additional ports from torrc file: {}", torrcFilePath, e);
+            throw new RuntimeException("Failed to read torrc file", e);
         }
         return additionalPorts;
     }

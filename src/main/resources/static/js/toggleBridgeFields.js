@@ -1,19 +1,23 @@
 function toggleBridgeFields() {
-    var bridgeType = document.getElementById("bridgeType").value;
-    var commonFields = document.getElementById("commonFields");
-    var bridgeFields = document.getElementById("bridgeFields");
-    var webtunnelFields = document.getElementById("webtunnelFields");
-    var snowflakeFields = document.getElementById("snowflakeFields");
+    const bridgeType = document.getElementById("bridgeType").value;
+    const commonFields = document.getElementById("commonFields");
+    const bridgeFields = document.getElementById("bridgeFields");
+    const webtunnelFields = document.getElementById("webtunnelFields");
+    const snowflakeFields = document.getElementById("snowflakeFields");
+    const submitButton = document.querySelector("#bridgeForm button[type='submit']");
 
     // Retrieve the form elements
-    var bridgePort = document.getElementById("bridgePort");
-    var bridgeTransportListenAddr = document.getElementById("bridgeTransportListenAddr");
+    const bridgePort = document.getElementById("bridgePort");
+    const bridgeTransportListenAddr = document.getElementById("bridgeTransportListenAddr");
 
     // Hide all fields initially
     commonFields.style.display = "none";
     bridgeFields.style.display = "none";
     webtunnelFields.style.display = "none";
     snowflakeFields.style.display = "none";
+
+    // Show the submit button initially
+    submitButton.style.display = "block";
 
     // Remove 'required' attributes initially
     bridgePort.removeAttribute("required");
@@ -32,6 +36,7 @@ function toggleBridgeFields() {
         webtunnelFields.style.display = "block";
     } else if (bridgeType === "snowflake") {
         snowflakeFields.style.display = "block";
+        submitButton.style.display = "none";
     }
 }
 

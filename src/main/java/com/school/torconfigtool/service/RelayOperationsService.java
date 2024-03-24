@@ -1,10 +1,8 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.exception.RelayOperationException;
+
 import com.school.torconfigtool.model.TorConfig;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -18,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
+import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 
 /**
  * This class contains methods to perform operations on Tor Relays.
@@ -26,170 +24,81 @@ import static com.school.torconfigtool.Constants.TORRC_FILE_PREFIX;
 @Service
 public class RelayOperationsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RelayOperationsService.class);
     private final TorConfigService torConfigService;
     private final NginxService nginxService;
-    private final OnionRelayOperationsService onionRelayOperationsService;
     private final TorFileService torFileService;
     private final RelayStatusService relayStatusService;
     private final UPnPService upnpService;
-    private final BridgeRelayOperationsService bridgeRelayOperationsService;
+    private final WebtunnelService webtunnelService;
+    private final OnionService onionService;
+    private final CommandService commandService;
 
     /**
      * Constructor for RelayOperationsService.
      *
      * @param torConfigService The TorConfigurationService to use.
      * @param nginxService The NginxService to use.
-     * @param onionRelayOperationsService The OnionRelayOperationsService to use.
      * @param torFileService The TorFileService to use.
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
-     * @param bridgeRelayOperationsService The BridgeRelayOperationsService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, OnionRelayOperationsService onionRelayOperationsService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, BridgeRelayOperationsService bridgeRelayOperationsService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService, CommandService commandService) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
-        this.onionRelayOperationsService = onionRelayOperationsService;
         this.torFileService = torFileService;
         this.relayStatusService = relayStatusService;
         this.upnpService = upnpService;
-        this.bridgeRelayOperationsService = bridgeRelayOperationsService;
+        this.webtunnelService = webtunnelService;
+        this.onionService = onionService;
+        this.commandService = commandService;
     }
 
-    /**
-     * This method executes a bash command and returns its exit code.
-     *
-     * @param command The bash command to execute.
-     * @return int The exit code of the command.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    public int executeCommand(String command) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-        Process process = processBuilder.start();
-
-        // Log the command being executed
-        logger.info("Executing command: {}", command);
-
-        try {
-            int exitCode = process.waitFor();
-
-            // Log the exit code
-            logger.info("Command exit code: {}", exitCode);
-
-            return exitCode;
-        } finally {
-            process.destroy();
-        }
-    }
-
-    /**
-     * This method starts a Tor Relay without updating the torrc file with fingerprints.
-     *
-     * @param relayNickname The nickname of the Tor Relay to start.
-     * @param relayType The type of the Tor Relay to start.
-     * @param model The Model to add attributes to.
-     * @return String The name of the view to render.
-     */
-    public String changeRelayStateWithoutFingerprint(String relayNickname, String relayType, Model model) {
-        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-        String operation = "start";
-        try {
-            processRelayOperationWithoutFingerprint(torrcFilePath, relayNickname);
-            model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
-        } catch (RelayOperationException | IOException | InterruptedException e) {
-            logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
-            model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
-        }
-        return relayOperations(model);
-    }
-
-    /**
-     * This method starts a Tor Relay without updating the torrc file with fingerprints.
-     *
-     * @param torrcFilePath The path to the torrc file of the Tor Relay to start.
-     * @param relayNickname The nickname of the Tor Relay to start.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    private void processRelayOperationWithoutFingerprint(Path torrcFilePath, String relayNickname) throws IOException, InterruptedException {
-        if (!torrcFilePath.toFile().exists()) {
-            throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
-        }
-        {
-            // Step 3: Start the Relay
-            String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            System.out.println("Executing command: " + command);
-            int exitCode = executeCommand(command);
-            if (exitCode != 0) {
-                throw new RelayOperationException("Failed to start Tor Relay service.");
-            }
-        }
-    }
-
-    /**
-     * This method starts or stops a Tor Relay.
-     *
-     * @param relayNickname The nickname of the Tor Relay to start or stop.
-     * @param relayType The type of the Tor Relay to start or stop.
-     * @param model The Model to add attributes to.
-     * @param start Whether to start or stop the Tor Relay.
-     * @return String The name of the view to render.
-     */
-    public String changeRelayState(String relayNickname, String relayType, Model model, boolean start) {
+    public String changeRelayState(String relayNickname, String relayType, Model model, boolean start, boolean updateFingerprint) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         String operation = start ? "start" : "stop";
         try {
-            processRelayOperation(torrcFilePath, relayNickname, start);
+            processRelayOperation(torrcFilePath, relayNickname, start, updateFingerprint);
             model.addAttribute("successMessage", "Tor Relay " + operation + "ed successfully!");
-        } catch (RelayOperationException | IOException | InterruptedException e) {
-            logger.error("Failed to {} Tor Relay for relayNickname: {}", operation, relayNickname, e);
+        } catch (RuntimeException | IOException | InterruptedException e) {
             model.addAttribute("errorMessage", "Failed to " + operation + " Tor Relay.");
         }
-        return relayOperations(model);
+        return prepareModelForRelayOperationsView(model);
     }
 
-    /**
-     * This method starts or stops a Tor Relay.
-     *
-     * @param torrcFilePath The path to the torrc file of the Tor Relay to start or stop.
-     * @param relayNickname The nickname of the Tor Relay to start or stop.
-     * @param start Whether to start or stop the Tor Relay.
-     * @throws IOException If an I/O error occurs.
-     * @throws InterruptedException If the current thread is interrupted while waiting for the command to finish.
-     */
-    private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start) throws IOException, InterruptedException {
+    private void processRelayOperation(Path torrcFilePath, String relayNickname, boolean start, boolean updateFingerprint) throws IOException, InterruptedException {
         if (!torrcFilePath.toFile().exists()) {
-            throw new RelayOperationException("Torrc file does not exist for relay: " + relayNickname);
+            throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
         }
         if (start) {
-            // Step 1: Retrieve Fingerprints
-            List<String> allFingerprints = getAllRelayFingerprints();
+            if (updateFingerprint) {
+                // Step 1: Retrieve Fingerprints
+                List<String> allFingerprints = getAllRelayFingerprints();
 
-            // Step 2: Update the torrc File with fingerprints
-            torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
-
-            // Step 3: Start the Relay
-            String command = "tor -f " + torrcFilePath.toAbsolutePath();
-            System.out.println("Executing command: " + command);
-            int exitCode = executeCommand(command);
-            if (exitCode != 0) {
-                throw new RelayOperationException("Failed to start Tor Relay service.");
+                // Step 2: Update the torrc File with fingerprints
+                torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
             }
 
+            // Step 3: Start the Relay
+            String command = "sudo tor -f " + torrcFilePath.toAbsolutePath();
+            try {
+                commandService.executeCommand(command);
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Failed to start Tor Relay service.", e);
+            }
 
         } else {
             int pid = relayStatusService.getTorRelayPID(torrcFilePath.toString());
             if (pid > 0) {
                 String command = "kill -SIGINT " + pid;
-                int exitCode = executeCommand(command);
-                if (exitCode != 0) {
-                    throw new RelayOperationException("Failed to stop Tor Relay service.");
+                try {
+                    commandService.executeCommand(command);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Failed to stop Tor Relay service.", e);
                 }
             } else if (pid == -1) {
-                throw new RelayOperationException("Tor Relay is not running.");
+                throw new RuntimeException("Tor Relay is not running.");
             } else {
-                throw new RelayOperationException("Error occurred while retrieving PID for Tor Relay.");
+                throw new RuntimeException("Error occurred while retrieving PID for Tor Relay.");
             }
         }
     }
@@ -222,8 +131,7 @@ public class RelayOperationsService {
     }
 
 
-    public String relayOperations(Model model) {
-        System.out.println("Inside relayOperations method");
+    public String prepareModelForRelayOperationsView(Model model) {
         String folderPath = torConfigService.buildFolderPath();
         model.addAttribute("guardConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "guard"));
 
@@ -232,26 +140,21 @@ public class RelayOperationsService {
         model.addAttribute("onionConfigs", torConfigService.readTorConfigurationsFromFolder(folderPath, "onion"));
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "onion");
 
-        logger.info("OnionConfigs: {}", onionConfigs);
-
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
-            String hostname = onionRelayOperationsService.readHostnameFile(config.getHiddenServicePort());
+            String hostname = onionService.readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
             hostnames.put(config.getHiddenServicePort(), hostname);
-            logger.info("Hostname for port {}: {}", config.getHiddenServicePort(), hostname);
         }
 
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(folderPath, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
-            String webtunnelLink = bridgeRelayOperationsService.getWebtunnelLink(config.getBridgeConfig().getNickname());
+            String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
-            logger.info("Added webtunnel link for " + config.getBridgeConfig().getNickname() + ": " + webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
 
-        logger.info("Hostnames: {}", hostnames);
         model.addAttribute("hostnames", hostnames);
 
         List<Integer> upnpPorts = upnpService.getUPnPPorts();
@@ -268,7 +171,7 @@ public class RelayOperationsService {
      * @return String The name of the view to render.
      */
     public String stopRelay(String relayNickname, String relayType, Model model) {
-        String view = changeRelayState(relayNickname, relayType, model, false);
+        String view = changeRelayState(relayNickname, relayType, model, false, true);
 
         new Thread(() -> {
             try {
@@ -276,7 +179,7 @@ public class RelayOperationsService {
                 // Close the ORPort after the relay has stopped
                 upnpService.closeOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to stop", e);
+                throw new RuntimeException("Error while waiting for relay to stop", e);
             }
         }).start();
 
@@ -293,21 +196,19 @@ public class RelayOperationsService {
     public String startRelay(String relayNickname, String relayType, Model model) {
         String view;
         if ("guard".equals(relayType)) {
-            view = changeRelayState(relayNickname, relayType, model, true);
+            view = changeRelayState(relayNickname, relayType, model, true, true);
         } else {
-            view = changeRelayStateWithoutFingerprint(relayNickname, relayType, model);
+            view = changeRelayState(relayNickname, relayType, model, true, false);
         }
-        System.out.println("Relay state changed");
 
         new Thread(() -> {
             try {
                 relayStatusService.waitForStatusChange(relayNickname, relayType, "online");
                 upnpService.openOrPort(relayNickname, relayType);
             } catch (InterruptedException e) {
-                logger.error("Error while waiting for relay to start", e);
+                throw new RuntimeException("Error while waiting for relay to start", e);
             }
         }).start();
-        System.out.println("Returning view");
 
         return view;
     }
@@ -323,7 +224,10 @@ public class RelayOperationsService {
         try {
             // Build paths for Torrc file and DataDirectory
             Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname);
+
+            String capitalizedRelayType = relayType.substring(0, 1).toUpperCase() + relayType.substring(1);
+
+            String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + capitalizedRelayType + "Config");
 
             // Delete Torrc file
             Files.deleteIfExists(torrcFilePath);
@@ -339,50 +243,18 @@ public class RelayOperationsService {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
             Files.deleteIfExists(torrcOnionFilePath);
 
-            // Call the shell script to delete Nginx configuration file and symbolic link
-            ProcessBuilder processBuilder = new ProcessBuilder("shellScripts/remove_onion_files.sh", relayNickname);
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode != 0) {
-                throw new IOException("Failed to delete Nginx configuration file and symbolic link");
-            }
+            onionService.removeOnionFiles(relayNickname);
 
             nginxService.reloadNginx();
 
             response.put("success", true);
         } catch (IOException | InterruptedException e) {
-            logger.error("Failed to remove Torrc file, DataDirectory, Onion files, Nginx configuration file and symbolic link for relayNickname: {}", relayNickname, e);
             response.put("success", false);
         }
         return response;
     }
 
-    /**
-     * This method creates a DataDirectory folder for the Tor Relay.
-     */
-    public void createDataDirectory() {
-        try {
-            Path dataDirectoryPath = Paths.get(System.getProperty("user.dir"), "torrc", "dataDirectory");
-            if (!Files.exists(dataDirectoryPath)) {
-                Files.createDirectory(dataDirectoryPath);
-            }
-        } catch (IOException e) {
-            logger.error("Failed to create dataDirectory folder", e);
-        }
-    }
-
-
     public String getRelayStatus(String relayNickname, String relayType) {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
-    }
-    // openOrPort and closeOrPort methods that take from the UPnPService class
-    public Map<String, Object> openOrPort(String relayNickname, String relayType) {
-        return upnpService.openOrPort(relayNickname, relayType);
-    }
-
-    // toggleUPnP method that takes from the UPnPService class
-    public Map<String, Object> toggleUPnP(boolean enable) {
-        return upnpService.toggleUPnP(enable);
     }
 }

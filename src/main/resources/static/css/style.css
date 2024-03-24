@@ -38,3 +38,56 @@ button:hover {
     margin-bottom: 20px;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,.05)!important;
 }
+
+.blue-text {
+    color: blue;
+}
+
+.red-text {
+    color: red;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    animation: spin 2s linear infinite;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.proxy-button .btn {
+    width: 100%;  /* Adjust this value as needed */
+}
+
+.image-text-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust as needed */
+    margin-bottom: 20px; /* Adjust as needed */
+    border-bottom: 1px solid #ddd; /* Adjust as needed */
+}
+
+.image-text-wrapper:last-child {
+    border-bottom: none;
+}
+
+.image-text-wrapper img {
+    flex-shrink: 0; /* Prevents the image from shrinking */
+}
+
+.image-text-wrapper p {
+    margin: 0; /* Removes the default paragraph margin */
+}

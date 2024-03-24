@@ -1,25 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <link rel="stylesheet" type="text/css" href="/css/style.css"> <!-- Include the style.css file -->
     <link rel="stylesheet" type="text/css" href="/css/navbar.css"> <!-- Include the navbar.css file -->
     <meta charset="UTF-8">
     <title>Tor Relay Configuration</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/tabs.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <style>
-        .limit-reached {
-            color: blue;
-        }
-        .over-limit {
-            color: red;
-        }
-    </style>
 </head>
 <body>
 <div th:replace="navbar :: nav"></div>
@@ -34,10 +25,15 @@
         <p th:text="${successMessage}"></p>
     </div>
 
+    <!-- Display error message if provided -->
+    <div class="alert alert-danger" th:if="${errorMessage}" role="alert">
+        <p th:text="${errorMessage}"></p>
+    </div>
+
     <!-- Create the tabs -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="relay-tab" data-toggle="tab" href="#relayTab" role="tab" aria-controls="relayTab" aria-selected="true">Guard Relay</a>
+            <a class="nav-link active" id="relay-tab" data-toggle="tab" href="#relayTab" role="tab" aria-controls="relayTab" aria-selected="true">Middle/Guard Relay</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="bridge-tab" data-toggle="tab" href="#bridgeTab" role="tab" aria-controls="bridgeTab" aria-selected="false">Bridge</a>
@@ -46,37 +42,54 @@
             <a class="nav-link" id="onion-tab" data-toggle="tab" href="#onionTab" role="tab" aria-controls="onionTab" aria-selected="false">Onion Service</a>
         </li>
     </ul>
+            <div id="relayLimitWarning" style="display: none;" class="alert alert-warning">
+                <p>You have reached the maximum limit of 8 relays. You can't add more relays. You can edit or delete existing relays.</p>
+            </div>
 
     <div class="tab-content" id="myTabContent">
         <!-- Relay Tab Content -->
         <div class="tab-pane fade show active" id="relayTab" role="tabpanel" aria-labelledby="relay-tab">
+
+            <div id="guardWarning" style="display: none;" class="alert alert-warning">
+                <p>You have configured a bridge. It's recommended to only run one type of relay.</p>
+                <button id="understandButton" class="btn btn-primary">I Understand</button>
+            </div>
+
             <form action="/guard/configure" id="guardForm" method="post">
                 <div class="form-group">
                     <label for="relayNickname">Nickname:</label>
                     <input id="relayNickname" name="relayNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                 </div>
                 <div class="form-group">
-                    <label for="relayPort">Relay Port:</label>
-                    <input id="relayPort" name="relayPort" required type="number" min="1024" max="65535" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="relayContact">Contact:</label>
+                    <label for="relayContact">Contact email:</label>
                     <input id="relayContact" name="relayContact" required type="text" class="form-control">
                 </div>
                 <div class="form-group">
+                    <label for="relayPort">ORPort:</label>
+                    <input id="relayPort" name="relayPort" required type="number" min="1" max="65535" class="form-control">
+                </div>
+                <div class="form-group">
                     <label for="controlPort">Control Port:</label>
-                    <input id="controlPort" name="controlPort" required type="number" min="1024" max="65535" class="form-control">
+                    <input id="controlPort" name="controlPort" required type="number" min="1" max="65535" class="form-control">
                 </div>
-                <div class="form-group" id="guardBandwidthField">
-                    <label for="guardBandwidth">Bandwidth limit (KB/s)</label>
-                    <input type="number" class="form-control" id="guardBandwidth" name="guardBandwidth" required>
+                <div class="form-group" id="relayBandwidthField">
+                    <label for="relayBandwidth">Bandwidth limit (KB/s, 0 = unlimited)</label>
+                    <input type="number" class="form-control" id="relayBandwidth" name="relayBandwidth" required>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
 
         <!-- Bridge Tab Content -->
         <div class="tab-pane fade" id="bridgeTab" role="tabpanel" aria-labelledby="bridge-tab">
+
+
+            <div id="bridgeWarning" style="display: none;" class="alert alert-warning">
+                <p>You have configured a non-exit relay. It's recommended to only run one type of relay.</p>
+                <button id="understandBridgeButton" class="btn btn-primary">I Understand</button>
+            </div>
+
             <form action="/bridge/configure" id="bridgeForm" method="post">
                 <div class="form-group">
                     <label for="bridgeType">Bridge Type:</label>
@@ -90,22 +103,22 @@
                 <!-- Common Fields -->
                 <div id="commonFields">
                     <div class="form-group">
-                        <label for="bridgeContact">Contact Email:</label>
-                        <input id="bridgeContact" name="bridgeContact" required type="email" class="form-control">
-                    </div>
-
-                    <div class="form-group">
                         <label for="bridgeNickname">Nickname:</label>
                         <input id="bridgeNickname" name="bridgeNickname" required pattern="^[a-zA-Z0-9]*$" title="Only alphanumeric characters are allowed" type="text" class="form-control" maxlength="19">
                     </div>
 
                     <div class="form-group">
-                        <label for="bridgeControlPort">ControlPort (e.g., 9051):</label>
-                        <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1024" max="65535" class="form-control">
+                        <label for="bridgeContact">Contact Email:</label>
+                        <input id="bridgeContact" name="bridgeContact" required type="email" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bridgeControlPort">ControlPort:</label>
+                        <input id="bridgeControlPort" name="bridgeControlPort" required type="number" min="1" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group" id="bridgeBandwidthField">
-                        <label for="bridgeBandwidth">Bandwidth limit (KB/s)</label>
+                        <label for="bridgeBandwidth">Bandwidth limit (KB/s, 0 = unlimited)</label>
                         <input type="number" class="form-control" id="bridgeBandwidth" name="bridgeBandwidth" required> <!-- Added required attribute -->
                     </div>
                 </div>
@@ -113,13 +126,13 @@
                 <!-- Specific Fields for Bridge -->
                 <div class="bridge-specific" id="bridgeFields">
                     <div class="form-group">
-                        <label for="bridgePort">ORPort (e.g., 9001):</label>
-                        <input id="bridgePort" name="bridgePort" required type="number" min="1024" max="65535" class="form-control">
+                        <label for="bridgePort">ORPort:</label>
+                        <input id="bridgePort" name="bridgePort" required type="number" min="1" max="65535" class="form-control">
                     </div>
 
                     <div class="form-group">
-                        <label for="bridgeTransportListenAddr">ServerTransportListenAddr (e.g., 9001):</label>
-                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1024" max="65535" class="form-control">
+                        <label for="bridgeTransportListenAddr">ServerTransportListenAddr:</label>
+                        <input id="bridgeTransportListenAddr" name="bridgeTransportListenAddr" required type="number" min="1" max="65535" class="form-control">
                     </div>
                 </div>
 
@@ -128,13 +141,16 @@
                     <div class="form-group">
                         <label for="webtunnelUrl">Domain:</label>
                         <input id="webtunnelUrl" name="webtunnelUrl" type="text" class="form-control">
+
+                        <label for="webtunnelPort">Webtunnel Port:</label>
+                        <input id="webtunnelPort" name="webtunnelPort" type="number" min="1" max="65535" class="form-control">
                     </div>
                 </div>
 
                 <!-- Specific Fields for Snowflake -->
                 <div class="bridge-specific" id="snowflakeFields" style="display: none;">
                     <!-- Snowflake has no specific fields to enter -->
-                    <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Run Snowflake Proxy</button>
+                    <button id="runSnowflakeProxyButton" type="button" class="btn btn-primary">Configure Proxy</button>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Configure Bridge</button>
@@ -146,14 +162,16 @@
             <form action="/onion-service/configure" id="onionForm" method="post">
                 <div class="form-group">
                     <label for="onionServicePort">HiddenServicePort:</label>
-                    <input id="onionServicePort" name="onionServicePort" required type="number" min="1024" max="65535" class="form-control">
+                    <input id="onionServicePort" name="onionServicePort" required type="number" min="1" max="65535" class="form-control">
                 </div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
         </div>
         <div class="col-md-4">
+            <!-- First Part -->
             <table class="table">
                 <thead>
                 <tr>
@@ -164,103 +182,52 @@
                 <tbody>
                 <tr>
                     <td>Obfs4 Bridges</td>
-                    <td id="bridgeCount">0/2</td>
+                    <td id="bridgeCount">0</td>
                 </tr>
                 <tr>
-                    <td>Guard</td>
-                    <td id="guardCount">0/8</td>
+                    <td>Middle/Guard</td>
+                    <td id="guardCount">0</td>
                 </tr>
                 <tr>
                     <td>WebTunnel</td>
-                    <td id="webtunnelCount">0/1</td>
+                    <td id="webtunnelCount">0</td>
                 </tr>
                 <tr>
                     <td>Snowflake</td>
-                    <td id="snowflakeCount">0/1</td>
+                    <td id="snowflakeCount">0</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td id="totalRelays">0/8</td>
                 </tr>
                 </tbody>
             </table>
-            <button id="toggleLimitButton" type="button" class="btn btn-primary">Turn Limit Off</button>
+
+            <!-- Second Part -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Service Type</th>
+                    <th>Current</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Onion Services</td>
+                    <td id="onionServiceCount">0</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/tabs.js"></script> <!-- Include your JavaScript -->
+<script src="/js/tabs.js"></script>
 <script src="/js/toggleBridgeFields.js"></script>
-<script src="/js/runSnowflakeProxy.js"></script>
-<script src="/js/checkStateAndUpdate.js"></script>
-<script src="/js/checkRunningBridgeType.js"></script>
-<script src="/js/checkGuardLimit.js"></script>
+<script src="/js/snowflakeProxyManagement.js"></script>
 <script src="/js/updateCount.js"></script>
-<script src="/js/checkMaxLimits.js"></script>
-
-<script>
-    document.getElementById("toggleLimitButton").addEventListener("click", function () {
-        var limitStateCheckbox = document.getElementById("limitState");
-        limitStateCheckbox.checked = !limitStateCheckbox.checked;
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $.get("/bridge/limit-state", function(data) {
-            var toggleLimitButton = document.getElementById("toggleLimitButton");
-            if (data) {
-                toggleLimitButton.textContent = "Turn Limit Off";
-            } else {
-                toggleLimitButton.textContent = "Turn Limit On";
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#bridgeForm').on('submit', function() {
-            var bridgeTypeField = $('#bridgeType');
-            if (bridgeTypeField.prop('disabled')) {
-                var bridgeType = bridgeTypeField.val();
-                if (!$("input[name='bridgeType']").length) {
-                    $(this).append('<input type="hidden" name="bridgeType" value="' + bridgeType + '">');
-                }
-            }
-        });
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('#bridgeForm').on('submit', function(e) {
-            var orPort = $('#bridgePort').val();
-            var serverTransportListenAddr = $('#bridgeTransportListenAddr').val();
-
-            if (orPort == 9001 || serverTransportListenAddr == 9001) {
-                e.preventDefault(); // prevent form from being submitted
-                alert('Port 9001 is associated with Tor and may be blocked by censorship authorities. Please choose a different port.');
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#guardForm').on('submit', function(e) {
-            var bandwidth = parseInt($('#guardBandwidth').val());
-            if (bandwidth !== 0 && bandwidth < 75) {
-                alert("Bandwidth must be 0 or 75 and larger");
-                e.preventDefault(); // prevent form from being submitted
-            }
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        $('#bridgeForm').on('submit', function(e) {
-            var bandwidth = parseInt($('#bridgeBandwidth').val());
-            if (bandwidth !== 0 && bandwidth < 75) {
-                alert("Bandwidth must be 0 or 75 and larger");
-                e.preventDefault(); // prevent form from being submitted
-            }
-        });
-    });
-</script>
+<script src="/js/FormSubmissionHandler.js"></script>
+<script src="/js/setupConfig.js"></script>
 </body>
 </html>

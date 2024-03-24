@@ -5,6 +5,19 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/navbar.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Relay Operations</title>
+
+    <style>
+        .start-button-green {
+            background-color: green !important;
+            color: white !important;
+        }
+
+        .stop-button-red {
+            background-color: red !important;
+            color: white !important;
+        }
+    </style>
 </head>
 <style>
     #edit-form input {
@@ -16,6 +29,7 @@
 <div th:replace="navbar :: nav"></div>
 <div class="container">
     <h1>Tor Relay Operations</h1>
+
     <button id="upnp-toggle-button" class="btn btn-primary" data-upnp-enabled="true">Disable UPnP for Guard Relays</button>
 
     <!-- Guard Relay Configurations -->
@@ -25,12 +39,12 @@
             <div id="guard-configs" class="list-group">
                 <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
-                    <h5 th:text="'Nickname: ' + ${config.getGuardConfig.nickname}"></h5>
-                    <p th:text="'ORPort: ' + ${config.getGuardConfig.orPort}"></p>
-                    <p th:text="'Contact: ' + ${config.getGuardConfig.contact}"></p>
-                    <p th:text="'Control Port: ' + ${config.getGuardConfig.controlPort}"></p>
-                    <p th:text="'Bandwidth Limit: ' + ${config.getGuardConfig.bandwidthRate}"></p>
-                    <p>Status: <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
+                    <p><strong>Nickname:</strong> <span th:text="${config.getGuardConfig.nickname}"></span></p>
+                    <p><strong>ORPort:</strong> <span th:text="${config.getGuardConfig.orPort}"></span></p>
+                    <p><strong>Contact:</strong> <span th:text="${config.getGuardConfig.contact}"></span></p>
+                    <p><strong>Control Port:</strong> <span th:text="${config.getGuardConfig.controlPort}"></span></p>
+                    <p><strong>Bandwidth Limit:</strong> <span th:text="${config.getGuardConfig.bandwidthRate}"></span></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.getGuardConfig.nickname}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <button class="btn btn-secondary edit-button"
                                 th:attr="data-config-type='guard'"
@@ -46,16 +60,19 @@
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Remove
                         </button>
-                        <button class="btn btn-secondary start-button"
+                        <button class="btn start-button-green start-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Start
+                            <div class="spinner" style="display: none;"></div>
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='guard'"
                                 th:data-config-nickname="${config.getGuardConfig.nickname}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
+                        <div id="spinner-${config.getGuardConfig.nickname}" class="spinner" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -70,15 +87,14 @@
             <div id="bridge-configs" class="list-group">
                 <div th:each="config : ${bridgeConfigs}" class="list-group-item">
                     <!-- Display Bridge relay configuration fields -->
-                    <h5 th:text="'Nickname: ' + ${config.getBridgeConfig.nickname}"></h5>
-
-                    <p th:text="'ORPort: ' + ${config.getBridgeConfig.orPort}"></p>
-                    <p th:text="'ServerTransportListenAddr: ' + ${config.getBridgeConfig.getServerTransport}"></p>
-                    <p th:text="'Contact: ' + ${config.getBridgeConfig.contact}"></p>
-                    <p th:text="'Control Port: ' + ${config.getBridgeConfig.controlPort}"></p>
-                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:443 null url=null'}">Webtunnel Link: <span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
-                    <p th:text="'Bandwidth Limit: ' + ${config.getBridgeConfig.bandwidthRate}"></p>
-                    <p>Status: <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
+                    <p><strong>Nickname:</strong> <span th:text="${config.getBridgeConfig.nickname}"></span></p>
+                    <p><strong>ORPort:</strong> <span th:text="${config.getBridgeConfig.orPort}"></span></p>
+                    <p><strong>ServerTransportListenAddr:</strong> <span th:text="${config.getBridgeConfig.getServerTransport}"></span></p>
+                    <p><strong>Contact:</strong> <span th:text="${config.getBridgeConfig.contact}"></span></p>
+                    <p><strong>Control Port:</strong> <span th:text="${config.getBridgeConfig.controlPort}"></span></p>
+                    <p><strong>Webtunnel Link:</strong> <span th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}" th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
+                    <p><strong>Bandwidth Limit:</strong> <span th:text="${config.getBridgeConfig.bandwidthRate}"></span></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>
 
                     <!-- Display type of bridge -->
                     <p>Type: <span th:id="${'bridge-type-' + config.getBridgeConfig.nickname}">Unknown</span></p>
@@ -102,19 +118,20 @@
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Remove
                         </button>
-                        <button class="btn btn-secondary start-button"
+                        <button class="btn start-button-green start-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Start
+                            <div class="spinner" style="display: none;"></div>
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='bridge'"
                                 th:data-config-nickname="${config.getBridgeConfig.nickname}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
-                        <button class="btn btn-secondary">
-                            <a th:href="@{/file/upload/80}">Edit Files</a>
-                        </button>
+                        <div id="spinner-${config.getBridgeConfig.nickname}" class="spinner" style="display: none;"></div>
+
                     </div>
                 </div>
                 <div th:if="${isSnowflakeConfigured}" id="snowflakeTab" class="tab-pane fade show active">
@@ -135,9 +152,9 @@
             <div id="onion-configs" class="list-group">
                 <div th:each="config : ${onionConfigs}" class="list-group-item">
                     <!-- Display Onion relay configuration fields -->
-                    <p th:text="'HiddenServicePort: ' + ${config.hiddenServicePort}"></p>
-                    <p>Hostname: <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
-                    <p>Status: <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
+                    <p><strong>HiddenServicePort:</strong> <span th:text="${config.hiddenServicePort}"></span></p>
+                    <p><strong>Hostname:</strong> <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
 
                         <button class="btn btn-secondary remove-button"
@@ -145,20 +162,23 @@
                                 th:data-config-type="onion">
                             Remove
                         </button>
-                        <button type="button" class="btn btn-secondary start-button" th:attr="data-config-type='onion'"
+                        <button type="button" class="btn start-button-green start-button" th:attr="data-config-type='onion'"
                                 th:data-config-nickname="${config.hiddenServicePort}">
                             Start
+                            <div class="spinner" style="display: none;"></div>
                         </button>
-                        <button class="btn btn-secondary stop-button"
+                        <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='onion'"
                                 th:data-config-dir="${config.hiddenServiceDir}"
                                 th:data-config-nickname="${config.hiddenServicePort}"
                                 th:data-config-port="${config.hiddenServicePort}">
                             Stop
+                            <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn btn-secondary">
                             <a th:href="@{/file/upload/{port}(port=${config.hiddenServicePort})}">Edit Files</a>
                         </button>
+                        <div id="spinner-${config.getOnionConfig.nickname}" class="spinner" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -184,23 +204,23 @@
                     <p id="edit-nickname" data-config-type="guard bridge"></p>
 
                     <label for="edit-orport" data-config-type="guard bridge" data-bridge-type="obfs4">ORPort:</label>
-                    <input id="edit-orport" name="edit-orport" type="number" min="1024" max="65535" data-config-type="guard" data-bridge-type="obfs4">
+                    <input id="edit-orport" name="edit-orport" type="number" min="1" max="65535" data-config-type="guard" data-bridge-type="obfs4">
 
                     <label for="edit-server-transport" data-config-type="bridge" data-bridge-type="obfs4">ServerTransportListenAddr:</label>
-                    <input id="edit-server-transport" name="edit-server-transport" type="number" min="1024" max="65535" data-config-type="bridge" data-bridge-type="obfs4">
+                    <input id="edit-server-transport" name="edit-server-transport" type="number" min="1" max="65535" data-config-type="bridge" data-bridge-type="obfs4">
 
                     <label for="edit-contact" data-config-type="guard bridge" data-bridge-type="obfs4 webtunnel">Contact:</label>
                     <input id="edit-contact" name="edit-contact" type="email" data-config-type="guard bridge" data-bridge-type="obfs4 webtunnel">
 
                     <label for="edit-controlport" data-config-type="guard bridge" data-bridge-type="obfs4">Control Port:</label>
-                    <input id="edit-controlport" name="edit-controlport" type="number" min="1024" max="65535" data-config-type="guard" data-bridge-type="obfs4">
+                    <input id="edit-controlport" name="edit-controlport" type="number" min="1" max="65535" data-config-type="guard" data-bridge-type="obfs4">
 
                     <!-- Additional fields for Onion relay configurations -->
                     <label for="edit-dir" data-config-type="onion">HiddenServiceDir:</label>
                     <input id="edit-dir" name="edit-dir" type="text" data-config-type="onion">
 
                     <label for="edit-hidden-service-port" data-config-type="onion">HiddenServicePort:</label>
-                    <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="number" min="1024" max="65535" data-config-type="onion">
+                    <input id="edit-hidden-service-port" name="edit-hidden-service-port" type="number" min="1" max="65535" data-config-type="onion">
 
                     <label for="edit-path" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">Path:</label>
                     <input type="text" id="edit-path" data-config-type="bridge" data-bridge-type="webtunnel" data-editable="false">
@@ -220,20 +240,6 @@
     </div>
 </div>
 
-<table>
-    <thead>
-    <tr>
-        <th>UPnP Managed Ports</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Loop through the list of ports managed by UPnP -->
-    <tr th:each="port : ${upnpPorts}">
-        <td th:text="${port}"></td>
-    </tr>
-    </tbody>
-</table>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/js/edit.js"></script>
 <script src="/js/status.js"></script>
@@ -241,28 +247,12 @@
 <script src="/js/stop.js"></script>
 <script src="/js/remove.js"></script>
 <script src="/js/upnp-toggle.js"></script>
-<script src="/js/removeSnowflake.js"></script>
-<script src="/js/startStopSnowflake.js"></script>
+<script src="/js/snowflakeProxyManagement.js"></script>
 <script src="/js/getRunningBridgeTypes.js"></script>
 <script src="/js/updateHostname.js"></script>
 <script src="/js/upnpAvailability.js"></script>
-
-
-<script>
-    $(document).ready(function() {
-        if ($('#guard-configs .list-group-item').length === 0) {
-            $('h2:contains("Guard Relay Configurations")').hide();
-        }
-        if ($('#bridge-configs .list-group-item').length === 0) {
-            $('h2:contains("Bridge Relay Configurations")').hide();
-        }
-        if ($('#onion-configs .list-group-item').length === 0) {
-            $('h2:contains("Onion Relay Configurations")').hide();
-        }
-    });
-</script>
+<script src="/js/hideEmptyElements.js"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>
