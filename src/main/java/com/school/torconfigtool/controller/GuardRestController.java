@@ -34,8 +34,8 @@ public class GuardRestController {
      * It checks if the limit for the Guard has been reached.
      * @return ResponseEntity - It returns a Map of String and Object wrapped in a ResponseEntity with an HTTP status code.
      */
-    @GetMapping("/guards/limit-reached")
-    public ResponseEntity<Map<String, Object>> checkGuardLimit() {
+    @GetMapping("/guards/guard-count")
+    public ResponseEntity<Map<String, Object>> checkGuardCount() {
         return ResponseEntity.ok(guardService.countGuards());
     }
 

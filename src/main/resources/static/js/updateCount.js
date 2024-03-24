@@ -1,36 +1,50 @@
 let totalRelays = 0;
 
-$.get("/guard-api/guards/limit-reached", function(data) {
-    const guardCountElement = $('#guardCount');
-    guardCountElement.text(data.guardCount);
-    guardCountElement.addClass('blue-text');
-    totalRelays += data.guardCount;
-});
+function updateCount(endpoint, elementId, bridgeType = null) {
+    let data = bridgeType ? { bridgeType: bridgeType } : {};
+    $.get(endpoint, data, function(response) {
+        const element = $('#' + elementId);
+        let count = 0;
+        if (typeof response.bridgeCount === 'number') {
+            count = response.bridgeCount;
+        } else if (typeof response.guardCount === 'number') {
+            count = response.guardCount;
+        }
+        element.text(count);
+        element.addClass('blue-text');
+        totalRelays += count;
+        updateTotalRelays();
+    });
+}
 
-$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'obfs4' }, function(data) {
-    const bridgeCountElement = $('#bridgeCount');
-    bridgeCountElement.text(data.bridgeCount);
-    bridgeCountElement.addClass('blue-text');
-    totalRelays += data.bridgeCount;
-});
+function checkConfigured(endpoint, warningElementId, formElementId) {
+    $.get(endpoint, function(data) {
+        if (data.bridgeConfigured || data.guardConfigured) {
+            $(`#${warningElementId}`).show();
+            $(`#${formElementId} :input`).prop('disabled', true);
+        }
+    });
+}
 
-$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'webtunnel' }, function(data) {
-    const webtunnelCountElement = $('#webtunnelCount');
-    webtunnelCountElement.text(data.bridgeCount);
-    webtunnelCountElement.addClass('blue-text');
-    totalRelays += data.bridgeCount;
+function handleUnderstandButtonClick(buttonElementId, warningElementId, formElementId) {
+    $(`#${buttonElementId}`).click(function() {
+        $(`#${warningElementId}`).hide();
+        if (!$('#relayLimitWarning').is(':visible')) {
+            $(`#${formElementId} :input`).prop('disabled', false);
+        }
+    });
+}
 
-    updateTotalRelays();
-});
+updateCount("/guard-api/guards/guard-count", "guardCount");
+updateCount("/bridge-api/bridges/bridge-count", "bridgeCount", 'obfs4');
+updateCount("/bridge-api/bridges/bridge-count", "webtunnelCount", 'webtunnel');
+updateCount("/bridge-api/bridges/bridge-count", "snowflakeCount", 'snowflake');
 
-$.get("/bridge-api/bridges/bridge-count", { bridgeType: 'snowflake' }, function(data) {
-    const snowflakeCountElement = $('#snowflakeCount');
-    snowflakeCountElement.text(data.bridgeCount);
-    snowflakeCountElement.addClass('blue-text');
-    totalRelays += data.bridgeCount;
+checkConfigured("/bridge-api/bridge-configured", "guardWarning", "guardForm");
+handleUnderstandButtonClick("understandButton", "guardWarning", "guardForm");
 
-    updateTotalRelays();
-});
+checkConfigured("/guard-api/guard-configured", "bridgeWarning", "bridgeForm");
+handleUnderstandButtonClick("understandBridgeButton", "bridgeWarning", "bridgeForm");
 
 let onionServiceCount = 0;
 
@@ -41,55 +55,14 @@ $.get("/onion-api/onion-configured", function(data) {
 });
 
 function updateTotalRelays() {
-    // Update total relays
     const totalRelaysElement = $('#totalRelays');
     totalRelaysElement.text(totalRelays + "/8");
     if (totalRelays >= 8) {
         totalRelaysElement.addClass('red-text');
-
-        // Display warning message
         $('#relayLimitWarning').show();
-
-        // Disable the forms
         $('#guardForm :input').prop('disabled', true);
         $('#bridgeForm :input').prop('disabled', true);
     } else {
         totalRelaysElement.addClass('green-text');
     }
 }
-
-// Check if any bridge is configured
-$.get("/bridge-api/bridge-configured", function(data) {
-    if (data.bridgeConfigured) {
-        // If a bridge is configured, show the warning message and disable the form
-        $('#guardWarning').show();
-        $('#guardForm :input').prop('disabled', true);
-    }
-});
-
-// When the "I Understand" button is clicked, hide the warning message and enable the form
-$('#understandButton').click(function() {
-    $('#guardWarning').hide();
-    // Only enable the form if the relay limit warning is not visible
-    if (!$('#relayLimitWarning').is(':visible')) {
-        $('#guardForm :input').prop('disabled', false);
-    }
-});
-
-// Check if any guard is configured
-$.get("/guard-api/guard-configured", function(data) {
-    if (data.guardConfigured) {
-        // If a guard is configured, show the warning message and disable the form
-        $('#bridgeWarning').show();
-        $('#bridgeForm :input').prop('disabled', true);
-    }
-});
-
-// When the "I Understand" button is clicked, hide the warning message and enable the form
-$('#understandBridgeButton').click(function() {
-    $('#bridgeWarning').hide();
-    // Only enable the form if the relay limit warning is not visible
-    if (!$('#relayLimitWarning').is(':visible')) {
-        $('#bridgeForm :input').prop('disabled', false);
-    }
-});

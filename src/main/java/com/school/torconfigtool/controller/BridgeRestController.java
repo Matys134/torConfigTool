@@ -61,7 +61,7 @@ public class BridgeRestController {
      * @return ResponseEntity<Map<String, Object>> - The response entity containing the map with the bridge limit reached status and the bridge counts.
      */
     @GetMapping("/bridges/bridge-count")
-    public ResponseEntity<Map<String, Object>> checkBridgeLimit(@RequestParam String bridgeType) {
+    public ResponseEntity<Map<String, Object>> checkBridgeCount(@RequestParam String bridgeType) {
         Map<String, Object> response = bridgeService.countBridges(bridgeType);
         return ResponseEntity.ok(response);
     }
