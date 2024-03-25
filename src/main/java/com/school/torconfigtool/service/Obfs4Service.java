@@ -14,6 +14,8 @@ public class Obfs4Service {
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         String obfs4FilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "pt_state" + File.separator + "obfs4_bridgeline.txt";
 
+        System.out.println("Obfs4 file path: " + obfs4FilePath);
+
         String obfs4Link = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(obfs4FilePath))) {
             String line;
