@@ -2,6 +2,7 @@ package com.school.torconfigtool.service;
 
 
 import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.util.Constants;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -132,13 +133,12 @@ public class RelayOperationsService {
 
 
     public String prepareModelForRelayOperationsView(Model model) {
-        String folderPath = torConfigService.buildFolderPath();
-        model.addAttribute("guardConfigs", torConfigService.readTorConfigurations(folderPath, "guard"));
+        model.addAttribute("guardConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "guard"));
 
-        model.addAttribute("bridgeConfigs", torConfigService.readTorConfigurations(folderPath, "bridge"));
+        model.addAttribute("bridgeConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge"));
 
-        model.addAttribute("onionConfigs", torConfigService.readTorConfigurations(folderPath, "onion"));
-        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(folderPath, "onion");
+        model.addAttribute("onionConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion"));
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
 
         // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
@@ -147,7 +147,7 @@ public class RelayOperationsService {
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
 
-        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(folderPath, "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
             String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());

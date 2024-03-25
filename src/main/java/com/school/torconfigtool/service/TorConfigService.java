@@ -21,15 +21,6 @@ import java.util.List;
 public class TorConfigService {
 
     /**
-     * Builds the folder path for the Tor configurations.
-     *
-     * @return the folder path as a string.
-     */
-    public String buildFolderPath() {
-        return "torrc";
-    }
-
-    /**
      * Reads Tor configurations from a specified folder and relay type.
      *
      * @param folderPath the path to the folder.

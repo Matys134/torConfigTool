@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.util.Constants;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -287,13 +288,13 @@ public class NginxService {
     public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
-        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(torConfigService.buildFolderPath(), "onion");
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
         for (TorConfig config : onionConfigs) {
             allServices.add(config.getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
-        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(torConfigService.buildFolderPath(), "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         for (TorConfig config : bridgeConfigs) {
             allServices.add(config.getBridgeConfig().getNickname());
         }
