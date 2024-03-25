@@ -176,7 +176,7 @@ public class RelayOperationsService {
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> obfs4Links = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
-            String obfs4Link = obfs4Service.getObfs4Link(config.getBridgeConfig().getNickname());
+            String obfs4Link = obfs4Service.getObfs4Link(config.getBridgeConfig().getNickname(), config.getBridgeConfig());
             obfs4Links.put(config.getBridgeConfig().getNickname(), obfs4Link);
         }
         model.addAttribute("obfs4Links", obfs4Links);
