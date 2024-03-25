@@ -21,7 +21,7 @@ public class Obfs4Service {
 
         File obfs4File = new File(obfs4FilePath);
         if (!obfs4File.exists()) {
-            throw new RuntimeException("obfs4_bridgeline.txt file does not exist");
+            return null;
         }
 
         String obfs4Link = null;
