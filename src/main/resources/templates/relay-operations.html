@@ -96,7 +96,7 @@
                         <strong>Obfs4 Link:</strong>
                         <span th:text="${obfs4Links[config.getBridgeConfig.nickname]}"></span>
                     </p>
-                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname]} != null and ${webtunnelLinks[config.getBridgeConfig.nickname]} != ''">
+                    <p th:if="${webtunnelLinks[config.getBridgeConfig.nickname]} != null and ${webtunnelLinks[config.getBridgeConfig.nickname]} != '' and ${config.getBridgeConfig.webtunnelUrl} != null">
                         <strong>WebTunnel Link:</strong>
                         <span th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span>
                     </p>
