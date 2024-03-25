@@ -92,6 +92,7 @@
                     <p><strong>ServerTransportListenAddr:</strong> <span th:text="${config.getBridgeConfig.getServerTransport}"></span></p>
                     <p><strong>Contact:</strong> <span th:text="${config.getBridgeConfig.contact}"></span></p>
                     <p><strong>Control Port:</strong> <span th:text="${config.getBridgeConfig.controlPort}"></span></p>
+                    <p><string>Obfs4 Link:</string> <span th:text="${config.getBridgeConfig.obfs4link}"></span></p>
                     <p><strong>Webtunnel Link:</strong> <span th:if="${webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}" th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span></p>
                     <p><strong>Bandwidth Limit:</strong> <span th:text="${config.getBridgeConfig.bandwidthRate}"></span></p>
                     <p><strong>Status:</strong> <span th:id="${'status-' + config.getBridgeConfig.nickname}">Unknown</span></p>

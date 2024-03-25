@@ -33,6 +33,7 @@ public class RelayOperationsService {
     private final WebtunnelService webtunnelService;
     private final OnionService onionService;
     private final CommandService commandService;
+    private final Obfs4Service obfs4Service;
 
     /**
      * Constructor for RelayOperationsService.
@@ -43,7 +44,7 @@ public class RelayOperationsService {
      * @param relayStatusService The RelayStatusService to use.
      * @param upnpService The UPnPService to use.
      */
-    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService, CommandService commandService) {
+    public RelayOperationsService(TorConfigService torConfigService, NginxService nginxService, TorFileService torFileService, RelayStatusService relayStatusService, UPnPService upnpService, WebtunnelService webtunnelService, OnionService onionService, CommandService commandService, Obfs4Service obfs4Service) {
         this.torConfigService = torConfigService;
         this.nginxService = nginxService;
         this.torFileService = torFileService;
@@ -52,6 +53,7 @@ public class RelayOperationsService {
         this.webtunnelService = webtunnelService;
         this.onionService = onionService;
         this.commandService = commandService;
+        this.obfs4Service = obfs4Service;
     }
 
     public String changeRelayState(String relayNickname, String relayType, Model model, boolean start, boolean updateFingerprint) {
@@ -137,6 +139,7 @@ public class RelayOperationsService {
         addHostnamesToModel(model);
         addUPnPPortsToModel(model);
         addWebtunnelLinksToModel(model);
+        addObfs4LinksToModel(model);
         return "relay-operations";
     }
 
@@ -167,6 +170,16 @@ public class RelayOperationsService {
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
+    }
+
+    private void addObfs4LinksToModel(Model model) {
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
+        Map<String, String> obfs4Links = new HashMap<>();
+        for (TorConfig config : bridgeConfigs) {
+            String obfs4Link = obfs4Service.getObfs4Link(config.getBridgeConfig().getNickname());
+            obfs4Links.put(config.getBridgeConfig().getNickname(), obfs4Link);
+        }
+        model.addAttribute("obfs4Links", obfs4Links);
     }
 
 

@@ -15,6 +15,8 @@ public class BridgeConfig extends BaseRelayConfig {
     private String serverTransport;
     // The type of the relay
     private String relayType;
+    // The obfs4 link of the bridge
+    private String obfs4link;
     // The domain of the webtunnel
     private String webtunnelDomain;
     // The port of the webtunnel
