@@ -158,15 +158,15 @@ public class RelayOperationsService {
         model.addAttribute("hostnames", hostnames);
     }
 
-    private void addWebtunnelLinksToModel(Model model) {
-        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
-        Map<String, String> webtunnelLinks = new HashMap<>();
-        for (TorConfig config : bridgeConfigs) {
-            String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
-            webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
-        }
-        model.addAttribute("webtunnelLinks", webtunnelLinks);
-    }
+//    private void addWebtunnelLinksToModel(Model model) {
+//        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
+//        Map<String, String> webtunnelLinks = new HashMap<>();
+//        for (TorConfig config : bridgeConfigs) {
+//            String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
+//            webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
+//        }
+//        model.addAttribute("webtunnelLinks", webtunnelLinks);
+//    }
 
 
     private void addUPnPPortsToModel(Model model) {
