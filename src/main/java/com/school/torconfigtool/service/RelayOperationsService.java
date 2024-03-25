@@ -73,7 +73,7 @@ public class RelayOperationsService {
         if (start) {
             if (updateFingerprint) {
                 // Step 1: Retrieve Fingerprints
-                List<String> allFingerprints = getAllRelayFingerprints();
+                List<String> allFingerprints = getGuardRelayFingerprints();
 
                 // Step 2: Update the torrc File with fingerprints
                 torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
@@ -109,7 +109,7 @@ public class RelayOperationsService {
      *
      * @return List The list of fingerprints.
      */
-    private List<String> getAllRelayFingerprints() {
+    private List<String> getGuardRelayFingerprints() {
         // This path should lead to the base directory where all relay data directories are stored
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         File dataDirectory = new File(dataDirectoryPath);
@@ -133,20 +133,33 @@ public class RelayOperationsService {
 
 
     public String prepareModelForRelayOperationsView(Model model) {
-        model.addAttribute("guardConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "guard"));
+        addRelayConfigsToModel(model);
+        addHostnamesToModel(model);
+        addUPnPPortsToModel(model);
+        addWebtunnelLinksToModel(model);
+        return "relay-operations";
+    }
 
-        model.addAttribute("bridgeConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge"));
+    private void addRelayConfigsToModel(Model model) {
+        model.addAttribute("guardConfigs", torConfigService.readTorConfigurations
+                (Constants.TORRC_DIRECTORY_PATH, "guard"));
+        model.addAttribute("bridgeConfigs", torConfigService.readTorConfigurations
+                (Constants.TORRC_DIRECTORY_PATH, "bridge"));
+        model.addAttribute("onionConfigs", torConfigService.readTorConfigurations
+                (Constants.TORRC_DIRECTORY_PATH, "onion"));
+    }
 
-        model.addAttribute("onionConfigs", torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion"));
+    private void addHostnamesToModel(Model model) {
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
-
-        // Create a map to store hostnames for onion services
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
             String hostname = onionService.readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
             hostnames.put(config.getHiddenServicePort(), hostname);
         }
+        model.addAttribute("hostnames", hostnames);
+    }
 
+    private void addWebtunnelLinksToModel(Model model) {
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
@@ -154,13 +167,12 @@ public class RelayOperationsService {
             webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
+    }
 
-        model.addAttribute("hostnames", hostnames);
 
+    private void addUPnPPortsToModel(Model model) {
         List<Integer> upnpPorts = upnpService.getUPnPPorts();
         model.addAttribute("upnpPorts", upnpPorts);
-
-        return "relay-operations";
     }
 
     /**

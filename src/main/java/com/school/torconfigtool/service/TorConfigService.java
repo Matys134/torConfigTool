@@ -37,7 +37,7 @@ public class TorConfigService {
                 String relayType = parseRelayTypeFromFile(file);
                 if (relayType.equals(expectedRelayType)) {
                     try {
-                        TorConfig config = parseTorConfiguration(file, relayType);
+                        TorConfig config = parseTorConfig(file, relayType);
                         configs.add(config);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -69,12 +69,12 @@ public class TorConfigService {
      * @return a Tor configuration.
      * @throws IOException if an I/O error occurs.
      */
-    private TorConfig parseTorConfiguration(File file, String relayType) throws IOException {
+    private TorConfig parseTorConfig(File file, String relayType) throws IOException {
         TorConfig config = new TorConfig();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                parseTorConfigLine(line, config, relayType);
+                parseTorConfigLines(line, config, relayType);
             }
         }
         return config;
@@ -87,7 +87,7 @@ public class TorConfigService {
      * @param config the configuration to update.
      * @param relayType the relay type.
      */
-    private void parseTorConfigLine(String line, TorConfig config, String relayType) {
+    private void parseTorConfigLines(String line, TorConfig config, String relayType) {
         RelayConfig relayConfig = getRelayConfig(config, relayType);
 
         if (line.startsWith("Nickname")) {

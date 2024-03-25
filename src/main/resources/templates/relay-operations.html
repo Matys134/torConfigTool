@@ -35,9 +35,9 @@
     <!-- Guard Relay Configurations -->
     <div class="row">
         <div class="col-md-12">
+
             <h2>Guard Relay Configurations</h2>
             <div id="guard-configs" class="list-group">
-                <!-- Guard relay configurations will be added here dynamically -->
                 <div th:each="config : ${guardConfigs}" class="list-group-item">
                     <p><strong>Nickname:</strong> <span th:text="${config.getGuardConfig.nickname}"></span></p>
                     <p><strong>ORPort:</strong> <span th:text="${config.getGuardConfig.orPort}"></span></p>
