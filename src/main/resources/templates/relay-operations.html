@@ -94,7 +94,7 @@
                     <p><strong>Control Port:</strong> <span th:text="${config.getBridgeConfig.controlPort}"></span></p>
                     <p><strong>Obfs4 Link:</strong> <span th:text="${obfs4Links[config.getBridgeConfig.nickname]}"></span></p>
                     <p><strong>Webtunnel Link:</strong>
-                        <span th:if="${config.getBridgeConfig.bridgeType != 'obfs4' and webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}"
+                        <span th:if="${config.getBridgeConfig.bridgeType == 'webtunnel' and webtunnelLinks[config.getBridgeConfig.nickname] != 'webtunnel 10.0.0.2:' + config.getBridgeConfig.webtunnelPort + ' null url=null'}"
                               th:text="${webtunnelLinks[config.getBridgeConfig.nickname]}"></span>
                     </p>
                     <p><strong>Bandwidth Limit:</strong> <span th:text="${config.getBridgeConfig.bandwidthRate}"></span></p>
