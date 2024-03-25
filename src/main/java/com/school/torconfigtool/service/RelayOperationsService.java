@@ -136,7 +136,6 @@ public class RelayOperationsService {
         addRelayConfigsToModel(model);
         addHostnamesToModel(model);
         addUPnPPortsToModel(model);
-        addWebtunnelLinksToModel(model);
         return "relay-operations";
     }
 
