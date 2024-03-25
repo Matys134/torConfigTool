@@ -109,7 +109,8 @@ public class TorConfigService {
             String bandwidthRate = line.substring("RelayBandwidthRate".length()).trim();
             updateBandwidthRate(relayConfig, bandwidthRate);
         } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
-            ((BridgeConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
+            String port = line.split(" ")[2].split(":")[1];
+            ((BridgeConfig) relayConfig).setServerTransport(port);
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
             String fullUrl = line.split("=")[1].trim();
             try {
