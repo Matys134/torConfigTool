@@ -92,7 +92,7 @@
                     <p><strong>ServerTransportListenAddr:</strong> <span th:text="${config.getBridgeConfig.getServerTransport}"></span></p>
                     <p><strong>Contact:</strong> <span th:text="${config.getBridgeConfig.contact}"></span></p>
                     <p><strong>Control Port:</strong> <span th:text="${config.getBridgeConfig.controlPort}"></span></p>
-                    <p th:if="${obfs4Links[config.getBridgeConfig.nickname] != 'obfs4 10.0.0.2:' + config.getBridgeConfig.serverTransport + ' null'}">
+                    <p th:if="${obfs4Links[config.getBridgeConfig.nickname]} != null and ${obfs4Links[config.getBridgeConfig.nickname]} != ''">
                         <strong>Obfs4 Link:</strong>
                         <span th:text="${obfs4Links[config.getBridgeConfig.nickname]}"></span>
                     </p>
