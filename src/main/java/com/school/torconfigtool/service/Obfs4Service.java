@@ -36,9 +36,15 @@ public class Obfs4Service {
 
         if (obfs4Link != null) {
             String[] parts = obfs4Link.split(" ");
-            parts[2] = getPublicIPAddress() + ":" + bridgeConfig.getServerTransport(); // replace <IP ADDRESS> and <PORT> with public IP address and obfs4 port
+            parts[2] = getPublicIPAddress() + ":" + bridgeConfig.getServerTransport(); // combine <IP ADDRESS> and <PORT> with :
             parts[4] = fingerprint; // replace <FINGERPRINT> with fingerprint
-            obfs4Link = String.join(" ", parts);
+
+            // Remove the element at index 3
+            String[] newParts = new String[parts.length - 1];
+            System.arraycopy(parts, 0, newParts, 0, 3);
+            System.arraycopy(parts, 4, newParts, 3, parts.length - 4);
+
+            obfs4Link = String.join(" ", newParts);
         }
 
         return obfs4Link;
