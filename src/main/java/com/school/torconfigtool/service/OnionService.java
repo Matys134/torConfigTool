@@ -99,7 +99,8 @@ public class OnionService {
         String currentDirectory = System.getProperty("user.dir");
 
         // Build the correct path to the hostname file
-        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-" + port, "hostname");
+        Path path = Paths.get(currentDirectory, "onion", "hiddenServiceDirs", "onion-service-"
+                + port, "hostname");
         try {
             return new String(Files.readAllBytes(path));
         } catch (IOException e) {
