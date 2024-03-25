@@ -74,8 +74,8 @@ public class UPnPService {
     public Map<String, Object> toggleUPnP(boolean enable) {
         Map<String, Object> response = new HashMap<>();
         try {
-            List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
-            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
+            List<TorConfig> guardConfigs = torConfigService.readTorConfigurations(torConfigService.buildFolderPath(), "guard");
+            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(torConfigService.buildFolderPath(), "bridge");
             List<TorConfig> allConfigs = new ArrayList<>();
             allConfigs.addAll(guardConfigs);
             allConfigs.addAll(bridgeConfigs);
@@ -147,7 +147,7 @@ public class UPnPService {
      */
     public List<Integer> getUPnPPorts() {
         List<Integer> upnpPorts = new ArrayList<>();
-        List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
+        List<TorConfig> guardConfigs = torConfigService.readTorConfigurations(torConfigService.buildFolderPath(), "guard");
         for (TorConfig config : guardConfigs) {
             int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
             if (UPnP.isMappedTCP(orPort)) {

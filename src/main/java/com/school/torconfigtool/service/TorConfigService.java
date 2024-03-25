@@ -21,21 +21,6 @@ import java.util.List;
 public class TorConfigService {
 
     /**
-     * Reads Tor configurations from the specified folder.
-     *
-     * @return a list of Tor configurations.
-     */
-    public List<TorConfig> readTorConfigurations() {
-        List<TorConfig> configs = new ArrayList<>();
-        String folderPath = buildFolderPath();
-
-        configs.addAll(readTorConfigurationsFromFolder(folderPath, "guard"));
-        configs.addAll(readTorConfigurationsFromFolder(folderPath, "bridge"));
-
-        return configs;
-    }
-
-    /**
      * Builds the folder path for the Tor configurations.
      *
      * @return the folder path as a string.
@@ -51,7 +36,7 @@ public class TorConfigService {
      * @param expectedRelayType the expected relay type.
      * @return a list of Tor configurations.
      */
-    public List<TorConfig> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
+    public List<TorConfig> readTorConfigurations(String folderPath, String expectedRelayType) {
         List<TorConfig> configs = new ArrayList<>();
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
@@ -124,8 +109,8 @@ public class TorConfigService {
             config.setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
             String[] parts = line.split(" ");
-            String addressAndPort = parts[parts.length - 1]; // Get the last element "127.0.0.1:9005"
-            String port = addressAndPort.split(":")[1]; // Split by ":" and get the second element "9005"
+            String addressAndPort = parts[parts.length - 1];
+            String port = addressAndPort.split(":")[1];
             config.setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
@@ -139,7 +124,7 @@ public class TorConfigService {
             try {
                 java.net.URI uri = new java.net.URI(fullUrl);
                 String webtunnelUrl = uri.getHost();
-                String path = uri.getPath().substring(1); // Remove the leading "/"
+                String path = uri.getPath().substring(1);
                 ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
                 ((BridgeConfig) relayConfig).setPath(path);
             } catch (URISyntaxException e) {
