@@ -15,7 +15,7 @@ import java.util.List;
 public class FileController {
 
     private final FileService fileService;
-    private final String baseDirectory = "/path/to/base/directory/"; // replace with your base directory
+    private final String baseDirectory = "/onion/www/service-";
 
     @Autowired
     public FileController(FileService fileService) {
