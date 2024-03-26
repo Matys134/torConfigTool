@@ -158,7 +158,7 @@ $(document).ready(function () {
         };
 
         $.get("/server-ip", function(serverIp) {
-        $.get("http://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
