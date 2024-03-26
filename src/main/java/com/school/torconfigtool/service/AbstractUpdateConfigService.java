@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractUpdateConfigService<T extends BaseRelayConfig> implements RelayConfigService<T> {
+public abstract class AbstractUpdateConfigService<T extends BaseRelayConfig> implements UpdateConfigService<T> {
 
     @Override
     public Map<String, String> updateConfiguration(T config) {

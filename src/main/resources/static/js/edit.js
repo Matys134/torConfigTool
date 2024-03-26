@@ -1,8 +1,9 @@
 $(document).ready(function () {
 
-    let isBridgeEdit = false; // Add this variable to track which config is being edited
-    let serverTransportProtocolAndAddress;
+    // Variable to track which config is being edited
+    let isBridgeEdit = false;
 
+    // Selectors for the various elements in the modal
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
@@ -15,6 +16,7 @@ $(document).ready(function () {
         bandwidthRate: $("#edit-bandwidthrate"),
     };
 
+    // Selectors for the buttons
     const buttons = {
         edit: $(".edit-button, .edit-bridge-button"), // Combined edit buttons for guard and bridge
         save: $("#save-button"),
@@ -25,7 +27,7 @@ $(document).ready(function () {
     function showModalWith(data, relayType, bridgeType) {
 
         // Set the values of the input fields
-        configSelectors.nickname.text(data.nickname); // Use .text() for nickname
+        configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
         configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
@@ -50,16 +52,10 @@ $(document).ready(function () {
                 const inputId = $(this).next('input').attr('id');
                 if (inputId in data) {
                     const value = data[inputId.replace('edit-', '')];
-                    console.log('Setting value for input field with id ' + inputId + ': ' + value);
                     $(this).next('input').val(value);
                 }
             }
         });
-
-        // Log the current values of the webtunnelUrl and path fields
-        console.log('webtunnelUrl field:', configSelectors.webtunnelUrl);
-        console.log('path field:', configSelectors.path);
-
         // Show the modal
         $('#edit-modal').modal('show');
     }
@@ -72,9 +68,6 @@ $(document).ready(function () {
     function updateView(data) {
         const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
         const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
-        console.log("Data: ", data);
-
-        console.log("configElement: ", configElement); // Add this line
 
         configElement.find("h5:contains('Nickname')").text(`Nickname: ${data.nickname}`);
         configElement.find("p:contains('ORPort')").text(`ORPort: ${data.orPort}`);
@@ -92,15 +85,6 @@ $(document).ready(function () {
         editButton.data('config-webtunnelurl', data.webtunnelUrl);
         editButton.data('config-path', data.path);
         editButton.data('config-bandwidthrate', data.bandwidthRate);
-
-        // Add these lines
-        console.log("ORPort: ", configElement.find(".config-orport").text());
-        console.log("ServerTransportListenAddr: ", configElement.find(".config-server-transport").text());
-        console.log("Contact: ", configElement.find(".config-contact").text());
-        console.log("Control Port: ", configElement.find(".config-controlport").text());
-        console.log("Webtunnel URL: ", configElement.find(".config-webtunnelurl").text());
-        console.log("Path: ", configElement.find(".config-path").text());
-        console.log("Bandwidth Limit: ", configElement.find(".config-bandwidthrate").text());
     }
 
     function sendUpdateRequest(url, data) {
@@ -155,19 +139,12 @@ $(document).ready(function () {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
 
-            console.log('Relay type:', relayType);
-            console.log('Bridge type:', bridgeType);
-            console.log('path:', data.path);
-
             showModalWith(data, relayType, bridgeType);
         });
         });
     });
 
     buttons.save.click(function () {
-        console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
-        console.log('path input field:', configSelectors.path);
-
         const bandwidth = parseInt(configSelectors.bandwidthRate.val());
         if (bandwidth !== 0 && bandwidth < 75) {
             alert("Bandwidth must be 0 or 75 and larger");
