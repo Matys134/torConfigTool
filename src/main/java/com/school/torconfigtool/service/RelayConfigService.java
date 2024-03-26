@@ -10,13 +10,6 @@ import java.util.Map;
 public interface RelayConfigService<T extends BaseRelayConfig> {
 
     /**
-     * Updates the configuration with the provided config object.
-     * @param config The configuration object to be updated.
-     * @return A boolean indicating the success of the operation.
-     */
-    boolean updateConfiguration(T config);
-
-    /**
      * Builds the file path for the Torrc file based on the provided nickname.
      * @param nickname The nickname to be used in the file path.
      * @return A string representing the file path.
@@ -28,5 +21,5 @@ public interface RelayConfigService<T extends BaseRelayConfig> {
      * @param config The configuration object to be updated.
      * @return A map containing the response details.
      */
-    Map<String, String> updateConfigAndReturnResponse(T config);
+    Map<String, String> updateConfiguration(T config);
 }

@@ -73,15 +73,16 @@ public class RelayOperationsService {
             throw new RuntimeException("Torrc file does not exist for relay: " + relayNickname);
         }
         if (start) {
+            // If the relay is a guard relay, update the torrc file with fingerprints
             if (updateFingerprint) {
-                // Step 1: Retrieve Fingerprints
+                //Retrieve Fingerprints
                 List<String> allFingerprints = getGuardRelayFingerprints();
 
-                // Step 2: Update the torrc File with fingerprints
+                //Update the torrc File with fingerprints
                 torFileService.updateTorrcWithFingerprints(torrcFilePath, allFingerprints);
             }
 
-            // Step 3: Start the Relay
+            //Start the Relay
             String command = "sudo tor -f " + torrcFilePath.toAbsolutePath();
             try {
                 commandService.executeCommand(command);
@@ -112,8 +113,9 @@ public class RelayOperationsService {
      * @return List The list of fingerprints.
      */
     private List<String> getGuardRelayFingerprints() {
-        // This path should lead to the base directory where all relay data directories are stored
-        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
+        // This path lead to the base directory where all relay data directories are stored
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
+                + "dataDirectory";
         File dataDirectory = new File(dataDirectoryPath);
         File[] dataDirectoryFiles = dataDirectory.listFiles(File::isDirectory);
 

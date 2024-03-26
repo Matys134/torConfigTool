@@ -37,7 +37,7 @@ public class UpdateBridgeConfigRestController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
-        Map<String, String> response = updateBridgeConfigService.updateConfigAndReturnResponse(config);
+        Map<String, String> response = updateBridgeConfigService.updateConfiguration(config);
         if (response.get("message").startsWith("Bridge configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {

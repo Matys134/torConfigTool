@@ -39,7 +39,7 @@ public class RelayStatusService {
     }
 
     /**
-     * This method is used to get the PID of a given Tor relay.
+     * This method is used to get the PID of a given Tor Arelay.
      * It executes a bash command to get the PID and returns it.
      *
      * @param torrcFilePath The path to the torrc file of the relay.

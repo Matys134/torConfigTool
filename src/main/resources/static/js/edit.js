@@ -146,8 +146,6 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
-        console.log("Button clicked: ", relayType, nickname, isBridgeEdit);
-
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -191,9 +189,6 @@ $(document).ready(function () {
             path: configSelectors.path.val(),
             bandwidthRate: configSelectors.bandwidthRate.val(),
         };
-
-        console.log('webtunnelUrl:', data.webtunnelUrl);
-        console.log('path:', data.path);
 
         $.get("/server-ip", function(serverIp) {
         $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
