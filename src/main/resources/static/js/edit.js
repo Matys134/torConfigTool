@@ -27,7 +27,7 @@ $(document).ready(function () {
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(serverTransportPort);
+        configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
