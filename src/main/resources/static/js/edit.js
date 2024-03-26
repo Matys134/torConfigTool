@@ -23,13 +23,6 @@ $(document).ready(function () {
 
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
-        console.log('Data:', data); // Log the data object
-        console.log("Tady ty kokot")
-
-        // Split the serverTransport into protocol and port
-        const serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
-        serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
-        const serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Set the values of the input fields
         configSelectors.nickname.text(data.nickname); // Use .text() for nickname
