@@ -44,15 +44,18 @@ public class UPnPService {
      * @param relayType      The type of the relay.
      * @return               A map containing the success status and a message.
      */
-    public Map<String, Object> openOrPort(String relayNickname, String relayType) {
+    public Map<String, Object> openPorts(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
         Map<String, List<Integer>> ports = getPorts(torrcFilePath);
-        boolean success = ports.get("ORPort").stream().allMatch(UPnP::openPortTCP);
+        boolean success = true;
 
-        // Open ServerTransportListenAddr ports and webtunnel ports
-        for (int port : ports.get("BridgePort")) {
+        for (int port : ports.get("ORPort")) {
+            success &= UPnP.openPortTCP(port);
+        }
+
+        for (int port : ports.get("Obfs4Port")) {
             success &= UPnP.openPortTCP(port);
         }
 
@@ -75,7 +78,7 @@ public class UPnPService {
      * @param relayNickname  The nickname of the relay.
      * @param relayType      The type of the relay.
      */
-    public void closeOrPort(String relayNickname, String relayType) {
+    public void closePorts(String relayNickname, String relayType) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
         Map<String, List<Integer>> ports = getPorts(torrcFilePath);
@@ -86,7 +89,7 @@ public class UPnPService {
         });
 
         // Close ServerTransportListenAddr ports and webtunnel ports
-        for (int port : ports.get("BridgePort")) {
+        for (int port : ports.get("Obfs4Port")) {
             if (UPnP.isMappedTCP(port)) {
                 UPnP.closePortTCP(port);
             }
@@ -129,10 +132,10 @@ public class UPnPService {
                     if (enable) {
                         String status = relayStatusService.getRelayStatus(relayNickname, relayType);
                         if ("online".equals(status)) {
-                            openOrPort(relayNickname, relayType);
+                            openPorts(relayNickname, relayType);
                         }
                     } else {
-                        closeOrPort(relayNickname, relayType);
+                        closePorts(relayNickname, relayType);
                     }
                 }
             }
@@ -148,7 +151,7 @@ public class UPnPService {
     public Map<String, List<Integer>> getPorts(Path torrcFilePath) {
         Map<String, List<Integer>> ports = new HashMap<>();
         ports.put("ORPort", new ArrayList<>());
-        ports.put("BridgePort", new ArrayList<>());
+        ports.put("Obfs4Port", new ArrayList<>());
         ports.put("WebTunnelPort", new ArrayList<>());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
@@ -165,7 +168,7 @@ public class UPnPService {
                     if (parts.length > 2) {
                         String[] addrParts = parts[2].split(":");
                         if (addrParts.length > 1) {
-                            ports.get("BridgePort").add(Integer.parseInt(addrParts[1]));
+                            ports.get("Obfs4Port").add(Integer.parseInt(addrParts[1]));
                         }
                     }
                 }

@@ -77,11 +77,11 @@ public class BridgeService {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
 
-        if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null) {
+        if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null && bridgeTransportListenAddr != null) {
             nginxService.configureNginxForOnionService(webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort);
+            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr);
             config.setPath(randomString);
             webtunnelService.updateTorrcFile(config);
 

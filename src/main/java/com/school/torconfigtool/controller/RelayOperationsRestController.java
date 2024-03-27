@@ -93,7 +93,7 @@ public class RelayOperationsRestController {
     @PostMapping("/open-orport")
     @ResponseBody
     public Map<String, Object> openOrPort(@RequestParam String relayNickname, @RequestParam String relayType) {
-        return upnpService.openOrPort(relayNickname, relayType);
+        return upnpService.openPorts(relayNickname, relayType);
     }
 
     /**

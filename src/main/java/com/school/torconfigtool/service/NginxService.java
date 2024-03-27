@@ -163,7 +163,7 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) throws Exception {
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
         // Build the new configuration
         StringBuilder sb = new StringBuilder();
         sb.append("server {\n");
@@ -175,7 +175,7 @@ public class NginxService {
         sb.append("    ssl_certificate ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/fullchain.pem;\n");
         sb.append("    ssl_certificate_key ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/key.pem;\n");
         sb.append("    location = /").append(randomString).append(" {\n");
-        sb.append("        proxy_pass http://127.0.0.1:15000;\n");
+        sb.append("        proxy_pass http://127.0.0.1:").append(transportListenAddr).append(";\n");
         sb.append("        proxy_http_version 1.1;\n");
         sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
         sb.append("        proxy_set_header Connection \"upgrade\";\n");

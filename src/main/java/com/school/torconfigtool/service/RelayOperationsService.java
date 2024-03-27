@@ -197,7 +197,7 @@ public class RelayOperationsService {
             try {
                 relayStatusService.waitForStatusChange(relayNickname, relayType, "offline");
                 // Close the ORPort after the relay has stopped
-                upnpService.closeOrPort(relayNickname, relayType);
+                upnpService.closePorts(relayNickname, relayType);
             } catch (InterruptedException e) {
                 throw new RuntimeException("Error while waiting for relay to stop", e);
             }
@@ -224,7 +224,7 @@ public class RelayOperationsService {
         new Thread(() -> {
             try {
                 relayStatusService.waitForStatusChange(relayNickname, relayType, "online");
-                upnpService.openOrPort(relayNickname, relayType);
+                upnpService.openPorts(relayNickname, relayType);
             } catch (InterruptedException e) {
                 throw new RuntimeException("Error while waiting for relay to start", e);
             }
