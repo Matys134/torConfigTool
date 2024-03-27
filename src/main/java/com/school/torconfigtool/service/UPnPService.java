@@ -139,8 +139,8 @@ public class UPnPService {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ORPort")) {
-                    String portStr = line.split(" ")[1];
-                    if (!portStr.equals("auto")) {
+                    if (!line.equals("ORPort 127.0.0.1:auto IPv4Only")) {
+                        String portStr = line.split(" ")[1];
                         ports.get("ORPort").add(Integer.parseInt(portStr));
                     }
                 }
