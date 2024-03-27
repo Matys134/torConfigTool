@@ -48,12 +48,11 @@ public class UPnPService {
         Map<String, Object> response = new HashMap<>();
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
-        int orPort = getOrPort(torrcFilePath);
-        boolean success = UPnP.openPortTCP(orPort);
+        Map<String, List<Integer>> ports = getPorts(torrcFilePath);
+        boolean success = ports.get("ORPort").stream().allMatch(UPnP::openPortTCP);
 
         // Open ServerTransportListenAddr ports and webtunnel ports
-        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
-        for (int port : additionalPorts) {
+        for (int port : ports.get("BridgePort")) {
             success &= UPnP.openPortTCP(port);
         }
 
@@ -64,6 +63,24 @@ public class UPnPService {
             response.put("message", "Failed to open ORPort using UPnP");
         }
         return response;
+    }
+
+    /**
+     * Closes a port based on the relay nickname and type.
+     *
+     * @param relayNickname  The nickname of the relay.
+     * @param relayType      The type of the relay.
+     */
+    public void closeOrPort(String relayNickname, String relayType) {
+        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
+
+        Map<String, List<Integer>> ports = getPorts(torrcFilePath);
+        ports.get("ORPort").forEach(UPnP::closePortTCP);
+
+        // Close ServerTransportListenAddr ports and webtunnel ports
+        for (int port : ports.get("BridgePort")) {
+            UPnP.closePortTCP(port);
+        }
     }
 
     /**
@@ -102,24 +119,6 @@ public class UPnPService {
     }
 
     /**
-     * Closes a port based on the relay nickname and type.
-     *
-     * @param relayNickname  The nickname of the relay.
-     * @param relayType      The type of the relay.
-     */
-    public void closeOrPort(String relayNickname, String relayType) {
-        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-        int orPort = getOrPort(torrcFilePath);
-        UPnP.closePortTCP(orPort);
-
-        // Close ServerTransportListenAddr ports and webtunnel ports
-        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
-        for (int port : additionalPorts) {
-            UPnP.closePortTCP(port);
-        }
-    }
-
-    /**
      * Retrieves the ORPort from a torrc file.
      *
      * @param torrcFilePath  The path to the torrc file.
@@ -141,32 +140,7 @@ public class UPnPService {
         return orPort;
     }
 
-    /**
-     * Retrieves a list of UPnP ports.
-     *
-     * @return  A list of UPnP ports as integers.
-     */
-    public List<Integer> getUPnPPorts() {
-        List<Integer> upnpPorts = new ArrayList<>();
-        List<TorConfig> guardConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "guard");
-        for (TorConfig config : guardConfigs) {
-            int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
-            if (UPnP.isMappedTCP(orPort)) {
-                upnpPorts.add(orPort);
-            }
-
-            // Add ServerTransportListenAddr ports and webtunnel ports
-            List<Integer> additionalPorts = getAdditionalPorts(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
-            for (int port : additionalPorts) {
-                if (UPnP.isMappedTCP(port)) {
-                    upnpPorts.add(port);
-                }
-            }
-        }
-        return upnpPorts;
-    }
-
-    private List<Integer> getAdditionalPorts(Path torrcFilePath) {
+    private List<Integer> getBridgePorts(Path torrcFilePath) {
         List<Integer> additionalPorts = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
             String line;
@@ -194,6 +168,33 @@ public class UPnPService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
         return additionalPorts;
+    }
+
+    public Map<String, List<Integer>> getPorts(Path torrcFilePath) {
+        Map<String, List<Integer>> ports = new HashMap<>();
+        ports.put("ORPort", new ArrayList<>());
+        ports.put("BridgePort", new ArrayList<>());
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("ORPort")) {
+                    ports.get("ORPort").add(Integer.parseInt(line.split(" ")[1]));
+                }
+                if (line.startsWith("ServerTransportListenAddr") || line.contains("webtunnel")) {
+                    String[] parts = line.split(" ");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
+                        if (addrParts.length > 1) {
+                            ports.get("BridgePort").add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read torrc file", e);
+        }
+        return ports;
     }
 
     public boolean isUPnPAvailable() {

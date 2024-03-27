@@ -139,7 +139,6 @@ public class RelayOperationsService {
     public String prepareModelForRelayOperationsView(Model model) {
         addRelayConfigsToModel(model);
         addHostnamesToModel(model);
-        addUPnPPortsToModel(model);
         addWebtunnelLinksToModel(model);
         addObfs4LinksToModel(model);
         return "relay-operations";
@@ -182,12 +181,6 @@ public class RelayOperationsService {
             obfs4Links.put(config.getBridgeConfig().getNickname(), obfs4Link);
         }
         model.addAttribute("obfs4Links", obfs4Links);
-    }
-
-
-    private void addUPnPPortsToModel(Model model) {
-        List<Integer> upnpPorts = upnpService.getUPnPPorts();
-        model.addAttribute("upnpPorts", upnpPorts);
     }
 
     /**

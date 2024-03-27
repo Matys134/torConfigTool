@@ -167,14 +167,14 @@ public class NginxService {
         // Build the new configuration
         StringBuilder sb = new StringBuilder();
         sb.append("server {\n");
-        sb.append("    listen [::]:" + webtunnelPort + " ssl http2;\n");
-        sb.append("    listen " + webtunnelPort + " ssl http2;\n");
-        sb.append("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n");
+        sb.append("    listen [::]:").append(webtunnelPort).append(" ssl http2;\n");
+        sb.append("    listen ").append(webtunnelPort).append(" ssl http2;\n");
+        sb.append("    root ").append(programLocation).append("/onion/www/service-").append(webtunnelPort).append(";\n");
         sb.append("    index index.html index.htm index.nginx-debian.html;\n");
         sb.append("    server_name $SERVER_ADDRESS;\n");
-        sb.append("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n");
-        sb.append("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n");
-        sb.append("    location = /" + randomString + " {\n");
+        sb.append("    ssl_certificate ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/fullchain.pem;\n");
+        sb.append("    ssl_certificate_key ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/key.pem;\n");
+        sb.append("    location = /").append(randomString).append(" {\n");
         sb.append("        proxy_pass http://127.0.0.1:15000;\n");
         sb.append("        proxy_http_version 1.1;\n");
         sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
@@ -288,13 +288,15 @@ public class NginxService {
     public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
-        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
+                "onion");
         for (TorConfig config : onionConfigs) {
             allServices.add(config.getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
-        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
+                "bridge");
         for (TorConfig config : bridgeConfigs) {
             allServices.add(config.getBridgeConfig().getNickname());
         }
