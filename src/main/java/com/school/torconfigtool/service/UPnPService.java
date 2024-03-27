@@ -58,6 +58,10 @@ public class UPnPService {
             success &= UPnP.openPortTCP(port);
         }
 
+        for (int port : ports.get("WebTunnelPort")) {
+            success &= UPnP.openPortTCP(port);
+        }
+
         if (success) {
             response.put("success", true);
         } else {
@@ -97,6 +101,16 @@ public class UPnPService {
                 UPnP.closePortTCP(port);
             } else {
                 LOGGER.info("BridgePort is not mapped: " + port);
+            }
+        }
+
+        for (int port : ports.get("WebTunnelPort")) {
+            LOGGER.info("Checking WebTunnelPort: " + port);
+            if (UPnP.isMappedTCP(port)) {
+                LOGGER.info("Closing WebTunnelPort: " + port);
+                UPnP.closePortTCP(port);
+            } else {
+                LOGGER.info("WebTunnelPort is not mapped: " + port);
             }
         }
     }
