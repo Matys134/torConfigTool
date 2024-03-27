@@ -108,7 +108,7 @@ public class TorConfigService {
         } else if (line.startsWith("RelayBandwidthRate")) {
             String bandwidthRate = line.substring("RelayBandwidthRate".length()).trim();
             updateBandwidthRate(relayConfig, bandwidthRate);
-        } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
+        } else if ((line.startsWith("ServerTransportListenAddr obfs4") || line.startsWith("ServerTransportListenAddr webtunnel")) && relayType.equals("bridge")) {
             String port = line.split(" ")[2].split(":")[1];
             ((BridgeConfig) relayConfig).setServerTransport(port);
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
