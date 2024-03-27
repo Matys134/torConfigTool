@@ -174,7 +174,7 @@ public class UPnPService {
         Map<String, List<Integer>> ports = new HashMap<>();
         ports.put("ORPort", new ArrayList<>());
         ports.put("BridgePort", new ArrayList<>());
-        ports.put("WebTunnelPort", new ArrayList<>());
+//        ports.put("WebTunnelPort", new ArrayList<>());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
             String line;
@@ -191,9 +191,9 @@ public class UPnPService {
                         }
                     }
                 }
-                if (line.startsWith("# webtunnel")) {
-                    ports.get("WebTunnelPort").add(Integer.parseInt(line.split(" ")[2]));
-                }
+//                if (line.startsWith("# webtunnel")) {
+//                    ports.get("WebTunnelPort").add(Integer.parseInt(line.split(" ")[2]));
+//                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read torrc file", e);
