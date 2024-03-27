@@ -41,15 +41,15 @@ public class BridgeService {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (bridgePort == null && bridgeTransportListenAddr == null) {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        } else {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        }
+//        if (bridgePort == null && bridgeTransportListenAddr == null) {
+//            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
+//                throw new Exception("One or more ports are already in use.");
+//            }
+//        } else {
+//            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
+//                throw new Exception("One or more ports are already in use.");
+//            }
+//        }
 
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
