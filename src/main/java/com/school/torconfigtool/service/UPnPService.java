@@ -99,14 +99,25 @@ public class UPnPService {
             allConfigs.addAll(bridgeConfigs);
 
             for (TorConfig config : allConfigs) {
-                String relayType = config.getGuardConfig() != null ? "guard" : "bridge";
-                if (enable) {
-                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), relayType);
-                    if ("online".equals(status)) {
-                        openOrPort(config.getGuardConfig().getNickname(), relayType);
+                String relayType = null;
+                String relayNickname = null;
+                if (config.getGuardConfig() != null) {
+                    relayType = "guard";
+                    relayNickname = config.getGuardConfig().getNickname();
+                } else if (config.getBridgeConfig() != null) {
+                    relayType = "bridge";
+                    relayNickname = config.getBridgeConfig().getNickname();
+                }
+
+                if (relayType != null && relayNickname != null) {
+                    if (enable) {
+                        String status = relayStatusService.getRelayStatus(relayNickname, relayType);
+                        if ("online".equals(status)) {
+                            openOrPort(relayNickname, relayType);
+                        }
+                    } else {
+                        closeOrPort(relayNickname, relayType);
                     }
-                } else {
-                    closeOrPort(config.getGuardConfig().getNickname(), relayType);
                 }
             }
             response.put("success", true);
@@ -116,58 +127,6 @@ public class UPnPService {
             response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.");
         }
         return response;
-    }
-
-    /**
-     * Retrieves the ORPort from a torrc file.
-     *
-     * @param torrcFilePath  The path to the torrc file.
-     * @return               The ORPort as an integer.
-     */
-    public int getOrPort(Path torrcFilePath) {
-        int orPort = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("ORPort")) {
-                    orPort = Integer.parseInt(line.split(" ")[1]);
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read torrc file", e);
-        }
-        return orPort;
-    }
-
-    private List<Integer> getBridgePorts(Path torrcFilePath) {
-        List<Integer> additionalPorts = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("ServerTransportListenAddr")) {
-                    String[] parts = line.split(" ");
-                    if (parts.length > 2) {
-                        String[] addrParts = parts[2].split(":");
-                        if (addrParts.length > 1) {
-                            additionalPorts.add(Integer.parseInt(addrParts[1]));
-                        }
-                    }
-                }
-                if (line.contains("webtunnel")) {
-                    String[] parts = line.split(" ");
-                    if (parts.length > 2) {
-                        String[] addrParts = parts[2].split(":");
-                        if (addrParts.length > 1) {
-                            additionalPorts.add(Integer.parseInt(addrParts[1]));
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read torrc file", e);
-        }
-        return additionalPorts;
     }
 
     public Map<String, List<Integer>> getPorts(Path torrcFilePath) {
