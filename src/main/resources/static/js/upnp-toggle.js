@@ -1,6 +1,6 @@
 function toggleUPnP(enable) {
     $.ajax({
-        url: '/relay-operations/toggle-upnp',
+        url: '/relay-operations-api/toggle-upnp',
         type: 'POST',
         data: { enable: enable },
         success: function(response) {
