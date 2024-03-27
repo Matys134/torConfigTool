@@ -180,7 +180,10 @@ public class UPnPService {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ORPort")) {
-                    ports.get("ORPort").add(Integer.parseInt(line.split(" ")[1]));
+                    String portStr = line.split(" ")[1];
+                    if (!portStr.equals("auto")) {
+                        ports.get("ORPort").add(Integer.parseInt(portStr));
+                    }
                 }
                 if (line.startsWith("ServerTransportListenAddr") || line.contains("webtunnel")) {
                     String[] parts = line.split(" ");
