@@ -75,11 +75,17 @@ public class UPnPService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
         Map<String, List<Integer>> ports = getPorts(torrcFilePath);
-        ports.get("ORPort").forEach(UPnP::closePortTCP);
+        ports.get("ORPort").forEach(port -> {
+            if (UPnP.isMappedTCP(port)) {
+                UPnP.closePortTCP(port);
+            }
+        });
 
         // Close ServerTransportListenAddr ports and webtunnel ports
         for (int port : ports.get("BridgePort")) {
-            UPnP.closePortTCP(port);
+            if (UPnP.isMappedTCP(port)) {
+                UPnP.closePortTCP(port);
+            }
         }
     }
 
