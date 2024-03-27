@@ -3,8 +3,6 @@ package com.school.torconfigtool.service;
 import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.util.Constants;
 import com.simtechdata.waifupnp.UPnP;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -77,40 +75,26 @@ public class UPnPService {
      * @param relayNickname  The nickname of the relay.
      * @param relayType      The type of the relay.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UPnPService.class);
-
     public void closeOrPort(String relayNickname, String relayType) {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
         Map<String, List<Integer>> ports = getPorts(torrcFilePath);
         ports.get("ORPort").forEach(port -> {
-            LOGGER.info("Checking ORPort: " + port);
             if (UPnP.isMappedTCP(port)) {
-                LOGGER.info("Closing ORPort: " + port);
                 UPnP.closePortTCP(port);
-            } else {
-                LOGGER.info("ORPort is not mapped: " + port);
             }
         });
 
         // Close ServerTransportListenAddr ports and webtunnel ports
         for (int port : ports.get("BridgePort")) {
-            LOGGER.info("Checking BridgePort: " + port);
             if (UPnP.isMappedTCP(port)) {
-                LOGGER.info("Closing BridgePort: " + port);
                 UPnP.closePortTCP(port);
-            } else {
-                LOGGER.info("BridgePort is not mapped: " + port);
             }
         }
 
         for (int port : ports.get("WebTunnelPort")) {
-            LOGGER.info("Checking WebTunnelPort: " + port);
             if (UPnP.isMappedTCP(port)) {
-                LOGGER.info("Closing WebTunnelPort: " + port);
                 UPnP.closePortTCP(port);
-            } else {
-                LOGGER.info("WebTunnelPort is not mapped: " + port);
             }
         }
     }
@@ -148,16 +132,13 @@ public class UPnPService {
                             openOrPort(relayNickname, relayType);
                         }
                     } else {
-                        LOGGER.info("Attempting to close ports for relay: " + relayNickname);
                         closeOrPort(relayNickname, relayType);
-                        LOGGER.info("Ports closed for relay: " + relayNickname);
                     }
                 }
             }
             response.put("success", true);
             response.put("message", "UPnP for Guard and Bridge Relays " + (enable ? "enabled" : "disabled") + " successfully!");
         } catch (Exception e) {
-            LOGGER.error("Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.", e);
             response.put("success", false);
             response.put("message", "Failed to " + (enable ? "enable" : "disable") + " UPnP for Guard and Bridge Relays.");
         }
