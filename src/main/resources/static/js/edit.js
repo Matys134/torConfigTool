@@ -163,13 +163,13 @@ $(document).ready(function () {
         $.get("/server-ip", function(serverIp) {
         $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
             data.bridgeType = runningBridgeTypes[data.nickname];
+            data.serverTransport = configSelectors.serverTransport.val();
 
             hideModal();
 
             // If the bridge type is not webtunnel, set the orPort and serverTransport values
             if (data.bridgeType !== 'webtunnel') {
                 data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransport = configSelectors.serverTransport.val();
             }
 
             // If only the contact field is being edited, skip the port availability check
