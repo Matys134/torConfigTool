@@ -305,7 +305,7 @@ public class NginxService {
     }
 
     public void updateNginxConfig(int oldPort, int newPort) {
-        Path configPath = Paths.get("/etc/nginx/sites-available/onion-service-" + oldPort);
+        Path configPath = Paths.get("/etc/nginx/sites-available/onion-service-10001");
         try {
             List<String> lines = Files.readAllLines(configPath);
             List<String> updatedLines = lines.stream()
