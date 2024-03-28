@@ -36,11 +36,7 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
-
-        let webtunnelPortString = String(data.webtunnelPort);
-        let splitString = webtunnelPortString.split(' ');
-        let portNumber = splitString[splitString.length - 1];
-        configSelectors.webtunnelPort.val(portNumber);
+        configSelectors.webtunnelPort.val(data.webtunnelPort);
 
 
         // Hide all fields initially
@@ -83,7 +79,7 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
-        configElement.find("p:contains('WebTunnel Port')").text(`WebTunnel Port: ${data.webtunnelPort}`);
+        configElement.find("p:contains('WebTunnel Link')").text(`WebTunnel Link: ${data.webtunnelPort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
