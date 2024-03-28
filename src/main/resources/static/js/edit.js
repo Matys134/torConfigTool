@@ -15,7 +15,6 @@ $(document).ready(function () {
         path: $("#edit-path"),
         bandwidthRate: $("#edit-bandwidthrate"),
         webtunnelPort: $("#edit-webtunnelport"),
-        hiddenServicePort: $("#edit-hidden-service-port"),
     };
 
     // Selectors for the buttons
@@ -38,7 +37,6 @@ $(document).ready(function () {
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
         configSelectors.webtunnelPort.val(data.webtunnelPort);
-        configSelectors.hiddenServicePort.val(data.hiddenServicePort);
 
 
         // Hide all fields initially
@@ -82,7 +80,6 @@ $(document).ready(function () {
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
         configElement.find("p:contains('WebTunnel Port')").text(`WebTunnel Port: ${data.webtunnelPort}`);
-        configElement.find("p:contains('Hidden Service Port')").text(`Hidden Service Port: ${data.hiddenServicePort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
@@ -92,7 +89,6 @@ $(document).ready(function () {
         editButton.data('config-path', data.path);
         editButton.data('config-bandwidthrate', data.bandwidthRate);
         editButton.data('config-webtunnelport', data.webtunnelPort);
-        editButton.data('config-hidden-service-port', data.hiddenServicePort);
     }
 
     function sendUpdateRequest(url, data) {
@@ -141,7 +137,6 @@ $(document).ready(function () {
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
             webtunnelPort: $(this).data('config-webtunnelport'),
-            hiddenServicePort: $(this).data('config-hidden-service-port'),
         };
 
         $.get("/server-ip", function(serverIp) {
@@ -169,7 +164,6 @@ $(document).ready(function () {
             path: configSelectors.path.val(),
             bandwidthRate: configSelectors.bandwidthRate.val(),
             webtunnelPort: parseInt(configSelectors.webtunnelPort.val()),
-            hiddenServicePort: parseInt(configSelectors.hiddenServicePort.val()),
         };
 
         $.get("/server-ip", function(serverIp) {
@@ -204,7 +198,7 @@ $(document).ready(function () {
                     },
                     function (response) {
                         if (response['available']) {
-                            let url = isBridgeEdit ? '/update-bridge-config' : '/update-onion-config';
+                            let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
                             sendUpdateRequest(url, data);
                         } else {
                             alert("One or more ports are already in use. Please choose different ports.");
