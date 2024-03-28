@@ -6,8 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -20,9 +18,8 @@ public class FileService {
 
     public void uploadFiles(MultipartFile[] files, String directory) throws IOException {
         for (MultipartFile file : files) {
-            Path outputPath = Paths.get(directory, file.getOriginalFilename());
-            System.out.println("outputPath: " + outputPath.toFile().getAbsolutePath());
-            try (FileOutputStream fos = new FileOutputStream(outputPath.toFile())) {
+            File outputFile = new File(directory + file.getOriginalFilename());
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
                 fos.write(file.getBytes());
             }
         }
@@ -30,8 +27,7 @@ public class FileService {
 
     public void deleteFile(String[] fileNames, String directory) throws IOException {
         for (String fileName : fileNames) {
-            Path fileToRemovePath = Paths.get(directory, fileName);
-            File fileToRemove = fileToRemovePath.toFile();
+            File fileToRemove = new File(directory + fileName);
             if (!fileToRemove.delete()) {
                 throw new IOException("Failed to delete file: " + fileName);
             }
