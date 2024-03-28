@@ -22,11 +22,11 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping("/upload/{port}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port,
+    @PostMapping("/upload/{nickname}")
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("nickname") String nickname,
                               Model model) {
         try {
-            String directory = baseDirectory + port;
+            String directory = baseDirectory + nickname;
             fileService.uploadFiles(files, directory);
             List<String> fileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", fileNames);
@@ -38,11 +38,11 @@ public class FileController {
         return "file_upload_form";
     }
 
-    @PostMapping("/remove-files/{port}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port,
+    @PostMapping("/remove-files/{nickname}")
+    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("nickname") String nickname,
                               Model model) {
         try {
-            String directory = baseDirectory + port;
+            String directory = baseDirectory + nickname;
             fileService.deleteFile(fileNames, directory);
             List<String> remainingFileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", remainingFileNames);
@@ -53,9 +53,9 @@ public class FileController {
         return "file_upload_form";
     }
 
-    @GetMapping("/upload/{port}")
-    public String showUploadForm(@PathVariable("port") int port, Model model) {
-        String directory = baseDirectory + port;
+    @GetMapping("/upload/{nickname}")
+    public String showUploadForm(@PathVariable("nickname") String nickname, Model model) {
+        String directory = baseDirectory + nickname;
         List<String> fileNames = fileService.getUploadedFiles(directory);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
