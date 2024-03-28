@@ -305,16 +305,17 @@ public class NginxService {
     }
 
     public void updateNginxConfig(int oldPort, int newPort) {
-        Path configPath = Paths.get("/etc/nginx/sites-available/onion-service-10001");
+        String configPath = "/etc/nginx/sites-available/onion-service-10001";
+        String sedCommand = String.format("s/proxy_pass http:\\/\\/127.0.0.1:%d/proxy_pass http:\\/\\/127.0.0.1:%d/g", oldPort, newPort);
+
+        ProcessBuilder processBuilder = new ProcessBuilder("sudo", "sed", "-i", sedCommand, configPath);
         try {
-            List<String> lines = Files.readAllLines(configPath);
-            List<String> updatedLines = lines.stream()
-                    .map(line -> line.contains("proxy_pass http://127.0.0.1:" + oldPort)
-                            ? line.replace("proxy_pass http://127.0.0.1:" + oldPort, "proxy_pass http://127.0.0.1:" + newPort)
-                            : line)
-                    .collect(Collectors.toList());
-            Files.write(configPath, updatedLines);
-        } catch (IOException e) {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new RuntimeException("Failed to update Nginx configuration");
+            }
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Failed to update Nginx configuration", e);
         }
     }
