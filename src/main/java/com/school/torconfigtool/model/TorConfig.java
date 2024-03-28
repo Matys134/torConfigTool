@@ -30,7 +30,4 @@ public class TorConfig {
 
     // The hostname of the Tor network
     private String hostname;
-
-    // The nickname of the Tor network
-    private String nickname;
 }

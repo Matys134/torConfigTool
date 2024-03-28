@@ -77,7 +77,7 @@ public class TorrcWriteConfigService {
         torrcWriter.newLine();
         torrcWriter.write("SocksPort 0");
         torrcWriter.newLine();
-        String dataDirectoryPath = currentDirectory + File.separator + TORRC_DIRECTORY_PATH + "dataDirectory/onion_" + nickname;
+        String dataDirectoryPath = currentDirectory + File.separator + TORRC_DIRECTORY_PATH + "dataDirectory/onion_" + onionServicePort;
         torrcWriter.write("DataDirectory " + dataDirectoryPath);
         torrcWriter.newLine();
         torrcWriter.write("User " + activeUserNickname);
