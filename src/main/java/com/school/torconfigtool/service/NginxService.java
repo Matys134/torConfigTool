@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * NginxService is a service class responsible for managing the Nginx server.
@@ -90,9 +89,9 @@ public class NginxService {
      * It creates the necessary directories and the index.html file.
      * If the file writing fails, it logs the error.
      */
-    public void configureNginxForOnionService(int onionServicePort) throws IOException {
+    public void configureNginxForOnionService(int onionServicePort, String onionServiceNickname) throws IOException {
         String nginxConfig = buildNginxServerBlock(onionServicePort);
-        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
+        deployOnionServiceNginxConfig(nginxConfig, onionServiceNickname);
         createIndexFile(onionServicePort, System.getProperty("user.dir"));
     }
 
@@ -164,7 +163,7 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr, String onionServiceNickname) throws Exception {
         // Build the new configuration
         StringBuilder sb = new StringBuilder();
         sb.append("server {\n");
@@ -196,7 +195,7 @@ public class NginxService {
         acmeService.installCert(webTunnelUrl, webtunnelPort);
 
         // Deploy the configuration
-        deployOnionServiceNginxConfig(sb.toString(), webtunnelPort);
+        deployOnionServiceNginxConfig(sb.toString(), onionServiceNickname);
     }
 
     /**
@@ -240,7 +239,7 @@ public class NginxService {
     }
 
 
-    private void deployOnionServiceNginxConfig(String nginxConfig, int onionServicePort) {
+    private void deployOnionServiceNginxConfig(String nginxConfig, String onionServiceNickname) {
         try {
             // Write the nginxConfig to a temporary file
             File tempFile = File.createTempFile("nginx_config", null);
@@ -248,7 +247,7 @@ public class NginxService {
                 writer.write(nginxConfig);
             }
 
-            String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServicePort;
+            String onionServiceConfigPath = "/etc/nginx/sites-available/onion-service-" + onionServiceNickname;
 
             // Use sudo to copy the temporary file to the actual nginx configuration file
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "cp", tempFile.getAbsolutePath(),
@@ -257,7 +256,7 @@ public class NginxService {
             process.waitFor();
 
             // Create a symbolic link to the nginx configuration file
-            String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServicePort;
+            String enableConfigPath = "/etc/nginx/sites-enabled/onion-service-" + onionServiceNickname;
             processBuilder = new ProcessBuilder("sudo", "ln", "-s", onionServiceConfigPath, enableConfigPath);
             process = processBuilder.start();
             process.waitFor();
@@ -292,7 +291,7 @@ public class NginxService {
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
                 "onion");
         for (TorConfig config : onionConfigs) {
-            allServices.add(config.getHiddenServicePort());
+            allServices.add(config.getOnionServiceConfig().getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
