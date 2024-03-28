@@ -15,7 +15,7 @@ import java.util.List;
 public class FileController {
 
     private final FileService fileService;
-    private final String baseDirectory = "/onion/www/service-";
+    private final String baseDirectory = System.getProperty("user.dir") + "/onion/www/service-";
 
     @Autowired
     public FileController(FileService fileService) {
@@ -26,7 +26,7 @@ public class FileController {
     public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port,
                               Model model) {
         try {
-            String directory = baseDirectory + port;
+            String directory = baseDirectory + port + "/";
             fileService.uploadFiles(files, directory);
             List<String> fileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", fileNames);
@@ -42,7 +42,7 @@ public class FileController {
     public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port,
                               Model model) {
         try {
-            String directory = baseDirectory + port;
+            String directory = baseDirectory + port + "/";
             fileService.deleteFile(fileNames, directory);
             List<String> remainingFileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", remainingFileNames);
@@ -55,46 +55,7 @@ public class FileController {
 
     @GetMapping("/upload/{port}")
     public String showUploadForm(@PathVariable("port") int port, Model model) {
-        String directory = baseDirectory + port;
-        List<String> fileNames = fileService.getUploadedFiles(directory);
-        model.addAttribute("uploadedFiles", fileNames);
-        return "file_upload_form";
-    }
-
-    @PostMapping("/upload-webtunnel/{port}")
-    public String uploadFilesWebTunnel(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port,
-                                       Model model) {
-        try {
-            String directory = baseDirectory + port;
-            fileService.uploadFiles(files, directory);
-            List<String> fileNames = fileService.getUploadedFiles(directory);
-            model.addAttribute("uploadedFiles", fileNames);
-            model.addAttribute("message", "Files uploaded successfully!");
-        } catch (Exception e) {
-            model.addAttribute("message", "Fail! -> uploaded filename: "
-                    + Arrays.toString(files));
-        }
-        return "file_upload_form";
-    }
-
-    @PostMapping("/remove-files-webtunnel/{port}")
-    public String removeFilesWebTunnel(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port,
-                                       Model model) {
-        try {
-            String directory = baseDirectory + port;
-            fileService.deleteFile(fileNames, directory);
-            List<String> remainingFileNames = fileService.getUploadedFiles(directory);
-            model.addAttribute("uploadedFiles", remainingFileNames);
-            model.addAttribute("message", "Files deleted successfully.");
-        } catch (Exception e) {
-            model.addAttribute("message", "Error: " + e.getMessage());
-        }
-        return "file_upload_form";
-    }
-
-    @GetMapping("/upload-webtunnel/{port}")
-    public String showUploadFormWebTunnel(@PathVariable("port") int port, Model model) {
-        String directory = baseDirectory + port;
+        String directory = baseDirectory + port + "/";
         List<String> fileNames = fileService.getUploadedFiles(directory);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";

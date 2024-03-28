@@ -122,6 +122,8 @@ public class TorConfigService {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        } else if (line.startsWith("# webtunnel")) {
+            ((BridgeConfig) relayConfig).setWebtunnelPort(Integer.parseInt(line.split(" ")[2]));
         }
     }
 
