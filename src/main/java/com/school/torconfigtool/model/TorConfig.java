@@ -21,4 +21,9 @@ public class TorConfig {
     private OnionConfig onionConfig;
 
     private String bandwidthRate;
+
+    public TorConfig() {
+        // Initialize onionConfig to prevent NullPointerException
+        this.onionConfig = new OnionConfig();
+    }
 }
