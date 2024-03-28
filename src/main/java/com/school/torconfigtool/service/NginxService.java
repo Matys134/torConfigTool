@@ -291,7 +291,7 @@ public class NginxService {
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
                 "onion");
         for (TorConfig config : onionConfigs) {
-            allServices.add(config.getHiddenServicePort());
+            allServices.add(config.getOnionConfig().getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
