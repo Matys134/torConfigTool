@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-public class OnionConfig implements RelayConfig {
+public class OnionConfig extends BaseRelayConfig{
 
     // The directory for the hidden service in the Tor network
     private String hiddenServiceDir;
@@ -23,44 +23,4 @@ public class OnionConfig implements RelayConfig {
 
     // The hostname of the Tor network
     private String hostname;
-
-    @Override
-    public String getNickname() {
-        return null;
-    }
-
-    @Override
-    public void setNickname(String nickname) {
-
-    }
-
-    @Override
-    public String getOrPort() {
-        return null;
-    }
-
-    @Override
-    public void setOrPort(String orPort) {
-
-    }
-
-    @Override
-    public String getContact() {
-        return null;
-    }
-
-    @Override
-    public void setContact(String contact) {
-
-    }
-
-    @Override
-    public String getControlPort() {
-        return null;
-    }
-
-    @Override
-    public void setControlPort(String controlPort) {
-
-    }
 }
