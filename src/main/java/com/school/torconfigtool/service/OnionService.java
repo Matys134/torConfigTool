@@ -1,5 +1,6 @@
 package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.model.OnionServiceConfig;
 import com.school.torconfigtool.model.TorConfig;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +28,14 @@ public class OnionService {
     private final TorConfig torConfig;
     private final CommandService commandService;
     private final TorrcWriteConfigService torrcWriteConfigService;
+    private final OnionServiceConfig onionServiceConfig;
 
-    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService, TorrcWriteConfigService torrcWriteConfigService) {
+    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService, TorrcWriteConfigService torrcWriteConfigService, OnionServiceConfig onionServiceConfig) {
         this.nginxService = nginxService;
         this.torConfig = torConfig;
         this.commandService = commandService;
         this.torrcWriteConfigService = torrcWriteConfigService;
+        this.onionServiceConfig = onionServiceConfig;
     }
 
     /**
@@ -123,12 +126,12 @@ public class OnionService {
         String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + nickname + "_onion";
         if (!new File(pathToFile).exists()) {
             setupOnionService(pathToFile, onionServicePort, nickname);
-            nginxService.configureNginxForOnionService(onionServicePort);
+            nginxService.configureNginxForOnionService(onionServicePort, nickname);
 
             // Restart nginx
             nginxService.reloadNginx();
         }
-        torConfig.setHiddenServicePort(String.valueOf(onionServicePort));
+        onionServiceConfig.setHiddenServicePort(String.valueOf(onionServicePort));
     }
 
     /**
