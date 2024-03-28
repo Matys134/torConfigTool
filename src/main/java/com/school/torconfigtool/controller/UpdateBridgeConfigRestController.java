@@ -41,7 +41,7 @@ public class UpdateBridgeConfigRestController {
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBridgeConfiguration(@RequestBody BridgeConfig config) {
         Map<String, String> response = updateBridgeConfigService.updateConfiguration(config);
-        nginxService.updateNginxConfig(Integer.parseInt(config.getServerTransport()));
+        nginxService.updateNginxConfig(10000, 10012);
         if (response.get("message").startsWith("Bridge configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {
