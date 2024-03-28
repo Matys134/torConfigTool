@@ -23,7 +23,7 @@ public class FileController {
     }
 
     @PostMapping("/upload/{nickname}")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("nickname") String nickname,
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("nickname") int nickname,
                               Model model) {
         try {
             String directory = baseDirectory + nickname;
@@ -39,7 +39,7 @@ public class FileController {
     }
 
     @PostMapping("/remove-files/{nickname}")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("nickname") String nickname,
+    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("nickname") int nickname,
                               Model model) {
         try {
             String directory = baseDirectory + nickname;
@@ -54,7 +54,7 @@ public class FileController {
     }
 
     @GetMapping("/upload/{nickname}")
-    public String showUploadForm(@PathVariable("nickname") String nickname, Model model) {
+    public String showUploadForm(@PathVariable("nickname") int nickname, Model model) {
         String directory = baseDirectory + nickname;
         List<String> fileNames = fileService.getUploadedFiles(directory);
         model.addAttribute("uploadedFiles", fileNames);
