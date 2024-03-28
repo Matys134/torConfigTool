@@ -16,7 +16,7 @@
         <!-- Upload form -->
         <div class="col-md-6">
             <h1 class="mb-4">File Upload</h1>
-            <form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/file/upload/8555}" class="mb-4">
+            <form id="upload-form" enctype="multipart/form-data" method="POST" th:action="@{/file/upload/{nickname}(nickname=${nickname})}" class="mb-4">
                 <input id="file-input" multiple name="files" type="file" class="form-control mb-3">
                 <input type="submit" value="Upload" class="btn btn-primary">
             </form>
@@ -25,7 +25,7 @@
         <!-- Uploaded files and delete form -->
         <div class="col-md-6">
             <h2 class="mb-3">Uploaded files:</h2>
-            <form id="delete-form" method="POST" th:action="@{/file/remove-files/8555}">
+            <form id="delete-form" method="POST" th:action="@{/file/remove-files/{nickname}(nickname=${nickname})}">
                 <table class="table">
                     <thead>
                     <tr>
