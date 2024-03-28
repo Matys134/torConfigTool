@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     // Variable to track which config is being edited
     let isBridgeEdit = false;
-    let isOnionEdit = false;
+    let relayType = null;
 
     // Selectors for the various elements in the modal
     const configSelectors = {
@@ -21,7 +21,7 @@ $(document).ready(function () {
 
     // Selectors for the buttons
     const buttons = {
-        edit: $(".edit-button, .edit-bridge-button, .edit-onion-button"), // Combined edit buttons for guard and bridge
+        edit: $(".edit-button, .edit-bridge-button"), // Combined edit buttons for guard and bridge
         save: $("#save-button"),
         cancel: $("#cancel-button"),
     };
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
     function updateView(data) {
         const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
-        const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"], .edit-onion-button[data-config-nickname="${data.nickname}"]`);
+        const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
 
         configElement.find("h5:contains('Nickname')").text(`Nickname: ${data.nickname}`);
         configElement.find("p:contains('ORPort')").text(`ORPort: ${data.orPort}`);
@@ -131,7 +131,6 @@ $(document).ready(function () {
 
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
-        isOnionEdit = relayType === 'onion';
 
         const data = {
             nickname: nickname,
@@ -174,48 +173,16 @@ $(document).ready(function () {
             hiddenServicePort: parseInt(configSelectors.hiddenServicePort.val()),
         };
 
-        $.get("/server-ip", function(serverIp) {
-        $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
-            data.bridgeType = runningBridgeTypes[data.nickname];
-            data.serverTransport = configSelectors.serverTransport.val();
+        let url;
+        if (isBridgeEdit) {
+            url = '/update-bridge-config';
+        } else if (relayType === 'onion') {
+            url = '/update-onion-config';
+        } else {
+            url = '/update-guard-config';
+        }
 
-            hideModal();
-
-            // If the bridge type is not webtunnel, set the orPort and serverTransport values
-            if (data.bridgeType !== 'webtunnel') {
-                data.orPort = parseInt(configSelectors.orPort.val());
-            }
-
-            // If only the contact field is being edited, skip the port availability check
-            if (isBridgeEdit && data.bridgeType === 'webtunnel') {
-                let url = '/update-bridge-config';
-                sendUpdateRequest(url, data);
-            }
-            else {
-                // Check for the uniqueness of ports
-                if (!arePortsUnique(data.orPort, data.controlPort)) {
-                    alert("The ports specified must be unique. Please check your entries.");
-                    return;
-                }
-
-                // Now send a GET request to your new API for checking the port availability
-                $.get("/update-guard-config/check-port-availability",
-                    {
-                        nickname: data.nickname,
-                        orPort: data.orPort,
-                        controlPort: data.controlPort,
-                    },
-                    function (response) {
-                        if (response['available']) {
-                            let url = isBridgeEdit ? '/update-bridge-config' : '/update-guard-config';
-                            sendUpdateRequest(url, data);
-                        } else {
-                            alert("One or more ports are already in use. Please choose different ports.");
-                        }
-                    });
-            }
-        });
-        });
+        sendUpdateRequest(url, data);
     });
 
     // Method to check uniqueness of ports
