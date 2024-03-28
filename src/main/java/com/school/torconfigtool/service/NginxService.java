@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * NginxService is a service class responsible for managing the Nginx server.
@@ -302,20 +301,5 @@ public class NginxService {
             allServices.add(config.getBridgeConfig().getNickname());
         }
         return allServices;
-    }
-
-    public void updateNginxConfig(int oldPort, int newPort) {
-        Path configPath = Paths.get("/etc/nginx/sites-available/onion-service-" + oldPort);
-        try {
-            List<String> lines = Files.readAllLines(configPath);
-            List<String> updatedLines = lines.stream()
-                    .map(line -> line.contains("proxy_pass http://127.0.0.1:" + oldPort)
-                            ? line.replace("proxy_pass http://127.0.0.1:" + oldPort, "proxy_pass http://127.0.0.1:" + newPort)
-                            : line)
-                    .collect(Collectors.toList());
-            Files.write(configPath, updatedLines);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to update Nginx configuration", e);
-        }
     }
 }
