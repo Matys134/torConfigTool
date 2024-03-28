@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * This class represents the configuration for a Tor network.
- * It includes configurations for guard nodes, bridge nodes, and onion services.
+ * It includes configurations for guard nodes, bridge nodes, and hidden services.
+ * It also includes the hostname and bandwidth rate for the Tor network.
+ *
  */
 @Data
 @Component
@@ -17,6 +19,18 @@ public class TorConfig {
     // Configuration for the bridge node in the Tor network.
     private BridgeConfig bridgeConfig;
 
-    // Configuration for the onion service in the Tor network.
-    private OnionConfig onionConfig;
+    // The directory for the hidden service in the Tor network
+    private String hiddenServiceDir;
+
+    // The port for the hidden service in the Tor network
+    private String hiddenServicePort;
+
+    // The bandwidth rate of the Tor network
+    private String bandwidthRate;
+
+    // The hostname of the Tor network
+    private String hostname;
+
+    // The nickname of the Tor network
+    private String nickname;
 }
