@@ -85,7 +85,7 @@ public class OnionService {
 
         try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
             torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, nickname, torrcWriter);
-            nginxService.createIndexFile(onionServicePort, System.getProperty("user.dir"), nickname);
+            nginxService.createIndexFile(System.getProperty("user.dir"), nickname);
         }
     }
 

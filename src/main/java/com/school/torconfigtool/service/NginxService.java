@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * NginxService is a service class responsible for managing the Nginx server.
@@ -93,10 +92,10 @@ public class NginxService {
     public void configureNginxForOnionService(int onionServicePort, String nickname) throws IOException {
         String nginxConfig = buildNginxServerBlock(onionServicePort, nickname);
         deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
-        createIndexFile(onionServicePort, System.getProperty("user.dir"), nickname);
+        createIndexFile(System.getProperty("user.dir"), nickname);
     }
 
-    public void createIndexFile(int onionServicePort, String currentDirectory, String nickname) throws IOException {
+    public void createIndexFile(String currentDirectory, String nickname) throws IOException {
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
