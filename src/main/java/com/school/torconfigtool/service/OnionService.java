@@ -128,7 +128,7 @@ public class OnionService {
             // Restart nginx
             nginxService.reloadNginx();
         }
-        torConfig.setHiddenServicePort(String.valueOf(onionServicePort));
+        torConfig.getOnionConfig().setHiddenServicePort(String.valueOf(onionServicePort));
     }
 
     /**

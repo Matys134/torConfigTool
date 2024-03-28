@@ -41,7 +41,7 @@ public class OnionController {
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         Map<String, String> hostnames = onionService.getCurrentHostnames();
-        String hostname = onionService.readHostnameFile(Integer.parseInt(torConfig.getHiddenServicePort()));
+        String hostname = onionService.readHostnameFile(Integer.parseInt(torConfig.getOnionConfig().getHiddenServicePort()));
 
         model.addAttribute("hostname", hostname);
         model.addAttribute("hostnames", hostnames);
