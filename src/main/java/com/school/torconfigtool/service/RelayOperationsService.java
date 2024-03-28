@@ -157,8 +157,8 @@ public class RelayOperationsService {
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
         Map<String, String> hostnames = new HashMap<>();
         for (TorConfig config : onionConfigs) {
-            String hostname = onionService.readHostnameFile(Integer.parseInt(config.getOnionServiceConfig().getHiddenServicePort()));
-            hostnames.put(config.getOnionServiceConfig().getHiddenServicePort(), hostname);
+            String hostname = onionService.readHostnameFile(Integer.parseInt(config.getHiddenServicePort()));
+            hostnames.put(config.getHiddenServicePort(), hostname);
         }
         model.addAttribute("hostnames", hostnames);
     }
