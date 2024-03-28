@@ -130,17 +130,10 @@ $(document).ready(function () {
         // Get the "WebTunnel Link" string
         const webTunnelLink = $(this).parent().siblings("p:contains('WebTunnel Link')").text();
 
-        console.log("WebTunnel Link: ", webTunnelLink); // Log the webTunnelLink
-
         // Extract the webtunnelPort from the "WebTunnel Link" string
         const webTunnelLinkParts = webTunnelLink.split(' ');
         const webTunnelPart = webTunnelLinkParts.find(part => part.includes('webtunnel'));
-
-        console.log("WebTunnel Part: ", webTunnelPart); // Log the webTunnelPart
-
         const webTunnelPort = webTunnelPart.split(':')[1];
-
-        console.log("WebTunnel Port: ", webTunnelPort); // Log the webTunnelPort
 
         const data = {
             nickname: nickname,
