@@ -187,6 +187,12 @@
                         <button class="btn btn-secondary" style="background-color: #000080;">
                             <a th:href="@{/file/upload/{nickname}(nickname=${config.getOnionConfig.nickname})}" style="color: #FFFFFF;">Edit Files</a>
                         </button>
+                        <button class="btn btn-secondary edit-button"
+                                th:attr="data-config-type='onion'"
+                                th:data-config-nickname="${config.getOnionConfig.hiddenServicePort}"
+                                th:data-config-hidden-service-port="${config.getOnionConfig.hiddenServicePort}">
+                            Edit
+                        </button>
                         <div id="spinner-${config.getOnionConfig.nickname}" class="spinner" style="display: none;"></div>
                     </div>
                 </div>
