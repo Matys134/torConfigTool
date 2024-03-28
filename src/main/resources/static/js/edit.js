@@ -36,7 +36,7 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
-        configSelectors.webtunnelPort.val(data.webtunnelPort);
+        configSelectors.webtunnelPort.val(data.webtunnelPort.split(' ')[2]);
 
 
         // Hide all fields initially
