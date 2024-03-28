@@ -134,7 +134,7 @@ $(document).ready(function () {
 
         // Extract the webtunnelPort from the "WebTunnel Link" string
         const webTunnelLinkParts = webTunnelLink.split(' ');
-        const webTunnelPart = webTunnelLinkParts.find(part => part.startsWith('webtunnel'));
+        const webTunnelPart = webTunnelLinkParts.find(part => part.includes('webtunnel'));
 
         console.log("WebTunnel Part: ", webTunnelPart); // Log the webTunnelPart
 
