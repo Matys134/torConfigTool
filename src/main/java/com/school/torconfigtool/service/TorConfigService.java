@@ -97,12 +97,12 @@ public class TorConfigService {
         } else if (line.startsWith("Contact")) {
             relayConfig.setContact(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServiceDir")) {
-            config.setHiddenServiceDir(line.split(" ")[1].trim());
+            config.getOnionConfig().setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
             String[] parts = line.split(" ");
             String addressAndPort = parts[parts.length - 1];
             String port = addressAndPort.split(":")[1];
-            config.setHiddenServicePort(port);
+            config.getOnionConfig().setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("RelayBandwidthRate")) {
