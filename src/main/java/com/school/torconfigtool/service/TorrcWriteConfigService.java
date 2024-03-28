@@ -69,7 +69,7 @@ public class TorrcWriteConfigService {
 
         torrcWriter.write("Nickname " + nickname);
         torrcWriter.newLine();
-        torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + nickname + "/");
+        torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
         torrcWriter.newLine();
         torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);
         torrcWriter.newLine();
