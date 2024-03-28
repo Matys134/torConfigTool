@@ -1,5 +1,6 @@
 package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.model.OnionConfig;
 import com.school.torconfigtool.model.TorConfig;
 import org.springframework.stereotype.Service;
 
@@ -128,6 +129,12 @@ public class OnionService {
             // Restart nginx
             nginxService.reloadNginx();
         }
+
+        // Check if OnionConfig is null and initialize it if it is
+        if (torConfig.getOnionConfig() == null) {
+            torConfig.setOnionConfig(new OnionConfig());
+        }
+
         torConfig.getOnionConfig().setHiddenServicePort(String.valueOf(onionServicePort));
     }
 
