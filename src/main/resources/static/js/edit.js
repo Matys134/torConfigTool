@@ -36,12 +36,6 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
-
-        // Extract the webtunnelPort from the webtunnelLink
-        if (data.webtunnelUrl) {
-            data.webtunnelPort = extractWebtunnelPort(data.webtunnelUrl);
-        }
-
         configSelectors.webtunnelPort.val(data.webtunnelPort);
 
 
@@ -133,6 +127,14 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
+        // Get the "WebTunnel Link" string
+        const webTunnelLink = $(this).parent().siblings("p:contains('WebTunnel Link')").text();
+
+        // Extract the webtunnelPort from the "WebTunnel Link" string
+        const webTunnelLinkParts = webTunnelLink.split(' ');
+        const webTunnelPart = webTunnelLinkParts.find(part => part.includes('webtunnel'));
+        const webTunnelPort = webTunnelPart.split(':')[1];
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -142,7 +144,7 @@ $(document).ready(function () {
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
-            webtunnelPort: $(this).data('config-webtunnelport'),
+            webtunnelPort: webTunnelPort,
         };
 
         $.get("/server-ip", function(serverIp) {
@@ -218,17 +220,6 @@ $(document).ready(function () {
     // Method to check uniqueness of ports
     function arePortsUnique(relayPort, controlPort) {
         return !(relayPort === controlPort);
-    }
-
-    function extractWebtunnelPort(webtunnelLink) {
-        // Split the webtunnelLink by spaces
-        const parts = webtunnelLink.split(' ');
-
-        // Find the part that starts with "webtunnel"
-        const webtunnelPart = parts.find(part => part.startsWith('webtunnel'));
-
-        // Split the webtunnelPart by ':' to get the port
-        return webtunnelPart.split(':')[1];
     }
 
     buttons.cancel.click(hideModal);
