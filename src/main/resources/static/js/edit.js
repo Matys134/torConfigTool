@@ -127,6 +127,21 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
+        // Get the "WebTunnel Link" string
+        const webTunnelLink = $(this).parent().siblings("p:contains('WebTunnel Link')").text();
+
+        console.log("WebTunnel Link: ", webTunnelLink); // Log the webTunnelLink
+
+        // Extract the webtunnelPort from the "WebTunnel Link" string
+        const webTunnelLinkParts = webTunnelLink.split(' ');
+        const webTunnelPart = webTunnelLinkParts.find(part => part.startsWith('webtunnel'));
+
+        console.log("WebTunnel Part: ", webTunnelPart); // Log the webTunnelPart
+
+        const webTunnelPort = webTunnelPart.split(':')[1];
+
+        console.log("WebTunnel Port: ", webTunnelPort); // Log the webTunnelPort
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -136,7 +151,7 @@ $(document).ready(function () {
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
-            webtunnelPort: $(this).data('config-webtunnelport'),
+            webtunnelPort: webTunnelPort,
         };
 
         $.get("/server-ip", function(serverIp) {
