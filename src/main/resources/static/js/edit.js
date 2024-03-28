@@ -36,6 +36,12 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
+
+        // Extract the webtunnelPort from the webtunnelLink
+        if (data.webtunnelUrl) {
+            data.webtunnelPort = extractWebtunnelPort(data.webtunnelUrl);
+        }
+
         configSelectors.webtunnelPort.val(data.webtunnelPort);
 
 
@@ -79,7 +85,7 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
-        configElement.find("p:contains('WebTunnel Link')").text(`WebTunnel Link: ${data.webtunnelPort}`);
+        configElement.find("p:contains('WebTunnel Port')").text(`WebTunnel Port: ${data.webtunnelPort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
@@ -212,6 +218,17 @@ $(document).ready(function () {
     // Method to check uniqueness of ports
     function arePortsUnique(relayPort, controlPort) {
         return !(relayPort === controlPort);
+    }
+
+    function extractWebtunnelPort(webtunnelLink) {
+        // Split the webtunnelLink by spaces
+        const parts = webtunnelLink.split(' ');
+
+        // Find the part that starts with "webtunnel"
+        const webtunnelPart = parts.find(part => part.startsWith('webtunnel'));
+
+        // Split the webtunnelPart by ':' to get the port
+        return webtunnelPart.split(':')[1];
     }
 
     buttons.cancel.click(hideModal);
