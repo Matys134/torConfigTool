@@ -159,31 +159,31 @@
             <div id="onion-configs" class="list-group">
                 <div th:each="config : ${onionConfigs}" class="list-group-item">
                     <!-- Display Onion relay configuration fields -->
-                    <p><strong>HiddenServicePort:</strong> <span th:text="${config.getOnionConfig.hiddenServicePort}"></span></p>
-                    <p><strong>Hostname:</strong> <span th:id="${'hostname-display-' + config.getOnionConfig.hiddenServicePort}"></span></p>
-                    <p><strong>Status:</strong> <span th:id="${'status-' + config.getOnionConfig.hiddenServicePort}">Unknown</span></p>
+                    <p><strong>HiddenServicePort:</strong> <span th:text="${config.hiddenServicePort}"></span></p>
+                    <p><strong>Hostname:</strong> <span th:id="${'hostname-display-' + config.hiddenServicePort}"></span></p>
+                    <p><strong>Status:</strong> <span th:id="${'status-' + config.hiddenServicePort}">Unknown</span></p>
                     <div class="btn-group" role="group" aria-label="Basic example">
 
                         <button class="btn btn-secondary remove-button"
-                                th:data-config-nickname="${config.getOnionConfig.hiddenServicePort}"
+                                th:data-config-nickname="${config.hiddenServicePort}"
                                 th:data-config-type="onion">
                             Remove
                         </button>
                         <button type="button" class="btn start-button-green start-button" th:attr="data-config-type='onion'"
-                                th:data-config-nickname="${config.getOnionConfig.hiddenServicePort}">
+                                th:data-config-nickname="${config.hiddenServicePort}">
                             Start
                             <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn stop-button-red stop-button"
                                 th:attr="data-config-type='onion'"
-                                th:data-config-dir="${config.getOnionConfig.hiddenServiceDir}"
-                                th:data-config-nickname="${config.getOnionConfig.hiddenServicePort}"
-                                th:data-config-port="${config.getOnionConfig.hiddenServicePort}">
+                                th:data-config-dir="${config.hiddenServiceDir}"
+                                th:data-config-nickname="${config.hiddenServicePort}"
+                                th:data-config-port="${config.hiddenServicePort}">
                             Stop
                             <div class="spinner" style="display: none;"></div>
                         </button>
                         <button class="btn btn-secondary" style="background-color: #000080;">
-                            <a th:href="@{/file/upload/{port}(port=${config.getOnionConfig.hiddenServicePort})}" style="color: #FFFFFF;">Edit Files</a>
+                            <a th:href="@{/file/upload/{port}(port=${config.hiddenServicePort})}" style="color: #FFFFFF;">Edit Files</a>
                         </button>
                         <div id="spinner-${config.getOnionConfig.nickname}" class="spinner" style="display: none;"></div>
                     </div>
