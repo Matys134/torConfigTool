@@ -36,7 +36,6 @@ public class FileService {
 
     public List<String> getUploadedFiles(String directory) {
         File folder = new File(directory);
-        System.out.println("folder: " + folder.getAbsolutePath());
         return Arrays.asList(Objects.requireNonNull(folder.list()));
     }
 }

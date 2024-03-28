@@ -22,11 +22,11 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping("/upload/8555")
-    public String uploadFiles(@RequestParam("files") MultipartFile[] files,
+    @PostMapping("/upload/{port}")
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable("port") int port,
                               Model model) {
         try {
-            String directory = baseDirectory + 8555;
+            String directory = baseDirectory + port;
             fileService.uploadFiles(files, directory);
             List<String> fileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", fileNames);
@@ -38,11 +38,11 @@ public class FileController {
         return "file_upload_form";
     }
 
-    @PostMapping("/remove-files/8555")
-    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames,
+    @PostMapping("/remove-files/{port}")
+    public String removeFiles(@RequestParam("selectedFiles") String[] fileNames, @PathVariable("port") int port,
                               Model model) {
         try {
-            String directory = baseDirectory + 8555;
+            String directory = baseDirectory + port;
             fileService.deleteFile(fileNames, directory);
             List<String> remainingFileNames = fileService.getUploadedFiles(directory);
             model.addAttribute("uploadedFiles", remainingFileNames);
@@ -53,9 +53,9 @@ public class FileController {
         return "file_upload_form";
     }
 
-    @GetMapping("/upload/8555")
-    public String showUploadForm(Model model) {
-        String directory = baseDirectory + 8555;
+    @GetMapping("/upload/{port}")
+    public String showUploadForm(@PathVariable("port") int port, Model model) {
+        String directory = baseDirectory + port;
         List<String> fileNames = fileService.getUploadedFiles(directory);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
