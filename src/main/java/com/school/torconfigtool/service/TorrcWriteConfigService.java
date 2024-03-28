@@ -63,10 +63,12 @@ public class TorrcWriteConfigService {
         // No specific configuration for guard relays
     }
 
-    public void writeOnionServiceConfig(int onionServicePort, BufferedWriter torrcWriter) throws IOException {
+    public void writeOnionServiceConfig(int onionServicePort, String nickname, BufferedWriter torrcWriter) throws IOException {
         String currentDirectory = System.getProperty("user.dir");
         String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
 
+        torrcWriter.write("Nickname " + nickname);
+        torrcWriter.newLine();
         torrcWriter.write("HiddenServiceDir " + hiddenServiceDirs + "/onion-service-" + onionServicePort + "/");
         torrcWriter.newLine();
         torrcWriter.write("HiddenServicePort 80 127.0.0.1:" + onionServicePort);

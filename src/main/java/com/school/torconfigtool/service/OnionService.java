@@ -75,7 +75,7 @@ public class OnionService {
         }
     }
 
-    public void setupOnionService(String filePath, int onionServicePort) throws IOException {
+    public void setupOnionService(String filePath, int onionServicePort, String nickname) throws IOException {
         File torrcFile = new File(filePath);
 
         // Check if the parent directories exist; if not, attempt to create them
@@ -84,7 +84,7 @@ public class OnionService {
         }
 
         try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
-            torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, torrcWriter);
+            torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, nickname, torrcWriter);
             nginxService.createIndexFile(onionServicePort, System.getProperty("user.dir"));
         }
     }
@@ -113,16 +113,16 @@ public class OnionService {
      * @param onionServicePort The onion service port.
      * @throws IOException If an I/O error occurs.
      */
-    public void configureOnionService(int onionServicePort) throws IOException {
+    public void configureOnionService(int onionServicePort, String nickname) throws IOException {
         // Check port availability before configuring the onion service
-        if (!RelayUtilityService.portsAreAvailable(TORRC_FILE_PREFIX + onionServicePort + "_onion",
+        if (!RelayUtilityService.portsAreAvailable(TORRC_FILE_PREFIX + nickname + "_onion",
                 onionServicePort)) {
             throw new IOException("Port is not available.");
         }
 
-        String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + onionServicePort + "_onion";
+        String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + nickname + "_onion";
         if (!new File(pathToFile).exists()) {
-            setupOnionService(pathToFile, onionServicePort);
+            setupOnionService(pathToFile, onionServicePort, nickname);
             nginxService.configureNginxForOnionService(onionServicePort);
 
             // Restart nginx

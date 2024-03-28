@@ -50,9 +50,9 @@ public class OnionController {
     }
 
     @PostMapping("/configure")
-    public String configureOnionService(@RequestParam int onionServicePort, Model model) {
+    public String configureOnionService(@RequestParam int onionServicePort, @RequestParam String onionServiceNickname, Model model) {
         try {
-            onionService.configureOnionService(onionServicePort);
+            onionService.configureOnionService(onionServicePort, onionServiceNickname);
             model.addAttribute("successMessage", "Tor Onion Service configured successfully!");
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Failed to configure Tor Onion Service.");
