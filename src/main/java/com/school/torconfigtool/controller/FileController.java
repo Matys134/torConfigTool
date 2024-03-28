@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class FileController {
 
     private final FileService fileService;
-    private final String baseDirectory = "/onion/www/service-";
+    private final String baseDirectory = System.getProperty("user.dir") + "/onion/www/service-";
 
     @Autowired
     public FileController(FileService fileService) {
@@ -55,7 +56,7 @@ public class FileController {
 
     @GetMapping("/upload/{nickname}")
     public String showUploadForm(@PathVariable("nickname") String nickname, Model model) {
-        String directory = baseDirectory + nickname;
+        String directory = Paths.get(System.getProperty("user.dir"), "onion", "www", "service-" + nickname).toString();
         List<String> fileNames = fileService.getUploadedFiles(directory);
         model.addAttribute("uploadedFiles", fileNames);
         return "file_upload_form";
