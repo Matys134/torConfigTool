@@ -2,7 +2,6 @@ $(document).ready(function () {
 
     // Variable to track which config is being edited
     let isBridgeEdit = false;
-    let relayType = null;
 
     // Selectors for the various elements in the modal
     const configSelectors = {
@@ -153,36 +152,35 @@ $(document).ready(function () {
             showModalWith(data, relayType, bridgeType);
         });
         });
-    });
+        buttons.save.click(function () {
+            const bandwidth = parseInt(configSelectors.bandwidthRate.val());
+            if (bandwidth !== 0 && bandwidth < 75) {
+                alert("Bandwidth must be 0 or 75 and larger");
+                return; // stop the function if the validation fails
+            }
 
-    buttons.save.click(function () {
-        const bandwidth = parseInt(configSelectors.bandwidthRate.val());
-        if (bandwidth !== 0 && bandwidth < 75) {
-            alert("Bandwidth must be 0 or 75 and larger");
-            return; // stop the function if the validation fails
-        }
+            const data = {
+                nickname: configSelectors.nickname.text(),
+                contact: configSelectors.contact.val(),
+                controlPort: parseInt(configSelectors.controlPort.val()),
+                webtunnelUrl: configSelectors.webtunnelUrl.val(),
+                path: configSelectors.path.val(),
+                bandwidthRate: configSelectors.bandwidthRate.val(),
+                webtunnelPort: parseInt(configSelectors.webtunnelPort.val()),
+                hiddenServicePort: parseInt(configSelectors.hiddenServicePort.val()),
+            };
 
-        const data = {
-            nickname: configSelectors.nickname.text(),
-            contact: configSelectors.contact.val(),
-            controlPort: parseInt(configSelectors.controlPort.val()),
-            webtunnelUrl: configSelectors.webtunnelUrl.val(),
-            path: configSelectors.path.val(),
-            bandwidthRate: configSelectors.bandwidthRate.val(),
-            webtunnelPort: parseInt(configSelectors.webtunnelPort.val()),
-            hiddenServicePort: parseInt(configSelectors.hiddenServicePort.val()),
-        };
+            let url;
+            if (isBridgeEdit) {
+                url = '/update-bridge-config';
+            } else if (relayType === 'onion') {
+                url = '/update-onion-config';
+            } else {
+                url = '/update-guard-config';
+            }
 
-        let url;
-        if (isBridgeEdit) {
-            url = '/update-bridge-config';
-        } else if (relayType === 'onion') {
-            url = '/update-onion-config';
-        } else {
-            url = '/update-guard-config';
-        }
-
-        sendUpdateRequest(url, data);
+            sendUpdateRequest(url, data);
+        });
     });
 
     // Method to check uniqueness of ports
