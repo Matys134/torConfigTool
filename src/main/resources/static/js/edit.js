@@ -37,7 +37,7 @@ $(document).ready(function () {
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
 
-        let webtunnelPortString = String(data.webtunnelPort);
+        let webtunnelPortString = data.webtunnelPort;
         let splitString = webtunnelPortString.split(' ');
         let portNumber = splitString[splitString.length - 1];
         configSelectors.webtunnelPort.val(portNumber);
