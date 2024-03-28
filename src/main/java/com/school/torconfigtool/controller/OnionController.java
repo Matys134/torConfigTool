@@ -1,6 +1,5 @@
 package com.school.torconfigtool.controller;
 
-import com.school.torconfigtool.model.OnionServiceConfig;
 import com.school.torconfigtool.model.TorConfig;
 import com.school.torconfigtool.service.OnionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/onion-service")
 public class OnionController {
     private final OnionService onionService;
-    OnionServiceConfig onionServiceConfig = new OnionServiceConfig();
+    TorConfig torConfig = new TorConfig();
 
     @Autowired
     public OnionController(OnionService onionService) {
@@ -42,7 +41,7 @@ public class OnionController {
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         Map<String, String> hostnames = onionService.getCurrentHostnames();
-        String hostname = onionService.readHostnameFile(Integer.parseInt(onionServiceConfig.getHiddenServicePort()));
+        String hostname = onionService.readHostnameFile(Integer.parseInt(torConfig.getHiddenServicePort()));
 
         model.addAttribute("hostname", hostname);
         model.addAttribute("hostnames", hostnames);

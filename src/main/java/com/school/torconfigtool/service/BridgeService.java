@@ -78,10 +78,10 @@ public class BridgeService {
         }
 
         if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null && bridgeTransportListenAddr != null) {
-            nginxService.configureNginxForOnionService(webtunnelPort, bridgeNickname);
+            nginxService.configureNginxForOnionService(webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr, bridgeNickname);
+            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr);
             config.setPath(randomString);
             webtunnelService.updateTorrcFile(config);
 

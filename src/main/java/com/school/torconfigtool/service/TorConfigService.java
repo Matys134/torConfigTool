@@ -1,6 +1,9 @@
 package com.school.torconfigtool.service;
 
-import com.school.torconfigtool.model.*;
+import com.school.torconfigtool.model.BridgeConfig;
+import com.school.torconfigtool.model.GuardConfig;
+import com.school.torconfigtool.model.RelayConfig;
+import com.school.torconfigtool.model.TorConfig;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -94,12 +97,12 @@ public class TorConfigService {
         } else if (line.startsWith("Contact")) {
             relayConfig.setContact(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServiceDir")) {
-            ((OnionServiceConfig) relayConfig).setHiddenServiceDir(line.split(" ")[1].trim());
+            config.setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
             String[] parts = line.split(" ");
             String addressAndPort = parts[parts.length - 1];
             String port = addressAndPort.split(":")[1];
-            ((OnionServiceConfig) relayConfig).setHiddenServicePort(port);
+            config.setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("RelayBandwidthRate")) {
@@ -142,11 +145,6 @@ public class TorConfigService {
                 config.setBridgeConfig(new BridgeConfig());
             }
             relayConfig = config.getBridgeConfig();
-        } else if ("onion".equals(relayType)) {
-            if (config.getOnionServiceConfig() == null) {
-                config.setOnionServiceConfig(new OnionServiceConfig());
-            }
-            relayConfig = (RelayConfig) config.getOnionServiceConfig();
         }
 
         return relayConfig;
