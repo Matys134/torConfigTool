@@ -22,7 +22,7 @@ public class AcmeService {
         this.commandService = commandService;
     }
 
-    public void generateCertificate(String webTunnelUrl, String programLocation, int webtunnelPort, String nickname) throws Exception {
+    public void generateCertificate(String webTunnelUrl, String programLocation, int webtunnelPort) throws Exception {
         // Create the directory for the certificate files
         String certDirectory = programLocation + "/onion/certs/service-" + webtunnelPort + "/";
         File dir = new File(certDirectory);
@@ -34,7 +34,7 @@ public class AcmeService {
         // Generate the certificate
         String username = System.getProperty("user.name");
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
-                + "/onion/www/service-" + nickname + "/ --nginx --server letsencrypt --force";
+                + "/onion/www/service-" + webtunnelPort + "/ --nginx --server letsencrypt --force";
 
         Process certProcess = commandService.executeCommand(command);
 

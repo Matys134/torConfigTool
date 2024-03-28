@@ -85,7 +85,7 @@ public class OnionService {
 
         try (BufferedWriter torrcWriter = new BufferedWriter(new FileWriter(torrcFile))) {
             torrcWriteConfigService.writeOnionServiceConfig(onionServicePort, nickname, torrcWriter);
-            nginxService.createIndexFile(onionServicePort, System.getProperty("user.dir"), nickname);
+            nginxService.createIndexFile(onionServicePort, System.getProperty("user.dir"));
         }
     }
 
@@ -123,7 +123,7 @@ public class OnionService {
         String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + nickname + "_onion";
         if (!new File(pathToFile).exists()) {
             setupOnionService(pathToFile, onionServicePort, nickname);
-            nginxService.configureNginxForOnionService(onionServicePort, nickname);
+            nginxService.configureNginxForOnionService(onionServicePort);
 
             // Restart nginx
             nginxService.reloadNginx();

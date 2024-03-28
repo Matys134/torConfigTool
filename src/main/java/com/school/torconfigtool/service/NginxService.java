@@ -90,19 +90,19 @@ public class NginxService {
      * It creates the necessary directories and the index.html file.
      * If the file writing fails, it logs the error.
      */
-    public void configureNginxForOnionService(int onionServicePort, String nickname) throws IOException {
-        String nginxConfig = buildNginxServerBlock(onionServicePort, nickname);
+    public void configureNginxForOnionService(int onionServicePort) throws IOException {
+        String nginxConfig = buildNginxServerBlock(onionServicePort);
         deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
-        createIndexFile(onionServicePort, System.getProperty("user.dir"), nickname);
+        createIndexFile(onionServicePort, System.getProperty("user.dir"));
     }
 
-    public void createIndexFile(int onionServicePort, String currentDirectory, String nickname) throws IOException {
+    public void createIndexFile(int onionServicePort, String currentDirectory) throws IOException {
         File wwwDir = new File(currentDirectory + "/onion/www");
         if (!wwwDir.exists() && !wwwDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + wwwDir.getAbsolutePath());
         }
 
-        File serviceDir = new File(wwwDir, "service-" + nickname);
+        File serviceDir = new File(wwwDir, "service-" + onionServicePort);
         if (!serviceDir.exists() && !serviceDir.mkdirs()) {
             throw new IOException("Failed to create directory: " + serviceDir.getAbsolutePath());
         }
@@ -225,7 +225,7 @@ public class NginxService {
         }
     }
 
-    private String buildNginxServerBlock(int onionServicePort, String nickname) {
+    private String buildNginxServerBlock(int onionServicePort) {
 
         String currentDirectory = System.getProperty("user.dir");
         // Build the server block
@@ -234,9 +234,9 @@ public class NginxService {
                     listen 127.0.0.1:%d;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
-                    root %s/onion/www/service-%s;
+                    root %s/onion/www/service-%d;
                 }
-                """, onionServicePort, currentDirectory, nickname);
+                """, onionServicePort, currentDirectory, onionServicePort);
     }
 
 

@@ -44,7 +44,7 @@ public class WebtunnelService {
      * @param webTunnelUrl The URL of the web tunnel.
      * @throws Exception If an error occurs during setup.
      */
-    public void setupWebtunnel(String webTunnelUrl, int webtunnelPort, String nickname) throws Exception {
+    public void setupWebtunnel(String webTunnelUrl, int webtunnelPort) throws Exception {
         UPnP.openPortTCP(80);
 
         // Check if Nginx is running, if not, start it
@@ -63,7 +63,7 @@ public class WebtunnelService {
         }
 
         // Call the new method to generate the certificate
-        acmeService.generateCertificate(webTunnelUrl, programLocation, webtunnelPort, nickname);
+        acmeService.generateCertificate(webTunnelUrl, programLocation, webtunnelPort);
 
         UPnP.closePortTCP(80);
     }
