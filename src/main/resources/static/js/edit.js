@@ -14,7 +14,6 @@ $(document).ready(function () {
         webtunnelUrl: $("#edit-webtunnelurl"),
         path: $("#edit-path"),
         bandwidthRate: $("#edit-bandwidthrate"),
-        webtunnelPort: $("#edit-webtunnelport"),
     };
 
     // Selectors for the buttons
@@ -36,7 +35,6 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
-        configSelectors.webtunnelPort.val(data.webtunnelUrl.split(':')[2]);
 
 
         // Hide all fields initially
