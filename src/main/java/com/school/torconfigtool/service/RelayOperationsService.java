@@ -296,6 +296,7 @@ public class RelayOperationsService {
     public void removeOnionFiles(String relayNickname) throws IOException {
         TorConfig torConfig = getTorConfigForRelay(relayNickname);
         int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+        System.out.println("Webtunnel port: " + webtunnelPort);
 
         if (webtunnelPort > 0) {
             System.out.println("Webtunnel port is set for relay: " + relayNickname);
