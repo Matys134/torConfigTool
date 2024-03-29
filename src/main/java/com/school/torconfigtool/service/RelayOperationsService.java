@@ -295,21 +295,18 @@ public class RelayOperationsService {
 
     public void removeOnionFiles(String relayNickname, String relayType) throws IOException {
         int webtunnelPort = 0;
-        System.out.println("Relay type: " + relayType);
         if ("bridge".equals(relayType)) {
             TorConfig torConfig = getTorConfigForRelay(relayNickname);
             if (torConfig.getBridgeConfig() != null) {
                 webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+                System.out.println("Webtunnel port: " + webtunnelPort);
             }
-            System.out.println("Webtunnel port: " + webtunnelPort);
         }
 
         if (webtunnelPort > 0) {
-            System.out.println("Webtunnel port is set for relay: " + relayNickname);
             removeServiceDirectory(webtunnelPort);
             removeNginxConfigAndSymbolicLink(webtunnelPort);
         } else {
-            System.out.println("Webtunnel port is not set for relay: " + relayNickname);
             removeServiceDirectory(relayNickname);
             removeNginxConfigAndSymbolicLink(relayNickname);
         }
@@ -317,6 +314,7 @@ public class RelayOperationsService {
 
     private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
+        System.out.println("Reading Tor configurations from: " + Constants.TORRC_DIRECTORY_PATH);
         TorConfig torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge")
                 .stream()
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
@@ -344,8 +342,6 @@ public class RelayOperationsService {
 
         commandService.executeCommand(removeNginxConfigCommand);
         commandService.executeCommand(removeSymbolicLinkCommand);
-
-        System.out.println("Deleted nginx config and symbolic link for relay: " + nickname);
     }
 
     private void removeServiceDirectory(int webtunnelPort) throws IOException {
