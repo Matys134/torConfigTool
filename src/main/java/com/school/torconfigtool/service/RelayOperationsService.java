@@ -275,7 +275,7 @@ public class RelayOperationsService {
     }
 
     private void deleteOnionFiles(String relayNickname) throws IOException, InterruptedException {
-        Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
+        Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "service-" + relayNickname);
         Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
         if (Files.exists(onionFilePath)) {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
