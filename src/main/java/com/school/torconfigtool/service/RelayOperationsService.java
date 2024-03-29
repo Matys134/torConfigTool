@@ -320,7 +320,7 @@ public class RelayOperationsService {
                 .findFirst()
                 .orElse(null);
 
-        System.out.println("Tor config: " + torConfig);
+        System.out.println("Tor config: " + torConfig.getBridgeConfig().getNickname());
         if (torConfig == null) {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
         }
