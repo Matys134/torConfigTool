@@ -242,10 +242,10 @@ public class RelayOperationsService {
     public Map<String, Object> removeRelay(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         try {
-            removeOnionFiles(relayNickname);
             deleteTorrcFile(relayNickname, relayType);
-            deleteDataDirectory(relayNickname, relayType);
             deleteOnionFiles(relayNickname);
+            removeOnionFiles(relayNickname);
+            deleteDataDirectory(relayNickname, relayType);
 
             nginxService.reloadNginx();
 
@@ -275,8 +275,6 @@ public class RelayOperationsService {
     private void deleteOnionFiles(String relayNickname) throws IOException, InterruptedException {
         Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
         Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
-        System.out.println(onionFilePath);
-        System.out.println(torrcOnionFilePath);
         if (Files.exists(onionFilePath)) {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
         }
@@ -290,7 +288,19 @@ public class RelayOperationsService {
     }
 
     public void removeOnionFiles(String relayNickname) throws IOException {
-        // Get the TorConfig for the given relayNickname
+        TorConfig torConfig = getTorConfigForRelay(relayNickname);
+        int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+
+        if (webtunnelPort > 0) {
+            removeServiceDirectory(webtunnelPort);
+            removeNginxConfigAndSymbolicLink(webtunnelPort);
+        } else {
+            removeServiceDirectory(relayNickname);
+            removeNginxConfigAndSymbolicLink(relayNickname);
+        }
+    }
+
+    private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
         TorConfig torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge")
                 .stream()
@@ -302,17 +312,38 @@ public class RelayOperationsService {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
         }
 
-        // Get the webtunnel port from the TorConfig
-        int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+        return torConfig;
+    }
 
+    private void removeNginxConfigAndSymbolicLink(int webtunnelPort) {
         String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + webtunnelPort;
         String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + webtunnelPort;
 
-        FileUtils.deleteDirectory(new File("/onion/www/service-" + webtunnelPort));
+        commandService.executeCommand(removeNginxConfigCommand);
+        commandService.executeCommand(removeSymbolicLinkCommand);
+    }
 
-        System.out.println("/onion/www/service-" + webtunnelPort + " deleted");
+    private void removeNginxConfigAndSymbolicLink(String nickname) {
+        String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + nickname;
+        String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + nickname;
 
         commandService.executeCommand(removeNginxConfigCommand);
         commandService.executeCommand(removeSymbolicLinkCommand);
+    }
+
+    private void removeServiceDirectory(int webtunnelPort) throws IOException {
+        String currentDirectory = System.getProperty("user.dir");
+        File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + webtunnelPort);
+        if (serviceDirectory.exists()) {
+            FileUtils.deleteDirectory(serviceDirectory);
+        }
+    }
+
+    private void removeServiceDirectory(String nickname) throws IOException {
+        String currentDirectory = System.getProperty("user.dir");
+        File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + nickname);
+        if (serviceDirectory.exists()) {
+            FileUtils.deleteDirectory(serviceDirectory);
+        }
     }
 }
