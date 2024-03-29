@@ -244,7 +244,7 @@ public class RelayOperationsService {
         try {
             deleteTorrcFile(relayNickname, relayType);
             deleteOnionFiles(relayNickname);
-            removeOnionFiles(relayNickname);
+            removeOnionFiles(relayNickname, relayType);
             deleteDataDirectory(relayNickname, relayType);
 
             nginxService.reloadNginx();
@@ -293,13 +293,15 @@ public class RelayOperationsService {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
 
-    public void removeOnionFiles(String relayNickname) throws IOException {
-        TorConfig torConfig = getTorConfigForRelay(relayNickname);
+    public void removeOnionFiles(String relayNickname, String relayType) throws IOException {
         int webtunnelPort = 0;
-        if (torConfig.getBridgeConfig() != null) {
-            webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+        if ("bridge".equals(relayType)) {
+            TorConfig torConfig = getTorConfigForRelay(relayNickname);
+            if (torConfig.getBridgeConfig() != null) {
+                webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+            }
+            System.out.println("Webtunnel port: " + webtunnelPort);
         }
-        System.out.println("Webtunnel port: " + webtunnelPort);
 
         if (webtunnelPort > 0) {
             System.out.println("Webtunnel port is set for relay: " + relayNickname);
@@ -319,15 +321,6 @@ public class RelayOperationsService {
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
                 .findFirst()
                 .orElse(null);
-
-        // If no bridge configuration is found, check for onion configurations
-        if (torConfig == null) {
-            torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion")
-                    .stream()
-                    .filter(config -> config.getOnionConfig().getHiddenServicePort().equals(relayNickname))
-                    .findFirst()
-                    .orElse(null);
-        }
 
         if (torConfig == null) {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
