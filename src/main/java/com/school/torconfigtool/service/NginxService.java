@@ -305,7 +305,7 @@ public class NginxService {
     }
 
     public void updateNginxConfig(int newPort) {
-        String configPath = "/etc/nginx/sites-available/onion-service-10001";
+        String configPath = "/etc/nginx/sites-available/onion-service-9557";
         String sedCommand = String.format("s/proxy_pass http:\\/\\/127.0.0.1:[0-9]*/proxy_pass http:\\/\\/127.0.0.1:%d/g", newPort);
 
         ProcessBuilder processBuilder = new ProcessBuilder("sudo", "sed", "-i", sedCommand, configPath);
