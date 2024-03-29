@@ -315,8 +315,12 @@ public class RelayOperationsService {
 
     private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
-        TorConfig torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge")
-                .stream()
+        List<TorConfig> configs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
+
+        // Debugging: print all nicknames in the configs
+        configs.forEach(config -> System.out.println(config.getBridgeConfig().getNickname()));
+
+        TorConfig torConfig = configs.stream()
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
                 .findFirst()
                 .orElse(null);
