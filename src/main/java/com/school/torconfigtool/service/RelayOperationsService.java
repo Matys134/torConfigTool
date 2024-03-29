@@ -242,10 +242,10 @@ public class RelayOperationsService {
     public Map<String, Object> removeRelay(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         try {
-            deleteTorrcFile(relayNickname, relayType);
             deleteOnionFiles(relayNickname);
             removeOnionFiles(relayNickname, relayType);
             deleteDataDirectory(relayNickname, relayType);
+            deleteTorrcFile(relayNickname, relayType);
 
             nginxService.reloadNginx();
 

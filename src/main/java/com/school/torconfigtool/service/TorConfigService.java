@@ -31,14 +31,14 @@ public class TorConfigService {
         System.out.println("Reading configurations from: " + folderPath);
         List<TorConfig> configs = new ArrayList<>();
         System.out.println("Expected relay type: " + expectedRelayType);
-        System.out.println("Reading configurations...");
-        System.out.println(configs);
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
 
         if (files != null) {
+            System.out.println("Files in directory: " + files.length); // Print the number of files in the directory
             for (File file : files) {
                 String relayType = parseRelayTypeFromFile(file);
+                System.out.println("Parsed relay type: " + relayType); // Print the parsed relay type
                 if (relayType.equals(expectedRelayType)) {
                     try {
                         TorConfig config = parseTorConfig(file, relayType);
@@ -48,8 +48,11 @@ public class TorConfigService {
                     }
                 }
             }
+        } else {
+            System.out.println("No files found in directory"); // Print a message if no files are found
         }
 
+        System.out.println("Configurations found: " + configs.size()); // Print the number of configurations found
         return configs;
     }
 
@@ -81,6 +84,7 @@ public class TorConfigService {
                 parseTorConfigLines(line, config, relayType);
             }
         }
+        System.out.println("Parsed TorConfig: " + config); // Print the parsed TorConfig
         return config;
     }
 
