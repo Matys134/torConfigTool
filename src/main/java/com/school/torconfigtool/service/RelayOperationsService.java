@@ -314,16 +314,17 @@ public class RelayOperationsService {
 
     private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
-        System.out.println("Reading Tor configurations from: " + Constants.TORRC_DIRECTORY_PATH);
         TorConfig torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge")
                 .stream()
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
                 .findFirst()
                 .orElse(null);
 
+        System.out.println("Tor config: " + torConfig);
         if (torConfig == null) {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
         }
+        System.out.println("Tor config: " + torConfig.getBridgeConfig().getWebtunnelPort());
 
         return torConfig;
     }
