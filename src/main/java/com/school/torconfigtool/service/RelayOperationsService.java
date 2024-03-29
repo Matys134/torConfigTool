@@ -260,6 +260,7 @@ public class RelayOperationsService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         if (Files.exists(torrcFilePath)) {
             Files.delete(torrcFilePath);
+            System.out.println("Deleted torrc file for relay: " + relayNickname);
         }
     }
 
@@ -269,6 +270,7 @@ public class RelayOperationsService {
         File dataDirectory = new File(dataDirectoryPath);
         if (dataDirectory.exists()) {
             FileUtils.deleteDirectory(dataDirectory);
+            System.out.println("Deleted data directory for relay: " + relayNickname);
         }
     }
 
@@ -277,9 +279,11 @@ public class RelayOperationsService {
         Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
         if (Files.exists(onionFilePath)) {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
+            System.out.println("Deleted onion files for relay: " + relayNickname);
         }
         if (Files.exists(torrcOnionFilePath)) {
             Files.delete(torrcOnionFilePath);
+            System.out.println("Deleted torrc file for onion service: " + relayNickname);
         }
     }
 
@@ -297,6 +301,7 @@ public class RelayOperationsService {
         } else {
             removeServiceDirectory(relayNickname);
             removeNginxConfigAndSymbolicLink(relayNickname);
+            System.out.println("Deleted onion files for relay: " + relayNickname);
         }
     }
 
@@ -329,6 +334,8 @@ public class RelayOperationsService {
 
         commandService.executeCommand(removeNginxConfigCommand);
         commandService.executeCommand(removeSymbolicLinkCommand);
+
+        System.out.println("Deleted nginx config and symbolic link for relay: " + nickname);
     }
 
     private void removeServiceDirectory(int webtunnelPort) throws IOException {
@@ -344,6 +351,7 @@ public class RelayOperationsService {
         File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + nickname);
         if (serviceDirectory.exists()) {
             FileUtils.deleteDirectory(serviceDirectory);
+            System.out.println("Deleted service directory for relay: " + nickname);
         }
     }
 }
