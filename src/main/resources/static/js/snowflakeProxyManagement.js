@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('#start-snowflake-proxy-button').click(function() {
         $.ajax({
             type: "POST",
-            url: "/relay-operations/start-snowflake-proxy",
+            url: "/relay-operations-api/start-snowflake-proxy",
             success: function(response) {
                 alert(response);
             }
@@ -12,7 +12,7 @@ $(document).ready(function() {
     $('#stop-snowflake-proxy-button').click(function() {
         $.ajax({
             type: "POST",
-            url: "/relay-operations/stop-snowflake-proxy",
+            url: "/relay-operations-api/stop-snowflake-proxy",
             success: function(response) {
                 alert(response);
             }
@@ -24,7 +24,7 @@ $(document).ready(function() {
     $('#remove-snowflake-proxy-button').click(function() {
         $.ajax({
             type: "POST",
-            url: "/relay-operations/remove-snowflake-proxy",
+            url: "/relay-operations-api/remove-snowflake-proxy",
             success: function(response) {
                 alert(response);
             }
