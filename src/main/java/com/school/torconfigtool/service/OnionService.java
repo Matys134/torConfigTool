@@ -173,13 +173,4 @@ public class OnionService {
         }
         return hostnames;
     }
-
-    /**
-     * Removes the Nginx configuration and symbolic link files associated with the given relay nickname.
-     * This method is used when you want to completely remove an onion service from the system.
-     *
-     * @param relayNickname The nickname of the relay for which the onion files should be removed.
-     * @throws IOException If an I/O error occurs during the execution of the remove commands.
-     */
-
 }

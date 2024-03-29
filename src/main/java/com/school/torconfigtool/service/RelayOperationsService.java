@@ -316,7 +316,7 @@ public class RelayOperationsService {
         TorConfigService torConfigService = new TorConfigService();
         TorConfig torConfig = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge")
                 .stream()
-                .filter(config -> relayNickname.equals(config.getBridgeConfig().getNickname()))
+                .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
                 .findFirst()
                 .orElse(null);
 
@@ -324,7 +324,9 @@ public class RelayOperationsService {
         if (torConfig == null) {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
         }
-        System.out.println("Tor config: " + torConfig.getBridgeConfig().getWebtunnelPort());
+        int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
+
+        System.out.println("Webtunnel port: " + webtunnelPort);
 
         return torConfig;
     }
