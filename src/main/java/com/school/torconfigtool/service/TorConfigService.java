@@ -28,6 +28,7 @@ public class TorConfigService {
      * @return a list of Tor configurations.
      */
     public List<TorConfig> readTorConfigurations(String folderPath, String expectedRelayType) {
+        System.out.println("Reading configurations from: " + folderPath);
         List<TorConfig> configs = new ArrayList<>();
         File folder = new File(folderPath);
         System.out.println("Reading configurations from: " + folder.getAbsolutePath());
