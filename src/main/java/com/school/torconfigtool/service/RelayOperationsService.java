@@ -239,11 +239,11 @@ public class RelayOperationsService {
      * @param relayType The type of the Tor Relay to remove.
      * @return String The name of the view to render.
      */
-    public Map<String, Object> removeRelay(String relayNickname, String relayType) {
+    public Map<String, Object> removeService(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         try {
-            deleteOnionFiles(relayNickname);
-            removeOnionFiles(relayNickname, relayType);
+            deleteOnionServiceFiles(relayNickname);
+            removeNginxFilesAndConfig(relayNickname, relayType);
             deleteDataDirectory(relayNickname, relayType);
             deleteTorrcFile(relayNickname, relayType);
 
@@ -260,7 +260,6 @@ public class RelayOperationsService {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         if (Files.exists(torrcFilePath)) {
             Files.delete(torrcFilePath);
-            System.out.println("Deleted torrc file for relay: " + relayNickname);
         }
     }
 
@@ -270,22 +269,17 @@ public class RelayOperationsService {
         File dataDirectory = new File(dataDirectoryPath);
         if (dataDirectory.exists()) {
             FileUtils.deleteDirectory(dataDirectory);
-            System.out.println("Deleted data directory for relay: " + relayNickname);
         }
     }
 
-    private void deleteOnionFiles(String relayNickname) throws IOException, InterruptedException {
+    private void deleteOnionServiceFiles(String relayNickname) throws IOException, InterruptedException {
         Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
         Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
-        System.out.println(torrcOnionFilePath);
-        System.out.println(onionFilePath);
         if (Files.exists(onionFilePath)) {
             FileUtils.deleteDirectory(new File(onionFilePath.toString()));
-            System.out.println("Deleted onion files for relay: " + relayNickname);
         }
         if (Files.exists(torrcOnionFilePath)) {
             Files.delete(torrcOnionFilePath);
-            System.out.println("Deleted torrc file for onion service: " + relayNickname);
         }
     }
 
@@ -293,14 +287,12 @@ public class RelayOperationsService {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
 
-    public void removeOnionFiles(String relayNickname, String relayType) throws IOException {
+    public void removeNginxFilesAndConfig(String relayNickname, String relayType) throws IOException {
         int webtunnelPort = 0;
         if ("bridge".equals(relayType)) {
-            System.out.println("Removing onion files for bridge relay: " + relayNickname);
             TorConfig torConfig = getTorConfigForRelay(relayNickname);
             if (torConfig.getBridgeConfig() != null) {
                 webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
-                System.out.println("Webtunnel port: " + webtunnelPort);
             }
         }
 
@@ -317,23 +309,14 @@ public class RelayOperationsService {
         TorConfigService torConfigService = new TorConfigService();
         List<TorConfig> configs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
 
-
-        // Debugging: print all nicknames in the configs
-        configs.forEach(config -> System.out.println(config.getBridgeConfig().getNickname()));
-
         TorConfig torConfig = configs.stream()
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
                 .findFirst()
                 .orElse(null);
 
-        System.out.println("Tor config: " + torConfig);
         if (torConfig == null) {
             throw new IOException("Failed to find Tor configuration for relay: " + relayNickname);
         }
-        int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
-
-        System.out.println("Webtunnel port: " + webtunnelPort);
-
         return torConfig;
     }
 
@@ -366,7 +349,6 @@ public class RelayOperationsService {
         File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + nickname);
         if (serviceDirectory.exists()) {
             FileUtils.deleteDirectory(serviceDirectory);
-            System.out.println("Deleted service directory for relay: " + nickname);
         }
     }
 }

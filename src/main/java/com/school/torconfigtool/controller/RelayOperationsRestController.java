@@ -81,7 +81,7 @@ public class RelayOperationsRestController {
     @PostMapping("/remove")
     @ResponseBody
     public Map<String, Object> removeRelay(@RequestParam String relayNickname, @RequestParam String relayType) {
-        return relayOperationsService.removeRelay(relayNickname, relayType);
+        return relayOperationsService.removeService(relayNickname, relayType);
     }
 
     /**

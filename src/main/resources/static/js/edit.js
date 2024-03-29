@@ -14,6 +14,7 @@ $(document).ready(function () {
         webtunnelUrl: $("#edit-webtunnelurl"),
         path: $("#edit-path"),
         bandwidthRate: $("#edit-bandwidthrate"),
+        webtunnelPort: $("#edit-webtunnelport"),
     };
 
     // Selectors for the buttons
@@ -35,6 +36,7 @@ $(document).ready(function () {
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
+        configSelectors.webtunnelPort.val(data.webtunnelPort);
 
 
         // Hide all fields initially
@@ -77,6 +79,7 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+        configElement.find("p:contains('Webtunnel Port')").text(`Webtunnel Port: ${data.webtunnelPort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
@@ -85,6 +88,7 @@ $(document).ready(function () {
         editButton.data('config-webtunnelurl', data.webtunnelUrl);
         editButton.data('config-path', data.path);
         editButton.data('config-bandwidthrate', data.bandwidthRate);
+        editButton.data('config-webtunnelport', data.webtunnelPort);
     }
 
     function sendUpdateRequest(url, data) {
@@ -132,6 +136,7 @@ $(document).ready(function () {
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
+            webtunnelPort: relayType === 'bridge' ? $(this).data('config-webtunnelport') : "",
         };
 
         $.get("/server-ip", function(serverIp) {
@@ -158,6 +163,7 @@ $(document).ready(function () {
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
             path: configSelectors.path.val(),
             bandwidthRate: configSelectors.bandwidthRate.val(),
+            webtunnelPort: parseInt(configSelectors.webtunnelPort.val()),
         };
 
         $.get("/server-ip", function(serverIp) {
