@@ -317,8 +317,7 @@ public class RelayOperationsService {
         TorConfigService torConfigService = new TorConfigService();
         List<TorConfig> configs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
 
-        // Debugging: print all nicknames in the configs
-        configs.forEach(config -> System.out.println(config.getBridgeConfig().getNickname()));
+        System.out.println("Tor configs: " + configs);
 
         TorConfig torConfig = configs.stream()
                 .filter(config -> config.getBridgeConfig().getNickname().equals(relayNickname))
