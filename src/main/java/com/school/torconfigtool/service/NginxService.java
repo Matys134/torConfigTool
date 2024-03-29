@@ -304,8 +304,8 @@ public class NginxService {
         return allServices;
     }
 
-    public void updateNginxConfig(int newPort) {
-        String configPath = "/etc/nginx/sites-available/onion-service-9557";
+    public void updateNginxConfig(int newPort, int webtunnelPort) {
+        String configPath = "/etc/nginx/sites-available/onion-service-" + webtunnelPort;
         String sedCommand = String.format("s/proxy_pass http:\\/\\/127.0.0.1:[0-9]*/proxy_pass http:\\/\\/127.0.0.1:%d/g", newPort);
 
         ProcessBuilder processBuilder = new ProcessBuilder("sudo", "sed", "-i", sedCommand, configPath);
