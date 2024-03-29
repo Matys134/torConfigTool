@@ -173,10 +173,8 @@ $(document).ready(function () {
             hideModal();
 
             // If the bridge type is not webtunnel, set the orPort and serverTransport values
-            if (data.bridgeType !== 'webtunnel') {
-                data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransport = configSelectors.serverTransport.val();
-            }
+            data.orPort = parseInt(configSelectors.orPort.val());
+            data.serverTransport = configSelectors.serverTransport.val();
 
             // If only the contact field is being edited, skip the port availability check
             if (isBridgeEdit && data.bridgeType === 'webtunnel') {
