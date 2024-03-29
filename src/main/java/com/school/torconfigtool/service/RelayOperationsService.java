@@ -296,12 +296,13 @@ public class RelayOperationsService {
         int webtunnelPort = torConfig.getBridgeConfig().getWebtunnelPort();
 
         if (webtunnelPort > 0) {
+            System.out.println("Webtunnel port is set for relay: " + relayNickname);
             removeServiceDirectory(webtunnelPort);
             removeNginxConfigAndSymbolicLink(webtunnelPort);
         } else {
+            System.out.println("Webtunnel port is not set for relay: " + relayNickname);
             removeServiceDirectory(relayNickname);
             removeNginxConfigAndSymbolicLink(relayNickname);
-            System.out.println("Deleted onion files for relay: " + relayNickname);
         }
     }
 
