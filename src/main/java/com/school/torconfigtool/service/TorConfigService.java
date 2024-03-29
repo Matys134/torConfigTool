@@ -30,6 +30,7 @@ public class TorConfigService {
     public List<TorConfig> readTorConfigurations(String folderPath, String expectedRelayType) {
         List<TorConfig> configs = new ArrayList<>();
         File folder = new File(folderPath);
+        System.out.println("Reading configurations from: " + folder.getAbsolutePath());
         File[] files = folder.listFiles();
 
         if (files != null) {
