@@ -79,7 +79,7 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
-        configElement.find("p:contains('Webtunnel Port')").text(`Webtunnel Port: ${data.webtunnelPort}`);
+        configElement.find("p:contains('WebTunnel Port')").text(`WebTunnel Port: ${data.webtunnelPort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
@@ -127,6 +127,14 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
+        // Get the "WebTunnel Link" string
+        const webTunnelLink = $(this).parent().siblings("p:contains('WebTunnel Link')").text();
+
+        // Extract the webtunnelPort from the "WebTunnel Link" string
+        const webTunnelLinkParts = webTunnelLink.split(' ');
+        const webTunnelPart = webTunnelLinkParts.find(part => part.startsWith('webtunnel'));
+        const webTunnelPort = webTunnelPart.split(':')[1];
+
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -136,7 +144,7 @@ $(document).ready(function () {
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
-            webtunnelPort: relayType === 'bridge' ? $(this).data('config-webtunnelport') : "",
+            webtunnelPort: webTunnelPort,
         };
 
         $.get("/server-ip", function(serverIp) {
