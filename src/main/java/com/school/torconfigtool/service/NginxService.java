@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.util.Constants;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * NginxService is a service class responsible for managing the Nginx server.
@@ -62,25 +64,25 @@ public class NginxService {
      */
     public void reloadNginx() {
         // Check if Nginx is running
-        if (!isNginxRunning()) {
-            // If Nginx is not running, start it
-            startNginx();
-        } else {
-            // If Nginx is running, reload it
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
-
-            try {
-                Process process = processBuilder.start();
-                int exitCode = process.waitFor();
-
-                if (exitCode != 0) {
-                    throw new IOException("Failed to reload Nginx");
-                }
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException("Failed to reload Nginx", e);
-            }
-        }
+//        if (!isNginxRunning()) {
+//            // If Nginx is not running, start it
+//            startNginx();
+//        } else {
+//            // If Nginx is running, reload it
+//            ProcessBuilder processBuilder = new ProcessBuilder();
+//            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
+//
+//            try {
+//                Process process = processBuilder.start();
+//                int exitCode = process.waitFor();
+//
+//                if (exitCode != 0) {
+//                    throw new IOException("Failed to reload Nginx");
+//                }
+//            } catch (IOException | InterruptedException e) {
+//                throw new RuntimeException("Failed to reload Nginx", e);
+//            }
+//        }
     }
 
     /**
@@ -162,19 +164,19 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort) throws Exception {
+    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
         // Build the new configuration
         StringBuilder sb = new StringBuilder();
         sb.append("server {\n");
-        sb.append("    listen [::]:" + webtunnelPort + " ssl http2;\n");
-        sb.append("    listen " + webtunnelPort + " ssl http2;\n");
-        sb.append("    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n");
+        sb.append("    listen [::]:").append(webtunnelPort).append(" ssl http2;\n");
+        sb.append("    listen ").append(webtunnelPort).append(" ssl http2;\n");
+        sb.append("    root ").append(programLocation).append("/onion/www/service-").append(webtunnelPort).append(";\n");
         sb.append("    index index.html index.htm index.nginx-debian.html;\n");
         sb.append("    server_name $SERVER_ADDRESS;\n");
-        sb.append("    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n");
-        sb.append("    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n");
-        sb.append("    location = /" + randomString + " {\n");
-        sb.append("        proxy_pass http://127.0.0.1:15000;\n");
+        sb.append("    ssl_certificate ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/fullchain.pem;\n");
+        sb.append("    ssl_certificate_key ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/key.pem;\n");
+        sb.append("    location = /").append(randomString).append(" {\n");
+        sb.append("        proxy_pass http://127.0.0.1:").append(transportListenAddr).append(";\n");
         sb.append("        proxy_http_version 1.1;\n");
         sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
         sb.append("        proxy_set_header Connection \"upgrade\";\n");
@@ -287,16 +289,34 @@ public class NginxService {
     public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
-        List<TorConfig> onionConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "onion");
+        List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
+                "onion");
         for (TorConfig config : onionConfigs) {
-            allServices.add(config.getHiddenServicePort());
+            allServices.add(config.getOnionConfig().getHiddenServicePort());
         }
 
         // Get the list of all webTunnels
-        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
+        List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH,
+                "bridge");
         for (TorConfig config : bridgeConfigs) {
             allServices.add(config.getBridgeConfig().getNickname());
         }
         return allServices;
+    }
+
+    public void updateNginxConfig(int newPort, int webtunnelPort) {
+        String configPath = "/etc/nginx/sites-available/onion-service-" + webtunnelPort;
+        String sedCommand = String.format("s/proxy_pass http:\\/\\/127.0.0.1:[0-9]*/proxy_pass http:\\/\\/127.0.0.1:%d/g", newPort);
+
+        ProcessBuilder processBuilder = new ProcessBuilder("sudo", "sed", "-i", sedCommand, configPath);
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new RuntimeException("Failed to update Nginx configuration");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Failed to update Nginx configuration", e);
+        }
     }
 }

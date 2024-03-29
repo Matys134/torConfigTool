@@ -1,8 +1,9 @@
 $(document).ready(function () {
 
-    let isBridgeEdit = false; // Add this variable to track which config is being edited
-    let serverTransportProtocolAndAddress;
+    // Variable to track which config is being edited
+    let isBridgeEdit = false;
 
+    // Selectors for the various elements in the modal
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
@@ -13,8 +14,10 @@ $(document).ready(function () {
         webtunnelUrl: $("#edit-webtunnelurl"),
         path: $("#edit-path"),
         bandwidthRate: $("#edit-bandwidthrate"),
+        webtunnelPort: $("#edit-webtunnelport"),
     };
 
+    // Selectors for the buttons
     const buttons = {
         edit: $(".edit-button, .edit-bridge-button"), // Combined edit buttons for guard and bridge
         save: $("#save-button"),
@@ -23,23 +26,17 @@ $(document).ready(function () {
 
     // Function to show the modal with the data for editing
     function showModalWith(data, relayType, bridgeType) {
-        console.log('Data:', data); // Log the data object
-        console.log("Tady ty kokot")
-
-        // Split the serverTransport into protocol and port
-        const serverTransportParts = data.serverTransport ? data.serverTransport.split(':') : [];
-        serverTransportProtocolAndAddress = serverTransportParts.slice(0, -1).join(':');
-        const serverTransportPort = serverTransportParts[serverTransportParts.length - 1];
 
         // Set the values of the input fields
-        configSelectors.nickname.text(data.nickname); // Use .text() for nickname
+        configSelectors.nickname.text(data.nickname);
         configSelectors.orPort.val(data.orPort);
-        configSelectors.serverTransport.val(serverTransportPort);
+        configSelectors.serverTransport.val(data.serverTransport);
         configSelectors.contact.val(data.contact);
         configSelectors.controlPort.val(data.controlPort);
         configSelectors.webtunnelUrl.val(data.webtunnelUrl);
         configSelectors.path.val(data.path);
         configSelectors.bandwidthRate.val(data.bandwidthRate.split(' ')[0]);
+        configSelectors.webtunnelPort.val(data.webtunnelPort);
 
 
         // Hide all fields initially
@@ -57,16 +54,10 @@ $(document).ready(function () {
                 const inputId = $(this).next('input').attr('id');
                 if (inputId in data) {
                     const value = data[inputId.replace('edit-', '')];
-                    console.log('Setting value for input field with id ' + inputId + ': ' + value);
                     $(this).next('input').val(value);
                 }
             }
         });
-
-        // Log the current values of the webtunnelUrl and path fields
-        console.log('webtunnelUrl field:', configSelectors.webtunnelUrl);
-        console.log('path field:', configSelectors.path);
-
         // Show the modal
         $('#edit-modal').modal('show');
     }
@@ -79,9 +70,6 @@ $(document).ready(function () {
     function updateView(data) {
         const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
         const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
-        console.log("Data: ", data);
-
-        console.log("configElement: ", configElement); // Add this line
 
         configElement.find("h5:contains('Nickname')").text(`Nickname: ${data.nickname}`);
         configElement.find("p:contains('ORPort')").text(`ORPort: ${data.orPort}`);
@@ -91,6 +79,7 @@ $(document).ready(function () {
         configElement.find("p:contains('Webtunnel URL')").text(`Webtunnel URL: ${data.webtunnelUrl}`);
         configElement.find("p:contains('Path')").text(`Path: ${data.path}`);
         configElement.find("p:contains('Bandwidth Limit')").text(`Bandwidth Limit: ${data.bandwidthRate}`);
+        configElement.find("p:contains('WebTunnel Port')").text(`WebTunnel Port: ${data.webtunnelPort}`);
 
         editButton.data('config-orport', data.orPort);
         editButton.data('config-servertransport', data.serverTransport);
@@ -99,15 +88,7 @@ $(document).ready(function () {
         editButton.data('config-webtunnelurl', data.webtunnelUrl);
         editButton.data('config-path', data.path);
         editButton.data('config-bandwidthrate', data.bandwidthRate);
-
-        // Add these lines
-        console.log("ORPort: ", configElement.find(".config-orport").text());
-        console.log("ServerTransportListenAddr: ", configElement.find(".config-server-transport").text());
-        console.log("Contact: ", configElement.find(".config-contact").text());
-        console.log("Control Port: ", configElement.find(".config-controlport").text());
-        console.log("Webtunnel URL: ", configElement.find(".config-webtunnelurl").text());
-        console.log("Path: ", configElement.find(".config-path").text());
-        console.log("Bandwidth Limit: ", configElement.find(".config-bandwidthrate").text());
+        editButton.data('config-webtunnelport', data.webtunnelPort);
     }
 
     function sendUpdateRequest(url, data) {
@@ -146,8 +127,6 @@ $(document).ready(function () {
         // Set isBridgeEdit based on the relay type
         isBridgeEdit = relayType === 'bridge';
 
-        console.log("Button clicked: ", relayType, nickname, isBridgeEdit);
-
         const data = {
             nickname: nickname,
             orPort: $(this).data('config-orport'),
@@ -157,16 +136,13 @@ $(document).ready(function () {
             webtunnelUrl: relayType === 'bridge' ? $(this).data('config-webtunnelurl') : "",
             path: relayType === 'bridge' ? $(this).data('config-path') : "",
             bandwidthRate: $(this).data('config-bandwidthrate'),
+            webtunnelPort: $(this).data('config-webtunnelport'),
         };
 
         $.get("/server-ip", function(serverIp) {
-        $.get("http://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
+        $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
             // Get the bridge type for the current nickname
             const bridgeType = runningBridgeTypes[nickname];
-
-            console.log('Relay type:', relayType);
-            console.log('Bridge type:', bridgeType);
-            console.log('path:', data.path);
 
             showModalWith(data, relayType, bridgeType);
         });
@@ -174,9 +150,6 @@ $(document).ready(function () {
     });
 
     buttons.save.click(function () {
-        console.log('webtunnelUrl input field:', configSelectors.webtunnelUrl);
-        console.log('path input field:', configSelectors.path);
-
         const bandwidth = parseInt(configSelectors.bandwidthRate.val());
         if (bandwidth !== 0 && bandwidth < 75) {
             alert("Bandwidth must be 0 or 75 and larger");
@@ -190,10 +163,8 @@ $(document).ready(function () {
             webtunnelUrl: configSelectors.webtunnelUrl.val(),
             path: configSelectors.path.val(),
             bandwidthRate: configSelectors.bandwidthRate.val(),
+            webtunnelPort: parseInt(configSelectors.webtunnelPort.val()),
         };
-
-        console.log('webtunnelUrl:', data.webtunnelUrl);
-        console.log('path:', data.path);
 
         $.get("/server-ip", function(serverIp) {
         $.get("https://" + serverIp + ":8443/bridge-api/bridges/configured-type", function(runningBridgeTypes) {
@@ -202,10 +173,8 @@ $(document).ready(function () {
             hideModal();
 
             // If the bridge type is not webtunnel, set the orPort and serverTransport values
-            if (data.bridgeType !== 'webtunnel') {
-                data.orPort = parseInt(configSelectors.orPort.val());
-                data.serverTransport = configSelectors.serverTransport.val();
-            }
+            data.orPort = parseInt(configSelectors.orPort.val());
+            data.serverTransport = configSelectors.serverTransport.val();
 
             // If only the contact field is being edited, skip the port availability check
             if (isBridgeEdit && data.bridgeType === 'webtunnel') {

@@ -2,7 +2,6 @@ $(document).ready(function () {
     // Function to check and update relay status
     function updateRelayStatus(nickname, relayType) {
         $.get("/relay-operations-api/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
-            console.log(data); // Log the server response
 
             const statusElement = $("#status-" + nickname);
             const statusMessageElement = $("#status-message-" + nickname);
@@ -101,5 +100,5 @@ $(document).ready(function () {
         updateGuardRelayStatus();
         updateBridgeRelayStatus();
         updateOnionRelayStatus();
-    }, 10000);
+    }, 5000);
 });

@@ -21,55 +21,38 @@ import java.util.List;
 public class TorConfigService {
 
     /**
-     * Reads Tor configurations from the specified folder.
-     *
-     * @return a list of Tor configurations.
-     */
-    public List<TorConfig> readTorConfigurations() {
-        List<TorConfig> configs = new ArrayList<>();
-        String folderPath = buildFolderPath();
-
-        configs.addAll(readTorConfigurationsFromFolder(folderPath, "guard"));
-        configs.addAll(readTorConfigurationsFromFolder(folderPath, "bridge"));
-
-        return configs;
-    }
-
-    /**
-     * Builds the folder path for the Tor configurations.
-     *
-     * @return the folder path as a string.
-     */
-    public String buildFolderPath() {
-        return "torrc";
-    }
-
-    /**
      * Reads Tor configurations from a specified folder and relay type.
      *
      * @param folderPath the path to the folder.
      * @param expectedRelayType the expected relay type.
      * @return a list of Tor configurations.
      */
-    public List<TorConfig> readTorConfigurationsFromFolder(String folderPath, String expectedRelayType) {
+    public List<TorConfig> readTorConfigurations(String folderPath, String expectedRelayType) {
+        System.out.println("Reading configurations from: " + folderPath);
         List<TorConfig> configs = new ArrayList<>();
+        System.out.println("Expected relay type: " + expectedRelayType);
         File folder = new File(folderPath);
         File[] files = folder.listFiles();
 
         if (files != null) {
+            System.out.println("Files in directory: " + files.length); // Print the number of files in the directory
             for (File file : files) {
                 String relayType = parseRelayTypeFromFile(file);
+                System.out.println("Parsed relay type: " + relayType); // Print the parsed relay type
                 if (relayType.equals(expectedRelayType)) {
                     try {
-                        TorConfig config = parseTorConfiguration(file, relayType);
+                        TorConfig config = parseTorConfig(file, relayType);
                         configs.add(config);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
+        } else {
+            System.out.println("No files found in directory"); // Print a message if no files are found
         }
 
+        System.out.println("Configurations found: " + configs.size()); // Print the number of configurations found
         return configs;
     }
 
@@ -93,14 +76,15 @@ public class TorConfigService {
      * @return a Tor configuration.
      * @throws IOException if an I/O error occurs.
      */
-    private TorConfig parseTorConfiguration(File file, String relayType) throws IOException {
+    private TorConfig parseTorConfig(File file, String relayType) throws IOException {
         TorConfig config = new TorConfig();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                parseTorConfigLine(line, config, relayType);
+                parseTorConfigLines(line, config, relayType);
             }
         }
+        System.out.println("Parsed TorConfig: " + config); // Print the parsed TorConfig
         return config;
     }
 
@@ -111,7 +95,7 @@ public class TorConfigService {
      * @param config the configuration to update.
      * @param relayType the relay type.
      */
-    private void parseTorConfigLine(String line, TorConfig config, String relayType) {
+    private void parseTorConfigLines(String line, TorConfig config, String relayType) {
         RelayConfig relayConfig = getRelayConfig(config, relayType);
 
         if (line.startsWith("Nickname")) {
@@ -121,30 +105,33 @@ public class TorConfigService {
         } else if (line.startsWith("Contact")) {
             relayConfig.setContact(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServiceDir")) {
-            config.setHiddenServiceDir(line.split(" ")[1].trim());
+            config.getOnionConfig().setHiddenServiceDir(line.split(" ")[1].trim());
         } else if (line.startsWith("HiddenServicePort")) {
             String[] parts = line.split(" ");
-            String addressAndPort = parts[parts.length - 1]; // Get the last element "127.0.0.1:9005"
-            String port = addressAndPort.split(":")[1]; // Split by ":" and get the second element "9005"
-            config.setHiddenServicePort(port);
+            String addressAndPort = parts[parts.length - 1];
+            String port = addressAndPort.split(":")[1];
+            config.getOnionConfig().setHiddenServicePort(port);
         } else if (line.startsWith("ControlPort")) {
             relayConfig.setControlPort(line.split(" ")[1].trim());
         } else if (line.startsWith("RelayBandwidthRate")) {
             String bandwidthRate = line.substring("RelayBandwidthRate".length()).trim();
             updateBandwidthRate(relayConfig, bandwidthRate);
-        } else if (line.startsWith("ServerTransportListenAddr obfs4") && relayType.equals("bridge")) {
-            ((BridgeConfig) relayConfig).setServerTransport(line.substring(line.indexOf("obfs4")).trim());
+        } else if ((line.startsWith("ServerTransportListenAddr obfs4") || line.startsWith("ServerTransportListenAddr webtunnel")) && relayType.equals("bridge")) {
+            String port = line.split(" ")[2].split(":")[1];
+            ((BridgeConfig) relayConfig).setServerTransport(port);
         } else if (line.startsWith("ServerTransportOptions webtunnel url") && relayType.equals("bridge")) {
             String fullUrl = line.split("=")[1].trim();
             try {
                 java.net.URI uri = new java.net.URI(fullUrl);
                 String webtunnelUrl = uri.getHost();
-                String path = uri.getPath().substring(1); // Remove the leading "/"
+                String path = uri.getPath().substring(1);
                 ((BridgeConfig) relayConfig).setWebtunnelUrl(webtunnelUrl);
                 ((BridgeConfig) relayConfig).setPath(path);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        } else if (line.startsWith("# webtunnel")) {
+            ((BridgeConfig) relayConfig).setWebtunnelPort(Integer.parseInt(line.split(" ")[2]));
         }
     }
 

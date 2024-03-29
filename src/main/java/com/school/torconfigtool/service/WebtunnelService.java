@@ -92,11 +92,14 @@ public class WebtunnelService {
     }
 
     public String getWebtunnelLink(String relayNickname) {
-        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
-        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
+                + "dataDirectory";
+        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig"
+                + File.separator + "fingerprint";
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
 
-        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
+        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
+                + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
         String webtunnelPort = null; // Changed from int to String

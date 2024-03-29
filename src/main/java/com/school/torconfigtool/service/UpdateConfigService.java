@@ -7,14 +7,7 @@ import java.util.Map;
  * This interface defines the contract for services that manage Relay Configurations.
  * The generic type T extends BaseRelayConfig which means it can be any type that is a subclass of BaseRelayConfig.
  */
-public interface RelayConfigService<T extends BaseRelayConfig> {
-
-    /**
-     * Updates the configuration with the provided config object.
-     * @param config The configuration object to be updated.
-     * @return A boolean indicating the success of the operation.
-     */
-    boolean updateConfiguration(T config);
+public interface UpdateConfigService<T extends BaseRelayConfig> {
 
     /**
      * Builds the file path for the Torrc file based on the provided nickname.
@@ -28,5 +21,5 @@ public interface RelayConfigService<T extends BaseRelayConfig> {
      * @param config The configuration object to be updated.
      * @return A map containing the response details.
      */
-    Map<String, String> updateConfigAndReturnResponse(T config);
+    Map<String, String> updateConfiguration(T config);
 }

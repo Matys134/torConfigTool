@@ -76,7 +76,8 @@ public class RelayInformationService {
      */
     public Map<String, String> getConfiguredBridgeType() {
         File torrcDirectory = new File(TORRC_DIRECTORY_PATH);
-        File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) && name.endsWith("_bridge"));
+        File[] files = torrcDirectory.listFiles((dir, name) -> name.startsWith(TORRC_FILE_PREFIX) &&
+                name.endsWith("_bridge"));
         Map<String, String> runningBridgeTypes = new HashMap<>();
 
         if (files != null) {
@@ -92,7 +93,8 @@ public class RelayInformationService {
                         bridgeType = "snowflake";
                     }
                     if (bridgeType != null) {
-                        String bridgeNickname = file.getName().substring(TORRC_FILE_PREFIX.length(), file.getName().length() - "_bridge".length());
+                        String bridgeNickname = file.getName().substring(TORRC_FILE_PREFIX.length(),
+                                file.getName().length() - "_bridge".length());
                         runningBridgeTypes.put(bridgeNickname, bridgeType);
                     }
                 } catch (IOException e) {
@@ -128,7 +130,6 @@ public class RelayInformationService {
             bridgeCountByType.put(bridgeType, bridgeCountByType.get(bridgeType) + 1);
         }
 
-        // Count the number of running snowflake proxies
         if (new File(TORRC_DIRECTORY_PATH, "snowflake_proxy_configured").exists()) {
             bridgeCountByType.put("snowflake", bridgeCountByType.get("snowflake") + 1);
         }

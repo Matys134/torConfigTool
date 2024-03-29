@@ -36,7 +36,7 @@ public class UpdateGuardConfigRestController {
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> updateGuardConfiguration(@RequestBody GuardConfig config) {
-        Map<String, String> response = updateGuardConfigService.updateConfigAndReturnResponse(config);
+        Map<String, String> response = updateGuardConfigService.updateConfiguration(config);
         if (response.get("message").startsWith("Guard configuration updated successfully")) {
             return ResponseEntity.ok(response);
         } else {

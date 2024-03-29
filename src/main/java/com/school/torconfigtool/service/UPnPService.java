@@ -1,6 +1,7 @@
 package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.TorConfig;
+import com.school.torconfigtool.util.Constants;
 import com.simtechdata.waifupnp.UPnP;
 import org.springframework.stereotype.Service;
 
@@ -43,16 +44,22 @@ public class UPnPService {
      * @param relayType      The type of the relay.
      * @return               A map containing the success status and a message.
      */
-    public Map<String, Object> openOrPort(String relayNickname, String relayType) {
+    public Map<String, Object> openPorts(String relayNickname, String relayType) {
         Map<String, Object> response = new HashMap<>();
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
 
-        int orPort = getOrPort(torrcFilePath);
-        boolean success = UPnP.openPortTCP(orPort);
+        Map<String, List<Integer>> ports = getPorts(torrcFilePath);
+        boolean success = true;
 
-        // Open ServerTransportListenAddr ports and webtunnel ports
-        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
-        for (int port : additionalPorts) {
+        for (int port : ports.get("ORPort")) {
+            success &= UPnP.openPortTCP(port);
+        }
+
+        for (int port : ports.get("Obfs4Port")) {
+            success &= UPnP.openPortTCP(port);
+        }
+
+        for (int port : ports.get("WebTunnelPort")) {
             success &= UPnP.openPortTCP(port);
         }
 
@@ -66,6 +73,36 @@ public class UPnPService {
     }
 
     /**
+     * Closes a port based on the relay nickname and type.
+     *
+     * @param relayNickname  The nickname of the relay.
+     * @param relayType      The type of the relay.
+     */
+    public void closePorts(String relayNickname, String relayType) {
+        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
+
+        Map<String, List<Integer>> ports = getPorts(torrcFilePath);
+        ports.get("ORPort").forEach(port -> {
+            if (UPnP.isMappedTCP(port)) {
+                UPnP.closePortTCP(port);
+            }
+        });
+
+        // Close ServerTransportListenAddr ports and webtunnel ports
+        for (int port : ports.get("Obfs4Port")) {
+            if (UPnP.isMappedTCP(port)) {
+                UPnP.closePortTCP(port);
+            }
+        }
+
+        for (int port : ports.get("WebTunnelPort")) {
+            if (UPnP.isMappedTCP(port)) {
+                UPnP.closePortTCP(port);
+            }
+        }
+    }
+
+    /**
      * Toggles UPnP on or off.
      *
      * @param enable  A boolean indicating whether to enable or disable UPnP.
@@ -74,21 +111,32 @@ public class UPnPService {
     public Map<String, Object> toggleUPnP(boolean enable) {
         Map<String, Object> response = new HashMap<>();
         try {
-            List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
-            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "bridge");
+            List<TorConfig> guardConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "guard");
+            List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
             List<TorConfig> allConfigs = new ArrayList<>();
             allConfigs.addAll(guardConfigs);
             allConfigs.addAll(bridgeConfigs);
 
             for (TorConfig config : allConfigs) {
-                String relayType = config.getGuardConfig() != null ? "guard" : "bridge";
-                if (enable) {
-                    String status = relayStatusService.getRelayStatus(config.getGuardConfig().getNickname(), relayType);
-                    if ("online".equals(status)) {
-                        openOrPort(config.getGuardConfig().getNickname(), relayType);
+                String relayType = null;
+                String relayNickname = null;
+                if (config.getGuardConfig() != null) {
+                    relayType = "guard";
+                    relayNickname = config.getGuardConfig().getNickname();
+                } else if (config.getBridgeConfig() != null) {
+                    relayType = "bridge";
+                    relayNickname = config.getBridgeConfig().getNickname();
+                }
+
+                if (relayType != null && relayNickname != null) {
+                    if (enable) {
+                        String status = relayStatusService.getRelayStatus(relayNickname, relayType);
+                        if ("online".equals(status)) {
+                            openPorts(relayNickname, relayType);
+                        }
+                    } else {
+                        closePorts(relayNickname, relayType);
                     }
-                } else {
-                    closeOrPort(config.getGuardConfig().getNickname(), relayType);
                 }
             }
             response.put("success", true);
@@ -100,99 +148,38 @@ public class UPnPService {
         return response;
     }
 
-    /**
-     * Closes a port based on the relay nickname and type.
-     *
-     * @param relayNickname  The nickname of the relay.
-     * @param relayType      The type of the relay.
-     */
-    public void closeOrPort(String relayNickname, String relayType) {
-        Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
-        int orPort = getOrPort(torrcFilePath);
-        UPnP.closePortTCP(orPort);
+    public Map<String, List<Integer>> getPorts(Path torrcFilePath) {
+        Map<String, List<Integer>> ports = new HashMap<>();
+        ports.put("ORPort", new ArrayList<>());
+        ports.put("Obfs4Port", new ArrayList<>());
+        ports.put("WebTunnelPort", new ArrayList<>());
 
-        // Close ServerTransportListenAddr ports and webtunnel ports
-        List<Integer> additionalPorts = getAdditionalPorts(torrcFilePath);
-        for (int port : additionalPorts) {
-            UPnP.closePortTCP(port);
-        }
-    }
-
-    /**
-     * Retrieves the ORPort from a torrc file.
-     *
-     * @param torrcFilePath  The path to the torrc file.
-     * @return               The ORPort as an integer.
-     */
-    public int getOrPort(Path torrcFilePath) {
-        int orPort = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ORPort")) {
-                    orPort = Integer.parseInt(line.split(" ")[1]);
-                    break;
+                    if (!line.equals("ORPort 127.0.0.1:auto IPv4Only")) {
+                        String portStr = line.split(" ")[1];
+                        ports.get("ORPort").add(Integer.parseInt(portStr));
+                    }
+                }
+                if (line.startsWith("ServerTransportListenAddr obfs4")) {
+                    String[] parts = line.split(" ");
+                    if (parts.length > 2) {
+                        String[] addrParts = parts[2].split(":");
+                        if (addrParts.length > 1) {
+                            ports.get("Obfs4Port").add(Integer.parseInt(addrParts[1]));
+                        }
+                    }
+                }
+                if (line.startsWith("# webtunnel")) {
+                    ports.get("WebTunnelPort").add(Integer.parseInt(line.split(" ")[2]));
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read torrc file", e);
         }
-        return orPort;
-    }
-
-    /**
-     * Retrieves a list of UPnP ports.
-     *
-     * @return  A list of UPnP ports as integers.
-     */
-    public List<Integer> getUPnPPorts() {
-        List<Integer> upnpPorts = new ArrayList<>();
-        List<TorConfig> guardConfigs = torConfigService.readTorConfigurationsFromFolder(torConfigService.buildFolderPath(), "guard");
-        for (TorConfig config : guardConfigs) {
-            int orPort = getOrPort(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
-            if (UPnP.isMappedTCP(orPort)) {
-                upnpPorts.add(orPort);
-            }
-
-            // Add ServerTransportListenAddr ports and webtunnel ports
-            List<Integer> additionalPorts = getAdditionalPorts(torFileService.buildTorrcFilePath(config.getGuardConfig().getNickname(), "guard"));
-            for (int port : additionalPorts) {
-                if (UPnP.isMappedTCP(port)) {
-                    upnpPorts.add(port);
-                }
-            }
-        }
-        return upnpPorts;
-    }
-
-    private List<Integer> getAdditionalPorts(Path torrcFilePath) {
-        List<Integer> additionalPorts = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath.toFile()))){
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("ServerTransportListenAddr")) {
-                    String[] parts = line.split(" ");
-                    if (parts.length > 2) {
-                        String[] addrParts = parts[2].split(":");
-                        if (addrParts.length > 1) {
-                            additionalPorts.add(Integer.parseInt(addrParts[1]));
-                        }
-                    }
-                }
-                if (line.contains("webtunnel")) {
-                    String[] parts = line.split(" ");
-                    if (parts.length > 2) {
-                        String[] addrParts = parts[2].split(":");
-                        if (addrParts.length > 1) {
-                            additionalPorts.add(Integer.parseInt(addrParts[1]));
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read torrc file", e);
-        }
-        return additionalPorts;
+        return ports;
     }
 
     public boolean isUPnPAvailable() {

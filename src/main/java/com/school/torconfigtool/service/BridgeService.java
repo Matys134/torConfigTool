@@ -41,15 +41,15 @@ public class BridgeService {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (bridgePort == null && bridgeTransportListenAddr == null) {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        } else {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
-                throw new Exception("One or more ports are already in use.");
-            }
-        }
+//        if (bridgePort == null && bridgeTransportListenAddr == null) {
+//            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
+//                throw new Exception("One or more ports are already in use.");
+//            }
+//        } else {
+//            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgePort, bridgeTransportListenAddr, bridgeControlPort)) {
+//                throw new Exception("One or more ports are already in use.");
+//            }
+//        }
 
         String torrcFileName = TORRC_FILE_PREFIX + bridgeNickname + "_bridge";
         Path torrcFilePath = Paths.get(TORRC_DIRECTORY_PATH, torrcFileName).toAbsolutePath().normalize();
@@ -77,11 +77,11 @@ public class BridgeService {
             TorrcFileCreator.createTorrcFile(torrcFilePath.toString(), config);
         }
 
-        if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null) {
+        if (webtunnelUrl != null && !webtunnelUrl.isEmpty() && webtunnelPort != null && bridgeTransportListenAddr != null) {
             nginxService.configureNginxForOnionService(webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort);
+            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr);
             config.setPath(randomString);
             webtunnelService.updateTorrcFile(config);
 
