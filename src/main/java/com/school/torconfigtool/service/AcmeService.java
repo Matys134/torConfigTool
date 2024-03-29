@@ -36,8 +36,6 @@ public class AcmeService {
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
                 + "/onion/www/service-" + webtunnelPort + "/ --nginx --server letsencrypt_test --force";
 
-        System.out.println("Command: " + command);
-
         Process certProcess = commandService.executeCommand(command);
 
         if (certProcess == null || certProcess.exitValue() != 0) {
