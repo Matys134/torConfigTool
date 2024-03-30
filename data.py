@@ -150,9 +150,6 @@ def _send_bandwidth_data(controller, control_port):
     initial_download = int(controller.get_info("traffic/read"))
     initial_upload = int(controller.get_info("traffic/written"))
 
-    # Wait for 1 second
-    time.sleep(1)
-
     # Get the total bytes read and written after 1 second
     final_download = int(controller.get_info("traffic/read"))
     final_upload = int(controller.get_info("traffic/written"))
