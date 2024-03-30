@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 
@@ -47,9 +48,9 @@ public class ProxyController {
      * @return The name of the view to be rendered.
      */
     @PostMapping("/start")
-    public String startProxy(Model model) {
+    public String startProxy(@RequestParam("socksPort") int socksPort, Model model) {
         try {
-            String result = proxyService.configureAndStartProxy();
+            String result = proxyService.configureAndStartProxy(socksPort);
             if (result.equals("success")) {
                 model.addAttribute("successMessage", "Tor Proxy started successfully!");
             } else {

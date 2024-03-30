@@ -50,9 +50,9 @@ public class ProxyService {
      * @param localIpAddress The local IP address to use in the configuration.
      * @throws IOException If an I/O error occurs.
      */
-    public void writeConfiguration(File file, String localIpAddress) throws IOException {
+    public void writeConfiguration(File file, String localIpAddress, int socksPort) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-            bw.write("SocksPort " + localIpAddress + ":9050");
+            bw.write("SocksPort " + localIpAddress + ":" + socksPort);
             bw.newLine();
             String localNetwork = localIpAddress.substring(0, localIpAddress.lastIndexOf('.')) + ".0/24";
             bw.write("SocksPolicy accept " + localNetwork);
@@ -69,10 +69,10 @@ public class ProxyService {
      * @return true if the configuration was successful, false otherwise.
      * @throws IOException If an I/O error occurs.
      */
-    public boolean configureProxy() throws IOException {
+    public boolean configureProxy(int socksPort) throws IOException {
         File torrcFile = createProxyFile(TORRC_PROXY_FILE);
         String localIpAddress = ipAddressRetriever.getLocalIpAddress();
-        writeConfiguration(torrcFile, localIpAddress);
+        writeConfiguration(torrcFile, localIpAddress, socksPort);
         return true;
     }
 
@@ -116,8 +116,8 @@ public class ProxyService {
      * @throws IOException      If an I/O error occurs.
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to start.
      */
-    public String configureAndStartProxy() throws IOException, InterruptedException {
-        if (!configureProxy()) {
+    public String configureAndStartProxy(int socksPort) throws IOException, InterruptedException {
+        if (!configureProxy(socksPort)) {
             return "Failed to configure Tor Proxy.";
         }
 
