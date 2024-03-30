@@ -13,9 +13,9 @@ $(document).ready(function () {
 
         // Create a container for the upload and download rates
         $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
-// Create a container for the events
+        // Create a container for the events
         $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
-// Create a container for the flags
+        // Create a container for the flags
         $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
         const eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
@@ -105,7 +105,6 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
-                    // Fetch the flags data
                     const flagsData = data.map(function (relayData) {
                         return relayData.flags;
                     });
@@ -142,10 +141,6 @@ $(document).ready(function () {
                     if (relayChart && relayChart.options && relayChart.options.scales && relayChart.options.scales.yAxes && relayChart.options.scales.yAxes[0]) {
                         relayChart.options.scales.yAxes[0].scaleLabel.labelString = unit;
                     }
-
-                    // Get the current time and format it as a string
-                    const currentTime = new Date();
-                    const timeLabel = currentTime.getHours() + ':' + currentTime.getMinutes() + ':' + currentTime.getSeconds();
 
                     // Update the chart's data and labels
                     relayChart.data.labels.push(''); // Add a label for each data point
@@ -196,10 +191,6 @@ $(document).ready(function () {
             });
         }
 
-        // Store the last fetched events and the last event index
-        const lastEvents = {};
-        const lastEventIndex = {};
-
         function updateRelayEventData(port, eventContainer) {
             if (!$('#relayChart' + port).is(':visible')) {
                 // If the chart is not visible, return immediately without fetching and displaying the events
@@ -231,7 +222,7 @@ $(document).ready(function () {
                         const formattedTime = date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
                         const eventElement = document.createElement('p');
-                        eventElement.innerText = formattedDate + ' ' + formattedTime + ': ' + event.split(' ').slice(1).join(' '); // The event data now includes the formatted timestamp
+                        eventElement.innerText = formattedDate + ' ' + formattedTime + ': ' + event.split(' ').slice(1).join(' ');
                         eventContainer.append(eventElement);
                     }
                 }
@@ -257,12 +248,12 @@ $(document).ready(function () {
             relayInfoArray.forEach(function (relayInfo) {
                 const port = relayInfo.controlPort;
                 const nickname = relayInfo.nickname;
-                const type = relayInfo.type; // Add this line
+                const type = relayInfo.type;
 
                 createRelayChart(port, nickname);
 
                 // Add an item to the dropdown menu for this relay
-                const menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>'); // Modify this line
+                const menuItem = $('<a class="dropdown-item" href="#">' + nickname + ' (' + type + ')' + '</a>');
                 menuItem.appendTo($('#relayDropdownMenu'));
 
                 // Add a click event handler to the menu item
@@ -280,7 +271,7 @@ $(document).ready(function () {
                     $('#eventData' + port).show();
                 });
             });
-        }).catch(function (jqXHR, textStatus, errorThrown) {  // Use catch instead of fail
+        }).catch(function (jqXHR, textStatus, errorThrown) {
             console.error('Error fetching relay info:', textStatus, errorThrown);  // Log any errors
         });
     });

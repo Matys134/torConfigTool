@@ -45,7 +45,8 @@ public class RelayDataRestController {
 
 
     @PostMapping("/relays/{relayId}/event")
-    public ResponseEntity<String> createRelayEvent(@PathVariable int relayId, @RequestBody Map<String, String> eventData) {
+    public ResponseEntity<String> createRelayEvent(@PathVariable int relayId, @RequestBody Map<String,
+            String> eventData) {
         relayDataService.handleRelayEvent(relayId, eventData, relayDataMap, relayEventMap);
         return ResponseEntity.ok("Event received successfully for Relay ID: " + relayId);
     }
@@ -94,14 +95,16 @@ public class RelayDataRestController {
         // Fetch the list of all bridges
         List<BridgeConfig> bridges = relayInformationService.getAllBridges();
         for (BridgeConfig bridge : bridges) {
-            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(bridge.getControlPort()), bridge.getNickname(), "bridge");
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(bridge.getControlPort()), bridge.getNickname(),
+                    "bridge");
             relayInfoList.add(relayInfo);
         }
 
         // Fetch the list of all guards
         List<GuardConfig> guards = relayInformationService.getAllGuards();
         for (GuardConfig guard : guards) {
-            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(), "guard");
+            RelayInfo relayInfo = new RelayInfo(Integer.parseInt(guard.getControlPort()), guard.getNickname(),
+                    "guard");
             relayInfoList.add(relayInfo);
         }
 
