@@ -101,14 +101,14 @@ def monitor_traffic_and_flags(control_port):
                         time.sleep(1)  # Wait for 1 second to collect data
                     except stem.SocketError as e:
                         print(f"Error connecting to ControlPort {control_port}: {e}")
-                        time.sleep(1)  # Sleep for 10 seconds before retrying
+                        time.sleep(10)  # Sleep for 10 seconds before retrying
                     except Exception as e:
                         print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
-                        time.sleep(1)  # Sleep for 10 seconds before retrying
+                        time.sleep(10)  # Sleep for 10 seconds before retrying
 
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-            time.sleep(1)  # Sleep for 10 seconds before retrying
+            time.sleep(10)  # Sleep for 10 seconds before retrying
 
 
 def _send_relay_data_entry(control_port, relay_data_entry):
@@ -144,7 +144,7 @@ def _send_bandwidth_data(controller, control_port):
 
     :param controller: Controller object.
     :param control_port: Control port number.
-    :return: Response object.
+    :return: Data dictionary.
     """
     # Get the initial total bytes read and written
     initial_download = int(controller.get_info("traffic/read"))
@@ -183,9 +183,9 @@ def _send_bandwidth_data(controller, control_port):
     api_endpoint = f"{BASE_API_ENDPOINT}/{control_port}"
 
     # Send data to the API endpoint for the corresponding relay
-    response = requests.post(api_endpoint, json=data, verify=False)
+    requests.post(api_endpoint, json=data, verify=False)
 
-    return response
+    return data
 
 
 def _handle_event(control_port, event):
