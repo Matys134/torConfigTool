@@ -93,21 +93,21 @@ def monitor_traffic_and_flags(control_port):
                                               EventType.NOTICE)
 
                 while controller.is_alive():  # Check if the relay is still running
-                    # Send the bandwidth data every second
-                    relay_data_entry = _send_bandwidth_data(controller, control_port)
-                    if relay_data_entry is not None:  # Only send data when there is new data to send
-                        _send_relay_data_entry(control_port, relay_data_entry)
-                    time.sleep(1)  # Wait for 1 second to collect data
+                    try:
+                        # Send the bandwidth data every second
+                        relay_data_entry = _send_bandwidth_data(controller, control_port)
+                        if relay_data_entry is not None:  # Only send data when there is new data to send
+                            _send_relay_data_entry(control_port, relay_data_entry)
+                        time.sleep(1)  # Wait for 1 second to collect data
+                    except stem.SocketError as e:
+                        print(f"Error connecting to ControlPort {control_port}: {e}")
+                        time.sleep(10)  # Sleep for 10 seconds before retrying
+                    except Exception as e:
+                        print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
+                        time.sleep(10)  # Sleep for 10 seconds before retrying
 
-        except stem.SocketError as e:
-            print(f"Error connecting to ControlPort {control_port}: {e}")
-
-            # Sleep for a while before retrying
-            time.sleep(10)  # Sleep for 10 seconds before retrying
         except Exception as e:
-            print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
-
-            # Sleep for a while before retrying
+            print(f"An unexpected error occurred: {e}")
             time.sleep(10)  # Sleep for 10 seconds before retrying
 
 
