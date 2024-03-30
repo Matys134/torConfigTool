@@ -98,7 +98,6 @@ def monitor_traffic_and_flags(control_port):
                         relay_data_entry = _send_bandwidth_data(controller, control_port)
                         if relay_data_entry is not None:  # Only send data when there is new data to send
                             _send_relay_data_entry(control_port, relay_data_entry)
-                        time.sleep(1)  # Wait for 1 second to collect data
                     except stem.SocketError as e:
                         print(f"Error connecting to ControlPort {control_port}: {e}")
                         time.sleep(10)  # Sleep for 10 seconds before retrying
@@ -149,6 +148,9 @@ def _send_bandwidth_data(controller, control_port):
     # Get the initial total bytes read and written
     initial_download = int(controller.get_info("traffic/read"))
     initial_upload = int(controller.get_info("traffic/written"))
+
+    # Wait for 1 second
+    time.sleep(1)
 
     # Get the total bytes read and written after 1 second
     final_download = int(controller.get_info("traffic/read"))
