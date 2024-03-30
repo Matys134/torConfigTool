@@ -101,14 +101,14 @@ def monitor_traffic_and_flags(control_port):
                         time.sleep(1)  # Wait for 1 second to collect data
                     except stem.SocketError as e:
                         print(f"Error connecting to ControlPort {control_port}: {e}")
-                        time.sleep(10)  # Sleep for 10 seconds before retrying
+                        time.sleep(1)  # Sleep for 10 seconds before retrying
                     except Exception as e:
                         print(f"An unexpected error occurred for ControlPort {control_port}: {e}")
-                        time.sleep(10)  # Sleep for 10 seconds before retrying
+                        time.sleep(1)  # Sleep for 10 seconds before retrying
 
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-            time.sleep(10)  # Sleep for 10 seconds before retrying
+            time.sleep(1)  # Sleep for 10 seconds before retrying
 
 
 def _send_relay_data_entry(control_port, relay_data_entry):
