@@ -35,9 +35,11 @@
                 <input type="number" class="form-control" id="socksPort" name="socksPort" required>
             </div>
             <button type="submit" class="btn btn-success" onclick="showWarning()">Start Tor Proxy</button>
-            <form action="/proxy/stop" method="post" class="proxy-button">
-                <button type="submit" class="btn btn-danger">Stop Tor Proxy</button>
-            </form>
+        </form>
+    </div>
+    <div class="button-container">
+        <form action="/proxy/stop" method="post" class="proxy-button">
+            <button type="submit" class="btn btn-danger" onclick="showWarning()">Stop Tor Proxy</button>
         </form>
     </div>
 
