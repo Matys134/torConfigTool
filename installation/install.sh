@@ -9,6 +9,14 @@ fi
 # Get the user who launched the script
 current_user=$SUDO_USER
 
+# Install Java using SDKMAN
+sudo -u $current_user bash -c "curl -s 'https://get.sdkman.io' | bash"
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install java 21.0.2-open
+
+# Install Python Stem library
+apt install -y python3-stem
+
 # Function for installing a package including its dependencies
 install_package() {
     if ! dpkg -s "$1" >/dev/null 2>&1; then # Check if package is installed

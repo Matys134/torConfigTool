@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.service.IpAddressRetriever;
 import com.school.torconfigtool.service.ProxyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,13 +19,15 @@ import java.io.IOException;
 public class ProxyController {
 
     private final ProxyService proxyService;
+    private final IpAddressRetriever ipAddressRetriever;
 
     /**
      * Constructor for the ProxyController class.
      * @param proxyService The service to handle operations related to the Proxy.
      */
-    public ProxyController(ProxyService proxyService) {
+    public ProxyController(ProxyService proxyService, IpAddressRetriever ipAddressRetriever) {
         this.proxyService = proxyService;
+        this.ipAddressRetriever = ipAddressRetriever;
     }
 
     /**
@@ -36,6 +39,8 @@ public class ProxyController {
     public String proxyConfigurationForm(Model model) {
         try {
             model.addAttribute("proxyStatus", proxyService.isProxyRunning() ? "Running" : "Stopped");
+            model.addAttribute("localIp", ipAddressRetriever.getLocalIpAddress());
+            model.addAttribute("socksPort", proxyService.getSocksPort());
         } catch (IOException e) {
             model.addAttribute("errorMessage", "An unexpected error occurred. Please check the logs for details.");
         }

@@ -28,21 +28,39 @@
         <p th:text="${errorMessage}"></p>
     </div>
 
-    <div class="form-group">
-        <label for="socksPort">SOCKS Port:</label>
-        <input type="number" class="form-control" id="socksPort" name="socksPort" required>
-    </div>
-
     <div class="button-container">
         <form action="/proxy/start" method="post" class="proxy-button">
+            <div class="form-group">
+                <label for="socksPort">SOCKS Port:</label>
+                <input type="number" class="form-control" id="socksPort" name="socksPort" required>
+            </div>
             <button type="submit" class="btn btn-success" onclick="showWarning()">Start Tor Proxy</button>
+            <form action="/proxy/stop" method="post" class="proxy-button">
+                <button type="submit" class="btn btn-danger">Stop Tor Proxy</button>
+            </form>
         </form>
     </div>
-    <div class="button-container">
-    <form action="/proxy/stop" method="post" class="proxy-button">
-        <button type="submit" class="btn btn-danger">Stop Tor Proxy</button>
-    </form>
-</div>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Proxy Information</h2>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Local IP</th>
+                <th scope="col">SOCKS Port</th>
+                <th scope="col">DNS Port</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${localIp}"></td>
+                <td th:text="${socksPort}"></td>
+                <td>53</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <!-- Display proxy status -->
     <div class="card mb-3">

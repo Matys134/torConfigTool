@@ -181,4 +181,19 @@ public class ProxyService {
             process.destroy();
         }
     }
+
+    public int getSocksPort() throws IOException {
+        File torrcFile = new File(TORRC_PROXY_FILE);
+        try (BufferedReader br = new BufferedReader(new FileReader(torrcFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("SocksPort")) {
+                    String[] parts = line.split(" ");
+                    String[] ipAndPort = parts[1].split(":");
+                    return Integer.parseInt(ipAndPort[1]);
+                }
+            }
+        }
+        throw new IOException("Failed to retrieve SOCKS port from " + TORRC_PROXY_FILE);
+    }
 }

@@ -91,3 +91,8 @@ button:hover {
 .image-text-wrapper p {
     margin: 0; /* Removes the default paragraph margin */
 }
+
+.proxy-button .btn-success {
+    margin-right: -50px;
+    margin-bottom: 10px;
+}
