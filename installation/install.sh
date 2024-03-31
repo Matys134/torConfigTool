@@ -11,8 +11,8 @@ current_user=$SUDO_USER
 
 # Install Java using SDKMAN
 sudo -u $current_user bash -c "curl -s 'https://get.sdkman.io' | bash"
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-sdk install java 21.0.2-open
+sudo -u $current_user bash -c "source /home/$current_user/.sdkman/bin/sdkman-init.sh"
+sudo -u $current_user bash -c "sdk install java 21.0.2-open"
 
 # Install Python Stem library
 apt install -y python3-stem
