@@ -117,6 +117,10 @@ public class ProxyService {
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to start.
      */
     public String configureAndStartProxy(int socksPort) throws IOException, InterruptedException {
+        if (!RelayUtilityService.portsAreAvailable("proxy", socksPort)) {
+            return "The port " + socksPort + " is already in use.";
+        }
+
         if (!configureProxy(socksPort)) {
             return "Failed to configure Tor Proxy.";
         }

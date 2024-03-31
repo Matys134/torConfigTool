@@ -17,7 +17,9 @@
     <h1 class="text-center mb-4">Tor Proxy Configuration</h1>
 
     <div class="alert alert-warning" role="alert">
-        <p><strong>Warning:</strong> This is not the ideal usage of Tor and the Tor Browser is still recommended.</p>
+        <p><strong>Warning:</strong> This is not the ideal usage of Tor and the Tor Browser is still recommended if you
+            plan to visit onion sites. Please visit the tutorial section below for more information on how to set up a
+            client computer.</p>
     </div>
 
     <!-- Display success or error messages if needed -->
@@ -28,19 +30,28 @@
         <p th:text="${errorMessage}"></p>
     </div>
 
-    <div class="button-container">
-        <form action="/proxy/start" method="post" class="proxy-button">
-            <div class="form-group">
-                <label for="socksPort">SOCKS Port:</label>
-                <input type="number" class="form-control" id="socksPort" name="socksPort" required>
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="button-container">
+            <!-- Start Proxy Form -->
+            <form action="/proxy/start" method="post" class="proxy-button">
+                <div class="form-group">
+                    <label for="socksPort">SOCKS Port:</label>
+                    <input type="number" min="1" max="65535" class="form-control" id="socksPort" name="socksPort" required>
+                </div>
+                <button type="submit" class="btn btn-success" id="startButton" onclick="showWarning()">Start Tor Proxy</button>
+            </form>
+            <!-- Stop Proxy Form -->
+            <form action="/proxy/stop" method="post" class="proxy-button mt-3">
+                <button type="submit" class="btn btn-danger" id="stopButton" onclick="showWarning()">Stop Tor Proxy</button>
+            </form>
+        </div>
+
+        <!-- Proxy Status -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">Proxy Status: <span id="proxyStatus" th:text="${proxyStatus}"></span></p>
             </div>
-            <button type="submit" class="btn btn-success" onclick="showWarning()">Start Tor Proxy</button>
-        </form>
-    </div>
-    <div class="button-container">
-        <form action="/proxy/stop" method="post" class="proxy-button">
-            <button type="submit" class="btn btn-danger" onclick="showWarning()">Stop Tor Proxy</button>
-        </form>
+        </div>
     </div>
 
     <div class="container mt-5">
@@ -62,13 +73,6 @@
             </tr>
             </tbody>
         </table>
-    </div>
-
-    <!-- Display proxy status -->
-    <div class="card mb-3">
-        <div class="card-body">
-            <p class="card-text">Proxy Status: <span th:text="${proxyStatus}"></span></p>
-        </div>
     </div>
 </div>
 
@@ -144,6 +148,37 @@
             </div>
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header" id="webrtcHeading" data-toggle="collapse" data-target="#webrtcTips" aria-expanded="false" aria-controls="webrtcTips" style="cursor: pointer;">
+            <h3 class="mb-0 d-flex justify-content-between align-items-center">
+                Disable WebRTC in browser of your choice!
+                <span class="circle">
+                    <span class="arrow" id="webrtcArrow"></span>
+                </span>
+            </h3>
+        </div>
+        <div id="webrtcTips" class="collapse" aria-labelledby="webrtcHeading">
+            <div class="card-body">
+                <div class="image-text-wrapper">
+                    <p>How to disable WebRTC in Edge browser</p>
+                    <p>1. Open your browser and type "about:config" in the address bar.</p>
+                    <p>2. Search for "media.peerconnection.enabled" and set it to "false".</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                    <p>How to disable WebRTC in Chrome browser</p>
+                    <p>Chrome does not have a built-in setting to disable WebRTC. You can use an extension like "WebRTC Control" to disable it.</p>
+                </div>
+
+                <div class="image-text-wrapper">
+                    <p>How to disable WebRTC in Firefox browser</p>
+                    <p>1. Open your browser and type "about:config" in the address bar.</p>
+                    <p>2. Search for "media.peerconnection.enabled" and set it to "false".</p>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script src="/js/warning.js"></script>
@@ -160,6 +195,21 @@
             }
         });
     });
+</script>
+<script>
+    window.onload = function() {
+        var proxyStatus = document.getElementById('proxyStatus');
+        var startButton = document.getElementById('startButton');
+        var stopButton = document.getElementById('stopButton');
+
+        if (proxyStatus.innerText === 'Running') {
+            startButton.disabled = true;
+            proxyStatus.classList.add('status-running');
+        } else if (proxyStatus.innerText === 'Stopped') {
+            stopButton.disabled = true;
+            proxyStatus.classList.add('status-stopped');
+        }
+    };
 </script>
 </body>
 </html>

@@ -69,7 +69,7 @@ button:hover {
 }
 
 .proxy-button .btn {
-    width: 100%;  /* Adjust this value as needed */
+    width: 200px;  /* Adjust this value as needed */
 }
 
 .image-text-wrapper {
@@ -92,7 +92,26 @@ button:hover {
     margin: 0; /* Removes the default paragraph margin */
 }
 
-.proxy-button .btn-success {
-    margin-right: -50px;
-    margin-bottom: 10px;
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.proxy-button {
+    width: fit-content;
+    margin-bottom: -10px;
+}
+
+.card.mb-3 {
+    margin-right: 60%;
+}
+
+.status-running {
+    color: green;
+}
+
+.status-stopped {
+    color: red;
 }
