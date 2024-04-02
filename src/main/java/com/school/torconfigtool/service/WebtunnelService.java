@@ -102,7 +102,7 @@ public class WebtunnelService {
                 + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
-        String webtunnelPort = null; // Changed from int to String
+        int webtunnelPort = 0; // Changed back to int
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -110,7 +110,7 @@ public class WebtunnelService {
                     webtunnelDomainAndPath = line.split("=")[1].trim();
                 }
                 if (line.startsWith("# webtunnel")) {
-                    webtunnelPort = line.split(" ")[2];
+                    webtunnelPort = Integer.parseInt(line.split(" ")[2]);
                 }
             }
         } catch (IOException e) {
@@ -121,6 +121,6 @@ public class WebtunnelService {
         String domain = parts[0];
         String path = parts.length > 1 ? parts[1] : "";
 
-        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + "/" + path;
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=https://" + domain + ":" + webtunnelPort + "/" + path;
     }
 }
