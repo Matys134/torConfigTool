@@ -38,6 +38,8 @@ public class AcmeService {
 
         Process certProcess = commandService.executeCommand(command);
 
+        System.out.println("Certificate generation process: " + certProcess.toString());
+
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
         }
