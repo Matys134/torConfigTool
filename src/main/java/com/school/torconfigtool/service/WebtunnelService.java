@@ -121,6 +121,6 @@ public class WebtunnelService {
         String domain = parts[0];
         String path = parts.length > 1 ? parts[1] : "";
 
-        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + "/" + path;
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + "/" + path;
     }
 }
