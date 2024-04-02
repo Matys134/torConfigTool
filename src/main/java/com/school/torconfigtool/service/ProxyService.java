@@ -50,7 +50,8 @@ public class ProxyService {
      * @param localIpAddress The local IP address to use in the configuration.
      * @throws IOException If an I/O error occurs.
      */
-    public void writeConfiguration(File file, String localIpAddress, int socksPort) throws IOException {
+    public void writeConfiguration(File file, String localIpAddress, int socksPort, String exitCountry)
+            throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write("SocksPort " + localIpAddress + ":" + socksPort);
             bw.newLine();
@@ -60,6 +61,12 @@ public class ProxyService {
             bw.write("RunAsDaemon 1");
             bw.newLine();
             bw.write("DNSPort " + localIpAddress + ":53");
+            bw.newLine();
+            if (!"auto".equals(exitCountry)) {
+                bw.write("ExitNodes {" + exitCountry + "}");
+                bw.newLine();
+                bw.write("StrictNodes 1");
+            }
         }
     }
 
@@ -69,10 +76,10 @@ public class ProxyService {
      * @return true if the configuration was successful, false otherwise.
      * @throws IOException If an I/O error occurs.
      */
-    public boolean configureProxy(int socksPort) throws IOException {
+    public boolean setupProxyConfiguration(int socksPort, String exitCountry) throws IOException {
         File torrcFile = createProxyFile(TORRC_PROXY_FILE);
         String localIpAddress = ipAddressRetriever.getLocalIpAddress();
-        writeConfiguration(torrcFile, localIpAddress, socksPort);
+        writeConfiguration(torrcFile, localIpAddress, socksPort, exitCountry);
         return true;
     }
 
@@ -116,12 +123,12 @@ public class ProxyService {
      * @throws IOException      If an I/O error occurs.
      * @throws InterruptedException If the current thread is interrupted while waiting for the proxy to start.
      */
-    public String configureAndStartProxy(int socksPort) throws IOException, InterruptedException {
+    public String initializeAndRunProxy(int socksPort, String exitCountry) throws IOException, InterruptedException {
         if (!RelayUtilityService.portsAreAvailable("proxy", socksPort)) {
             return "The port " + socksPort + " is already in use.";
         }
 
-        if (!configureProxy(socksPort)) {
+        if (!setupProxyConfiguration(socksPort, exitCountry)) {
             return "Failed to configure Tor Proxy.";
         }
 

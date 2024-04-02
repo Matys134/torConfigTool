@@ -38,6 +38,12 @@
                     <label for="socksPort">SOCKS Port:</label>
                     <input type="number" min="1" max="65535" class="form-control" id="socksPort" name="socksPort" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="exitCountry">Exit Country:</label>
+                    <select id="exitCountry" name="exitCountry" class="form-control"></select>
+                </div>
+
                 <button type="submit" class="btn btn-success" id="startButton" onclick="showWarning()">Start Tor Proxy</button>
             </form>
             <!-- Stop Proxy Form -->
@@ -208,6 +214,19 @@
         } else if (proxyStatus.innerText === 'Stopped') {
             stopButton.disabled = true;
             proxyStatus.classList.add('status-stopped');
+        }
+    };
+</script>
+<script src="/js/countries.js"></script>
+<script>
+    window.onload = function() {
+        var select = document.getElementById('exitCountry');
+
+        for(var code in countries) {
+            var option = document.createElement('option');
+            option.value = code;
+            option.text = countries[code];
+            select.add(option);
         }
     };
 </script>

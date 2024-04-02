@@ -53,9 +53,9 @@ public class ProxyController {
      * @return The name of the view to be rendered.
      */
     @PostMapping("/start")
-    public String startProxy(@RequestParam("socksPort") int socksPort, Model model) {
+    public String startProxy(@RequestParam("socksPort") int socksPort, @RequestParam("exitCountry") String exitCountry, Model model) {
         try {
-            String result = proxyService.configureAndStartProxy(socksPort);
+            String result = proxyService.initializeAndRunProxy(socksPort, exitCountry);
             if (result.equals("success")) {
                 model.addAttribute("successMessage", "Tor Proxy started successfully!");
             } else {
