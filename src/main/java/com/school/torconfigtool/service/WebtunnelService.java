@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -117,15 +119,19 @@ public class WebtunnelService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
-        String[] parts = webtunnelDomainAndPath.split("/", 2);
-        String domain = parts[0];
-        String path = parts.length > 1 ? parts[1] : "";
+        try {
+            URL url = new URL(webtunnelDomainAndPath);
+            String domain = url.getProtocol() + "://" + url.getHost();
+            String path = url.getPath();
 
-        System.out.println("webtunnelPort: " + webtunnelPort
-        + ", fingerprint: " + fingerprint
-                + ", domain: " + domain
-                + ", path: " + path);
+            System.out.println("webtunnelPort: " + webtunnelPort
+                    + ", fingerprint: " + fingerprint
+                    + ", domain: " + domain
+                    + ", path: " + path);
 
-        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + "/" + path;
+            return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + path;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Failed to parse webtunnel URL", e);
+        }
     }
 }
