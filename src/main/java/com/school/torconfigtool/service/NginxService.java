@@ -64,25 +64,25 @@ public class NginxService {
      */
     public void reloadNginx() {
         // Check if Nginx is running
-//        if (!isNginxRunning()) {
-//            // If Nginx is not running, start it
-//            startNginx();
-//        } else {
-//            // If Nginx is running, reload it
-//            ProcessBuilder processBuilder = new ProcessBuilder();
-//            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
-//
-//            try {
-//                Process process = processBuilder.start();
-//                int exitCode = process.waitFor();
-//
-//                if (exitCode != 0) {
-//                    throw new IOException("Failed to reload Nginx");
-//                }
-//            } catch (IOException | InterruptedException e) {
-//                throw new RuntimeException("Failed to reload Nginx", e);
-//            }
-//        }
+        if (!isNginxRunning()) {
+            // If Nginx is not running, start it
+            startNginx();
+        } else {
+            // If Nginx is running, reload it
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("bash", "-c", "sudo systemctl reload nginx");
+
+            try {
+                Process process = processBuilder.start();
+                int exitCode = process.waitFor();
+
+                if (exitCode != 0) {
+                    throw new IOException("Failed to reload Nginx");
+                }
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException("Failed to reload Nginx", e);
+            }
+        }
     }
 
     /**
@@ -231,7 +231,7 @@ public class NginxService {
         // Build the server block
         return String.format("""
                 server {
-                    listen 127.0.0.1:%d;
+                    listen %d;
                     access_log /var/log/nginx/my-website.log;
                     index index.html;
                     root %s/onion/www/service-%d;

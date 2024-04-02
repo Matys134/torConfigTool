@@ -141,6 +141,12 @@ done
 
 echo "Installation complete!"
 
+# Remove the default file from sites-available
+rm /etc/nginx/sites-available/default
+
+# Remove the default file from sites-enabled
+rm /etc/nginx/sites-enabled/default
+
 # Add user to the www-data group
 usermod -a -G www-data "$current_user"
 
