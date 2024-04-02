@@ -36,9 +36,9 @@ public class AcmeService {
         String command = "/home/" + username + "/.acme.sh/acme.sh --issue -d " + webTunnelUrl + " -w " + programLocation
                 + "/onion/www/service-" + webtunnelPort + "/ --nginx --server letsencrypt --force";
 
-        Process certProcess = commandService.executeCommand(command);
+        System.out.println("Command: " + command);
 
-        System.out.println("Certificate generation process: " + certProcess.toString());
+        Process certProcess = commandService.executeCommand(command);
 
         if (certProcess == null || certProcess.exitValue() != 0) {
             throw new Exception("Failed to generate certificate");
