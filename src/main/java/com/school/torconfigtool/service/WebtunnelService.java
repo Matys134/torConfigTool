@@ -117,7 +117,7 @@ public class WebtunnelService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
-        String[] parts = webtunnelDomainAndPath.split("/", 1);
+        String[] parts = webtunnelDomainAndPath.split("/", 0);
         String domain = parts[0];
         String path = parts.length > 1 ? parts[1] : "";
 
