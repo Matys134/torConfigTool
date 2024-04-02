@@ -118,12 +118,9 @@ public class WebtunnelService {
         }
 
         String[] parts = webtunnelDomainAndPath.split("/", 2);
-        String domainAndProtocol = parts[0];
+        String domain = parts[0];
         String path = parts.length > 1 ? parts[1] : "";
-        String[] domainAndProtocolParts = domainAndProtocol.split("://");
-        String protocol = domainAndProtocolParts[0];
-        String domain = domainAndProtocolParts[1];
 
-        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + protocol + "://" + domain + ":" + webtunnelPort + "/" + path;
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=https://" + domain + ":" + webtunnelPort + "/" + path;
     }
 }
