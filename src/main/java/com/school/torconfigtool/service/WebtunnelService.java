@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -119,10 +121,14 @@ public class WebtunnelService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
+        if (webtunnelDomainAndPath == null) {
+            throw new RuntimeException("Failed to find webtunnel URL in torrc file");
+        }
+
         try {
-            URL url = new URL(webtunnelDomainAndPath);
-            String domain = url.getProtocol() + "://" + url.getHost();
-            String path = url.getPath();
+            URI uri = new URI(webtunnelDomainAndPath);
+            String domain = uri.getScheme() + "://" + uri.getHost();
+            String path = uri.getPath();
 
             System.out.println("webtunnelPort: " + webtunnelPort
                     + ", fingerprint: " + fingerprint
@@ -130,7 +136,7 @@ public class WebtunnelService {
                     + ", path: " + path);
 
             return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + path;
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to parse webtunnel URL", e);
         }
     }
