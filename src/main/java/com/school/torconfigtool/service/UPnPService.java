@@ -174,6 +174,7 @@ public class UPnPService {
                 }
                 if (line.startsWith("# webtunnel")) {
                     ports.get("WebTunnelPort").add(Integer.parseInt(line.split(" ")[2]));
+                    System.out.println("WebTunnelPort: " + line.split(" ")[2]);
                 }
             }
         } catch (IOException e) {
