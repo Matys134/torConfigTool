@@ -102,7 +102,7 @@ public class WebtunnelService {
                 + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
-        String webtunnelPort = null; // Changed from int to String
+        String webtunnelPort = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -117,10 +117,11 @@ public class WebtunnelService {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
-        String[] parts = webtunnelDomainAndPath.split("/", 2);
-        String domain = parts[0];
-        String path = parts.length > 1 ? parts[1] : "";
+        String[] parts = webtunnelDomainAndPath.split("/", 3);
+        String protocol = parts[0];
+        String domain = parts[1];
+        String path = parts.length > 2 ? parts[2] : "";
 
-        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=https://" + domain + ":" + webtunnelPort + "/" + path;
+        return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + protocol + "//" + domain + ":" + webtunnelPort + "/" + path;
     }
 }
