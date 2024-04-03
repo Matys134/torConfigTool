@@ -8,12 +8,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * NginxService is a service class responsible for managing the Nginx server.
@@ -113,48 +109,6 @@ public class NginxService {
         }
     }
 
-
-    /**
-     * This method is used to revert the Nginx configuration to its default state.
-     * It clears the configuration file and writes the initial configuration.
-     * If the file writing fails, it logs the error.
-     */
-    public void revertNginxDefaultConfig() {
-        // The path to the default configuration file
-        Path defaultConfigPath = Paths.get("/etc/nginx/sites-available/default");
-
-        try {
-            // Clear the file and write the initial configuration
-            List<String> lines = getDefaultNginxConfigLines(80);
-
-            // Write the list to the file
-            Files.write(defaultConfigPath, lines);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to revert Nginx default configuration", e);
-        }
-    }
-
-    /**
-     * This method is used to get the default Nginx configuration lines.
-     *
-     * @return The default Nginx configuration lines.
-     */
-    private static List<String> getDefaultNginxConfigLines(int webtunnelPort) {
-        String currentDirectory = System.getProperty("user.dir");
-        List<String> lines = new ArrayList<>();
-        lines.add("server {");
-        lines.add("    listen 80 default_server;");
-        lines.add("    listen [::]:80 default_server;");
-        lines.add("    root " + currentDirectory + "/onion/www/service-" + webtunnelPort + ";");
-        lines.add("    index index.html index.htm index.nginx-debian.html;");
-        lines.add("    server_name _;");
-        lines.add("    location / {");
-        lines.add("        try_files $uri $uri/ =404;");
-        lines.add("    }");
-        lines.add("}");
-        return lines;
-    }
-
     /**
      * This method is used to modify the Nginx configuration.
      * It clears the configuration file, writes the initial configuration, installs the certificates, and then writes the new configuration.
@@ -166,37 +120,36 @@ public class NginxService {
      */
     public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
         // Build the new configuration
-        StringBuilder sb = new StringBuilder();
-        sb.append("server {\n");
-        sb.append("    listen [::]:").append(webtunnelPort).append(" ssl http2;\n");
-        sb.append("    listen ").append(webtunnelPort).append(" ssl http2;\n");
-        sb.append("    root ").append(programLocation).append("/onion/www/service-").append(webtunnelPort).append(";\n");
-        sb.append("    index index.html index.htm index.nginx-debian.html;\n");
-        sb.append("    server_name $SERVER_ADDRESS;\n");
-        sb.append("    ssl_certificate ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/fullchain.pem;\n");
-        sb.append("    ssl_certificate_key ").append(programLocation).append("/onion/certs/service-").append(webtunnelPort).append("/key.pem;\n");
-        sb.append("    location = /").append(randomString).append(" {\n");
-        sb.append("        proxy_pass http://127.0.0.1:").append(transportListenAddr).append(";\n");
-        sb.append("        proxy_http_version 1.1;\n");
-        sb.append("        proxy_set_header Upgrade $http_upgrade;\n");
-        sb.append("        proxy_set_header Connection \"upgrade\";\n");
-        sb.append("        proxy_set_header Accept-Encoding \"\";\n");
-        sb.append("        proxy_set_header Host $host;\n");
-        sb.append("        proxy_set_header X-Real-IP $remote_addr;\n");
-        sb.append("        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n");
-        sb.append("        proxy_set_header X-Forwarded-Proto $scheme;\n");
-        sb.append("        add_header Front-End-Https on;\n");
-        sb.append("        proxy_redirect off;\n");
-        sb.append("        access_log off;\n");
-        sb.append("        error_log off;\n");
-        sb.append("    }\n");
-        sb.append("}\n");
+        String sb = "server {\n" +
+                "    listen [::]:" + webtunnelPort + " ssl http2;\n" +
+                "    listen " + webtunnelPort + " ssl http2;\n" +
+                "    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n" +
+                "    index index.html index.htm index.nginx-debian.html;\n" +
+                "    server_name $SERVER_ADDRESS;\n" +
+                "    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n" +
+                "    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n" +
+                "    location = /" + randomString + " {\n" +
+                "        proxy_pass http://127.0.0.1:" + transportListenAddr + ";\n" +
+                "        proxy_http_version 1.1;\n" +
+                "        proxy_set_header Upgrade $http_upgrade;\n" +
+                "        proxy_set_header Connection \"upgrade\";\n" +
+                "        proxy_set_header Accept-Encoding \"\";\n" +
+                "        proxy_set_header Host $host;\n" +
+                "        proxy_set_header X-Real-IP $remote_addr;\n" +
+                "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n" +
+                "        proxy_set_header X-Forwarded-Proto $scheme;\n" +
+                "        add_header Front-End-Https on;\n" +
+                "        proxy_redirect off;\n" +
+                "        access_log off;\n" +
+                "        error_log off;\n" +
+                "    }\n" +
+                "}\n";
 
         // Issue and install the certificates
         acmeService.installCert(webTunnelUrl, webtunnelPort);
 
         // Deploy the configuration
-        deployOnionServiceNginxConfig(sb.toString(), webtunnelPort);
+        deployOnionServiceNginxConfig(sb, webtunnelPort);
     }
 
     /**
