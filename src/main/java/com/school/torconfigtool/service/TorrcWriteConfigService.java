@@ -51,7 +51,7 @@ public class TorrcWriteConfigService {
                 writer.newLine();
                 writer.write("AssumeReachable 1");
                 writer.newLine();
-                writer.write("# webtunnel " + config.getWebtunnelPort());
+                writer.write("# webtunnel 443");
                 break;
             case "snowflake":
                 snowflakeProxyService.setupSnowflakeProxy();

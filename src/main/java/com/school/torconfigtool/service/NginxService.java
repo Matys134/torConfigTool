@@ -118,38 +118,54 @@ public class NginxService {
      * @param randomString A random string used in the configuration.
      * @param webTunnelUrl The URL of the web tunnel where the certificate will be installed.
      */
-    public void modifyNginxDefaultConfig(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
-        // Build the new configuration
-        String sb = "server {\n" +
-                "    listen [::]:" + webtunnelPort + " ssl http2;\n" +
-                "    listen " + webtunnelPort + " ssl http2;\n" +
-                "    root " + programLocation + "/onion/www/service-" + webtunnelPort + ";\n" +
-                "    index index.html index.htm index.nginx-debian.html;\n" +
-                "    server_name $SERVER_ADDRESS;\n" +
-                "    ssl_certificate " + programLocation + "/onion/certs/service-" + webtunnelPort + "/fullchain.pem;\n" +
-                "    ssl_certificate_key " + programLocation + "/onion/certs/service-" + webtunnelPort + "/key.pem;\n" +
-                "    location = /" + randomString + " {\n" +
-                "        proxy_pass http://127.0.0.1:" + transportListenAddr + ";\n" +
-                "        proxy_http_version 1.1;\n" +
-                "        proxy_set_header Upgrade $http_upgrade;\n" +
-                "        proxy_set_header Connection \"upgrade\";\n" +
-                "        proxy_set_header Accept-Encoding \"\";\n" +
-                "        proxy_set_header Host $host;\n" +
-                "        proxy_set_header X-Real-IP $remote_addr;\n" +
-                "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n" +
-                "        proxy_set_header X-Forwarded-Proto $scheme;\n" +
-                "        add_header Front-End-Https on;\n" +
-                "        proxy_redirect off;\n" +
-                "        access_log off;\n" +
-                "        error_log off;\n" +
-                "    }\n" +
-                "}\n";
+    public void configureNginxServerForWebtunnel(String programLocation, String randomString, String webTunnelUrl, int webtunnelPort, int transportListenAddr) throws Exception {
+        // Build the initial configuration with port 80
+        String initialNginxConfig = buildNginxServerBlock(80);
+        deployOnionServiceNginxConfig(initialNginxConfig, webtunnelPort);
+        createIndexFile(webtunnelPort, System.getProperty("user.dir"));
+
+        // Start the Nginx server
+        startNginx();
 
         // Issue and install the certificates
         acmeService.installCert(webTunnelUrl, webtunnelPort);
 
-        // Deploy the configuration
-        deployOnionServiceNginxConfig(sb, webtunnelPort);
+        // Stop the Nginx server
+        stopNginx();
+
+        // Build the new configuration with port 443
+        String finalNginxConfig = String.format("""
+            server {
+                listen [::]:443 ssl http2;
+                listen 443 ssl http2;
+                root %s/onion/www/service-%d;
+                index index.html index.htm index.nginx-debian.html;
+                server_name $SERVER_ADDRESS;
+                ssl_certificate %s/onion/certs/service-%d/fullchain.pem;
+                ssl_certificate_key %s/onion/certs/service-%d/key.pem;
+                location = /%s {
+                    proxy_pass http://127.0.0.1:%d;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_set_header Accept-Encoding "";
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    add_header Front-End-Https on;
+                    proxy_redirect off;
+                    access_log off;
+                    error_log off;
+                }
+            }
+            """, programLocation, webtunnelPort, programLocation, webtunnelPort, programLocation, webtunnelPort, randomString, transportListenAddr);
+
+        // Deploy the final configuration
+        deployOnionServiceNginxConfig(finalNginxConfig, webtunnelPort);
+
+        // Start the Nginx server again
+        startNginx();
     }
 
     /**

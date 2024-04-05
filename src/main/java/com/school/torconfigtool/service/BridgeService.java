@@ -81,7 +81,7 @@ public class BridgeService {
             nginxService.configureNginxForOnionService(webtunnelPort);
             webtunnelService.setupWebtunnel(webtunnelUrl, webtunnelPort);
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-            nginxService.modifyNginxDefaultConfig(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr);
+            nginxService.configureNginxServerForWebtunnel(System.getProperty("user.dir"), randomString, webtunnelUrl, webtunnelPort, bridgeTransportListenAddr);
             config.setPath(randomString);
             webtunnelService.updateTorrcFile(config);
 

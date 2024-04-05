@@ -46,7 +46,6 @@ public class BridgeController {
      * @param webtunnelDomain The domain of the web tunnel.
      * @param bridgeControlPort The control port of the bridge.
      * @param webtunnelUrl The URL of the web tunnel.
-     * @param webtunnelPort The port of the web tunnel.
      * @param bridgeBandwidth The bandwidth of the bridge.
      * @param model The model for the view.
      * @return The name of the setup view.
@@ -60,11 +59,10 @@ public class BridgeController {
                                   @RequestParam(required = false) String webtunnelDomain,
                                   @RequestParam int bridgeControlPort,
                                   @RequestParam(required = false) String webtunnelUrl,
-                                  @RequestParam(required = false) Integer webtunnelPort,
                                   @RequestParam(required = false) Integer bridgeBandwidth,
                                   Model model) {
         try {
-            bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, webtunnelPort, bridgeBandwidth);
+            bridgeService.configureBridge(bridgeType, bridgePort, bridgeTransportListenAddr, bridgeContact, bridgeNickname, webtunnelDomain, bridgeControlPort, webtunnelUrl, 443, bridgeBandwidth);
             model.addAttribute("successMessage", "Tor Bridge configured successfully!");
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Failed to configure Tor Bridge: " + e.getMessage());
