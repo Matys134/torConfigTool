@@ -33,8 +33,8 @@ public class TorConfigToolApplication {
             }
         }
 
-        //ProcessBuilder processBuilder = new ProcessBuilder("python3", "src/main/java/com/school/torconfigtool/python/data.py");
-        //processBuilder.start();
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "data.py");
+        processBuilder.start();
 
         System.getProperties().put("server.port", 8443);
 
