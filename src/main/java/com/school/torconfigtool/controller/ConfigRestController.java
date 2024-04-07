@@ -25,7 +25,7 @@ public class ConfigRestController {
      */
     @GetMapping("/config")
     public String getConfig() {
-        try (Stream<String> lines = Files.lines(Paths.get("config.txt"))) {
+        try (Stream<String> lines = Files.lines(Paths.get("installation/config.txt"))) {
             return lines.collect(Collectors.joining("\n"));
         } catch (IOException e) {
             return "Error reading config file";
