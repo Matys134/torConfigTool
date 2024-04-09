@@ -49,6 +49,12 @@ public class RelayUtilityService {
         String currentDirectory = System.getProperty("user.dir");
         String torrcDirectory = currentDirectory + File.separator + "torrc";
 
+        // Add reserved ports
+        int[] reservedPorts = {80, 443};
+        int[] allPorts = new int[ports.length + reservedPorts.length];
+        System.arraycopy(ports, 0, allPorts, 0, ports.length);
+        System.arraycopy(reservedPorts, 0, allPorts, ports.length, reservedPorts.length);
+
         File[] torrcFiles = new File(torrcDirectory).listFiles();
         if (torrcFiles != null) {
             for (File file : torrcFiles) {
@@ -62,7 +68,7 @@ public class RelayUtilityService {
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            for (int port : ports) {
+                            for (int port : allPorts) {
                                 if ((line.contains("ORPort") || line.contains("ControlPort") || line.contains("HiddenServicePort") || line.contains("ServerTransportListenAddr")) &&
                                         (line.contains(String.valueOf(port)))) {
                                     return false;
