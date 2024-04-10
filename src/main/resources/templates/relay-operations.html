@@ -27,6 +27,9 @@
 </style>
 <body>
 <div th:replace="navbar :: nav"></div>
+<div class="alert alert-warning" role="alert">
+    If a service starts and then stops, please try changing some of the ports as they may be used by another service.
+</div>
 <div class="container">
     <h1>Tor Relay Operations</h1>
 
@@ -148,9 +151,9 @@
                 <div th:if="${isSnowflakeConfigured}" id="snowflakeTab" class="tab-pane fade show active">
                     <h3>Snowflake Proxy</h3>
                     <p>Control the Snowflake Proxy from here.</p>
-                    <button id="start-snowflake-proxy-button" class="btn btn-success">Start Snowflake Proxy</button>
-                    <button id="stop-snowflake-proxy-button" class="btn btn-danger">Stop Snowflake Proxy</button>
-                    <button id="remove-snowflake-proxy-button" class="btn btn-danger">Remove Snowflake Proxy</button>
+                    <button id="start-snowflake-proxy-button" class="btn start-button-green start-button">Start Snowflake Proxy</button>
+                    <button id="stop-snowflake-proxy-button" class="btn stop-button-red stop-button">Stop Snowflake Proxy</button>
+                    <button id="remove-snowflake-proxy-button" class="btn btn-secondary remove-button">Remove Snowflake Proxy</button>
                 </div>
             </div>
         </div>
