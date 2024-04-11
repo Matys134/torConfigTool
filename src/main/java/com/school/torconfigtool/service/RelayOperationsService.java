@@ -372,7 +372,7 @@ public class RelayOperationsService {
      * @return The Tor configuration for the relay.
      * @throws IOException If an I/O error occurs.
      */
-    private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
+    public TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
         List<TorConfig> configs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
 

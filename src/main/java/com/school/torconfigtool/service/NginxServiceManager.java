@@ -1,7 +1,9 @@
 package com.school.torconfigtool.service;
 
+import com.school.torconfigtool.model.BridgeConfig;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,15 +15,17 @@ public class NginxServiceManager implements StatusChangeListener {
 
     private final RelayStatusService relayStatusService;
     private final NginxService nginxService;
+    private final RelayOperationsService relayOperationsService;
 
     /**
      * Constructor for NginxServiceManager.
      * @param relayStatusService The service to handle relay status operations.
      * @param nginxService The service to handle Nginx operations.
      */
-    public NginxServiceManager(RelayStatusService relayStatusService, NginxService nginxService) {
+    public NginxServiceManager(RelayStatusService relayStatusService, NginxService nginxService, RelayOperationsService relayOperationsService) {
         this.relayStatusService = relayStatusService;
         this.nginxService = nginxService;
+        this.relayOperationsService = relayOperationsService;
         this.relayStatusService.setStatusChangeListener(this);
     }
 
@@ -30,7 +34,7 @@ public class NginxServiceManager implements StatusChangeListener {
      * @param status The new status.
      */
     @Override
-    public void onStatusChange(String status) {
+    public void onStatusChange(String status) throws IOException {
         checkAndManageNginxStatus();
     }
 
@@ -39,7 +43,7 @@ public class NginxServiceManager implements StatusChangeListener {
      * If at least one Onion or Web Tunnel service is online, it starts the Nginx service.
      * If no service is online, it stops the Nginx service.
      */
-    public void checkAndManageNginxStatus() {
+    public void checkAndManageNginxStatus() throws IOException {
         // Get the list of all webTunnels and Onion services
         List<String> allServices = nginxService.getAllOnionAndWebTunnelServices();
 
@@ -57,8 +61,13 @@ public class NginxServiceManager implements StatusChangeListener {
             String webtunnelStatus = relayStatusService.getRelayStatus(service, "bridge");
             // If at least one Webtunnel Bridge service is online, start the Nginx service and return
             if ("online".equals(webtunnelStatus)) {
-                nginxService.startNginx();
-                return;
+                // Get the BridgeConfig for the service
+                BridgeConfig bridgeConfig = relayOperationsService.getTorConfigForRelay(service).getBridgeConfig();
+                // Check if the service is a Webtunnel Bridge
+                if (bridgeConfig != null && bridgeConfig.getWebtunnelUrl() != null) {
+                    nginxService.startNginx();
+                    return;
+                }
             }
         }
 
