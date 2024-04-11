@@ -192,11 +192,8 @@ public class RelayOperationsService {
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
         for (TorConfig config : bridgeConfigs) {
-            // Only get webtunnel link if bridge type supports it
-            if ("webtunnel".equals(config.getBridgeConfig().getBridgeType())) {
-                String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
-                webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
-            }
+            String webtunnelLink = webtunnelService.getWebtunnelLink(config.getBridgeConfig().getNickname());
+            webtunnelLinks.put(config.getBridgeConfig().getNickname(), webtunnelLink);
         }
         model.addAttribute("webtunnelLinks", webtunnelLinks);
     }
