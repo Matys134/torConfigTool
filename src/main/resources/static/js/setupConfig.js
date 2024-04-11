@@ -16,16 +16,21 @@ $(document).ready(function() {
             if (value === '0') {
                 if (configName === 'onion') {
                     $('#onion-tab').hide();
+                    $('#onionTab').hide(); // Hide the Onion tab content
+                } else if (configName === 'relay') {
+                    $('#relay-tab').hide();
+                    $('#relayTab').hide(); // Hide the Relay tab content
                 } else {
                     // Remove the bridge type from the dropdown
                     $("#bridgeType option[value='" + configName + "']").remove();
                 }
-            } else if (configName !== 'onion') {
+            } else if (configName !== 'onion' && configName !== 'relay') {
                 allBridgeTypesZero = false;
             }
         });
         if (allBridgeTypesZero) {
             $('#bridge-tab').hide();
+            $('#bridgeTab').hide(); // Hide the Bridge tab content
         }
         // Call the function to toggle bridge fields based on the selected bridge type
         toggleBridgeFields();

@@ -85,6 +85,8 @@ echo "Automatic updates and unattended upgrades have been configured."
 unattended-upgrade -d
 
 # Initialize the config.txt file with all services set to 0
+> config.txt # This line will clear the config.txt file
+echo "Relay 0" >> config.txt
 echo "Onion 0" >> config.txt
 echo "obfs4 0" >> config.txt
 echo "Snowflake 0" >> config.txt
@@ -94,6 +96,7 @@ echo "WebTunnel 0" >> config.txt
 for choice in "${choices[@]}"; do
     case $choice in
     1)  # Non-exit node
+        sed -i 's/Relay 0/Relay 1/' config.txt
         ;;
     2)  # Onion service
         install_package nginx
