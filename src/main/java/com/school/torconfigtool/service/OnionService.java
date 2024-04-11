@@ -2,8 +2,6 @@ package com.school.torconfigtool.service;
 
 import com.school.torconfigtool.model.OnionConfig;
 import com.school.torconfigtool.model.TorConfig;
-import com.school.torconfigtool.util.Constants;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -28,13 +26,11 @@ import static com.school.torconfigtool.util.Constants.TORRC_FILE_PREFIX;
 public class OnionService {
     private final NginxService nginxService;
     private final TorConfig torConfig;
-    private final CommandService commandService;
     private final TorrcWriteConfigService torrcWriteConfigService;
 
-    public OnionService(NginxService nginxService, TorConfig torConfig, CommandService commandService, TorrcWriteConfigService torrcWriteConfigService) {
+    public OnionService(NginxService nginxService, TorConfig torConfig, TorrcWriteConfigService torrcWriteConfigService) {
         this.nginxService = nginxService;
         this.torConfig = torConfig;
-        this.commandService = commandService;
         this.torrcWriteConfigService = torrcWriteConfigService;
     }
 
@@ -126,7 +122,7 @@ public class OnionService {
         String pathToFile = TORRC_DIRECTORY_PATH + TORRC_FILE_PREFIX + onionServicePort + "_onion";
         if (!new File(pathToFile).exists()) {
             setupOnionService(pathToFile, onionServicePort);
-            nginxService.configureNginxForOnionService(onionServicePort);
+            nginxService.configureNginx(onionServicePort);
 
             // Restart nginx
             nginxService.reloadNginx();

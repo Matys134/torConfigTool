@@ -1,3 +1,7 @@
+/**
+ * This script is responsible for handling the file upload and deletion forms,
+ * as well as refreshing Nginx.
+ */
 $(document).ready(function () {
     $('#upload-form').on('submit', function () {
         const files = $('#file-input').get(0).files;

@@ -1,18 +1,32 @@
+/**
+ * This file contains JavaScript code for managing relay operations.
+ * It includes functions to update the status of different types of relays.
+ * Each function is triggered by a button click event or a periodic interval.
+ */
+
 $(document).ready(function () {
-    // Function to check and update relay status
+    /**
+     * Function to check and update relay status
+     * @param {string} nickname - The nickname of the relay
+     * @param {string} relayType - The type of the relay
+     */
     function updateRelayStatus(nickname, relayType) {
+        // Send a GET request to the relay operations API to get the status of the relay
         $.get("/relay-operations-api/status?relayNickname=" + nickname + "&relayType=" + relayType, function (data) {
 
+            // Select the status elements for the relay
             const statusElement = $("#status-" + nickname);
             const statusMessageElement = $("#status-message-" + nickname);
             const spinner = $(".start-button[data-config-nickname='" + nickname + "']").find(".spinner");
 
-            // Select the start, stop and edit buttons
+            // Select the start, stop and edit buttons for the relay
             const startButton = $(".start-button[data-config-nickname='" + nickname + "']");
             const stopButton = $(".stop-button[data-config-nickname='" + nickname + "']");
             const editButton = $(".edit-button[data-config-nickname='" + nickname + "']");
 
+            // Update the status and buttons based on the status of the relay
             if (data === "online") {
+                // Update the status to online and color to green
                 statusElement.text("Online");
                 statusElement.css("color", "green");
 
@@ -24,6 +38,7 @@ $(document).ready(function () {
                 // Hide the spinner
                 spinner.hide();
             } else if (data === "offline") {
+                // Update the status to offline and color to red
                 statusElement.text("Offline");
                 statusElement.css("color", "red");
 
@@ -35,8 +50,9 @@ $(document).ready(function () {
                 // Hide the spinner
                 spinner.hide();
             } else {
-                statusElement.text("Unknown"); // Handle any other status
-                statusElement.css("color", "blue"); // Adjust color as needed
+                // Handle any other status
+                statusElement.text("Unknown");
+                statusElement.css("color", "blue");
 
                 // Enable all buttons
                 startButton.prop('disabled', false);
@@ -49,53 +65,61 @@ $(document).ready(function () {
                 statusMessageElement.text("Idle");
             }
 
+            // Hide the spinner if the relay is online or offline
             if (data === "online" || data === "offline") {
-                // Hide the appropriate spinner
                 $("#spinner-" + relayType).hide();
             }
         });
     }
 
-    // Function to update relay status for guard relays
+    /**
+     * Function to update relay status for guard relays
+     */
     function updateGuardRelayStatus() {
+        // For each start button, check if the relay type is guard and update the status
         $(".start-button").each(function () {
             const nickname = $(this).data("config-nickname");
-            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const relayType = $(this).data("config-type");
             if (relayType === "guard") {
                 updateRelayStatus(nickname, relayType);
             }
         });
     }
 
-    // Function to update relay status for bridge relays
+    /**
+     * Function to update relay status for bridge relays
+     */
     function updateBridgeRelayStatus() {
+        // For each start button, check if the relay type is bridge and update the status
         $(".start-button").each(function () {
             const nickname = $(this).data("config-nickname");
-            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const relayType = $(this).data("config-type");
             if (relayType === "bridge") {
                 updateRelayStatus(nickname, relayType);
             }
         });
     }
 
-    // Function to update relay status for Onion relays
+    /**
+     * Function to update relay status for Onion relays
+     */
     function updateOnionRelayStatus() {
+        // For each start button, check if the relay type is onion and update the status
         $(".start-button").each(function () {
             const nickname = $(this).data("config-nickname");
-            const relayType = $(this).data("config-type"); // Fetch the relayType parameter
+            const relayType = $(this).data("config-type");
             if (relayType === "onion") {
                 updateRelayStatus(nickname, relayType);
             }
         });
     }
 
-
-    // Update relay status on page load for both guard and bridge relays
+    // Update relay status on page load for all types of relays
     updateGuardRelayStatus();
     updateBridgeRelayStatus();
     updateOnionRelayStatus();
 
-    // Periodically update relay status every 10 seconds (adjust the interval as needed)
+    // Periodically update relay status every 5 seconds
     setInterval(function () {
         updateGuardRelayStatus();
         updateBridgeRelayStatus();

@@ -1,4 +1,8 @@
-var countries = {
+/**
+ * An object representing countries with their respective codes.
+ * @type {Object.<string, string>}
+ */
+let countries = {
     "auto": "Auto (recommended)",
     "nl": "Netherlands",
     "de": "Germany",
@@ -17,12 +21,12 @@ var countries = {
     "uk": "United Kingdom",
 };
 
-// Remove the "auto" option from the countries object
-var autoOption = { auto: countries.auto };
+// Store the "auto" option separately before removing it from the countries object
+const autoOption = {auto: countries.auto};
 delete countries.auto;
 
 // Convert the countries object into an array of key-value pairs
-var countriesArray = Object.entries(countries);
+const countriesArray = Object.entries(countries);
 
 // Sort the array by the country names
 countriesArray.sort(function(a, b) {
@@ -30,7 +34,7 @@ countriesArray.sort(function(a, b) {
 });
 
 // Convert the sorted array back into an object
-var sortedCountries = Object.fromEntries(countriesArray);
+const sortedCountries = Object.fromEntries(countriesArray);
 
 // Add the "auto" option back to the top of the sorted countries object
 countries = { ...autoOption, ...sortedCountries };

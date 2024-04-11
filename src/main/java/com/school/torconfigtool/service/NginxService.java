@@ -86,10 +86,10 @@ public class NginxService {
      * It creates the necessary directories and the index.html file.
      * If the file writing fails, it logs the error.
      */
-    public void configureNginxForOnionService(int onionServicePort) throws IOException {
-        String nginxConfig = buildNginxServerBlock(onionServicePort);
-        deployOnionServiceNginxConfig(nginxConfig, onionServicePort);
-        createIndexFile(onionServicePort, System.getProperty("user.dir"));
+    public void configureNginx(int servicePort) throws IOException {
+        String nginxConfig = buildNginxServerBlock(servicePort);
+        deployOnionServiceNginxConfig(nginxConfig, servicePort);
+        createIndexFile(servicePort, System.getProperty("user.dir"));
     }
 
     public void createIndexFile(int onionServicePort, String currentDirectory) throws IOException {
@@ -159,7 +159,8 @@ public class NginxService {
                     error_log off;
                 }
             }
-            """, programLocation, webtunnelPort, programLocation, webtunnelPort, programLocation, webtunnelPort, randomString, transportListenAddr);
+            """, programLocation, webtunnelPort, programLocation, webtunnelPort, programLocation, webtunnelPort,
+                randomString, transportListenAddr);
 
         // Deploy the final configuration
         deployOnionServiceNginxConfig(finalNginxConfig, webtunnelPort);
@@ -194,21 +195,33 @@ public class NginxService {
         }
     }
 
+    /**
+     * Builds the Nginx server block configuration.
+     *
+     * @param onionServicePort The port number for the Onion Service.
+     * @return The Nginx server block configuration.
+     */
     private String buildNginxServerBlock(int onionServicePort) {
-
         String currentDirectory = System.getProperty("user.dir");
         // Build the server block
         return String.format("""
-                server {
-                    listen %d;
-                    access_log /var/log/nginx/my-website.log;
-                    index index.html;
-                    root %s/onion/www/service-%d;
-                }
-                """, onionServicePort, currentDirectory, onionServicePort);
+            server {
+                listen %d;
+                access_log /var/log/nginx/my-website.log;
+                index index.html;
+                root %s/onion/www/service-%d;
+            }
+            """, onionServicePort, currentDirectory, onionServicePort);
     }
 
 
+    /**
+     * Deploys the Nginx configuration for the Onion Service.
+     *
+     * @param nginxConfig The Nginx configuration to be deployed.
+     * @param onionServicePort The port number for the Onion Service.
+     * @throws RuntimeException If there is an error while editing the Nginx configuration.
+     */
     private void deployOnionServiceNginxConfig(String nginxConfig, int onionServicePort) {
         try {
             // Write the nginxConfig to a temporary file
@@ -242,6 +255,11 @@ public class NginxService {
         }
     }
 
+    /**
+     * Stops the Nginx server.
+     *
+     * @throws RuntimeException If there is an error while stopping the Nginx server.
+     */
     public void stopNginx() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("sudo", "systemctl", "stop", "nginx");
@@ -255,6 +273,11 @@ public class NginxService {
         }
     }
 
+    /**
+     * Gets all Onion and Web Tunnel services.
+     *
+     * @return A list of all Onion and Web Tunnel services.
+     */
     public List<String> getAllOnionAndWebTunnelServices() {
         List<String> allServices = new ArrayList<>();
         // Get the list of all onion services
@@ -273,6 +296,13 @@ public class NginxService {
         return allServices;
     }
 
+    /**
+     * Updates the Nginx configuration.
+     *
+     * @param newPort The new port number.
+     * @param webtunnelPort The port number for the Web Tunnel.
+     * @throws RuntimeException If there is an error while updating the Nginx configuration.
+     */
     public void updateNginxConfig(int newPort, int webtunnelPort) {
         String configPath = "/etc/nginx/sites-available/onion-service-" + webtunnelPort;
         String sedCommand = String.format("s/proxy_pass http:\\/\\/127.0.0.1:[0-9]*/proxy_pass http:\\/\\/127.0.0.1:%d/g", newPort);

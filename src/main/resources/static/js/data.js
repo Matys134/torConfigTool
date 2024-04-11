@@ -1,25 +1,35 @@
+/**
+ * This script is responsible for creating and updating relay charts.
+ * It fetches relay data from a specified API endpoint and updates the charts accordingly.
+ * It also handles user interactions such as selecting a relay from a dropdown menu.
+ */
+
 $(document).ready(function () {
-    // Define the base API endpoint
+    /**
+     * Define the base API endpoint.
+     * @type {string}
+     */
     const baseApiUrl = 'https://' + location.hostname + ':8443/relay-data/relays';
 
+    // Hide all relay events initially
     $('.relay-event').hide();
 
-    // Function to create and update a chart for a given relay
+    /**
+     * Function to create and update a chart for a given relay.
+     * @param {number} port - The port number of the relay.
+     */
     function createRelayChart(port) {
         // Create a container for the relay chart and hide it initially
         const chartContainer = $('<div class="relay-chart" id="relayChart' + port + '"></div>').hide();
         const chartCanvas = $('<canvas width="400" height="200"></canvas>').appendTo(chartContainer);
         const relayName = 'Relay on Port ' + port;
 
-        // Create a container for the upload and download rates
+        // Create containers for the upload and download rates, events, and flags
         $('<div class="relay-rates" id="relayRates' + port + '"></div>').appendTo(chartContainer);
-        // Create a container for the events
         $('<div class="relay-events" id="relayEvents' + port + '"></div>').appendTo(chartContainer);
-        // Create a container for the flags
         $('<div class="relay-flags" id="relayFlags' + port + '"></div>').appendTo(chartContainer);
         const eventContainer = $('<div class="relay-event" id="eventData' + port + '"></div>');
         eventContainer.appendTo($('#eventData'));
-
 
         // Append the chart container to the relayCharts div
         chartContainer.appendTo($('#relayCharts'));
@@ -27,20 +37,21 @@ $(document).ready(function () {
         // Get references to the chart canvas and its context
         const ctx = chartCanvas[0].getContext('2d');
 
+        // Create a new Chart object
         const relayChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Array(20).fill(''), // Initialize with 50 empty labels
+                labels: Array(20).fill(''), // Initialize with 20 empty labels
                 datasets: [
                     {
                         label: 'Upload',
                         backgroundColor: '#00ff00',
-                        data: Array(20).fill(0), // Initialize with 50 zeros
+                        data: Array(20).fill(0),
                     },
                     {
                         label: 'Download',
                         backgroundColor: '#ff0000',
-                        data: Array(20).fill(0), // Initialize with 50 zeros
+                        data: Array(20).fill(0),
                     },
                 ],
             },
@@ -88,7 +99,10 @@ $(document).ready(function () {
             }
         });
 
-        // Function to update the traffic data and chart for the relay
+        /**
+         * Function to update the traffic data and chart for the relay.
+         * Fetches data from the API, processes it, and updates the chart accordingly.
+         */
         function updateRelayTrafficDataAndChart() {
             const apiUrl = baseApiUrl + '/' + port;
             $.get(apiUrl, function (data) {
@@ -98,6 +112,7 @@ $(document).ready(function () {
                         return relayData !== null;
                     });
 
+                    // Map the upload and download data
                     let uploadData = data.map(function (relayData) {
                         return relayData.upload;
                     });
@@ -105,6 +120,7 @@ $(document).ready(function () {
                         return relayData.download;
                     });
 
+                    // Map the flags data
                     const flagsData = data.map(function (relayData) {
                         return relayData.flags;
                     });
@@ -159,6 +175,7 @@ $(document).ready(function () {
                         return formatUptime(relayData.uptime);
                     });
 
+                    // Fetch the Tor version
                     const torVersion = data.map(function (relayData) {
                         return relayData.version;
                     });
@@ -191,6 +208,12 @@ $(document).ready(function () {
             });
         }
 
+        /**
+         * Function to update the relay event data.
+         * Fetches event data from the API and updates the event container accordingly.
+         * @param {number} port - The port number of the relay.
+         * @param {Object} eventContainer - The jQuery object representing the event container.
+         */
         function updateRelayEventData(port, eventContainer) {
             if (!$('#relayChart' + port).is(':visible')) {
                 // If the chart is not visible, return immediately without fetching and displaying the events
@@ -234,7 +257,7 @@ $(document).ready(function () {
         updateRelayTrafficDataAndChart();
         updateRelayEventData(port, eventContainer);
 
-        // Set an interval to update the data and chart periodically (e.g., every 1 seconds)
+        // Set an interval to update the data and chart periodically
         setInterval(updateRelayTrafficDataAndChart, 1000); // 1 seconds
         setInterval(function () {
             updateRelayEventData(port, eventContainer);
@@ -277,6 +300,11 @@ $(document).ready(function () {
     });
 });
 
+/**
+ * Function to format uptime in seconds into HH:MM:SS format.
+ * @param {number} uptime - The uptime in seconds.
+ * @returns {string} The formatted uptime.
+ */
 function formatUptime(uptime) {
     let hours = Math.floor(uptime / 3600);
     let minutes = Math.floor((uptime % 3600) / 60);

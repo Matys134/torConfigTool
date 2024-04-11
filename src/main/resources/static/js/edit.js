@@ -1,9 +1,19 @@
+/**
+ * This script is responsible for handling the edit modal for both guard and bridge configurations.
+ * It fetches the current configuration data, populates the modal with it, and sends the updated configuration data to the server.
+ */
 $(document).ready(function () {
 
-    // Variable to track which config is being edited
+    /**
+     * Variable to track which config is being edited.
+     * @type {boolean}
+     */
     let isBridgeEdit = false;
 
-    // Selectors for the various elements in the modal
+    /**
+     * Selectors for the various elements in the modal.
+     * @type {Object.<string, jQuery>}
+     */
     const configSelectors = {
         modal: $("#edit-modal"),
         nickname: $("#edit-nickname"),
@@ -17,14 +27,22 @@ $(document).ready(function () {
         webtunnelPort: $("#edit-webtunnelport"),
     };
 
-    // Selectors for the buttons
+    /**
+     * Selectors for the buttons.
+     * @type {Object.<string, jQuery>}
+     */
     const buttons = {
         edit: $(".edit-button, .edit-bridge-button"), // Combined edit buttons for guard and bridge
         save: $("#save-button"),
         cancel: $("#cancel-button"),
     };
 
-    // Function to show the modal with the data for editing
+    /**
+     * Function to show the modal with the data for editing.
+     * @param {Object} data - The current configuration data.
+     * @param {string} relayType - The type of the relay (guard or bridge).
+     * @param {string} bridgeType - The type of the bridge (if relayType is bridge).
+     */
     function showModalWith(data, relayType, bridgeType) {
 
         // Set the values of the input fields
@@ -63,10 +81,17 @@ $(document).ready(function () {
     }
 
 
+    /**
+     * Function to hide the modal.
+     */
     function hideModal() {
         $('#edit-modal').modal('hide');
     }
 
+    /**
+     * Function to update the view with the new configuration.
+     * @param {Object} data - The new configuration data.
+     */
     function updateView(data) {
         const configElement = $(`.list-group-item:has([data-config-nickname="${data.nickname}"])`);
         const editButton = configElement.find(`.edit-button[data-config-nickname="${data.nickname}"], .edit-bridge-button[data-config-nickname="${data.nickname}"]`);
@@ -91,6 +116,11 @@ $(document).ready(function () {
         editButton.data('config-webtunnelport', data.webtunnelPort);
     }
 
+    /**
+     * Function to send an update request to the server with the new configuration data.
+     * @param {string} url - The URL to send the request to.
+     * @param {Object} data - The new configuration data.
+     */
     function sendUpdateRequest(url, data) {
         // Check if serverTransport is defined before splitting it
         if (data.serverTransport) {
@@ -120,6 +150,7 @@ $(document).ready(function () {
         });
     }
 
+    // Event handlers for the buttons
     buttons.edit.click(function () {
         const relayType = $(this).attr('data-config-type'); // Get the relay type from the data attribute
         const nickname = $(this).data('config-nickname'); // Get the nickname from the data attribute
@@ -207,7 +238,12 @@ $(document).ready(function () {
         });
     });
 
-    // Method to check uniqueness of ports
+    /**
+     * Method to check uniqueness of ports.
+     * @param {number} relayPort - The ORPort of the relay.
+     * @param {number} controlPort - The ControlPort of the relay.
+     * @returns {boolean} - True if the ports are unique, false otherwise.
+     */
     function arePortsUnique(relayPort, controlPort) {
         return !(relayPort === controlPort);
     }

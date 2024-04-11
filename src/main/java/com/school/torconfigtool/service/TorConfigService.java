@@ -45,7 +45,7 @@ public class TorConfigService {
                 }
             }
         } else {
-            System.out.println("No files found in directory"); // Print a message if no files are found
+            System.out.println("No files found in directory");
         }
 
         return configs;
@@ -59,7 +59,6 @@ public class TorConfigService {
      */
     private String parseRelayTypeFromFile(File file) {
         String fileName = file.getName();
-        // e.g., assuming file name is "torrc-relayNickname_relayType"
         return fileName.substring(fileName.indexOf("_") + 1);
     }
 

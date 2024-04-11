@@ -9,6 +9,8 @@ fi
 # Get the user who launched the script
 current_user=$SUDO_USER
 
+
+
 # Install Python Stem library
 apt install -y python3-stem
 
@@ -169,4 +171,4 @@ echo "Running UserHasher..."
 read -p "Enter your username: " username
 read -p "Enter your password: " password
 
-java -cp UserHasher.jar com.example.userhasher.UserHasherApplication %username% %password%
+sudo -u $current_user bash -c "/home/$current_user/.sdkman/candidates/java/current/bin/java -jar userHasherApplication.jar $username $password"

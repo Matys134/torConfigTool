@@ -1,3 +1,10 @@
+/**
+ * Function to toggle the display of different fields based on the selected bridge type.
+ * It retrieves the selected bridge type and the different field elements.
+ * It hides all fields initially and shows the submit button.
+ * It removes the 'required' attribute from the 'bridgePort' and 'bridgeTransportListenAddr' fields initially.
+ * Then, based on the selected bridge type, it shows specific fields and adds the 'required' attribute to certain fields.
+ */
 function toggleBridgeFields() {
     const bridgeType = document.getElementById("bridgeType").value;
     const commonFields = document.getElementById("commonFields");

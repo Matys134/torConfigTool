@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 @SpringBootApplication
 public class TorConfigToolApplication {
 
+    public static Process pythonProcess;
+
     public static void main(String[] args) throws IOException {
 
         Path torrcPath = Paths.get("torrc", "dataDirectory");
@@ -34,7 +36,7 @@ public class TorConfigToolApplication {
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python3", "data.py");
-        processBuilder.start();
+        pythonProcess = processBuilder.start();
 
         System.getProperties().put("server.port", 8443);
 

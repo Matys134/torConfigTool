@@ -136,6 +136,13 @@ public class RelayOperationsService {
     }
 
 
+    /**
+     * Prepares the model for the relay operations view.
+     * This involves adding relay configurations, hostnames, webtunnel links, and obfs4 links to the model.
+     *
+     * @param model The Model to add attributes to.
+     * @return String The name of the view to render.
+     */
     public String prepareModelForRelayOperationsView(Model model) {
         addRelayConfigsToModel(model);
         addHostnamesToModel(model);
@@ -144,6 +151,12 @@ public class RelayOperationsService {
         return "relay-operations";
     }
 
+    /**
+     * Adds relay configurations to the model.
+     * This includes guard configurations, bridge configurations, and onion configurations.
+     *
+     * @param model The Model to add attributes to.
+     */
     private void addRelayConfigsToModel(Model model) {
         model.addAttribute("guardConfigs", torConfigService.readTorConfigurations
                 (Constants.TORRC_DIRECTORY_PATH, "guard"));
@@ -153,6 +166,12 @@ public class RelayOperationsService {
                 (Constants.TORRC_DIRECTORY_PATH, "onion"));
     }
 
+    /**
+     * Adds hostnames to the model.
+     * This involves reading the hostname file for each onion configuration and adding it to the model.
+     *
+     * @param model The Model to add attributes to.
+     */
     private void addHostnamesToModel(Model model) {
         List<TorConfig> onionConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "onion");
         Map<String, String> hostnames = new HashMap<>();
@@ -163,6 +182,12 @@ public class RelayOperationsService {
         model.addAttribute("hostnames", hostnames);
     }
 
+    /**
+     * Adds webtunnel links to the model.
+     * This involves getting the webtunnel link for each bridge configuration and adding it to the model.
+     *
+     * @param model The Model to add attributes to.
+     */
     private void addWebtunnelLinksToModel(Model model) {
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> webtunnelLinks = new HashMap<>();
@@ -173,6 +198,12 @@ public class RelayOperationsService {
         model.addAttribute("webtunnelLinks", webtunnelLinks);
     }
 
+    /**
+     * Adds obfs4 links to the model.
+     * This involves getting the obfs4 link for each bridge configuration and adding it to the model.
+     *
+     * @param model The Model to add attributes to.
+     */
     private void addObfs4LinksToModel(Model model) {
         List<TorConfig> bridgeConfigs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
         Map<String, String> obfs4Links = new HashMap<>();
@@ -256,6 +287,12 @@ public class RelayOperationsService {
         return response;
     }
 
+    /**
+     * Deletes the Torrc file for a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @param relayType The type of the relay.
+     * @throws IOException If an I/O error occurs.
+     */
     private void deleteTorrcFile(String relayNickname, String relayType) throws IOException {
         Path torrcFilePath = torFileService.buildTorrcFilePath(relayNickname, relayType);
         if (Files.exists(torrcFilePath)) {
@@ -263,6 +300,12 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * Deletes the data directory for a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @param relayType The type of the relay.
+     * @throws IOException If an I/O error occurs.
+     */
     private void deleteDataDirectory(String relayNickname, String relayType) throws IOException {
         String capitalizedRelayType = relayType.substring(0, 1).toUpperCase() + relayType.substring(1);
         String dataDirectoryPath = torFileService.buildDataDirectoryPath(relayNickname + "_" + capitalizedRelayType + "Config");
@@ -272,6 +315,12 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * Deletes the Onion service files for a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @throws IOException If an I/O error occurs.
+     * @throws InterruptedException If the current thread is interrupted.
+     */
     private void deleteOnionServiceFiles(String relayNickname) throws IOException, InterruptedException {
         Path onionFilePath = Paths.get(System.getProperty("user.dir"), "onion", "hiddenServiceDirs", "onion-service-" + relayNickname);
         Path torrcOnionFilePath = Paths.get(System.getProperty("user.dir"), "torrc", TORRC_FILE_PREFIX + relayNickname + "_onion");
@@ -283,10 +332,22 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * Gets the status of a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @param relayType The type of the relay.
+     * @return The status of the relay.
+     */
     public String getRelayStatus(String relayNickname, String relayType) {
         return relayStatusService.getRelayStatus(relayNickname, relayType);
     }
 
+    /**
+     * Removes the Nginx files and configuration for a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @param relayType The type of the relay.
+     * @throws IOException If an I/O error occurs.
+     */
     public void removeNginxFilesAndConfig(String relayNickname, String relayType) throws IOException {
         int webtunnelPort = 0;
         if ("bridge".equals(relayType)) {
@@ -305,6 +366,12 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * Gets the Tor configuration for a given relay.
+     * @param relayNickname The nickname of the relay.
+     * @return The Tor configuration for the relay.
+     * @throws IOException If an I/O error occurs.
+     */
     private TorConfig getTorConfigForRelay(String relayNickname) throws IOException {
         TorConfigService torConfigService = new TorConfigService();
         List<TorConfig> configs = torConfigService.readTorConfigurations(Constants.TORRC_DIRECTORY_PATH, "bridge");
@@ -320,6 +387,10 @@ public class RelayOperationsService {
         return torConfig;
     }
 
+    /**
+     * Removes the Nginx configuration and symbolic link for a given webtunnel port.
+     * @param webtunnelPort The webtunnel port.
+     */
     private void removeNginxConfigAndSymbolicLink(int webtunnelPort) {
         String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + webtunnelPort;
         String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + webtunnelPort;
@@ -328,6 +399,10 @@ public class RelayOperationsService {
         commandService.executeCommand(removeSymbolicLinkCommand);
     }
 
+    /**
+     * Removes the Nginx configuration and symbolic link for a given nickname.
+     * @param nickname The nickname.
+     */
     private void removeNginxConfigAndSymbolicLink(String nickname) {
         String removeNginxConfigCommand = "sudo rm -f /etc/nginx/sites-available/onion-service-" + nickname;
         String removeSymbolicLinkCommand = "sudo rm -f /etc/nginx/sites-enabled/onion-service-" + nickname;
@@ -336,6 +411,11 @@ public class RelayOperationsService {
         commandService.executeCommand(removeSymbolicLinkCommand);
     }
 
+    /**
+     * Removes the service directory for a given webtunnel port.
+     * @param webtunnelPort The webtunnel port.
+     * @throws IOException If an I/O error occurs.
+     */
     private void removeServiceDirectory(int webtunnelPort) throws IOException {
         String currentDirectory = System.getProperty("user.dir");
         File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + webtunnelPort);
@@ -344,6 +424,11 @@ public class RelayOperationsService {
         }
     }
 
+    /**
+     * Removes the service directory for a given nickname.
+     * @param nickname The nickname.
+     * @throws IOException If an I/O error occurs.
+     */
     private void removeServiceDirectory(String nickname) throws IOException {
         String currentDirectory = System.getProperty("user.dir");
         File serviceDirectory = new File(currentDirectory + File.separator + "onion/www/service-" + nickname);

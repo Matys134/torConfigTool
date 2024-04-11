@@ -148,6 +148,17 @@ public class UPnPService {
         return response;
     }
 
+    /**
+     * Retrieves the ports from the torrc file.
+     *
+     * This method reads the torrc file line by line and checks for lines that start with "ORPort",
+     * "ServerTransportListenAddr obfs4", and "# webtunnel". It then extracts the port numbers from these lines
+     * and adds them to the corresponding list in the ports map.
+     *
+     * @param torrcFilePath The path to the torrc file.
+     * @return A map where the keys are "ORPort", "Obfs4Port", and "WebTunnelPort", and the values are lists of integers representing the ports.
+     * @throws RuntimeException If an I/O error occurs while reading the torrc file.
+     */
     public Map<String, List<Integer>> getPorts(Path torrcFilePath) {
         Map<String, List<Integer>> ports = new HashMap<>();
         ports.put("ORPort", new ArrayList<>());
@@ -183,6 +194,13 @@ public class UPnPService {
         return ports;
     }
 
+    /**
+     * Checks if UPnP is available.
+     *
+     * This method uses the isUPnPAvailable method from the UPnP library to check if UPnP is available.
+     *
+     * @return A boolean indicating whether UPnP is available.
+     */
     public boolean isUPnPAvailable() {
         return UPnP.isUPnPAvailable();
     }

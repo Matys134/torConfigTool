@@ -1,3 +1,8 @@
+/**
+ * This script is responsible for handling the removal of relay configurations.
+ * It listens for click events on the remove buttons, sends a POST request to the server to remove the corresponding relay configuration,
+ * and updates the view accordingly.
+ */
 $(document).ready(function () {
     const removeButton = $(".remove-button");
 

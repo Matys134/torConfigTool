@@ -1,5 +1,6 @@
 package com.school.torconfigtool.controller;
 
+import com.school.torconfigtool.TorConfigToolApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +19,14 @@ public class HomeController {
      */
     @GetMapping({"/home", "/"})
     public String home() {
-        // Add any necessary data to the model
-        return "home"; // "home.html" corresponds to your Thymeleaf template file
+        return "home";
     }
 
     @PostMapping("/shutdown")
     public void shutdown() {
+        if (TorConfigToolApplication.pythonProcess.isAlive()) {
+            TorConfigToolApplication.pythonProcess.destroy();
+        }
         System.exit(0);
     }
 }

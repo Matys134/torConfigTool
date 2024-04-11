@@ -20,8 +20,6 @@ public class GuardService {
     // RelayService instance for relay operations
     private final RelayInformationService relayInformationService;
 
-    // Directory path for torrc files
-
 
     /**
      * Constructor for GuardService

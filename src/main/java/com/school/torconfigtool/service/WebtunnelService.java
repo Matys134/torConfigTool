@@ -95,6 +95,18 @@ public class WebtunnelService {
         Files.write(torrcFilePath, lines);
     }
 
+    /**
+     * Retrieves the web tunnel link for a given relay.
+     *
+     * This method reads the torrc file and the fingerprint file associated with the relay, constructs the web tunnel link,
+     * and returns it as a string. The web tunnel link is constructed using the web tunnel port, the fingerprint, and the
+     * web tunnel URL found in the torrc file.
+     *
+     * @param relayNickname The nickname of the relay.
+     * @return A string representing the web tunnel link.
+     * @throws RuntimeException If an I/O error occurs while reading the torrc file or the fingerprint file, or if the web
+     * tunnel URL is not found in the torrc file, or if the web tunnel URL cannot be parsed.
+     */
     public String getWebtunnelLink(String relayNickname) {
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
                 + "dataDirectory";
@@ -106,7 +118,7 @@ public class WebtunnelService {
                 + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
-        String webtunnelPort = null; // Changed from int to String
+        String webtunnelPort = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {

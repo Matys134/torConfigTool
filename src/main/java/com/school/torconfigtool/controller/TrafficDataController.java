@@ -17,6 +17,6 @@ public class TrafficDataController {
      */
     @GetMapping("/traffic-data")
     public String getTrafficDataPage() {
-        return "data"; // Return the name of your HTML page
+        return "data";
     }
 }

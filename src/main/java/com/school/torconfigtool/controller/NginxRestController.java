@@ -10,17 +10,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+/**
+ * NginxRestController is a Spring REST Controller that handles operations related to Nginx.
+ */
 @RestController
 @RequestMapping("/nginx-api")
 public class NginxRestController {
 
     private final OnionService onionService;
 
+    /**
+     * Constructor for NginxRestController.
+     * @param onionService The service to handle onion operations.
+     */
     @Autowired
     public NginxRestController(OnionService onionService) {
         this.onionService = onionService;
     }
 
+    /**
+     * Handles the POST request to refresh Nginx.
+     * @return ResponseEntity<Void> Returns a ResponseEntity with the status of the operation.
+     */
     @PostMapping("/refresh-nginx")
     public ResponseEntity<Void> refreshNginx() {
         try {

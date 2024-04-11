@@ -12,12 +12,22 @@ import java.io.IOException;
 
 import static com.school.torconfigtool.util.Constants.TORRC_DIRECTORY_PATH;
 
+/**
+ * Service class for writing configuration to the torrc file.
+ */
 @Service
 public class TorrcWriteConfigService {
 
     private final SnowflakeProxyService snowflakeProxyService = new SnowflakeProxyService();
     String activeUserNickname = System.getProperty("user.name");
 
+    /**
+     * Writes specific configuration based on the type of relay.
+     *
+     * @param config The relay configuration.
+     * @param writer The BufferedWriter to write the configuration.
+     * @throws IOException If an I/O error occurs.
+     */
     public void writeSpecificConfig(RelayConfig config, BufferedWriter writer) throws IOException {
         if (config instanceof BridgeConfig) {
             writeBridgeConfig((BridgeConfig) config, writer);
@@ -28,6 +38,13 @@ public class TorrcWriteConfigService {
         }
     }
 
+    /**
+     * Writes the bridge configuration to the torrc file.
+     *
+     * @param config The bridge configuration.
+     * @param writer The BufferedWriter to write the configuration.
+     * @throws IOException If an I/O error occurs.
+     */
     private void writeBridgeConfig(BridgeConfig config, BufferedWriter writer) throws IOException {
         writer.write("BridgeRelay 1");
         writer.newLine();
@@ -61,10 +78,20 @@ public class TorrcWriteConfigService {
         }
     }
 
+    /**
+     * Writes the guard configuration to the torrc file.
+     */
     private void writeGuardConfig() {
         // No specific configuration for guard relays
     }
 
+    /**
+     * Writes the onion service configuration to the torrc file.
+     *
+     * @param onionServicePort The port for the onion service.
+     * @param torrcWriter The BufferedWriter to write the configuration.
+     * @throws IOException If an I/O error occurs.
+     */
     public void writeOnionServiceConfig(int onionServicePort, BufferedWriter torrcWriter) throws IOException {
         String currentDirectory = System.getProperty("user.dir");
         String hiddenServiceDirs = currentDirectory + "/onion/hiddenServiceDirs";
@@ -83,6 +110,13 @@ public class TorrcWriteConfigService {
         torrcWriter.write("User " + activeUserNickname);
     }
 
+    /**
+     * Writes the base relay configuration to the torrc file.
+     *
+     * @param config The base relay configuration.
+     * @param writer The BufferedWriter to write the configuration.
+     * @throws IOException If an I/O error occurs.
+     */
     public void writeTorrcFileConfig(BaseRelayConfig config, BufferedWriter writer) throws IOException {
         writer.write("Nickname " + config.getNickname());
         writer.newLine();

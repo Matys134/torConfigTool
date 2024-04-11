@@ -14,18 +14,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * OnionController is a Spring MVC Controller that handles operations related to Onion Services.
+ */
 @Controller
 @RequestMapping("/onion-service")
 public class OnionController {
     private final OnionService onionService;
     TorConfig torConfig = new TorConfig();
 
+    /**
+     * Constructor for OnionController.
+     * @param onionService The service to handle onion operations.
+     */
     @Autowired
     public OnionController(OnionService onionService) {
         this.onionService = onionService;
         initializeOnionController();
     }
 
+    /**
+     * Initializes the OnionController by creating the necessary directories if they do not exist.
+     */
     private void initializeOnionController() {
 
         String hiddenServiceDirsPath = System.getProperty("user.dir") + "/onion/hiddenServiceDirs";
@@ -38,6 +48,11 @@ public class OnionController {
         }
     }
 
+    /**
+     * Handles the GET request to show the Onion Service configuration form.
+     * @param model The Model object to be returned to the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping
     public String onionServiceConfigurationForm(Model model) {
         Map<String, String> hostnames = onionService.getCurrentHostnames();
@@ -49,6 +64,12 @@ public class OnionController {
         return "setup";
     }
 
+    /**
+     * Handles the POST request to configure the Onion Service.
+     * @param onionServicePort The port number for the Onion Service.
+     * @param model The Model object to be returned to the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/configure")
     public String configureOnionService(@RequestParam int onionServicePort, Model model) {
         try {
@@ -60,6 +81,11 @@ public class OnionController {
         return "setup";
     }
 
+    /**
+     * Handles the POST request to start the Onion Service.
+     * @param model The Model object to be returned to the view.
+     * @return The name of the view to be rendered.
+     */
     @PostMapping("/start")
     public String startOnionService(Model model) {
         boolean startSuccess = onionService.startTorOnion();

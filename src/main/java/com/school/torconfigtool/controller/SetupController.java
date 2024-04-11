@@ -16,7 +16,6 @@ public class SetupController {
      */
     @GetMapping
     public String setup() {
-        // Add any necessary data to the model
-        return "setup"; // "setup" corresponds to your Thymeleaf template file
+        return "setup";
     }
 }

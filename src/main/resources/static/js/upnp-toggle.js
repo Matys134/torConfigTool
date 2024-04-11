@@ -1,3 +1,7 @@
+/**
+ * Sends a POST request to the '/relay-operations-api/toggle-upnp' endpoint to enable or disable UPnP.
+ * @param {boolean} enable - A boolean indicating whether to enable or disable UPnP.
+ */
 function toggleUPnP(enable) {
     $.ajax({
         url: '/relay-operations-api/toggle-upnp',
@@ -12,6 +16,7 @@ function toggleUPnP(enable) {
     });
 }
 
+// Wait for the document to be fully loaded
 $(document).ready(function() {
     $('#upnp-toggle-button').click(function() {
         const button = $(this);

@@ -6,15 +6,28 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * Obfs4Service is a service class that handles operations related to Obfs4.
+ */
 @Service
 public class Obfs4Service {
 
     private final TorFileService torFileService;
 
+    /**
+     * Constructor for Obfs4Service.
+     * @param torFileService The service to handle Tor file operations.
+     */
     public Obfs4Service(TorFileService torFileService) {
         this.torFileService = torFileService;
     }
 
+    /**
+     * Gets the Obfs4 link for a given relay and bridge configuration.
+     * @param relayNickname The nickname of the relay.
+     * @param bridgeConfig The bridge configuration.
+     * @return The Obfs4 link, or null if the Obfs4 file does not exist.
+     */
     public String getObfs4Link(String relayNickname, BridgeConfig bridgeConfig) {
         String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
         String obfs4FilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "pt_state" + File.separator + "obfs4_bridgeline.txt";
@@ -55,6 +68,11 @@ public class Obfs4Service {
         return obfs4Link;
     }
 
+    /**
+     * Gets the public IP address of the current machine.
+     * @return The public IP address.
+     * @throws RuntimeException If there is an error while getting the public IP address.
+     */
     private String getPublicIPAddress() {
         try {
             URL url = new URL("https://checkip.amazonaws.com/");
