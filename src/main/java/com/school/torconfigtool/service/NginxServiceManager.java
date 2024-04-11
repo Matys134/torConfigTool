@@ -45,9 +45,18 @@ public class NginxServiceManager implements StatusChangeListener {
 
         // Iterate over the list and check the status of each service
         for (String service : allServices) {
-            String status = relayStatusService.getRelayStatus(service, "onion");
-            // If at least one service is online, start the Nginx service and return
-            if ("online".equals(status)) {
+            // Check the status of Onion services
+            String onionStatus = relayStatusService.getRelayStatus(service, "onion");
+            // If at least one Onion service is online, start the Nginx service and return
+            if ("online".equals(onionStatus)) {
+                nginxService.startNginx();
+                return;
+            }
+
+            // Check the status of Webtunnel Bridge services
+            String webtunnelStatus = relayStatusService.getRelayStatus(service, "bridge");
+            // If at least one Webtunnel Bridge service is online, start the Nginx service and return
+            if ("online".equals(webtunnelStatus)) {
                 nginxService.startNginx();
                 return;
             }
