@@ -108,48 +108,25 @@ public class WebtunnelService {
      * tunnel URL is not found in the torrc file, or if the web tunnel URL cannot be parsed.
      */
     public String getWebtunnelLink(String relayNickname) {
-        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
-                + "dataDirectory";
-        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig"
-                + File.separator + "fingerprint";
+        String dataDirectoryPath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + "dataDirectory";
+        String fingerprintFilePath = dataDirectoryPath + File.separator + relayNickname + "_BridgeConfig" + File.separator + "fingerprint";
         String fingerprint = torFileService.readFingerprint(fingerprintFilePath);
 
-        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator
-                + TORRC_FILE_PREFIX + relayNickname + "_bridge";
+        String torrcFilePath = System.getProperty("user.dir") + File.separator + "torrc" + File.separator + TORRC_FILE_PREFIX + relayNickname + "_bridge";
 
         String webtunnelDomainAndPath = null;
-        String webtunnelPort = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(torrcFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("ServerTransportOptions webtunnel url")) {
                     webtunnelDomainAndPath = line.split("=")[1].trim();
-                }
-                if (line.startsWith("# webtunnel")) {
-                    webtunnelPort = line.split(" ")[2];
+                    break;
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read torrc file", e);
         }
 
-        if (webtunnelDomainAndPath == null) {
-            throw new RuntimeException("Failed to find webtunnel URL in torrc file");
-        }
-
-        try {
-            URI uri = new URI(webtunnelDomainAndPath);
-            String domain = uri.getScheme() + "://" + uri.getHost();
-            String path = uri.getPath();
-
-            System.out.println("webtunnelPort: " + webtunnelPort
-                    + ", fingerprint: " + fingerprint
-                    + ", domain: " + domain
-                    + ", path: " + path);
-
-            return "webtunnel 10.0.0.2:" + webtunnelPort + " " + fingerprint + " url=" + domain + ":" + webtunnelPort + path;
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Failed to parse webtunnel URL", e);
-        }
+        return "webtunnel 10.0.0.2:443 " + fingerprint + " url=" + webtunnelDomainAndPath;
     }
 }
