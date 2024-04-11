@@ -85,7 +85,11 @@ public class RelayStatusService {
                 String status = getRelayStatus(relayNickname, relayType);
                 if (expectedStatus.equals(status)) {
                     if (statusChangeListener != null) {
-                        statusChangeListener.onStatusChange(status);
+                        try {
+                            statusChangeListener.onStatusChange(status);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                     executor.shutdown();
                 }
