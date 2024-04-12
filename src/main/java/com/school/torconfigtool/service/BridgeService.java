@@ -41,8 +41,8 @@ public class BridgeService {
             throw new Exception("A relay with the same nickname already exists.");
         }
 
-        if (bridgePort == null && bridgeTransportListenAddr == null) {
-            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort)) {
+        if (bridgePort == null) {
+            if (!RelayUtilityService.portsAreAvailable(bridgeNickname, bridgeControlPort, bridgeTransportListenAddr)) {
                 throw new Exception("One or more ports are already in use.");
             }
         } else {
