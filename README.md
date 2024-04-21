@@ -35,7 +35,7 @@ This project, originally created as part of a bachelor thesis, provides a user-f
      ```bash
      java -jar torConfigTool.jar
      ```
-   * The application should now be running on port 8443. Access it in your web browser at `http://<your-raspberry-pi-ip>:8443`
+   * The application should now be running on port 8443. Access it in your web browser at `https://<your-raspberry-pi-ip>:8443`
 
 **Manual Configuration (Optional)**
 
